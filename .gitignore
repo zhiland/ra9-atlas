@@ -1,0 +1,5 @@
+# Local research copies. Review rights before any separate publication.
+notes/evidence/
+# Raw agent output may contain unreviewed claims or local details.
+*.log
+.DS_Store
