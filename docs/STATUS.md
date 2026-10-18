@@ -17,6 +17,7 @@ The map-first concept is accepted for a small prototype. PoC 2.0 applies the lig
 - OpenCode produced `notes/navigation-mockup-brief.md` for R1–R2 using D1–D3. It separates UI checks from guide-reported claims, preserves the unresolved D2 trigger and D3 11:00 boundary, and defines navigation acceptance checks. No claim is marked in-game verified. The saved brief is 1,197 words, longer than the requested concise target; OpenCode revision was interrupted after repeated unsuccessful condensation. Raw session log remains local and ignored by Git.
 - The first navigation mockup was rejected as card-based. Its [old check record](notes/navigation-mockup-check.md) is historical.
 - The [map-first replacement](../prototype/navigation-mockup.html) shows an overall sample canvas and three detailed chapter maps. Nodes and branches remain visible together. The overall canvas has a dashed, unresolved Alice's box → Todd link; D1 and D3 remain separate. [OCR and structure note](notes/map-reference-analysis.md) records representative Steam image transcription. [Map check record](notes/map-prototype-check.md) records static checks and limits.
+- The map data (refs, N/E helpers, maps, detail) moved out of [navigation-mockup.html](../prototype/navigation-mockup.html) into [map-data.js](../prototype/map-data.js), a classic script loaded before the UI script so the file still opens directly over file://. Every node, edge, status, source URL, label, and the unresolved cross-chapter example is unchanged. [validate-map-data.js](../prototype/validate-map-data.js) checks unique map node IDs, edge endpoints, and that the cross-chapter example stays unresolved; run `node prototype/validate-map-data.js`. All checks pass.
 - [spec.md](spec.md) remains a draft. [CONTEXT.md](CONTEXT.md) defines the main terms.
 - Project documents are in English. The project owner approved the public `zhiland/ra9-atlas` repository. Project documents are organized under [docs/](./).
 
@@ -32,7 +33,7 @@ Account limits change across all chats. Check them before each work package.
 Below 20% remaining, save progress and defer a large package.
 The run log records historical measurements, not current capacity.
 
-Static checks for PoC 2.0: JavaScript syntax passes, and all relative Markdown links resolve. Browser rendering and interaction remain unverified.
+Static checks for PoC 2.0: JavaScript syntax passes, all relative Markdown links resolve, and `node prototype/validate-map-data.js` passes. Browser rendering and interaction remain unverified.
 
 ## Limits
 
