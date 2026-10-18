@@ -9,11 +9,11 @@ The article describes the full AI-native SDLC, not a standalone SDD standard. Us
 
 ## Our process
 
-1. Record the need in `intent.md`.
-2. Describe behavior and acceptance in `spec.md`. Leave unknowns open.
+1. Record the need in `../intent.md`.
+2. Describe behavior and acceptance in `../spec.md`. Leave unknowns open.
 3. Check the data and mockup. Finish the decision grill.
 4. Record go/no-go. If ready, choose an architecture and approve the specification.
-5. Create `plan.md`: tasks, dependencies, files to change, and checks linked to requirement IDs.
+5. Create `../plan.md`: tasks, dependencies, files to change, and checks linked to requirement IDs.
 6. Complete small tasks. Compare results with the specification.
 7. Save verification evidence. Independently check important conclusions.
 8. Feed fixes back into requirements and related checks.
@@ -22,12 +22,12 @@ This sequence is adapted for the project. It does not require separate approval 
 
 ## One source for each kind of information
 
-- `intent.md`: purpose and boundaries.
-- `spec.md`: requirements, acceptance, and blockers.
-- `PREPARATION-PLAN.md`: preparation order and go/no-go.
-- `plan.md`: future implementation plan. Do not create it yet.
-- `notes/`: evidence, research, and reviews.
-- `STATUS.md`: resume point, links, and next step.
+- `../intent.md`: purpose and boundaries.
+- `../spec.md`: requirements, acceptance, and blockers.
+- `../PREPARATION-PLAN.md`: preparation order and go/no-go.
+- `../plan.md`: future implementation plan. Do not create it yet.
+- `./`: evidence, research, and reviews.
+- `../STATUS.md`: resume point, links, and next step.
 - Obsidian: short summary and pointers, not a second specification.
 
 Files are currently local. There is no Git history or commit yet. When preparing the repository, version selected documents. First review research copies and logs for publication suitability.

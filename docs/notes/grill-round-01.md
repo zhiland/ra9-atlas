@@ -11,7 +11,7 @@ Facts: no ready replacement has been confirmed; the JSON corpus found simplifies
 4. What language should the first public interface use?
    Recommendation: English for the community; add Russian separately.
 
-The next round depends on the answers. The acceptable gap limit before release remains open. Record answers in the plan and new terms in `CONTEXT.md`.
+The next round depends on the answers. The acceptable gap limit before release remains open. Record answers in the plan and new terms in `../CONTEXT.md`.
 
 ## Answers
 

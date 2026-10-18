@@ -1,13 +1,13 @@
 # ra9-atlas — specification 0.2
 
-Date: 2026-10-17. Status: draft, not ready for implementation.
+Date: 2026-10-18. Status: draft, not ready for implementation.
 Basis: [intent.md](intent.md), project owner decisions, and [Gate 01](notes/decision-gate-01.md).
 
 ## Requirements and acceptance
 
 | ID | Requirement | Verification |
 |---|---|---|
-| R1 | The guide provides a chapter overview and access to detailed charts | In the mockup, select a chapter, open an event, and return without losing the selected context |
+| R1 | The guide shows a large connected chapter flowchart with multiple branches visible at once | In the mockup, select a chapter, inspect several connected choices and outcomes on one canvas, pan and zoom, then open event details without replacing the map |
 | R2 | A selected action shows prerequisites and later consequences | Follow a cross-chapter example in both directions. Show required future choices. A conditional outcome must not appear guaranteed |
 | R3 | All user-facing text is English | Check navigation, warnings, labels, and event details |
 | R4 | A spoiler warning appears before map content | Check a new visit and a direct event link. Show the full map after consent. Consent retention is not yet decided |
@@ -16,6 +16,8 @@ Basis: [intent.md](intent.md), project owner decisions, and [Gate 01](notes/deci
 | R7 | Game coverage is transparent | Account for every chapter and separate character chart. Mark verified parts and gaps. A file's existence does not prove coverage |
 
 ## Data verification is separate from interface verification
+
+The 2026-10-18 mockup correction makes the map the main surface. Event clicks show secondary details. A sequence of event cards or a single-event view does not satisfy R1. The [Steam flowchart reference analysis](notes/map-reference-analysis.md) records representative OCR and visible branches; it is a structural reference, not complete gameplay evidence.
 
 - D1: a local branch in The Hostage. Preserve distinct actions and their conditions.
 - D2: a cross-chapter link. Check the initial action, state transfer, and conditions of the later event.

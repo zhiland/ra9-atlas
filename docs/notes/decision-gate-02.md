@@ -1,6 +1,6 @@
 # Gate 02 — scenario checks
 
-Date: October 17, 2026. Check of requirements D1–D3 from `spec.md` 0.1.
+Date: October 17, 2026. Check of requirements D1–D3 from `../spec.md` 0.1.
 
 **GO: a navigation mockup with explicit evidence statuses.**  
 **HOLD: an exact public corpus and website implementation.**

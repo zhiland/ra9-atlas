@@ -5,7 +5,7 @@ Updated: 2026-10-17.
 ## Goal
 
 Create an interactive guide for all of Detroit: Become Human.
-Players select an action and see its prerequisites and later consequences without switching between screenshots.
+Players inspect a large connected flowchart, then select an action to see its prerequisites and later consequences without losing the surrounding branches.
 
 ## Stages and decisions
 
@@ -42,7 +42,7 @@ A new project needs a concrete benefit absent from the checked candidates.
 The initial candidate review and guide-based D1–D3 checks are complete.
 They do not establish full coverage or gameplay verification.
 [Gate 02](notes/decision-gate-02.md) permits a navigation mockup with explicit evidence labels.
-Next, check R1–R2 on that mockup. Then record another decision and select architecture.
+The first card-based mockup did not represent the owner's intended flowchart. A map-first replacement now tests R1–R2 using visible branching examples. Check it with the owner before recording the next decision or selecting architecture.
 Application implementation has not started.
 
 A later consequence must show previous conditions and necessary future choices.

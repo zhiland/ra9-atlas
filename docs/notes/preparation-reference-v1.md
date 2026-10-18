@@ -97,7 +97,7 @@ Apply other skills as needed: `research` for audits, `domain-modeling` for terms
 - Check account limits before and after each research wave. Snapshot on October 17, 2026, while refining the plan: 20% of the 5-hour window and 27% of the week had been used; this covers the whole account, not this project’s usage.
 - Suggested start: one Luna / medium for a bounded package; add a second only for independent work where parallelism helps. Use Sol/Astra for specific unresolved questions, not every search. Do not promise fixed usage in advance.
 - Suggested reserve: if less than 20% remains in either window, do not start another large wave; save results and a summary. This is a working threshold for approval, not an automatic service limit. If limits are unavailable, do not assume the full allowance remains.
-- Each agent gets a separate output file and saves intermediate results during the task. `STATUS.md` records completed and unfinished work, next steps, and links; `AGENT-RUNS.md` records name, model/effort, assignment, status, and outcome.
+- Each agent gets a separate output file and saves intermediate results during the task. `../STATUS.md` records completed and unfinished work, next steps, and links; `../AGENT-RUNS.md` records name, model/effort, assignment, status, and outcome.
 - If work stops, save open questions, unread sources, partial results, and the resume point. A new session reads STATUS and relevant files instead of repeating all searches. Automatic resumption is not configured or promised.
 - Do not buy credits or paid APIs, or use available limit resets, without the project owner’s instruction.
 

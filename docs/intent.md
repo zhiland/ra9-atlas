@@ -13,6 +13,7 @@ Existing screenshots require repeated switching and zooming.
 An interactive guide to all of Detroit: Become Human.
 Players select an action, see its prerequisites, and follow its later consequences.
 They move from an overview to details without losing context.
+The overview is a large connected flowchart. Multiple choices, branches, and outcomes stay visible together. Selecting an event opens details beside the map and preserves its spatial context.
 
 ## Agreed scope
 

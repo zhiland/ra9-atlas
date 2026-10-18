@@ -1,6 +1,6 @@
 # Independent review of plan v2
 
-Date: October 17, 2026. Basis: `PREPARATION-PLAN.md`; external sources were not checked.
+Date: October 17, 2026. Basis: `../PREPARATION-PLAN.md`; external sources were not checked.
 
 - **Conclusion:** the goal is sound. Set research boundaries and test usefulness before filling a complete guide.
 
@@ -18,7 +18,7 @@ Date: October 17, 2026. Basis: `PREPARATION-PLAN.md`; external sources were not 
 - Check the strongest available candidates against the same three concrete game scenarios. Record a result, exact link, and status for each criterion: checked, claimed by author, or unknown.
 - For a candidate to adapt, check source availability and the licenses for code and data separately. Unknown rights do not count as permission.
 - Preserve one decision backed by an identified gap if proposing a custom solution. List unresolved questions, how to check them, and the next package.
-- Update `STATUS.md` and `AGENT-RUNS.md`; stop searching when more searches cannot change the decision.
+- Update `../STATUS.md` and `../AGENT-RUNS.md`; stop searching when more searches cannot change the decision.
 
 ## What to shorten
 
