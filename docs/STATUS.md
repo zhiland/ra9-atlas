@@ -1,12 +1,15 @@
 # ra9-atlas — resume point
 
-Updated: 2026-10-18. Status: PoC 2.0 in progress.
+Updated: 2026-10-18. Status: PoC3 checkpoint complete; PoC4 implementation blocked at the OpenCode free-model gateway.
 
 ## Decision
 
 The map-first concept is accepted for a small prototype. PoC 2.0 applies the light Steam flowchart grammar. This is a UI concept only; it does not establish gameplay accuracy, full coverage, or release readiness.
 
 ## Complete
+
+- PoC3 — The Hostage chapter map — passed its data/layout validator and JavaScript syntax checks. It contains 33 boxes, 40 visible labels, and 36 edges (5 uncertain); its coverage note documents source and browser/game verification limits. Checkpoint commit `2ca9e25` was pushed to `origin/main`.
+- PoC4 scope and checklist: [poc4-plan.md](poc4-plan.md). OpenCode v2.0.32 CLI/catalog were inspected; the installed catalog lists `opencode/deepseek-v4.1-flash-free` and `opencode/glm-5.3-flash-free`, and the CLI accepts `provider/model#variant`. Official DeepSeek and OpenCode docs support the `max` effort concept. A minimal `#max` request selected the DeepSeek model, but the free-model service rejected it before returning a model response. Backend application of max and PoC4 implementation are **unverified**. No paid fallback or access workaround was used. The public-only prompt remains in an ignored local log.
 
 - The preparation plan received an independent Astra review and discussion.
 - Gate 01: fschutt contains one chapter. AI Player contains 32 chapter files but simplifies the game.
@@ -23,7 +26,9 @@ The map-first concept is accepted for a small prototype. PoC 2.0 applies the lig
 
 ## Next
 
-Review the PoC 2.0 map visually and click through the D1–D3 samples. The local browser route remains unavailable under the earlier explicit restriction, so visual and interaction behavior have not been checked in a browser. Resolve specification blockers before an implementation plan or stack decision.
+Resume PoC4 only when the authorized free OpenCode route accepts a request. Follow [poc4-plan.md](poc4-plan.md); have OpenCode write the brief checklist and implement within the same work package. Do not claim implementation, backend-verified max effort, or game-verified transitions until evidence exists.
+
+Historical PoC2 next step: review its map visually and click through the D1–D3 samples. The local browser route remains unavailable under the earlier explicit restriction, so visual and interaction behavior have not been checked in a browser. Resolve specification blockers before a production stack decision.
 
 PoC 2.0 uses compact rectangular event nodes, orthogonal connectors, blue milestone nodes, visible branches, and a light neutral canvas. OpenCode was given one bounded visual task but the run was interrupted before a result after about 15 seconds; a hang was not established. The Luna executor completed this small pass. No architecture decision or implementation plan was created.
 

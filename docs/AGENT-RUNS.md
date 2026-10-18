@@ -1,6 +1,6 @@
 # ra9-atlas — agent run log
 
-Updated: 2026-10-17. These are bounded runs, not continuously active agents.
+Updated: 2026-10-18. These are bounded runs, not continuously active agents.
 
 | Run | Model / effort | Task | Result |
 |---|---|---|---|
@@ -13,8 +13,9 @@ Updated: 2026-10-17. These are bounded runs, not continuously active agents.
 | verify_d1_d3 | GPT-6 Luna / medium | Local branch and late detour conditions | [Report](notes/verification-d1-d3.md) |
 | verify_d2 | GPT-6 Luna / medium | Alice's box and later Todd encounter | [Report](notes/verification-d2.md) |
 | translate_research | GPT-6 Luna / medium | Translate the 12 research notes into English | Completed. Local evidence and logs were not changed. |
+| poc4_effort_check | OpenCode v2.0.32 / DeepSeek free `#max` requested | Inspect CLI/catalog and probe model route | Model selected locally; gateway rejected request before a model response. Backend max application is unverified; no workaround or paid fallback. PoC4 plan saved; implementation not started. |
 
-All listed runs are complete.
+All listed runs are complete; the PoC4 model request did not complete.
 
 ## Review boundaries
 
