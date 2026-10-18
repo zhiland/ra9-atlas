@@ -5,6 +5,7 @@ An unofficial, evidence-labeled map prototype for choices and consequences in **
 **Status:** PoC 2.0. This is a small guide-based prototype, not a complete or in-game-verified map.
 
 - [Current status](docs/STATUS.md)
+- [Source register](docs/SOURCES.md)
 - [Intent and scope](docs/intent.md)
 - [Specification](docs/spec.md)
 - [Preparation plan](docs/PREPARATION-PLAN.md)
