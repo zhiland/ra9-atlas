@@ -11,5 +11,6 @@ An unofficial, evidence-labeled map prototype for choices and consequences in **
 - [Glossary](docs/CONTEXT.md)
 - [Project notes](docs/notes/)
 - [Map prototype](prototype/navigation-mockup.html)
+- [PoC3 — The Hostage chapter map](prototype/hostage-poc3.html) · [coverage note](docs/notes/hostage-poc3-coverage.md)
 
 Research notes contain spoilers. Sources and uncertainty are documented. External links do not grant permission to reuse game content or third-party material. The project is not affiliated with Quantic Dream or Sony Interactive Entertainment. No project license has been selected.
