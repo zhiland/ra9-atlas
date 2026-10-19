@@ -10,7 +10,7 @@ Basis: [intent.md](intent.md), project owner decisions, and [Gate 01](notes/deci
 | R1 | The guide shows a large connected chapter flowchart with multiple branches visible at once | In the mockup, select a chapter, inspect several connected choices and outcomes on one canvas, pan and zoom, then open event details without replacing the map |
 | R2 | A selected action shows prerequisites and later consequences | Follow a cross-chapter example in both directions. Show required future choices. A conditional outcome must not appear guaranteed |
 | R3 | All user-facing text is English | Check navigation, warnings, labels, and event details |
-| R4 | A spoiler warning appears before map content | Check a new visit and a direct event link. Show the full map after consent. Consent retention is not yet decided |
+| R4 | A spoiler warning overlays the map and blocks interaction until consent | On a new visit and direct event link, confirm the overlay is visible before interaction; after consent, the full map is available. The map may remain visible behind the overlay. Consent retention is not yet decided |
 | R5 | Disputed claims differ visibly from confirmed claims | Show a status and source on the link and in event details. Choose the visual treatment in the mockup |
 | R6 | Relationship claims have traceable evidence | A selected link provides a URL, source location, verification status, and known conflicts |
 | R7 | Game coverage is transparent | Account for every chapter and separate character chart. Mark verified parts and gaps. A file's existence does not prove coverage |
@@ -35,9 +35,9 @@ A mockup using a few cases is not a complete public guide.
 ## Implementation blockers
 
 - D1–D3 have been compared against guides. Direct game evidence and complete conditions remain unconfirmed.
-- The R1–R2 user journey has not been tested in a mockup.
-- Architecture and data format are not selected.
-- Publication licenses are not settled.
+- PoC4 exercises the map-first selection and navigation journey in a limited sample; this does not establish full-release usability or accessibility.
+- The full-product stack and data contract are not selected.
+- The author has selected MIT for original project code and documentation; this does not license source-derived samples, game material, or third-party content. See [license boundaries](license-boundary.md).
 - The release policy for unverified links is not agreed.
 
 ## Change rule
@@ -49,3 +49,5 @@ Return conflicts to the specification or research. Do not change a check merely 
 
 Limited guide-based verification of D1–D3 is complete: [Gate 02](notes/decision-gate-02.md).
 The examples may support a mockup with evidence labels. Full game verification and interface checks remain pending.
+
+The [implementation roadmap](ROADMAP.md) breaks the full-game outcome into feature issues. It does not supersede these requirements or decide the open implementation questions.

@@ -150,8 +150,8 @@ a:hover { text-decoration: underline; }
 .rowlist button:hover { background: var(--chip); }
 .rowlist .dir { color: var(--muted); margin-right: 6px; }
 .rowlist .kind { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; margin-left: 6px; }
-.opt-list { margin: 0; padding-left: 18px; }
-.opt-list li { margin: 2px 0; }
+.opt-list { margin: 0; padding-left: 1.4em; list-style-position: outside; }
+.opt-list li { margin: 2px 0; padding-left: .15em; }
 .src-link { display: block; font-size: 11.5px; margin: 2px 0; }
 .goto { display: inline-block; border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; padding: 6px 10px; font-size: 12px; margin-top: 2px; background: var(--surface); }
 .goto:hover { background: var(--chip); }

@@ -2,6 +2,8 @@
 
 Updated: 2026-10-19. Status: PoC4 implementation and source-rights audit are complete. Commit `04ed960` is pushed to `origin/main`. The main entry uses a neutral-gray default and orthogonal arrow connectors; validators, unit checks, and Chromium browser checks pass.
 
+The implementation roadmap is recorded in [ROADMAP.md](ROADMAP.md) and split across 11 open GitHub issues. The root [MIT license](../LICENSE) applies to original project code and documentation only; [license-boundary.md](license-boundary.md) excludes game content, third-party sources, and source-derived samples. This is a license-scope statement, not clearance of existing source-derived material. The full product's data contract, publishing approach, and public-release policy remain open.
+
 ## Decision
 
 The map-first concept is accepted for a small prototype. PoC 2.0 applies the light Steam flowchart grammar. This is a UI concept only; it does not establish gameplay accuracy, full coverage, or release readiness.
