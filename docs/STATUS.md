@@ -1,6 +1,6 @@
 # ra9-atlas — resume point
 
-Updated: 2026-10-19. Status: PoC4 implementation and source-rights audit are complete. The main checkout includes a neutral-gray default, orthogonal arrow connectors, and passing validators, unit, and Chromium browser checks; changes are being checkpointed on `main`.
+Updated: 2026-10-19. Status: PoC4 implementation and source-rights audit are complete. Commit `04ed960` is pushed to `origin/main`. The main entry uses a neutral-gray default and orthogonal arrow connectors; validators, unit checks, and Chromium browser checks pass.
 
 ## Decision
 
@@ -27,7 +27,7 @@ The map-first concept is accepted for a small prototype. PoC 2.0 applies the lig
 
 ## Next
 
-PoC4 files are now in the main checkout. Git writes previously failed while creating a worktree index lock (`Operation not permitted`); a normal permission-escalated add/commit/push is being retried now. The focused review checked condition labels and details, separate Todd-survival and terminal prerequisites, the unresolved box hypothesis, and the new connector styling. A successful push will be confirmed by comparing the local commit hash with `origin/main`.
+Git writes initially failed while creating a worktree index lock (`Operation not permitted`). A normal permission-escalated add, commit, and non-forced push then succeeded; `04ed960` is confirmed on `origin/main`. The focused review checked condition labels and details, separate Todd-survival and terminal prerequisites, the unresolved box hypothesis, and the new connector styling.
 
 Historical PoC2 next step: review its map visually and click through the D1–D3 samples. The local browser route remains unavailable under the earlier explicit restriction, so visual and interaction behavior have not been checked in a browser. Resolve specification blockers before a production stack decision.
 
