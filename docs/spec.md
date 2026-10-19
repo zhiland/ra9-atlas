@@ -14,6 +14,9 @@ Basis: [intent.md](intent.md), project owner decisions, [Gate 01](notes/decision
 | R5 | Guide-supported and disputed claims may be published when their source and evidence status are visible; do not present them as gameplay-verified | Show a status and source on the link and in event details. Choose the visual treatment in the mockup |
 | R6 | Relationship claims have traceable evidence | A selected link provides a URL, source location, verification status, and known conflicts |
 | R7 | Game coverage is transparent | Account for every chapter and separate character chart. Mark verified parts and gaps. A file's existence does not prove coverage |
+| R8 | Chapter and story navigation retain context | Show all chart nodes, including optional actions. Search chapters, characters, actions, outcomes, and synonyms. Support zoom, selected-chart detail, reverse prerequisites, alternatives, and event/link permalinks under spoiler consent |
+| R9 | Evidence and coverage remain distinct | Show conflicting source accounts together. Track coverage as not added, partial, or checked against chart, separately from each link's evidence status |
+| R10 | Publication has a review gate | Required data/unit checks and desktop/mobile browser checks must pass. Proposed changes receive automated checks and review before owner approval and publication; visitors cannot edit published data directly |
 
 ## Data verification is separate from interface verification
 
@@ -34,12 +37,19 @@ The 2026-10-18 mockup correction makes the map the main surface. Event clicks sh
 The full game remains the target.
 Fog of war is deferred. Accounts, a simulator, and save imports are not required.
 A mockup using a few cases is not a complete public guide.
+An incomplete public preview is allowed when its coverage gaps are visible.
+Desktop is primary; mobile support is required. The first implementation milestone is a robust cross-chapter vertical slice, followed by the full chapter collection.
+The initial release uses no images, analytics, or advertising trackers. Future images require rights clearance.
+Error reports may open a prefilled GitHub issue; no project account system, comment system, or reporting server is planned.
 
 ## Open implementation decisions and evidence limits
 
 - D1–D3 have been compared against guides. Some conditions and exact triggers remain unconfirmed; targeted gameplay checks may resolve specific questions.
 - PoC4 exercises the map-first selection and navigation journey in a limited sample; this does not establish full-release usability or accessibility.
 - The full-product stack and data contract are not selected.
+- The agreed direction is a static site on free hosting, with no server maintenance; buying a custom domain is acceptable. Hosting/provider research remains open under [issue #6](https://github.com/zhiland/ra9-atlas/issues/6).
+- Chapter-level overview cross-links with stronger emphasis for the selected chapter are provisional pending a dense-map review. Replay-state help requires fact-checking before it makes claims. Agent-assisted extraction and separate source review are accepted in principle; the review procedure is still open.
+- Dedicated graph keyboard navigation and personal playthrough marking are deferred. Standard control support, visible focus, search focus, Escape behavior, contrast, and non-color distinctions remain required. Player-choice percentages are also deferred with usefulness undecided.
 - The author has selected MIT for original project code and documentation; this does not license source-derived samples, game material, or third-party content. See [license boundaries](license-boundary.md).
 - Guide-supported links can be published with source and status. This does not establish that a source is correct or that the graph is complete.
 

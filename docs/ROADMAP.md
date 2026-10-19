@@ -8,13 +8,21 @@ The requested end state is a complete, source-audited, interactive guide to the 
 2. **Set the evidence and verification method** — [#4](https://github.com/zhiland/ra9-atlas/issues/4). Define source extraction and cross-checks as the default evidence method, record conflicts and claim status, and use targeted in-game checks when they can resolve specific uncertainties. Keep automated structural validation separate from evidence checks.
 3. **Build full-game chapter and route coverage** — [#1](https://github.com/zhiland/ra9-atlas/issues/1). Reconcile chapter/character-route inventories and account for every branch and gap.
 4. **Model persistent state and delayed consequences** — [#3](https://github.com/zhiland/ra9-atlas/issues/3). Connect choices to later prerequisites and outcomes without implying certainty beyond the evidence.
-5. **Deliver the graph explorer** — [#11](https://github.com/zhiland/ra9-atlas/issues/11). Extend the map-first concept with story overview, route navigation, search, filters, and readable large graphs.
-6. **Complete spoiler, accessibility, and device behavior** — [#5](https://github.com/zhiland/ra9-atlas/issues/5). Keep spoiler consent explicit and verify keyboard, assistive technology, contrast, and small-screen use.
+5. **Deliver the graph explorer** — [#11](https://github.com/zhiland/ra9-atlas/issues/11). First build a robust cross-chapter vertical slice, then scale to the complete chapter collection. Keep story overview and chapter charts connected; search chapters, characters, actions, outcomes, and synonyms. Selected outcomes expose reverse prerequisites and alternatives. Chapter-level cross-link emphasis remains provisional pending a dense-map review.
+6. **Complete spoiler, accessibility, and device behavior** — [#5](https://github.com/zhiland/ra9-atlas/issues/5). Keep spoiler consent explicit and verify contrast, assistive technology, and mobile use. Dedicated graph keyboard navigation is deferred; preserve standard controls, visible focus, search focus, and Escape behavior.
 7. **Add quality and contribution workflow** — [#8](https://github.com/zhiland/ra9-atlas/issues/8). Validate data and evidence boundaries and automate appropriate checks.
-8. **Select and operate a publishing approach** — [#6](https://github.com/zhiland/ra9-atlas/issues/6). Decide hosting after product, privacy, data, and operations requirements are reviewed; verify the deployed environment.
+8. **Select and operate a publishing approach** — [#6](https://github.com/zhiland/ra9-atlas/issues/6). The agreed direction is a static site, free hosting, and no server maintenance; buying a custom domain is acceptable. Compare providers, including GitHub Pages and Sites. No provider has been selected. Required data/unit checks and desktop/mobile browser checks block publication when they fail.
 9. **Maintain licensing and provenance governance** — [#10](https://github.com/zhiland/ra9-atlas/issues/10). Review each contribution and published item against its actual source rights.
 
 These are broad feature issues. Break them into implementation tasks only after the related decisions and acceptance evidence are clear. Keep structural validation separate from gameplay verification and coverage claims.
+
+## Deferred product features
+
+- **Personal playthrough marking** — [#14](https://github.com/zhiland/ra9-atlas/issues/14). Keep distinct from the reference guide; no release commitment.
+- **Game images** — [#13](https://github.com/zhiland/ra9-atlas/issues/13). No images in the first release; assess later only after rights clearance.
+- **Player-choice percentages** — [#12](https://github.com/zhiland/ra9-atlas/issues/12). Deferred; usefulness and evidence sources are undecided.
+
+The first release has no analytics or advertising trackers. Public preview may expose incomplete coverage if gaps are visible; full-game coverage remains the end goal. Proposed edits go through pull requests, automated checks, review, and owner approval before publication. Visitors do not edit published data directly. Error reports can open a prefilled GitHub issue; the product will not add its own accounts, comments, or reporting server.
 
 ## Deferred discovery and outreach
 
