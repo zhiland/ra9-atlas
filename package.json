@@ -6,7 +6,8 @@
     "validate": "node prototype/validate-map-data.js && node prototype/validate-hostage-data.js && node prototype/validate-atlas-data.js",
     "test:unit": "node tests/atlas-core.test.js",
     "test:browser": "node tests/poc4-browser.test.js",
-    "test": "npm run validate && npm run test:unit && npm run test:browser"
+    "test": "npm run validate && npm run test:unit && npm run test:browser",
+    "bench:scale": "node benchmark/scale/run-benchmark.js"
   },
   "devDependencies": {
     "playwright": "^1.64.1"

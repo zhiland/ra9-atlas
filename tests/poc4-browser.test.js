@@ -8,8 +8,9 @@
    What this suite does and does not prove: it drives the static pages in
    headless Chromium over file://. It exercises consent, chapter jumps,
    cross-chapter gates and hypotheses, both detail-close paths, history,
-   hash round-trips and text contrast in all three palettes. It does NOT
-   verify any Detroit: Become Human gameplay. */
+   hash round-trips and text contrast in all three palettes, plus one scoped
+   390x844 mobile-emulation layout/interaction regression. It does NOT verify
+   any Detroit: Become Human gameplay or physical-phone behavior. */
 'use strict';
 
 const fs = require('fs');
@@ -58,6 +59,102 @@ async function textOf(page, selector) {
 async function resetAtlas(page) {
   await page.locator('#reset').click();
   await page.locator('#details').waitFor({ state: 'hidden' });
+}
+
+async function waitFrames(page) {
+  await page.evaluate(function () {
+    return new Promise(function (resolve) {
+      requestAnimationFrame(function () { requestAnimationFrame(resolve); });
+    });
+  });
+}
+
+/* Scoped regression for the <=900px responsive layout defect: the production
+   stylesheet used to give the canvas zero height and let .workspace exceed the
+   viewport at 390px. Runs once against the editorial entry point. This is
+   Chromium viewport emulation, not a physical-phone check. */
+async function runMobileRegression(browser) {
+  console.log('scenario mobile-390 (production CSS, viewport emulation only)');
+  const page = await browser.newPage({
+    viewport: { width: 390, height: 844 },
+    deviceScaleFactor: 1,
+    isMobile: true,
+    hasTouch: true
+  });
+  const pageErrors = [];
+  page.on('pageerror', function (e) { pageErrors.push('pageerror: ' + e.message); });
+  page.on('console', function (m) { if (m.type() === 'error') pageErrors.push('console: ' + m.text()); });
+  const url = 'file://' + path.join(root, 'prototype', 'poc4-editorial.html');
+  await page.goto(url + '#');
+  await page.locator('#consent').click();
+  await page.locator('#world').waitFor({ state: 'visible' });
+
+  await ok('390x844 keeps the canvas within the viewport and gives it height', async function () {
+    const layout = await page.evaluate(function () {
+      const canvas = document.getElementById('canvas').getBoundingClientRect();
+      const workspace = document.querySelector('.workspace').getBoundingClientRect();
+      const wrap = document.querySelector('.canvas-wrap').getBoundingClientRect();
+      return {
+        innerWidth: window.innerWidth,
+        innerHeight: window.innerHeight,
+        canvas: { left: canvas.left, top: canvas.top, width: canvas.width, height: canvas.height },
+        workspace: { width: workspace.width, height: workspace.height },
+        wrap: { width: wrap.width, height: wrap.height },
+        scrollWidth: document.documentElement.scrollWidth
+      };
+    });
+    assert(Math.abs(layout.canvas.width - layout.innerWidth) <= 1,
+      'canvas width ' + layout.canvas.width + ' should match viewport ' + layout.innerWidth + ' within 1px');
+    assert(layout.canvas.height > 0, 'canvas height must be > 0, got ' + layout.canvas.height);
+    assert(layout.workspace.width <= layout.innerWidth + 1,
+      'workspace width ' + layout.workspace.width + ' exceeds viewport ' + layout.innerWidth);
+    assert(layout.scrollWidth <= layout.innerWidth + 1,
+      'document horizontally overflows: ' + layout.scrollWidth + ' > ' + layout.innerWidth);
+    assert(layout.wrap.height > 0, 'canvas wrapper height must be > 0');
+  });
+
+  await ok('390x844 chapter focus and detail selection remain operable', async function () {
+    await page.locator('[data-chapter="home"]').click();
+    await waitFrames(page);
+    assert(await page.locator('[data-chapter="home"]').getAttribute('aria-pressed') === 'true',
+      'chapter focus did not become active');
+    const focused = await page.evaluate(function () {
+      const canvas = document.getElementById('canvas').getBoundingClientRect();
+      const home = Array.prototype.slice.call(document.querySelectorAll('.frame')).find(function (f) {
+        return /A New Home/.test(f.getAttribute('aria-label'));
+      });
+      const r = home.getBoundingClientRect();
+      return {
+        canvasHeight: canvas.height,
+        frameIntersects: r.right > canvas.left && r.left < canvas.right && r.bottom > canvas.top && r.top < canvas.bottom,
+        scrollWidth: document.documentElement.scrollWidth,
+        innerWidth: window.innerWidth
+      };
+    });
+    assert(focused.canvasHeight > 0 && focused.frameIntersects, 'focused chapter is not visible in the canvas');
+    assert(focused.scrollWidth <= focused.innerWidth + 1, 'chapter focus introduced horizontal overflow');
+
+    await page.locator('[data-node="k_meet"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    assert(await page.locator('#details-close').isVisible(), 'details close control is not reachable');
+    const details = await page.evaluate(function () {
+      const r = document.getElementById('details').getBoundingClientRect();
+      return {
+        left: r.left,
+        right: r.right,
+        width: r.width,
+        innerWidth: window.innerWidth,
+        scrollWidth: document.documentElement.scrollWidth
+      };
+    });
+    assert(details.left >= -1 && details.right <= details.innerWidth + 1,
+      'details panel exceeds the viewport: ' + details.left + '..' + details.right);
+    assert(details.width > 0, 'details panel has no width');
+    assert(details.scrollWidth <= details.innerWidth + 1, 'details selection introduced horizontal overflow');
+    assert(pageErrors.length === 0, pageErrors.join(' | '));
+  });
+
+  await page.close();
 }
 
 async function runVariant(browser, variant) {
@@ -298,6 +395,7 @@ async function runVariant(browser, variant) {
   const browser = await chromium.launch();
   try {
     for (const variant of VARIANTS) await runVariant(browser, variant);
+    await runMobileRegression(browser);
   } finally {
     await browser.close();
   }

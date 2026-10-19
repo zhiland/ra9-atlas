@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" data-benchmark="synthetic-1000">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthetic graph-scale benchmark — 1,000 nodes</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../../prototype/atlas.css">
+<link rel="stylesheet" href="benchmark.css">
+</head>
+<body>
+<div id="benchmark-banner" role="note">
+  <span class="tag">SYNTHETIC BENCHMARK</span>
+  1,000 generated nodes · 1,650 generated connectors · not game content or evidence
+</div>
+<div id="app"></div>
+
+<!-- Isolated benchmark entry point. The fixture is generated only for this
+     page; no production entry point imports it. The benchmark loads the real
+     production core, renderer, and stylesheet unchanged. -->
+<script src="generated/atlas-1000-data.js"></script>
+<script src="../../prototype/atlas-core.js"></script>
+<script src="../../prototype/atlas-app.js"></script>
+<script src="benchmark-chrome.js"></script>
+</body>
+</html>

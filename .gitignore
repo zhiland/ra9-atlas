@@ -5,3 +5,7 @@ notes/evidence/
 .DS_Store
 # Local tooling (Playwright devDependency for the PoC4 browser checks).
 node_modules/
+# Generated scale fixture and local benchmark artifacts. Regenerate with
+# `npm run bench:scale`; the generator and seed are tracked.
+benchmark/scale/generated/
+benchmark/scale/out/
