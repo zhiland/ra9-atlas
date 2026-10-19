@@ -1,17 +1,17 @@
-# ra9-atlas — specification 0.2
+# ra9-atlas — specification 0.3
 
-Date: 2026-10-18. Status: draft, not ready for implementation.
-Basis: [intent.md](intent.md), project owner decisions, and [Gate 01](notes/decision-gate-01.md).
+Date: 2026-10-19. Status: draft, not ready for implementation.
+Basis: [intent.md](intent.md), project owner decisions, [Gate 01](notes/decision-gate-01.md), and [grill round one](notes/grill-round-01.md).
 
 ## Requirements and acceptance
 
 | ID | Requirement | Verification |
 |---|---|---|
-| R1 | The guide shows a large connected chapter flowchart with multiple branches visible at once | In the mockup, select a chapter, inspect several connected choices and outcomes on one canvas, pan and zoom, then open event details without replacing the map |
+| R1 | The guide's main surface is a large connected chapter flowchart with multiple branches visible at once; hidden prerequisites appear on connections and/or in event details | In the mockup, select a chapter, inspect several connected choices and outcomes on one canvas, pan and zoom, then open event details without replacing the map |
 | R2 | A selected action shows prerequisites and later consequences | Follow a cross-chapter example in both directions. Show required future choices. A conditional outcome must not appear guaranteed |
 | R3 | All user-facing text is English | Check navigation, warnings, labels, and event details |
-| R4 | A spoiler warning overlays the map and blocks interaction until consent | On a new visit and direct event link, confirm the overlay is visible before interaction; after consent, the full map is available. The map may remain visible behind the overlay. Consent retention is not yet decided |
-| R5 | Disputed claims differ visibly from confirmed claims | Show a status and source on the link and in event details. Choose the visual treatment in the mockup |
+| R4 | A spoiler warning overlays the map and blocks interaction until consent; remember consent in the browser, with a way to reset it | On a new visit and direct event link, confirm the overlay is visible before interaction; after consent, the full map is available. The map may remain visible behind the overlay. Verify consent persists in that browser and can be reset; no fixed expiration is specified |
+| R5 | Guide-supported and disputed claims may be published when their source and evidence status are visible; do not present them as gameplay-verified | Show a status and source on the link and in event details. Choose the visual treatment in the mockup |
 | R6 | Relationship claims have traceable evidence | A selected link provides a URL, source location, verification status, and known conflicts |
 | R7 | Game coverage is transparent | Account for every chapter and separate character chart. Mark verified parts and gaps. A file's existence does not prove coverage |
 
@@ -24,7 +24,10 @@ The 2026-10-18 mockup correction makes the map the main surface. Event clicks sh
 - D3: a complex late-game chart. Check alternate outcomes and a case where another condition changes the result.
 - Use the identified detour/late-bus discrepancy to detect excessive simplification.
 - Record the game version and platform when known. Mark unknown values explicitly.
-- Structural data checks do not prove accuracy against the game. Check evidence separately.
+- Automated structural checks validate graph shape, references, and required metadata; they do not prove that a game claim is true.
+- Source review and cross-checks are the default evidence method. Record source support, status, uncertainty, and conflicts for each relationship. Similar guides are not automatically independent.
+- Targeted gameplay checks are optional and useful for resolving material conflicts or specific uncertainties. Checking the whole game in-game is not a release gate or owner obligation.
+- Do not describe guide-supported claims as gameplay-verified. Keep unknown conditions and conflicting evidence visible.
 
 ## First-release scope
 
@@ -32,13 +35,13 @@ The full game remains the target.
 Fog of war is deferred. Accounts, a simulator, and save imports are not required.
 A mockup using a few cases is not a complete public guide.
 
-## Implementation blockers
+## Open implementation decisions and evidence limits
 
-- D1–D3 have been compared against guides. Direct game evidence and complete conditions remain unconfirmed.
+- D1–D3 have been compared against guides. Some conditions and exact triggers remain unconfirmed; targeted gameplay checks may resolve specific questions.
 - PoC4 exercises the map-first selection and navigation journey in a limited sample; this does not establish full-release usability or accessibility.
 - The full-product stack and data contract are not selected.
 - The author has selected MIT for original project code and documentation; this does not license source-derived samples, game material, or third-party content. See [license boundaries](license-boundary.md).
-- The release policy for unverified links is not agreed.
+- Guide-supported links can be published with source and status. This does not establish that a source is correct or that the graph is complete.
 
 ## Change rule
 
@@ -47,7 +50,7 @@ Tasks and checks reference requirement IDs and the specification revision.
 A verification record states the expectation, observation, evidence, and verdict.
 Return conflicts to the specification or research. Do not change a check merely to obtain a passing result.
 
-Limited guide-based verification of D1–D3 is complete: [Gate 02](notes/decision-gate-02.md).
-The examples may support a mockup with evidence labels. Full game verification and interface checks remain pending.
+Limited guide-based cross-checking of D1–D3 is complete: [Gate 02](notes/decision-gate-02.md).
+Guide-supported examples may be published with evidence labels. Full-game gameplay verification is not required; full-game coverage, source accuracy, and interface checks remain separate work.
 
 The [implementation roadmap](ROADMAP.md) breaks the full-game outcome into feature issues. It does not supersede these requirements or decide the open implementation questions.

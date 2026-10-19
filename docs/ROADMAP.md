@@ -5,7 +5,7 @@ The requested end state is a complete, source-audited, interactive guide to the 
 ## Work sequence
 
 1. **Define the data contract and provenance** — [#2](https://github.com/zhiland/ra9-atlas/issues/2). Agree graph granularity, state vocabulary, evidence fields, and migration from PoC data.
-2. **Set the evidence and verification method** — [#4](https://github.com/zhiland/ra9-atlas/issues/4). Decide how to extract, cross-check, record conflicts, verify in-game, and label unreconciled claims.
+2. **Set the evidence and verification method** — [#4](https://github.com/zhiland/ra9-atlas/issues/4). Define source extraction and cross-checks as the default evidence method, record conflicts and claim status, and use targeted in-game checks when they can resolve specific uncertainties. Keep automated structural validation separate from evidence checks.
 3. **Build full-game chapter and route coverage** — [#1](https://github.com/zhiland/ra9-atlas/issues/1). Reconcile chapter/character-route inventories and account for every branch and gap.
 4. **Model persistent state and delayed consequences** — [#3](https://github.com/zhiland/ra9-atlas/issues/3). Connect choices to later prerequisites and outcomes without implying certainty beyond the evidence.
 5. **Deliver the graph explorer** — [#11](https://github.com/zhiland/ra9-atlas/issues/11). Extend the map-first concept with story overview, route navigation, search, filters, and readable large graphs.
@@ -25,4 +25,4 @@ These are future research tasks. No keyword, SEO, agent-search, subreddit, Steam
 
 ## Decisions still open
 
-The existing intent and specification remain authoritative. The next review should resolve only open items that affect the first full implementation: what source-derived material may be published; what evidence threshold permits an unverified relationship in a public release; what level of graph/state detail supports the agreed guide; what consent behavior is required; and which stack and hosting approach fit the resulting data and release requirements. English interface, full-game end goal, map-first navigation, and the decision to defer fog of war, accounts, save imports, and simulation are already agreed.
+The existing intent and specification remain authoritative. Guide-supported relationships may be published with source and status; gameplay checks are targeted follow-up for conflicts or specific uncertainties, not a whole-game release gate. Remaining decisions include what source-derived material may be published, what graph/state detail supports the guide, the full-product data contract and stack, and the hosting approach. Map-first navigation, prerequisites on connections/details, browser-persisted spoiler consent with reset, English interface, full-game end goal, and deferral of fog of war, accounts, save imports, and simulation are agreed.

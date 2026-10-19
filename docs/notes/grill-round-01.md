@@ -15,9 +15,9 @@ The next round depends on the answers. The acceptable gap limit before release r
 
 ## Answers
 
-1. Include earlier conditions — preliminary preference.
-2. Show a warning on entry, then the full map. The project owner also suggested fog of war and a separate reveal-all control. Details need a decision.
-3. Mark disputed connections and show their source — accepted.
+1. The map is the main surface. Keep the game-chart-like nodes and branches visible; show hidden prerequisites on connections and/or in event details, alongside later consequences.
+2. Show a warning on entry, then the full map. Persist spoiler consent in the browser and provide a reset. Do not invent a fixed expiration.
+3. Guide-supported and disputed connections may be published with source and evidence status. This status does not claim gameplay verification. Source cross-checking is the default; targeted gameplay checks can resolve specific conflicts, but checking the whole game is neither a release gate nor an owner obligation. Automated graph-structure checks remain separate from evidence review.
 4. English only. No Russian interface.
 
 ## Next questions
@@ -30,3 +30,9 @@ Recommendations: defer fog of war; if added, use a chapter boundary and a Reveal
 ## Answer to Q5
 
 The project owner deferred fog of war. Version one will show a warning and then the full map. Questions about revealing fog are deferred.
+
+## Follow-up decisions
+
+The initial map-first proposal is confirmed: the chart remains visible as the main surface, and hidden prerequisites appear on connections and/or in event details. Spoiler consent is remembered in the browser, with a reset and no specified fixed expiry.
+
+Guide-supported links can appear in a public guide when their sources and status are shown. This is not a claim that guides establish ground truth. Automated structural checks validate graph consistency only; source cross-checks support evidence labels. In-game checks may target disputed or unclear claims, but comprehensive gameplay verification is not required for release and is not an owner obligation.

@@ -2,7 +2,7 @@
 
 Updated: 2026-10-19. Status: PoC4 implementation and source-rights audit are complete. Commit `04ed960` is pushed to `origin/main`. The main entry uses a neutral-gray default and orthogonal arrow connectors; validators, unit checks, and Chromium browser checks pass.
 
-The implementation roadmap is recorded in [ROADMAP.md](ROADMAP.md) and split across 11 open GitHub issues. The root [MIT license](../LICENSE) applies to original project code and documentation only; [license-boundary.md](license-boundary.md) excludes game content, third-party sources, and source-derived samples. This is a license-scope statement, not clearance of existing source-derived material. The full product's data contract, publishing approach, and public-release policy remain open.
+The implementation roadmap is recorded in [ROADMAP.md](ROADMAP.md) and split across 11 open GitHub issues. The root [MIT license](../LICENSE) applies to original project code and documentation only; [license-boundary.md](license-boundary.md) excludes game content, third-party sources, and source-derived samples. This is a license-scope statement, not clearance of existing source-derived material. Guide-supported claims may be published with source and status; whole-game gameplay verification is not a release gate. The full product's data contract and publishing approach remain open.
 
 ## Decision
 
@@ -31,7 +31,7 @@ The map-first concept is accepted for a small prototype. PoC 2.0 applies the lig
 
 Git writes initially failed while creating a worktree index lock (`Operation not permitted`). A normal permission-escalated add, commit, and non-forced push then succeeded; `04ed960` is confirmed on `origin/main`. The focused review checked condition labels and details, separate Todd-survival and terminal prerequisites, the unresolved box hypothesis, and the new connector styling.
 
-Historical PoC2 next step: review its map visually and click through the D1–D3 samples. The local browser route remains unavailable under the earlier explicit restriction, so visual and interaction behavior have not been checked in a browser. Resolve specification blockers before a production stack decision.
+Historical PoC2 next step: review its map visually and click through the D1–D3 samples. The local browser route remains unavailable under the earlier explicit restriction, so visual and interaction behavior have not been checked in a browser. Production stack selection still depends on the full-product data contract and publishing requirements.
 
 PoC 2.0 uses compact rectangular event nodes, orthogonal connectors, blue milestone nodes, visible branches, and a light neutral canvas. OpenCode was given one bounded visual task but the run was interrupted before a result after about 15 seconds; a hang was not established. The Luna executor completed this small pass. No architecture decision or implementation plan was created.
 
