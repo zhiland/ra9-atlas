@@ -3,3 +3,5 @@ notes/evidence/
 # Raw agent output may contain unreviewed claims or local details.
 *.log
 .DS_Store
+# Local tooling (Playwright devDependency for the PoC4 browser checks).
+node_modules/

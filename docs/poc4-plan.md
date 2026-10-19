@@ -1,6 +1,6 @@
 # PoC4 — multi-chapter map plan
 
-Status: planned; implementation is blocked until an authorized free OpenCode model completes a request. PoC3 checkpoint `2ca9e25` is pushed to `origin/main`.
+Status: implemented 2026-10-18 on branch `poc4-implementation` (local commits only; pending independent review and non-forced push). PoC3 checkpoint `2ca9e25` is pushed to `origin/main`.
 
 ## Goal and boundary
 

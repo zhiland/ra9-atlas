@@ -1,6 +1,6 @@
 # ra9-atlas — resume point
 
-Updated: 2026-10-18. Status: PoC3 checkpoint complete; PoC4 implementation blocked at the OpenCode free-model gateway.
+Updated: 2026-10-19. Status: PoC4 implementation and source-rights audit are complete. The main checkout includes a neutral-gray default, orthogonal arrow connectors, and passing validators, unit, and Chromium browser checks; changes are being checkpointed on `main`.
 
 ## Decision
 
@@ -9,7 +9,8 @@ The map-first concept is accepted for a small prototype. PoC 2.0 applies the lig
 ## Complete
 
 - PoC3 — The Hostage chapter map — passed its data/layout validator and JavaScript syntax checks. It contains 33 boxes, 40 visible labels, and 36 edges (5 uncertain); its coverage note documents source and browser/game verification limits. Checkpoint commit `2ca9e25` was pushed to `origin/main`.
-- PoC4 scope and checklist: [poc4-plan.md](poc4-plan.md). OpenCode v2.0.32 CLI/catalog were inspected; the installed catalog lists `opencode/deepseek-v4.1-flash-free` and `opencode/glm-5.3-flash-free`, and the CLI accepts `provider/model#variant`. Official DeepSeek and OpenCode docs support the `max` effort concept. A minimal `#max` request selected the DeepSeek model, but the free-model service rejected it before returning a model response. Backend application of max and PoC4 implementation are **unverified**. No paid fallback or access workaround was used. The public-only prompt remains in an ignored local log.
+- PoC4 scope and checklist: [poc4-plan.md](poc4-plan.md). OpenCode v2.0.32 CLI/catalog were inspected; the installed catalog lists `opencode/deepseek-v4.1-flash-free` and `opencode/glm-5.3-flash-free`, and the CLI accepts `provider/model#variant`. Official DeepSeek and OpenCode docs support the `max` effort concept. A minimal `#max` request selected the DeepSeek model, but the free-model service rejected it before returning a model response; backend application of max remains **unverified**. No paid fallback or access workaround was used. The public-only prompt remains in an ignored local log. A later follow-up session on the same free route completed the implementation below.
+- PoC4 — multi-chapter atlas implemented on `main`. Three entry points ([default neutral gray](../prototype/poc4-editorial.html), [amber](../prototype/poc4-amber.html), [dark cyan](../prototype/poc4-darkcyan.html)) share one data/core/app/stylesheet. Selected slice: A New Home sequence transcribed from a Steam screenshot, Stormy Night carried states only (no inferred internal topology), Battle for Detroit — Kara meeting branch with separate Todd-survival and bus-terminal prerequisite gates, a single-source relationship condition, and the Alice-box link kept as a dashed UNRESOLVED hypothesis. Orthogonal connectors display arrowheads; prerequisite conditions retain text labels and have no diamond markers. Inventory: 3 chapters, 18 boxes, 16 connectors (12 traced + 1 reported condition + 2 prerequisite gates + 1 unresolved hypothesis; 2 cross-chapter). Current `npm test` passes all validators, 25/25 unit checks, and 42/42 Playwright Chromium checks across three palettes. No gameplay verification; version/platform unknown. See [coverage](notes/poc4-coverage.md) and the [source-license audit](notes/source-license-audit.md), which records evidence and recommendations without making a legal determination.
 
 - The preparation plan received an independent Astra review and discussion.
 - Gate 01: fschutt contains one chapter. AI Player contains 32 chapter files but simplifies the game.
@@ -26,7 +27,7 @@ The map-first concept is accepted for a small prototype. PoC 2.0 applies the lig
 
 ## Next
 
-Resume PoC4 only when the authorized free OpenCode route accepts a request. Follow [poc4-plan.md](poc4-plan.md); have OpenCode write the brief checklist and implement within the same work package. Do not claim implementation, backend-verified max effort, or game-verified transitions until evidence exists.
+PoC4 files are now in the main checkout. Git writes previously failed while creating a worktree index lock (`Operation not permitted`); a normal permission-escalated add/commit/push is being retried now. The focused review checked condition labels and details, separate Todd-survival and terminal prerequisites, the unresolved box hypothesis, and the new connector styling. A successful push will be confirmed by comparing the local commit hash with `origin/main`.
 
 Historical PoC2 next step: review its map visually and click through the D1–D3 samples. The local browser route remains unavailable under the earlier explicit restriction, so visual and interaction behavior have not been checked in a browser. Resolve specification blockers before a production stack decision.
 
