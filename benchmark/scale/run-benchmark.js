@@ -240,7 +240,6 @@ async function measureView(page) {
     const canvas = document.getElementById('canvas');
     if (!world || !canvas) return { error: 'map not rendered' };
     const cr = canvas.getBoundingClientRect();
-    const lod = canvas.getAttribute('data-lod');
     let scale = 1;
     let tx = 0;
     let ty = 0;
@@ -252,7 +251,18 @@ async function measureView(page) {
       ty = matrix.f;
     }
     const nodeEls = Array.prototype.slice.call(document.querySelectorAll('[data-node]'));
-    const labelEls = Array.prototype.slice.call(document.querySelectorAll('.node .label, .node .opt'));
+    const labelEls = Array.prototype.slice.call(document.querySelectorAll('.node .node-label, .node .opt'));
+    const intrinsicallyClippedNodes = nodeEls.filter(function (el) {
+      const nodeRect = el.getBoundingClientRect();
+      if (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1) return true;
+      const children = el.querySelectorAll('.node-label, .opt');
+      for (let i = 0; i < children.length; i++) {
+        const r = children[i].getBoundingClientRect();
+        if (r.left < nodeRect.left - 1 || r.right > nodeRect.right + 1 ||
+            r.top < nodeRect.top - 1 || r.bottom > nodeRect.bottom + 1) return true;
+      }
+      return false;
+    });
     function intersects(r) {
       return r.right > cr.left && r.left < cr.right && r.bottom > cr.top && r.top < cr.bottom;
     }
@@ -343,7 +353,6 @@ async function measureView(page) {
         scale: Math.round(scale * 10000) / 10000,
         tx: Math.round(tx * 100) / 100,
         ty: Math.round(ty * 100) / 100,
-        lod: lod,
         zoomLabel: document.getElementById('zoomLabel') ? document.getElementById('zoomLabel').textContent : null
       },
       canvas: {
@@ -368,13 +377,17 @@ async function measureView(page) {
       nodes: {
         mounted: nodeEls.length,
         visible: visibleNodes.length,
+        intrinsicClipped: intrinsicallyClippedNodes.length,
+        intrinsicClippedSamples: intrinsicallyClippedNodes.slice(0, 10).map(function (el) {
+          return el.getAttribute('data-node');
+        }),
         fullyVisible: fullyVisibleNodes.length,
         renderedVisible: renderedNodes.length,
         layoutClipped: clippedNodes.length,
         layoutClippedRatio: Math.round((clippedNodes.length / Math.max(1, nodeEls.length)) * 10000) / 10000,
         clippedSamples: clippedNodes.slice(0, 20).map(function (el) {
           const node = el.getAttribute('data-node');
-          return { id: node, label: el.querySelector('.label') ? el.querySelector('.label').textContent : '' };
+          return { id: node, label: el.querySelector('.node-label') ? el.querySelector('.node-label').textContent : '' };
         })
       },
       labels: {
@@ -458,12 +471,8 @@ async function resetAtlas(page) {
   });
 }
 
-async function zoomUntilLod(page, wanted, maxClicks) {
-  const limit = maxClicks || 24;
-  for (let i = 0; i <= limit; i++) {
-    const lod = await page.locator('#canvas').getAttribute('data-lod');
-    if (lod === wanted) return i;
-    if (i === limit) break;
+async function zoomSteps(page, steps) {
+  for (let i = 0; i < steps; i++) {
     await page.locator('#plus').click();
     await page.evaluate(function () {
       return new Promise(function (resolve) {
@@ -471,15 +480,13 @@ async function zoomUntilLod(page, wanted, maxClicks) {
       });
     });
   }
-  throw new Error('LOD ' + wanted + ' was not reached');
 }
 
-/* Diagnostic only: the overview is a scroll container, not a camera pan
-   surface. This records whether content can scroll and restores scrollTop. */
+/* The stable map has no secondary scrollable overview/report surface. */
 async function measureOverviewScroll(page) {
   return page.evaluate(function () {
     const overview = document.getElementById('overview');
-    if (!overview) return { error: 'overview missing' };
+    if (!overview) return { surfacePresent: false, scrollable: false };
     const start = {
       clientHeight: overview.clientHeight,
       scrollHeight: overview.scrollHeight,
@@ -595,7 +602,7 @@ async function measureZoomedLabels(page, chapterId, wanted) {
       if (!el) continue;
       const r = el.getBoundingClientRect();
       if (!(r.right > cr.left && r.left < cr.right && r.bottom > cr.top && r.top < cr.bottom)) continue;
-      const labelEl = el.querySelector('.label') || el.querySelector('.opt') || el;
+      const labelEl = el.querySelector('.node-label') || el.querySelector('.opt') || el;
       const cssFont = parseFloat(getComputedStyle(labelEl).fontSize);
       const effectiveFont = cssFont * scale;
       // Intrinsic clipping: the node's own content overflows its box, or its
@@ -805,8 +812,8 @@ async function runMeasuredRep(browser, profile, baseURL, fixtureMeta, captureScr
   const labelSample = await measureZoomedLabels(page, fixtureMeta.representative.chapterId, SAMPLE_LABEL_COUNT);
 
   await resetAtlas(page);
-  await zoomUntilLod(page, 'structure');
-  const panStructure = await measurePan(page, 'whole atlas structure (one zoom step above overview)');
+  await zoomSteps(page, 1);
+  const panStructure = await measurePan(page, 'whole atlas, one camera zoom step in');
   await resetAtlas(page);
   const zoomOverview = await measureZoom(page, 'whole atlas overview');
 
@@ -855,7 +862,7 @@ async function warmup(browser, profile, baseURL, fixtureMeta) {
   await zoomIn(page);
   await closeDetails(page);
   await resetAtlas(page);
-  await zoomUntilLod(page, 'structure');
+  await zoomSteps(page, 1);
   await measurePan(page, 'warmup');
   await resetAtlas(page);
   await measureZoom(page, 'warmup');
@@ -889,7 +896,6 @@ function aggregateProfile(profile, reps) {
     zoomOverview: { frameStats: stats(zoomOverviewFrames), perRep: reps.map(function (r) { return r.zoomOverview.frameStats; }) },
     overviewScroll: reps[0].overviewScroll,
     overview: {
-      lod: reps[0].overview.camera.lod,
       cameraScale: reps[0].overview.camera.scale,
       canvas: reps[0].overview.canvas,
       layout: reps[0].overview.layout,
@@ -900,7 +906,6 @@ function aggregateProfile(profile, reps) {
       fit: reps[0].overview.fit
     },
     chapterFocusView: {
-      lod: reps[0].chapterFocus.view.camera.lod,
       cameraScale: reps[0].chapterFocus.view.camera.scale,
       canvas: reps[0].chapterFocus.view.canvas,
       layout: reps[0].chapterFocus.view.layout,
@@ -909,7 +914,6 @@ function aggregateProfile(profile, reps) {
       fit: reps[0].chapterFocus.view.fit
     },
     detailView: {
-      lod: reps[0].detailView.camera.lod,
       cameraScale: reps[0].detailView.camera.scale,
       zoomLabel: reps[0].detailView.camera.zoomLabel,
       canvas: reps[0].detailView.canvas,
@@ -953,12 +957,13 @@ function gateEvaluation(profileAgg, profileId, reps) {
   const detailsOk = reps.every(function (r) {
     return r.selection.visible === true && r.selection.closePresent === true;
   });
-  const labelsOk = profileAgg.labelSamples.every(function (s) {
-    return s.sampleCount >= SAMPLE_LABEL_COUNT &&
-      s.minCssFont >= 11 &&
-      s.minEffectiveFont >= 11 &&
-      s.unclippedRatio >= 0.9 &&
-      s.cameraScale >= 1.0;
+  const labelsOk = reps.every(function (r) {
+    return r.overview.labels.total >= 1000 &&
+      r.overview.counts.nodeButtons === 1000 &&
+      r.overview.counts.edgePaths === 1650;
+  });
+  const textFits = reps.every(function (r) {
+    return r.overview.nodes.intrinsicClipped === 0;
   });
   return {
     profile: profileId,
@@ -971,7 +976,8 @@ function gateEvaluation(profileAgg, profileId, reps) {
     inventory: inventoryOk,
     mapUsable: mapUsable,
     detailsAfterSelection: detailsOk,
-    focusedZoomedLabels: labelsOk
+    stableWorldInventory: labelsOk,
+    stableWorldTextFits: textFits
   };
 }
 
@@ -1062,10 +1068,10 @@ async function main() {
       consentTiming: 'in-page performance.now() from the consent button click through the second animation frame after the cover is removed. The map is now built beneath the cover at page load so it stays visible under the spoiler overlay; this is overlay-dismissal timing, not initial graph construction. It is not navigation, network page-load, or cold-start timing.',
       labelSample: SAMPLE_LABEL_COUNT + ' visible nodes from the focused chapter after selection, details close, and one + zoom step',
       labelClipping: 'Intrinsic clipping is node scrollWidth/scrollHeight overflow or rendered label bounding box outside its own node. Label-box intersection with the canvas boundary is reported separately as boundary clipping and is not counted as intrinsic clipping.',
-      overviewLod: 'At whole-atlas fit the renderer shows screen-space chapter cards (overview LOD), not the 1,000 event labels. Nodes, connectors and labels stay mounted and measurable; renderedVisible counts only elements whose computed visibility is actually visible.',
-      overviewCrosslinks: 'Every overview crosslink row exposes the real data.edges index and evidence class. Aggregate rows, if any, are navigation-only and are reported separately; the synthetic fixture groups 150 cross-region edges into chapter pairs.',
+      stableWorld: 'The renderer keeps all synthetic nodes, node labels and actual connector paths in one world at every camera scale. The benchmark reports viewport intersection, world inventory, intrinsic clipping and timings; it does not require all 1,000 labels to be readable at whole-map fit.',
+      overviewCrosslinks: 'There are no grouped pseudo-connectors. Actual labelled data edges remain in the world; every connector path remains mounted.',
       fitBounds: 'fit.framesFullyInsideCanvas checks all chapter frames against the canvas rect. For a focused chapter, focusedFrameInside checks the requested chapter separately because other chapters are allowed off-screen.',
-      panTarget: 'After the overview becomes a scroll surface, the camera-pan timing sample runs at structure LOD (whole atlas, one zoom step above overview). The pan thresholds are unchanged; only the sampled interaction moved above the new overview layer.',
+      panTarget: 'The camera-pan timing sample runs on the whole atlas after one camera zoom step. The graph and label inventory stay unchanged.',
       mobileLayout: 'The mobile profile loads the production stylesheet at 390x844 with no layout override. The synthetic banner remains visible and its height is included in the measured canvas area.',
       layoutMeasurement: 'Actual #canvas getBoundingClientRect, .workspace, .canvas-wrap, banner, viewport, and document scroll dimensions are recorded for every overview/chapter/detail view.',
       physicalDeviceClaim: 'None. Mobile results are Chromium viewport emulation only.'
@@ -1088,8 +1094,8 @@ async function main() {
           '  rep ' + (i + 1) + ': consent-render ' + round(rep.consent.ms) + 'ms, selection ' +
           round(rep.selection.ms) + 'ms, pan p95 ' + rep.panStructure.frameStats.p95 +
           'ms/' + rep.panStructure.frameStats.count + ', zoom p95 ' + rep.zoomOverview.frameStats.p95 +
-          'ms/' + rep.zoomOverview.frameStats.count + ', overview ' + rep.overview.camera.lod +
-          '/' + rep.overview.counts.overviewCards + ' cards, labels ' + rep.labelSample.unclippedRatio
+          'ms/' + rep.zoomOverview.frameStats.count + ', whole-map scale ' + rep.overview.camera.scale +
+          ', mounted labels ' + rep.overview.labels.total + ', viewport labels ' + rep.overview.labels.renderedVisible
         );
       }
       const agg = aggregateProfile(profile, reps);

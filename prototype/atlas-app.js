@@ -1,50 +1,30 @@
 /* PoC4 — shared atlas renderer and interaction.
    Standalone classic script. Renders ATLAS data on one pannable/zoomable world
-   canvas. Chapter regions, actual connectors and event boxes stay on that same
-   surface at every level of detail. A screen-legible annotation layer is
-   inverse-scaled inside the world, so chapter names, event labels and actual
-   cross-chapter labels remain readable without replacing the map with cards.
+   canvas. Chapter regions, actual connectors, event boxes, node labels and
+   real edge labels are all world-space children of that one surface. Zoom and
+   pan change only the camera transform: labels are never swapped, hidden by
+   scale, inversely scaled, or reflowed into a screen-space overlay. Text at a
+   whole-map fit is naturally small and may be clipped by the viewport; panning
+   and fit reveal the same complete chart.
 
-   Progressive disclosure:
-     overview  — the whole-story spatial map: chapter regions and labels,
-                 meaningful event labels from the data, and actual
-                 cross-chapter connectors.
-     structure — chapter/intermediate event map: event labels for the real
-                 sample; labelled region/branch summaries for dense graphs.
-     detail    — close scale: full event text inside boxes and connector labels.
-   Zoom/pan changes the level automatically. Chapter focus fits the real region
-   on the same canvas.
-
-   No aggregate causal edge is invented. Dense summaries count real nodes and
-   connectors grouped by their actual chapter; labels name actual nodes. */
+   Chapter focus fits the real region on the same canvas. No aggregate causal
+   edge or grouped pseudo-path is invented. */
 
 (function () {
   'use strict';
 
   var C = ATLAS_CORE, D = ATLAS;
-  var byId = {}, chapters = {}, chapterIndex = {};
+  var byId = {}, chapters = {};
   D.nodes.forEach(function (n) { byId[n.id] = n; });
-  D.chapters.forEach(function (c, i) { chapters[c.id] = c; chapterIndex[c.id] = i; });
+  D.chapters.forEach(function (c) { chapters[c.id] = c; });
 
   var state = C.createState();
   var hashApplied = false;
   var cam = { scale: 1, tx: 0, ty: 0 };
   var app = document.getElementById('app');
   var lastTrigger = null;
-  var focusedGroup = null;
-  var lastLod = null;
   var resizeQueued = false;
-  var labelQueued = false;
-  var labelScale = null;
   var CONSENT_KEY = 'ra9-atlas.consent.v1';
-  var DENSE_NODE_THRESHOLD = 120;
-  var IS_DENSE = D.nodes.length > DENSE_NODE_THRESHOLD;
-  /* Below this camera scale a chapter's node boxes are too small for readable
-     in-box text; use compact labelled event chips and representative events. */
-  var MAP_LABEL_MIN_SCALE = 0.5;
-  /* Narrow screens should show readable in-box event labels and pan the same
-     map rather than squeezing the whole graph into unreadable boxes. */
-  var MIN_MOBILE_FOCUS_SCALE = 0.65;
 
   var STATUS_LABEL = {
     ocr: 'Screenshot transcription · structure only',
@@ -56,7 +36,6 @@
   };
   var KIND_LABEL = { action: 'Action', flag: 'State flag', choice: 'Choice', outcome: 'Outcome' };
   var EDGE_LABEL = { traced: 'traced', conditional: 'reported condition', prerequisite: 'prerequisite gate', hypothesis: 'unresolved hypothesis' };
-  var LOD_LABEL = { overview: 'story map', structure: 'event map', detail: 'close map' };
   var SOURCE_LABEL = {
     steam: 'Steam chapter flowcharts (screenshot reference)',
     powerpyxHome: 'PowerPyx · A New Home',
@@ -71,106 +50,8 @@
     gamerGuides: 'Gamer Guides · Battle for Detroit — Kara'
   };
 
-  /* Static data summaries, computed once. Degrees are observed from the real
-     edge list; dense summaries never add an edge or a causal claim. */
-  var CHAPTER_STATS = {};
-  D.chapters.forEach(function (c) {
-    CHAPTER_STATS[c.id] = {
-      nodes: 0, internalEdges: 0, crossEdges: 0, branches: 0, joins: 0,
-      entries: 0, terminals: 0, branchNodes: [], joinNodes: [], entryNodes: [],
-      terminalNodes: [], crossNodes: {}
-    };
-  });
   var nodeChapter = {};
-  D.nodes.forEach(function (n) {
-    nodeChapter[n.id] = n.chapter;
-    if (CHAPTER_STATS[n.chapter]) CHAPTER_STATS[n.chapter].nodes++;
-  });
-  var ALL_IN = {}, ALL_OUT = {}, INTERNAL_IN = {}, INTERNAL_OUT = {};
-  D.nodes.forEach(function (n) { ALL_IN[n.id] = 0; ALL_OUT[n.id] = 0; INTERNAL_IN[n.id] = 0; INTERNAL_OUT[n.id] = 0; });
-  D.edges.forEach(function (e) {
-    var a = nodeChapter[e.from], b = nodeChapter[e.to];
-    if (!a || !b) return;
-    ALL_OUT[e.from] = (ALL_OUT[e.from] || 0) + 1;
-    ALL_IN[e.to] = (ALL_IN[e.to] || 0) + 1;
-    if (a === b) {
-      if (CHAPTER_STATS[a]) {
-        CHAPTER_STATS[a].internalEdges++;
-        INTERNAL_OUT[e.from] = (INTERNAL_OUT[e.from] || 0) + 1;
-        INTERNAL_IN[e.to] = (INTERNAL_IN[e.to] || 0) + 1;
-      }
-    } else {
-      if (CHAPTER_STATS[a]) {
-        CHAPTER_STATS[a].crossEdges++;
-        CHAPTER_STATS[a].crossNodes[e.from] = true;
-      }
-      if (CHAPTER_STATS[b]) {
-        CHAPTER_STATS[b].crossEdges++;
-        CHAPTER_STATS[b].crossNodes[e.to] = true;
-      }
-    }
-  });
-  D.nodes.forEach(function (n) {
-    var m = CHAPTER_STATS[n.chapter];
-    if (!m) return;
-    if ((INTERNAL_OUT[n.id] || 0) > 1) { m.branches++; m.branchNodes.push(n); }
-    if ((INTERNAL_IN[n.id] || 0) > 1) { m.joins++; m.joinNodes.push(n); }
-    if ((INTERNAL_IN[n.id] || 0) === 0) { m.entries++; m.entryNodes.push(n); }
-    if ((INTERNAL_OUT[n.id] || 0) === 0) { m.terminals++; m.terminalNodes.push(n); }
-  });
-  Object.keys(CHAPTER_STATS).forEach(function (id) {
-    var m = CHAPTER_STATS[id];
-    m.branchNodes.sort(function (a, b) { return (ALL_OUT[b.id] || 0) - (ALL_OUT[a.id] || 0); });
-    m.joinNodes.sort(function (a, b) { return (ALL_IN[b.id] || 0) - (ALL_IN[a.id] || 0); });
-  });
-  var CROSS_EDGES = [];
-  D.edges.forEach(function (edge, index) {
-    if (nodeChapter[edge.from] !== nodeChapter[edge.to]) CROSS_EDGES.push({ index: index, edge: edge });
-  });
-
-  /* Dense maps have hundreds of real cross-region connectors. Label one
-     representative actual edge per chapter pair, and state the real count and
-     kinds in that group. The paths themselves all remain mounted and visible;
-     this prevents 150 connector labels from covering the regions. */
-  var DENSE_CROSS_GROUPS = [];
-  if (IS_DENSE) {
-    var denseCrossByPair = {};
-    CROSS_EDGES.forEach(function (item) {
-      var a = nodeChapter[item.edge.from], b = nodeChapter[item.edge.to];
-      var key = a + '>' + b;
-      var group = denseCrossByPair[key];
-      if (!group) {
-        group = denseCrossByPair[key] = {
-          from: a, to: b, count: 0, kinds: {}, representative: item.index, edge: item.edge, members: []
-        };
-      }
-      group.count++;
-      group.members.push(item.index);
-      group.kinds[item.edge.kind] = (group.kinds[item.edge.kind] || 0) + 1;
-    });
-    DENSE_CROSS_GROUPS = Object.keys(denseCrossByPair).map(function (key) {
-      return denseCrossByPair[key];
-    }).sort(function (a, b) { return b.count - a.count || a.representative - b.representative; });
-  }
-
-  function denseCrossSummary(group) {
-    var kinds = Object.keys(group.kinds).sort().map(function (kind) {
-      return group.kinds[kind] + ' ' + (EDGE_LABEL[kind] || kind);
-    });
-    return group.count + ' actual · ' + kinds.join(', ');
-  }
-
-  function denseCrossMapText(group) {
-    return group.count + ' cross-chapter connectors';
-  }
-
-  function denseCrossSummaryCompact(group) {
-    var kinds = Object.keys(group.kinds).sort(function (a, b) {
-      return group.kinds[b] - group.kinds[a];
-    });
-    var label = EDGE_LABEL[kinds[0]] || kinds[0];
-    return group.count + ' actual · ' + label + (kinds.length > 1 ? ' + ' + (kinds.length - 1) + ' kinds' : '');
-  }
+  D.nodes.forEach(function (n) { nodeChapter[n.id] = n.chapter; });
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
@@ -179,11 +60,6 @@
   }
 
   /* ---------- evidence wording (never claims gameplay verification) ---------- */
-  function sourcesFor(node) {
-    var detail = node ? (D.detail[node.id] || {}) : {};
-    return (detail.src || (node && node.src) || []).slice();
-  }
-
   function edgeSources(e) {
     return (e.src || []).slice();
   }
@@ -356,17 +232,13 @@
         '</header>' +
         '<div class="trailbar"><span class="trail-label">History</span><div class="trail" id="trail"></div></div>' +
         '<div class="workspace">' +
-          '<main class="canvas-wrap" id="canvas" data-lod="overview" aria-label="Whole-story spatial map with chapter regions, events and actual connectors">' +
+          '<main class="canvas-wrap" id="canvas" aria-label="Whole-story spatial map with chapter regions, events, node labels, edge labels and actual connectors">' +
             '<div class="world" id="world">' +
               '<div id="frames"></div>' +
               '<svg id="edges"><defs><marker id="arrowhead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 8 4 L 0 8 z" fill="context-stroke"></path></marker></defs></svg>' +
-              '<svg id="aggregate-edges" aria-hidden="true"></svg>' +
-              '<svg id="node-dots" aria-hidden="true"></svg>' +
-              '<div id="labels"></div>' +
+              '<div id="edge-labels"></div>' +
               '<div id="nodes"></div>' +
               '<svg id="markers"></svg>' +
-              '<svg id="label-leaders" aria-hidden="true"></svg>' +
-              '<div id="map-labels"></div>' +
             '</div>' +
             '<div class="legend" aria-label="Legend">' +
               '<div class="row"><i></i>traced connector</div>' +
@@ -377,7 +249,6 @@
             '</div>' +
             '<div class="status" id="status"></div>' +
             '<div class="zoom"><button class="tool" id="minus" aria-label="Zoom out">−</button><span id="zoomLabel"></span><button class="tool" id="plus" aria-label="Zoom in">+</button></div>' +
-            '<span class="sr-only" id="lodStatus" aria-live="polite"></span>' +
           '</main>' +
           '<aside class="details" id="details" hidden aria-label="Node details"></aside>' +
         '</div>' +
@@ -433,7 +304,6 @@
 
   function commit(next, opts) {
     opts = opts || {};
-    focusedGroup = null;
     state = next;
     renderGraph();
     if (opts.fit) fitCurrent();
@@ -455,17 +325,23 @@
 
     document.getElementById('frames').innerHTML = D.chapters.map(function (c) {
       return '<section class="frame" data-chapter-frame="' + c.id + '" aria-label="' + esc(c.name) + ' region" style="left:' + c.frame.x + 'px;top:' + c.frame.y +
-        'px;width:' + c.frame.w + 'px;height:' + c.frame.h + 'px"></section>';
+        'px;width:' + c.frame.w + 'px;height:' + c.frame.h + 'px">' +
+        '<button class="frame-title" data-frame-label="' + c.id + '" data-region="' + c.id + '">' + esc(c.name) + '</button>' +
+        '</section>';
     }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('[data-frame-label]'), function (b) {
+      b.onclick = function (ev) {
+        ev.stopPropagation();
+        var id = b.getAttribute('data-frame-label');
+        lastTrigger = b;
+        commit(C.jumpChapter(state, id, D), { fit: true, hash: true });
+      };
+    });
 
     var svg = document.getElementById('edges');
     svg.setAttribute('viewBox', '0 0 ' + D.canvas.width + ' ' + D.canvas.height);
     svg.setAttribute('width', D.canvas.width);
     svg.setAttribute('height', D.canvas.height);
-    var aggregateSvg = document.getElementById('aggregate-edges');
-    aggregateSvg.setAttribute('viewBox', '0 0 ' + D.canvas.width + ' ' + D.canvas.height);
-    aggregateSvg.setAttribute('width', D.canvas.width);
-    aggregateSvg.setAttribute('height', D.canvas.height);
 
     var focus = state.selected ? neighbours(state.selected) : null;
     var paths = [], labelQueue = [], badgeQueue = [];
@@ -476,7 +352,8 @@
       var dim = focus && !active;
       var cross = nodeChapter[e.from] !== nodeChapter[e.to];
       paths.push('<path class="edge ' + e.kind + (cross ? ' cross' : '') + (active ? ' active' : '') + (edgeFocused ? ' focused' : '') + (dim ? ' dimmed' : '') +
-        '" id="edge-' + i + '" data-edge="' + i + '" marker-end="url(#arrowhead)" d="' + d + '"></path>');
+        '" id="edge-' + i + '" data-edge="' + i + '"' + (e.id ? ' data-edge-id="' + esc(e.id) + '"' : '') +
+        ' marker-end="url(#arrowhead)" d="' + d + '"></path>');
       if (e.label) labelQueue.push({ e: e, i: i, dim: dim });
       if (e.kind === 'hypothesis') badgeQueue.push({ e: e, i: i, dim: dim });
     });
@@ -484,10 +361,18 @@
 
     var labelHtml = labelQueue.map(function (L) {
       var pos = L.e.labelAt || pointAt(svg.querySelector('#edge-' + L.i), 0.5);
-      return '<div class="edge-label ' + L.e.kind + (L.dim ? ' dimmed' : '') + '" data-edge-label="' + L.i + '" style="left:' + pos.x + 'px;top:' + pos.y + 'px">' +
-        esc(L.e.label) + '</div>';
+      return '<button class="edge-label ' + L.e.kind + (L.dim ? ' dimmed' : '') + '" data-edge-label="' + L.i + '"' +
+        (L.e.id ? ' data-edge-id="' + esc(L.e.id) + '"' : '') +
+        ' style="left:' + pos.x + 'px;top:' + pos.y + 'px" aria-label="Open actual connector from ' +
+        esc(byId[L.e.from].label) + ' to ' + esc(byId[L.e.to].label) + '">' + esc(L.e.label) + '</button>';
     });
-    document.getElementById('labels').innerHTML = labelHtml.join('');
+    document.getElementById('edge-labels').innerHTML = labelHtml.join('');
+    Array.prototype.forEach.call(document.querySelectorAll('.edge-label[data-edge-label]'), function (b) {
+      b.onclick = function (ev) {
+        ev.stopPropagation();
+        focusEdgeFromMap(Number(b.getAttribute('data-edge-label')), b);
+      };
+    });
 
     var mk = document.getElementById('markers');
     mk.setAttribute('viewBox', '0 0 ' + D.canvas.width + ' ' + D.canvas.height);
@@ -504,24 +389,16 @@
       badgeNodes[idx].setAttribute('transform', 'translate(' + pos.x + ',' + (pos.y + dy) + ')');
     });
 
-    var leaders = document.getElementById('label-leaders');
-    leaders.setAttribute('viewBox', '0 0 ' + D.canvas.width + ' ' + D.canvas.height);
-    leaders.setAttribute('width', D.canvas.width);
-    leaders.setAttribute('height', D.canvas.height);
-
     document.getElementById('nodes').innerHTML = D.nodes.map(function (n) {
       var classes = ['node', n.kind];
       if (state.selected === n.id) classes.push('selected');
-      var inner;
-      var shortLabel = '<span class="short">' + esc(n.short || n.label) + '</span>';
+      var inner = '<span class="node-label" data-node-label="' + esc(n.id) + '">' + esc(n.label) + '</span>';
       if (n.kind === 'choice') {
-        inner = shortLabel + n.options.map(function (o, i) {
+        inner += n.options.map(function (o, i) {
           return '<span class="opt"><span class="from-option">option ' + (i + 1) + '</span>' + esc(o) + '</span>';
         }).join('');
       } else {
-        inner = '<span class="k">' + KIND_LABEL[n.kind] + '</span>' + shortLabel +
-          '<span class="label">' + esc(n.label) + '</span>' +
-          (n.sub ? '<span class="sub">' + esc(n.sub) + '</span>' : '');
+        inner += n.sub ? '<span class="sub">' + esc(n.sub) + '</span>' : '';
       }
       var aria = esc(n.label) + ' — ' + KIND_LABEL[n.kind] + ' — ' + (STATUS_LABEL[n.status] || 'status unknown');
       return '<button class="' + classes.join(' ') + '" data-node="' + n.id + '" data-kind="' + n.kind + '" style="left:' + n.x + 'px;top:' + n.y +
@@ -550,7 +427,6 @@
     renderTrail();
     renderDetails();
     updateTransform();
-    scheduleMapLabels();
   }
 
   function pointAt(path, t) {
@@ -558,678 +434,14 @@
     return path.getPointAtLength(len * t);
   }
 
-  /* ---------- map label annotation layer ---------- */
-  function frameScreenRect(frame) {
-    return {
-      left: cam.tx + frame.x * cam.scale,
-      top: cam.ty + frame.y * cam.scale,
-      width: frame.w * cam.scale,
-      height: frame.h * cam.scale,
-      right: cam.tx + (frame.x + frame.w) * cam.scale,
-      bottom: cam.ty + (frame.y + frame.h) * cam.scale
-    };
-  }
-
-  function nodeScreenRect(n) {
-    return {
-      left: cam.tx + n.x * cam.scale,
-      top: cam.ty + n.y * cam.scale,
-      width: n.w * cam.scale,
-      height: n.h * cam.scale,
-      right: cam.tx + (n.x + n.w) * cam.scale,
-      bottom: cam.ty + (n.y + n.h) * cam.scale
-    };
-  }
-
-  function worldToScreen(x, y) {
-    return { x: cam.tx + x * cam.scale, y: cam.ty + y * cam.scale };
-  }
-
-  function intersects(a, b) {
-    return a.right > b.left && a.left < b.right && a.bottom > b.top && a.top < b.bottom;
-  }
-
-  function insideCanvas(r, width, height, margin) {
-    var m = margin == null ? 3 : margin;
-    return r.left >= m && r.top >= m && r.right <= width - m && r.bottom <= height - m;
-  }
-
-  function overlapArea(r, others, pad) {
-    var p = pad == null ? 2 : pad;
-    var area = 0;
-    for (var i = 0; i < others.length; i++) {
-      var o = others[i];
-      var w = Math.min(r.right, o.right + p) - Math.max(r.left, o.left - p);
-      var h = Math.min(r.bottom, o.bottom + p) - Math.max(r.top, o.top - p);
-      if (w > 0 && h > 0) area += w * h;
-    }
-    return area;
-  }
-
-  function uniqueNodes(list) {
-    var seen = {}, out = [];
-    list.forEach(function (n) {
-      if (n && !seen[n.id]) { seen[n.id] = 1; out.push(n); }
-    });
-    return out;
-  }
-
-  function nodesOfChapter(chapterId) {
-    return D.nodes.filter(function (n) { return n.chapter === chapterId; });
-  }
-
-  /* Overview labels favour the nodes that carry the story's actual shape:
-     cross-chapter endpoints, choices/flags, reported joins, then entries and
-     outcomes. This is a presentation subset, not a claim that other nodes are
-     absent. */
-  function overviewKeyNodes(chapterId, limit) {
-    var m = CHAPTER_STATS[chapterId];
-    if (!m) return [];
-    var chapterNodes = nodesOfChapter(chapterId);
-    var cross = chapterNodes.filter(function (n) { return m.crossNodes[n.id]; });
-    var marked = chapterNodes.filter(function (n) { return n.kind === 'choice' || n.kind === 'flag'; });
-    var joins = chapterNodes.filter(function (n) { return (ALL_IN[n.id] || 0) > 1; });
-    var branches = chapterNodes.filter(function (n) { return (ALL_OUT[n.id] || 0) > 1; });
-    return uniqueNodes(cross.concat(marked, joins, branches, m.entryNodes, m.terminalNodes)).slice(0, limit);
-  }
-
-  function structureKeyNodes(chapterId, limit) {
-    var m = CHAPTER_STATS[chapterId];
-    if (!m) return [];
-    var chapterNodes = nodesOfChapter(chapterId);
-    var cross = chapterNodes.filter(function (n) { return m.crossNodes[n.id]; });
-    var branches = chapterNodes.filter(function (n) { return (ALL_OUT[n.id] || 0) > 1; });
-    var joins = chapterNodes.filter(function (n) { return (ALL_IN[n.id] || 0) > 1; });
-    var marked = chapterNodes.filter(function (n) { return n.kind === 'choice' || n.kind === 'flag'; });
-    return uniqueNodes(cross.concat(branches, joins, marked, m.entryNodes, m.terminalNodes)).slice(0, limit);
-  }
-
-  function eventLabelText(n, compact) {
-    if (compact) return n.short || n.label;
-    return n.label;
-  }
-
-  function regionStatsText(chapterId, compact) {
-    var m = CHAPTER_STATS[chapterId];
-    if (!m) return '';
-    if (compact) return m.nodes + ' events';
-    return m.nodes + ' events · ' + (m.internalEdges + m.crossEdges) + ' connectors';
-  }
-
-  function scheduleMapLabels() {
-    if (labelQueued) return;
-    labelQueued = true;
-    requestAnimationFrame(function () {
-      labelQueued = false;
-      renderMapLabels();
-    });
-  }
-
-  function makeSpec(type, html, attrs, extra) {
-    var spec = { type: type, html: html, attrs: attrs || {}, priority: 0 };
-    if (extra) Object.keys(extra).forEach(function (k) { spec[k] = extra[k]; });
-    return spec;
-  }
-
-  function attrString(attrs) {
-    return Object.keys(attrs).map(function (k) {
-      return ' ' + k + '="' + esc(attrs[k]) + '"';
-    }).join('');
-  }
-
-  function renderMapLabels() {
-    var host = document.getElementById('map-labels');
-    var canvas = document.getElementById('canvas');
-    var leaders = document.getElementById('label-leaders');
-    if (!host || !canvas) return;
-    var width = canvas.clientWidth, height = canvas.clientHeight;
-    if (!width || !height) return;
-
-    var lod = C.lodFor(cam.scale, state.chapter);
-    var compact = width < 600;
-    var specs = [];
-    var aggregatePathParts = [];
-    var visibleFrames = D.chapters.filter(function (c) {
-      return intersects(frameScreenRect(c.frame), { left: 0, top: 0, right: width, bottom: height });
-    });
-    var compactRegion = width < 600;
-
-    visibleFrames.forEach(function (chapter) {
-      var stats = regionStatsText(chapter.id, compactRegion && IS_DENSE);
-      specs.push(makeSpec('region',
-        '<strong>' + esc(chapter.name) + '</strong>' + ((!compactRegion || IS_DENSE) ? '<span>' + esc(stats) + '</span>' : ''),
-        {
-          'class': 'map-label region-label',
-          'data-region': chapter.id,
-          'data-full-label': chapter.name,
-          'aria-label': 'Open ' + chapter.name + ' chapter'
-        },
-        { chapter: chapter.id }));
-    });
-
-    /* Event marks and readable labels belong to the map at every scale. The
-       real 18-node sample keeps every event box labeled at desktop overview and
-       chapter fit. Dense fixtures disclose named representatives until zoom. */
-    var dotParts = [];
-    var compactEvents = IS_DENSE || (state.chapter === 'all' && cam.scale < MAP_LABEL_MIN_SCALE);
-    D.chapters.forEach(function (chapter) {
-      if (state.chapter !== 'all' && state.chapter !== chapter.id) return;
-      var candidates;
-      if (IS_DENSE && lod !== 'detail') {
-        candidates = lod === 'overview'
-          ? overviewKeyNodes(chapter.id, compact ? 1 : 2)
-          : structureKeyNodes(chapter.id, 4);
-      } else if (!IS_DENSE && state.chapter === 'all' && cam.scale < MAP_LABEL_MIN_SCALE) {
-        candidates = overviewKeyNodes(chapter.id, compact ? 1 : 2);
-      } else {
-        candidates = nodesOfChapter(chapter.id);
-      }
-      candidates.forEach(function (node) {
-        var shortText = eventLabelText(node, compactEvents);
-        var mode = compactEvents ? 'compact' : 'in-box';
-        specs.push(makeSpec('event', esc(shortText), {
-          'class': 'map-label event-label event-box' + (compactEvents ? ' compact' : '') + (state.selected === node.id ? ' selected' : ''),
-          'data-event-node': node.id,
-          'data-label-mode': mode,
-          'data-full-label': node.label,
-          'aria-label': 'Open ' + node.label + ' event'
-        }, {
-          node: node,
-          overlay: compactEvents ? 'compact' : 'in-box',
-          priority: 1
-        }));
-        if (compactEvents) {
-          dotParts.push('<circle data-node-dot="' + esc(node.id) + '" cx="' + (node.x + node.w / 2) + '" cy="' + (node.y + node.h / 2) + '" r="5"></circle>');
-        }
-      });
-    });
-    var dots = document.getElementById('node-dots');
-    if (dots) {
-      dots.setAttribute('viewBox', '0 0 ' + D.canvas.width + ' ' + D.canvas.height);
-      dots.setAttribute('width', D.canvas.width);
-      dots.setAttribute('height', D.canvas.height);
-      dots.innerHTML = dotParts.join('');
-    }
-
-    if (IS_DENSE) {
-      visibleFrames.forEach(function (chapter) {
-        var m = CHAPTER_STATS[chapter.id];
-        if (!m) return;
-        /* On a narrow story map the compact chapter label already carries the
-           event count. The full count strip returns at chapter fit, where there
-           is room for a real region summary. */
-        if (compactRegion && lod === 'overview') return;
-        var summary = m.branches + ' branches · ' + m.joins + ' joins · ' +
-          m.entries + ' entries · ' + m.terminals + ' exits · ' +
-          m.nodes + ' events · ' + (m.internalEdges + m.crossEdges) + ' connectors';
-        specs.push(makeSpec('region-summary', esc(summary), {
-          'class': 'map-label region-summary',
-          'data-region-summary': chapter.id,
-          'data-full-label': summary
-        }, { chapter: chapter.id }));
-
-        if (lod === 'structure' && (state.chapter === 'all' || state.chapter === chapter.id) && m.branchNodes.length) {
-          var branches = m.branchNodes.slice(0, 2).map(function (n) {
-            return n.label + ' (' + (ALL_OUT[n.id] || 0) + ' paths)';
-          });
-          var branchText = 'Branch points: ' + branches.join(' · ') +
-            (m.branches > branches.length ? ' · ' + m.branches + ' total' : '');
-          specs.push(makeSpec('branch-summary', esc(branchText), {
-            'class': 'map-label branch-summary',
-            'data-branch-summary': chapter.id,
-            'data-full-label': branchText
-          }, { chapter: chapter.id }));
-        }
-      });
-    }
-
-    if (lod === 'overview' || lod === 'structure') {
-      if (IS_DENSE) {
-        var denseGroups = DENSE_CROSS_GROUPS.filter(function (group) {
-          return state.chapter === 'all' || group.from === state.chapter || group.to === state.chapter;
-        });
-        if (compact) denseGroups = denseGroups.slice(0, 3);
-        var parallelGroups = {};
-        denseGroups.forEach(function (group) {
-          var fromChapter = chapters[group.from], toChapter = chapters[group.to];
-          if (!fromChapter || !toChapter) return;
-          var fromFrame = fromChapter.frame, toFrame = toChapter.frame;
-          var fromScreen = frameScreenRect(fromFrame), toScreen = frameScreenRect(toFrame);
-          if (!intersects(fromScreen, { left: 0, top: 0, right: width, bottom: height }) ||
-              !intersects(toScreen, { left: 0, top: 0, right: width, bottom: height })) return;
-          var a = { x: fromFrame.x + fromFrame.w / 2, y: fromFrame.y + fromFrame.h / 2 };
-          var b = { x: toFrame.x + toFrame.w / 2, y: toFrame.y + toFrame.h / 2 };
-          var dx = b.x - a.x, dy = b.y - a.y;
-          var length = Math.sqrt(dx * dx + dy * dy) || 1;
-          var ux = dx / length, uy = dy / length;
-          var startT = Math.min((fromFrame.w / 2) / Math.max(Math.abs(ux), 0.0001), (fromFrame.h / 2) / Math.max(Math.abs(uy), 0.0001));
-          var endT = Math.min((toFrame.w / 2) / Math.max(Math.abs(ux), 0.0001), (toFrame.h / 2) / Math.max(Math.abs(uy), 0.0001));
-          var start = { x: a.x + ux * startT, y: a.y + uy * startT };
-          var end = { x: b.x - ux * endT, y: b.y - uy * endT };
-          var pair = [group.from, group.to].sort().join('>');
-          var laneIndex = parallelGroups[pair] || 0;
-          parallelGroups[pair] = laneIndex + 1;
-          var direction = group.from < group.to ? 1 : -1;
-          var lane = laneIndex ? direction * (12 + laneIndex * 8) : 0;
-          var px = -uy * lane, py = ux * lane;
-          var c1 = { x: start.x + (end.x - start.x) / 3 + px, y: start.y + (end.y - start.y) / 3 + py };
-          var c2 = { x: start.x + 2 * (end.x - start.x) / 3 + px, y: start.y + 2 * (end.y - start.y) / 3 + py };
-          var pathD = 'M ' + start.x + ' ' + start.y + ' C ' + c1.x + ' ' + c1.y + ' ' + c2.x + ' ' + c2.y + ' ' + end.x + ' ' + end.y;
-          var t = 0.5, mt = 1 - t;
-          var middle = {
-            x: mt * mt * mt * start.x + 3 * mt * mt * t * c1.x + 3 * mt * t * t * c2.x + t * t * t * end.x,
-            y: mt * mt * mt * start.y + 3 * mt * mt * t * c1.y + 3 * mt * t * t * c2.y + t * t * t * end.y
-          };
-          var groupKey = group.from + '>' + group.to;
-          aggregatePathParts.push('<path class="aggregate-edge" data-cross-group="' + esc(groupKey) +
-            '" data-from-region="' + esc(group.from) + '" data-to-region="' + esc(group.to) +
-            '" data-member-count="' + group.count + '" data-start-x="' + start.x + '" data-start-y="' + start.y +
-            '" data-end-x="' + end.x + '" data-end-y="' + end.y + '" d="' + pathD + '"></path>');
-          var e = group.edge;
-          var pos = middle;
-          var screen = worldToScreen(pos.x, pos.y);
-          if (screen.x < -40 || screen.x > width + 40 || screen.y < -20 || screen.y > height + 20) return;
-          var summary = denseCrossMapText(group);
-          var fromName = chapters[group.from] ? chapters[group.from].name : group.from;
-          var toName = chapters[group.to] ? chapters[group.to].name : group.to;
-          specs.push(makeSpec('cross', esc(summary), {
-            'class': 'map-label cross-label aggregate ' + e.kind,
-            'data-edge': String(group.representative),
-            'data-cross-group': group.from + '>' + group.to,
-            'data-full-label': group.count + ' actual cross-chapter connectors from ' + fromName + ' to ' + toName + ' · ' + denseCrossSummary(group),
-            'title': group.count + ' actual cross-chapter connectors · ' + denseCrossSummary(group) + ' · open the group to inspect every connector',
-            'aria-label': 'Inspect all ' + group.count + ' cross-chapter connectors from ' + fromName + ' to ' + toName + '; ' + denseCrossSummary(group)
-          }, {
-            anchor: screen,
-            edgeIndex: group.representative,
-            priority: 2
-          }));
-        });
-      } else {
-        CROSS_EDGES.forEach(function (item) {
-          var e = item.edge;
-          var pos = e.labelAt || pointAt(document.querySelector('#edge-' + item.index), 0.5);
-          var screen = worldToScreen(pos.x, pos.y);
-          if (screen.x < -40 || screen.x > width + 40 || screen.y < -20 || screen.y > height + 20) return;
-          var kind = e.kind === 'hypothesis' ? 'UNRESOLVED hypothesis' : (e.kind === 'prerequisite' ? 'prerequisite gate' : EDGE_LABEL[e.kind] || e.kind);
-          specs.push(makeSpec('cross', esc(kind), {
-            'class': 'map-label cross-label ' + e.kind,
-            'data-edge': String(item.index),
-            'data-full-label': e.label || kind,
-            'aria-label': 'Open actual ' + (EDGE_LABEL[e.kind] || e.kind) + ' connector from ' + byId[e.from].label + ' to ' + byId[e.to].label
-          }, {
-            anchor: screen,
-            edgeIndex: item.index,
-            priority: 2
-          }));
-        });
-      }
-    }
-
-    var aggregateSvg = document.getElementById('aggregate-edges');
-    if (aggregateSvg) aggregateSvg.innerHTML = aggregatePathParts.join('');
-
-    var inv = 1 / cam.scale;
-    host.style.setProperty('--inv', String(inv));
-    host.innerHTML = '';
-    specs.forEach(function (spec, i) {
-      var tag = spec.type === 'region' || spec.type === 'event' || spec.type === 'cross' ? 'button' : 'div';
-      spec.attrs['data-label-index'] = String(i);
-      var html = '<' + tag + attrString(spec.attrs) + '>' + spec.html + '</' + tag + '>';
-      host.insertAdjacentHTML('beforeend', html);
-    });
-
-    var els = Array.prototype.slice.call(host.querySelectorAll('[data-label-index]'));
-    var sizes = els.map(function (el) { return { w: el.offsetWidth, h: el.offsetHeight }; });
-    var occupied = [];
-
-    function placeBox(spec, el, size, desired, reserve, pad) {
-      var r = {
-        left: desired.left,
-        top: desired.top,
-        right: desired.left + size.w,
-        bottom: desired.top + size.h,
-        width: size.w,
-        height: size.h
-      };
-      if (reserve) occupied.push(r);
-      el.style.left = ((r.left - cam.tx) / cam.scale) + 'px';
-      el.style.top = ((r.top - cam.ty) / cam.scale) + 'px';
-      return r;
-    }
-
-    /* Region headings and their summaries are not floating callouts: keep each
-       one near its frame, but step it down until it clears the labels already
-       placed. If the viewport is genuinely too small, hide it rather than
-       stacking unreadable text over another region. */
-    function placeReserved(el, size, desired, maxSteps) {
-      var steps = maxSteps == null ? 7 : maxSteps;
-      var baseLeft = Math.max(4, Math.min(width - size.w - 4, desired.left));
-      var baseTop = Math.max(4, Math.min(height - size.h - 4, desired.top));
-      for (var k = 0; k <= steps; k++) {
-        var tops = [baseTop + k * (size.h + 4), baseTop - k * (size.h + 4)];
-        for (var t = 0; t < tops.length; t++) {
-          var cand = { left: baseLeft, top: tops[t] };
-          var rect = {
-            left: cand.left, top: cand.top, right: cand.left + size.w,
-            bottom: cand.top + size.h, width: size.w, height: size.h
-          };
-          if (insideCanvas(rect, width, height, 4) && overlapArea(rect, occupied, 2) === 0) {
-            return placeBox(null, el, size, cand, true);
-          }
-        }
-      }
-      el.style.display = 'none';
-      return null;
-    }
-
-    var regionRects = {};
-    var leaderParts = [];
-    specs.forEach(function (spec, i) {
-      if (spec.type !== 'region' && spec.type !== 'region-summary' && spec.type !== 'branch-summary') return;
-      var el = els[i], size = sizes[i];
-      if (spec.type === 'region') {
-        var fr = frameScreenRect(chapters[spec.chapter].frame);
-        el.style.maxWidth = (width < 600
-          ? Math.max(60, fr.width - 4)
-          : Math.max(112, Math.min(340, fr.width - 10))) + 'px';
-        size = { w: el.offsetWidth, h: el.offsetHeight };
-        var rect = placeReserved(el, size, { left: fr.left + 7, top: fr.top + 6 });
-        if (rect) regionRects[spec.chapter] = rect;
-      }
-    });
-
-    /* Region summaries sit under their region heading, then branch summaries
-       under those. Both are anchored to the real frame, not a report column. */
-    var regionExtra = {};
-    specs.forEach(function (spec, i) {
-      if (spec.type !== 'region-summary') return;
-      var el = els[i], size = sizes[i];
-      var anchor = regionRects[spec.chapter];
-      if (!anchor) { el.style.display = 'none'; return; }
-      el.style.maxWidth = Math.max(150, Math.min(360, frameScreenRect(chapters[spec.chapter].frame).width - 10)) + 'px';
-      size = { w: el.offsetWidth, h: el.offsetHeight };
-      var rect = placeReserved(el, size, { left: anchor.left, top: anchor.bottom + 4 });
-      if (rect) regionExtra[spec.chapter] = rect;
-    });
-    specs.forEach(function (spec, i) {
-      if (spec.type !== 'branch-summary') return;
-      var el = els[i], size = sizes[i];
-      var anchor = regionExtra[spec.chapter] || regionRects[spec.chapter];
-      if (!anchor) { el.style.display = 'none'; return; }
-      el.style.maxWidth = Math.max(150, Math.min(360, frameScreenRect(chapters[spec.chapter].frame).width - 10)) + 'px';
-      size = { w: el.offsetWidth, h: el.offsetHeight };
-      placeReserved(el, size, { left: anchor.left, top: anchor.bottom + 4 });
-    });
-
-    /* Event labels are the event boxes now: for sparse chapter/intermediate
-       views each overlay is sized over the real node footprint and contains its
-       wrapped short label. At whole-story scale (and for dense data) the
-       overlay is a compact labelled chip; unlabeled node rectangles stay
-       hidden rather than appearing as anonymous boxes. */
-    function placeEventBox(spec, i) {
-      var el = els[i], size = sizes[i];
-      var nr = nodeScreenRect(spec.node);
-      var maxW = Math.max(90, Math.min(220, width - 12));
-      el.style.maxWidth = maxW + 'px';
-      el.style.width = 'auto';
-      el.style.minHeight = '';
-      var naturalW = el.offsetWidth;
-      var boxW = spec.overlay === 'in-box'
-        ? Math.max(nr.width, Math.min(maxW, naturalW + 2))
-        : Math.min(190, Math.max(84, naturalW + 2));
-      el.style.width = Math.round(boxW) + 'px';
-      var naturalH = el.offsetHeight;
-      var boxH = spec.overlay === 'in-box' ? Math.max(nr.height, naturalH) : naturalH;
-      if (boxH > naturalH) el.style.minHeight = Math.round(boxH) + 'px';
-      size = { w: el.offsetWidth, h: el.offsetHeight };
-
-      var centered = {
-        left: nr.left + nr.width / 2 - size.w / 2,
-        top: nr.top + nr.height / 2 - size.h / 2
-      };
-      if (spec.overlay === 'in-box') {
-        var left = nr.left + nr.width / 2 - size.w / 2;
-        var top = nr.top + nr.height / 2 - size.h / 2;
-        if (left < 4 || top < 4 || left + size.w > width - 4 || top + size.h > height - 4) {
-          el.style.display = 'none';
-          return;
-        }
-        placeBox(spec, el, size, { left: left, top: top }, true);
-        return;
-      }
-
-      var anchor = { x: nr.left + nr.width / 2, y: nr.top + nr.height / 2 };
-      var candidates = [centered];
-      for (var lane = 1; lane <= 4; lane++) {
-        candidates.push({ left: centered.left, top: centered.top - lane * (size.h + 5) });
-        candidates.push({ left: centered.left, top: centered.top + lane * (size.h + 5) });
-      }
-      candidates.push({ left: centered.left + size.w + 6, top: centered.top });
-      candidates.push({ left: centered.left - size.w - 6, top: centered.top });
-      var chosen = null;
-      for (var c = 0; c < candidates.length; c++) {
-        var cand = candidates[c];
-        var rect = {
-          left: Math.max(4, Math.min(width - size.w - 4, cand.left)),
-          top: Math.max(4, Math.min(height - size.h - 4, cand.top)),
-          right: 0, bottom: 0, width: size.w, height: size.h
-        };
-        rect.right = rect.left + size.w;
-        rect.bottom = rect.top + size.h;
-        if (overlapArea(rect, occupied, 3) === 0) { chosen = rect; break; }
-      }
-      if (!chosen) {
-        var fallback = candidates[0];
-        chosen = {
-          left: Math.max(4, Math.min(width - size.w - 4, fallback.left)),
-          top: Math.max(4, Math.min(height - size.h - 4, fallback.top)),
-          right: 0, bottom: 0, width: size.w, height: size.h
-        };
-        chosen.right = chosen.left + size.w;
-        chosen.bottom = chosen.top + size.h;
-      }
-      occupied.push(chosen);
-      el.style.left = ((chosen.left - cam.tx) / cam.scale) + 'px';
-      el.style.top = ((chosen.top - cam.ty) / cam.scale) + 'px';
-      var dx = chosen.left + chosen.width / 2 - anchor.x;
-      var dy = chosen.top + chosen.height / 2 - anchor.y;
-      var anchorDistance = Math.sqrt(dx * dx + dy * dy);
-      el.setAttribute('data-anchor-distance', String(Math.round(anchorDistance)));
-      if (anchorDistance > 10) {
-        el.setAttribute('data-has-leader', 'true');
-        leaderParts.push('M ' + ((anchor.x - cam.tx) / cam.scale) + ' ' + ((anchor.y - cam.ty) / cam.scale) +
-          ' L ' + ((chosen.left + chosen.width / 2 - cam.tx) / cam.scale) + ' ' + ((chosen.top + chosen.height / 2 - cam.ty) / cam.scale));
-      }
-    }
-
-    specs.forEach(function (spec, i) {
-      if (spec.type === 'event') placeEventBox(spec, i);
-    });
-
-    function placeFloating(spec, i) {
-      var el = els[i], size = sizes[i];
-      var anchor, candidates = [];
-      if (spec.type === 'cross') {
-        anchor = spec.anchor;
-        for (var lane = 0; lane < 6; lane++) {
-          var cy = 5 + lane * (size.h + 4);
-          candidates.push({ left: anchor.x - size.w / 2, top: anchor.y - size.h - cy });
-          candidates.push({ left: anchor.x - size.w / 2, top: anchor.y + cy });
-        }
-        candidates.push({ left: anchor.x + 6, top: anchor.y - size.h / 2 });
-        candidates.push({ left: anchor.x - size.w - 6, top: anchor.y - size.h / 2 });
-      } else {
-        var nr = nodeScreenRect(spec.node);
-        anchor = { x: nr.left + nr.width / 2, y: nr.top + nr.height / 2 };
-        for (var lane2 = 0; lane2 < 9; lane2++) {
-          var offset = 4 + lane2 * (size.h + 3);
-          candidates.push({ left: nr.left + nr.width / 2 - size.w / 2, top: nr.top - size.h - offset });
-          candidates.push({ left: nr.left + nr.width / 2 - size.w / 2, top: nr.bottom + offset });
-        }
-        candidates.push({ left: nr.right + 5, top: nr.top + nr.height / 2 - size.h / 2 });
-        candidates.push({ left: nr.left - size.w - 5, top: nr.top + nr.height / 2 - size.h / 2 });
-      }
-
-      var chosen = null, bestOverlap = Infinity, bestOutside = Infinity;
-      for (var c = 0; c < candidates.length; c++) {
-        var cand = candidates[c];
-        var rect = { left: cand.left, top: cand.top, right: cand.left + size.w, bottom: cand.top + size.h, width: size.w, height: size.h };
-        var outside = !insideCanvas(rect, width, height, 4);
-        var overlap = outside ? Infinity : overlapArea(rect, occupied, 2);
-        if (!outside && overlap === 0) { chosen = rect; break; }
-        if (outside && outside < bestOutside) { bestOutside = outside; }
-        if (!outside && overlap < bestOverlap) { bestOverlap = overlap; chosen = rect; }
-      }
-      if (!chosen) {
-        var fallback = candidates[0];
-        chosen = { left: fallback.left, top: fallback.top, right: fallback.left + size.w, bottom: fallback.top + size.h, width: size.w, height: size.h };
-        if (!insideCanvas(chosen, width, height, 4)) {
-          chosen.left = Math.max(4, Math.min(width - size.w - 4, chosen.left));
-          chosen.top = Math.max(4, Math.min(height - size.h - 4, chosen.top));
-          chosen.right = chosen.left + size.w;
-          chosen.bottom = chosen.top + size.h;
-        }
-      }
-      occupied.push(chosen);
-      el.style.left = ((chosen.left - cam.tx) / cam.scale) + 'px';
-      el.style.top = ((chosen.top - cam.ty) / cam.scale) + 'px';
-
-      if (spec.type === 'event') {
-        var nr2 = nodeScreenRect(spec.node);
-        var sx = nr2.left + nr2.width / 2, sy = nr2.top + nr2.height / 2;
-        var lx = chosen.left + chosen.width / 2, ly;
-        if (chosen.bottom <= nr2.top) ly = chosen.bottom;
-        else if (chosen.top >= nr2.bottom) ly = chosen.top;
-        else if (chosen.left >= nr2.right) { lx = chosen.left; ly = chosen.top + chosen.height / 2; }
-        else { lx = chosen.right; ly = chosen.top + chosen.height / 2; }
-        var anchorDistance = Math.sqrt(Math.pow(lx - sx, 2) + Math.pow(ly - sy, 2));
-        el.setAttribute('data-anchor-distance', String(Math.round(anchorDistance)));
-        if (anchorDistance > 10) {
-          el.setAttribute('data-has-leader', 'true');
-        }
-        if (anchorDistance > 24) {
-          leaderParts.push('M ' + ((sx - cam.tx) / cam.scale) + ' ' + ((sy - cam.ty) / cam.scale) +
-            ' L ' + ((lx - cam.tx) / cam.scale) + ' ' + ((ly - cam.ty) / cam.scale));
-        }
-      }
-    }
-
-    specs.forEach(function (spec, i) {
-      if (spec.type === 'cross') placeFloating(spec, i);
-    });
-
-    if (leaders) {
-      leaders.innerHTML = leaderParts.map(function (d) {
-        return '<path class="label-leader" vector-effect="non-scaling-stroke" d="' + d + '"></path>';
-      }).join('');
-    }
-
-    Array.prototype.forEach.call(host.querySelectorAll('[data-region]'), function (b) {
-      b.onclick = function (ev) {
-        ev.stopPropagation();
-        var id = b.getAttribute('data-region');
-        lastTrigger = b;
-        commit(C.jumpChapter(state, id, D), { fit: true, hash: true });
-        var chapterButton = document.querySelector('[data-chapter="' + id + '"]');
-        if (chapterButton) chapterButton.focus();
-      };
-    });
-    Array.prototype.forEach.call(host.querySelectorAll('[data-event-node]'), function (b) {
-      b.onclick = function (ev) {
-        ev.stopPropagation();
-        var id = b.getAttribute('data-event-node');
-        lastTrigger = b;
-        commit(C.selectNode(state, id, D), { center: id, hash: true });
-      };
-    });
-    Array.prototype.forEach.call(host.querySelectorAll('[data-edge]'), function (b) {
-      b.onclick = function (ev) {
-        ev.stopPropagation();
-        var groupKey = b.getAttribute('data-cross-group');
-        if (groupKey) {
-          focusCrossGroupFromMap(groupKey, b);
-          return;
-        }
-        var index = Number(b.getAttribute('data-edge'));
-        if (!isFinite(index)) return;
-        focusEdgeFromMap(index, b);
-      };
-    });
-  }
-
   function focusEdgeFromMap(index, trigger) {
     lastTrigger = trigger;
-    focusedGroup = null;
     state = C.focusEdge(state, index, D);
     renderGraph();
     centerOn(byId[state.selected]);
     setHash();
     var close = document.getElementById('details-close');
     if (close) close.focus();
-  }
-
-  function focusCrossGroupFromMap(groupKey, trigger) {
-    var group = DENSE_CROSS_GROUPS.filter(function (g) { return g.from + '>' + g.to === groupKey; })[0];
-    if (!group) return;
-    lastTrigger = trigger;
-    focusedGroup = groupKey;
-    state = C.closeDetails(state);
-    renderGraph();
-    renderGroupDetails(group);
-    var close = document.getElementById('details-close');
-    if (close) close.focus();
-  }
-
-  /* Dense map labels aggregate several real connectors. Opening one must expose
-     every member edge, not just the representative, with its own evidence and
-     uncertainty. The panel never turns the aggregate into a causal claim. */
-  function renderGroupDetails(group) {
-    var el = document.getElementById('details');
-    var fromName = chapters[group.from] ? chapters[group.from].name : group.from;
-    var toName = chapters[group.to] ? chapters[group.to].name : group.to;
-    var kindCounts = Object.keys(group.kinds).sort(function (a, b) {
-      return group.kinds[b] - group.kinds[a];
-    }).map(function (kind) {
-      return group.kinds[kind] + ' ' + (EDGE_LABEL[kind] || kind);
-    });
-    var rows = group.members.map(function (index) {
-      var e = D.edges[index];
-      var ev = edgeEvidence(e);
-      var from = byId[e.from], to = byId[e.to];
-      var sourceText = sourceSummary(ev.sources);
-      return '<div class="group-edge" data-edge-evidence="' + index + '" data-evidence="' + ev.cls + '">' +
-        '<p><strong>' + esc(from ? from.label : e.from) + ' → ' + esc(to ? to.label : e.to) + '</strong>' +
-        '<span class="chip ' + ev.cls + '">' + esc(EDGE_LABEL[e.kind]) + '</span></p>' +
-        '<p class="note tiny">' + esc(ev.status) + '</p>' +
-        '<p class="note tiny">' + esc(ev.unknown) + '</p>' +
-        (e.label ? '<p class="note tiny">Connector label: ' + esc(e.label) + '</p>' : '') +
-        '<p class="tiny muted">' + esc(sourceText) + '</p>' +
-        edgeSourceLinks(ev.sources) +
-        '<button class="group-open" data-group-edge="' + index + '">Inspect connector ' + index + '</button>' +
-        '</div>';
-    }).join('');
-
-    el.hidden = false;
-    el.setAttribute('aria-label', 'Group of ' + group.count + ' cross-chapter connectors');
-    el.innerHTML =
-      '<button class="close" id="details-close" aria-label="Close details">×</button>' +
-      '<div class="eyebrow">Connector group · ' + esc(fromName) + ' → ' + esc(toName) + '</div>' +
-      '<h2>' + group.count + ' cross-chapter connectors</h2>' +
-      '<span class="chip synthetic">Aggregate label · not evidence</span>' +
-      '<p>This map label groups ' + group.count + ' actual connectors. It does not assert a combined causal link; each connector keeps its own status, source and unknown below.</p>' +
-      '<p class="tiny muted">Kind counts: ' + esc(kindCounts.join(' · ')) + '</p>' +
-      '<h3>Every connector in this group</h3>' +
-      '<div class="group-list">' + rows + '</div>' +
-      '<h3>Evidence</h3>' +
-      '<p class="tiny muted">Synthetic benchmark fixture generated for scale testing. Counts and topology are real to the fixture; they are not game evidence.</p>';
-
-    document.getElementById('details-close').onclick = closeWithFocus;
-    Array.prototype.forEach.call(el.querySelectorAll('[data-group-edge]'), function (b) {
-      b.onclick = function () {
-        focusEdgeFromMap(Number(b.getAttribute('data-group-edge')), b);
-      };
-    });
   }
 
   /* ---------- details ---------- */
@@ -1324,31 +536,22 @@
   }
 
   function closeWithFocus() {
-    if (focusedGroup) {
-      var groupKey = focusedGroup;
-      focusedGroup = null;
-      renderGraph();
-      var groupTarget = lastTrigger;
-      if (!groupTarget || !groupTarget.isConnected) {
-        groupTarget = document.querySelector('[data-cross-group="' + groupKey + '"]');
-      }
-      if (groupTarget) groupTarget.focus();
-      return;
-    }
     var last = state.selected;
+    var triggerEdgeLabel = lastTrigger ? lastTrigger.getAttribute('data-edge-label') : null;
     state = C.closeDetails(state);
     renderGraph();
     var target = lastTrigger;
     var usable = target && target.isConnected && target.offsetParent !== null && !target.closest('[hidden]');
-    if (usable && !target.hasAttribute('data-event-node')) { target.focus(); return; }
-    /* Map labels are rebuilt on the next frame after camera changes. Focus the
-       replacement button after that render so Escape/X do not focus a node
-       that is immediately detached from the DOM. */
+    if (usable) { target.focus(); return; }
+    /* The world is rebuilt on close. Restore focus to the replacement real
+       node or actual-edge label so Escape/X never leave focus on detached DOM. */
     requestAnimationFrame(function () {
-      var eventButton = last && document.querySelector('[data-event-node="' + last + '"]');
-      var nodeButton = last && document.querySelector('[data-node="' + last + '"]');
-      var replacement = eventButton && eventButton.offsetParent !== null ? eventButton : nodeButton;
-      if (replacement) replacement.focus();
+      var replacement = null;
+      if (triggerEdgeLabel != null) {
+        replacement = document.querySelector('.edge-label[data-edge-label="' + triggerEdgeLabel + '"]');
+      }
+      if (!replacement && last) replacement = document.querySelector('[data-node="' + last + '"]');
+      if (replacement && replacement.offsetParent !== null) replacement.focus();
     });
   }
 
@@ -1447,27 +650,8 @@
     var w = document.getElementById('world');
     if (!w) return;
     w.style.transform = 'translate(' + cam.tx + 'px,' + cam.ty + 'px) scale(' + cam.scale + ')';
-    var scaleChanged = labelScale == null || Math.abs(cam.scale - labelScale) > 1e-6;
-    labelScale = cam.scale;
-    updateLod();
-    if (scaleChanged) scheduleMapLabels();
-  }
-
-  function updateLod() {
-    var c = document.getElementById('canvas');
-    if (!c) return;
-    var lod = C.lodFor(cam.scale, state.chapter);
-    c.setAttribute('data-lod', lod);
-    c.setAttribute('data-density', IS_DENSE ? 'dense' : 'sparse');
-    var nodeLabels = IS_DENSE ? (lod === 'detail' ? 'detail' : 'compact') :
-      (lod === 'detail' ? 'detail' : (state.chapter === 'all' && cam.scale < MAP_LABEL_MIN_SCALE ? 'compact' : 'in-box'));
-    c.setAttribute('data-node-labels', nodeLabels);
-    c.setAttribute('data-node-text', !IS_DENSE && lod !== 'detail' && cam.scale >= 0.55 ? 'on' : 'off');
     var zoomLabel = document.getElementById('zoomLabel');
-    if (zoomLabel) zoomLabel.textContent = Math.round(cam.scale * 100) + '% · ' + LOD_LABEL[lod];
-    var lodStatus = document.getElementById('lodStatus');
-    if (lodStatus) lodStatus.textContent = 'Level of detail: ' + LOD_LABEL[lod] + '.';
-    if (lod !== lastLod) lastLod = lod;
+    if (zoomLabel) zoomLabel.textContent = Math.round(cam.scale * 100) + '%';
   }
 
   function fitCurrent() {
@@ -1476,8 +660,6 @@
     var box, pad, padTop;
     if (state.chapter === 'all') {
       box = { x: 0, y: 0, w: D.canvas.width, h: D.canvas.height };
-      /* Leave headroom so one desktop zoom step still keeps the whole graph
-         in view; the intermediate state must have the same complete map. */
       pad = c.clientWidth < 600 ? 28 : 80;
       padTop = c.clientWidth < 600 ? 28 : 80;
     } else {
@@ -1486,16 +668,10 @@
       padTop = 110;
     }
     var fitted = C.fitBounds({ width: c.clientWidth, height: c.clientHeight }, box, pad, padTop);
-    if (state.chapter !== 'all' && c.clientWidth < 600 && fitted.scale < MIN_MOBILE_FOCUS_SCALE) {
-      fitted.scale = MIN_MOBILE_FOCUS_SCALE;
-      fitted.tx = c.clientWidth / 2 - (box.x + box.w / 2) * fitted.scale;
-      fitted.ty = c.clientHeight / 2 - (box.y + box.h / 2) * fitted.scale;
-    }
     cam.scale = fitted.scale;
     cam.tx = fitted.tx;
     cam.ty = fitted.ty;
     updateTransform();
-    scheduleMapLabels();
   }
 
   function centerOn(n) {
@@ -1506,7 +682,6 @@
     cam.tx = c.clientWidth / 2 - (n.x + n.w / 2) * cam.scale;
     cam.ty = c.clientHeight / 2 - (n.y + n.h / 2) * cam.scale;
     updateTransform();
-    scheduleMapLabels();
   }
 
   function zoomAt(factor, px, py) {
@@ -1557,7 +732,7 @@
         if (q) q.focus();
         return;
       }
-      if (state.selected || focusedGroup) closeWithFocus();
+      if (state.selected) closeWithFocus();
       return;
     }
     if (typing) return;

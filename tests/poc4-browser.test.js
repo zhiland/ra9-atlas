@@ -113,63 +113,6 @@ async function openChapter(page, id) {
   await waitFrames(page);
 }
 
-async function getLod(page) {
-  return page.locator('#canvas').getAttribute('data-lod');
-}
-
-async function zoomUntil(page, wanted, maxClicks) {
-  const limit = maxClicks || 24;
-  for (let i = 0; i <= limit; i++) {
-    if (await getLod(page) === wanted) return i;
-    if (i === limit) break;
-    await page.locator('#plus').click();
-    await waitFrames(page);
-  }
-  const scale = await page.evaluate(function () {
-    const world = document.getElementById('world');
-    return world ? new DOMMatrixReadOnly(getComputedStyle(world).transform).a : null;
-  });
-  throw new Error('LOD ' + wanted + ' not reached; camera scale ' + scale);
-}
-
-async function selectionStyles(page) {
-  return page.evaluate(function () {
-    const node = document.querySelector('[data-node="k_meet"]');
-    const label = node ? node.querySelector('.label') : null;
-    const style = function (el) { return el ? getComputedStyle(el).visibility : 'missing'; };
-    const c = document.getElementById('canvas').getBoundingClientRect();
-    function mapLabels(selector) {
-      return Array.prototype.slice.call(document.querySelectorAll(selector)).filter(function (el) {
-        const s = getComputedStyle(el);
-        if (s.visibility !== 'visible' || s.display === 'none') return false;
-        const r = el.getBoundingClientRect();
-        return r.width > 0 && r.height > 0;
-      }).map(function (el) {
-        const r = el.getBoundingClientRect();
-        return {
-          id: el.getAttribute('data-event-node') || el.getAttribute('data-region') || el.getAttribute('data-edge'),
-          text: el.textContent.replace(/\s+/g, ' ').trim(),
-          font: parseFloat(getComputedStyle(el).fontSize),
-          intersectsCanvas: r.right > c.left && r.left < c.right && r.bottom > c.top && r.top < c.bottom
-        };
-      });
-    }
-    const eventLabels = mapLabels('#map-labels .event-label');
-    return {
-      lod: document.getElementById('canvas').getAttribute('data-lod'),
-      nodesLayer: style(document.getElementById('nodes')),
-      labelsLayer: style(document.getElementById('labels')),
-      node: style(node),
-      nodeLabel: style(label),
-      eventLabels: eventLabels,
-      regionLabels: mapLabels('#map-labels .region-label'),
-      crossLabels: mapLabels('#map-labels .cross-label'),
-      overviewSurface: document.querySelectorAll('#overview, .overview-card, .overview-link').length,
-      zoom: document.getElementById('zoomLabel') ? document.getElementById('zoomLabel').textContent : ''
-    };
-  });
-}
-
 /* Reads the current world transform and each chapter frame in canvas
    coordinates. The same measurement covers every LOD because one world stays
    mounted. */
@@ -251,7 +194,7 @@ async function runVariant(browser, variant) {
     assert(state.canvas && state.canvas.width > 0 && state.canvas.height > 0, 'canvas must have layout under the cover');
     assert(state.nodes === 38, '38 nodes should be rendered behind the cover, got ' + state.nodes);
     assert(state.edges === 42, '42 connectors should be rendered behind the cover, got ' + state.edges);
-    assert(state.lod === 'overview', 'the covered map should start at the story map LOD, got ' + state.lod);
+    assert(state.lod === null, 'the map must not carry a semantic LOD attribute');
   });
 
   await page.locator('#consent').click();
@@ -269,120 +212,68 @@ async function runVariant(browser, variant) {
     assert(status.indexOf('not in-game verified') !== -1, 'status line must keep the not-verified qualifier');
     assert(status.indexOf('version/platform unknown') === -1 && status.length <= 180,
       'primary status must stay a concise slice summary, got: ' + status);
-    assert(await getLod(page) === 'overview', 'whole-atlas fit should open on the story map');
+    assert(/^\d+%$/.test(await textOf(page, '#zoomLabel')), 'zoom label should report camera scale only');
     const zoom = await textOf(page, '#zoomLabel');
-    assert(/story map/.test(zoom), 'zoom label should name the story map LOD: ' + zoom);
+    assert(/^\d+%$/.test(zoom), 'zoom label should report camera scale only: ' + zoom);
     assert(await page.locator('#overview').count() === 0, 'the card/report overview surface must stay removed');
     assert(await page.locator('.frame').count() === 3, 'three chapter frames must stay mounted');
     assert(await page.locator('[data-node]').count() === 38, '38 event nodes must stay mounted');
     assert(await page.locator('path.edge').count() === 42, '42 connectors must stay mounted');
-    assert(await page.locator('#map-labels .region-label').count() === 3, 'three chapter map labels expected');
-    assert(await page.locator('#map-labels .cross-label').count() === 4, 'four actual cross labels expected');
+    assert(await page.locator('[data-frame-label]').count() === 3, 'three chapter names must remain on the map');
+    assert(await page.locator('[data-node-label]').count() === 38, 'every event box must keep its label');
   });
 
-  await ok('opening map keeps chapter names legible and cross labels point only at actual cross-chapter edges', async function () {
-    const m = await page.evaluate(function () {
-      const canvas = document.getElementById('canvas');
-      const cr = canvas.getBoundingClientRect();
-      const chapterOf = {};
-      ATLAS.nodes.forEach(function (n) { chapterOf[n.id] = n.chapter; });
-      const expected = [];
-      ATLAS.edges.forEach(function (edge, index) {
-        if (chapterOf[edge.from] !== chapterOf[edge.to]) {
-          expected.push({ index: index, kind: edge.kind, from: edge.from, to: edge.to });
-        }
+  await ok('map names and labels stay attached to real chapters, nodes and cross-chapter edges', async function () {
+    const result = await page.evaluate(function () {
+      const frames = Array.from(document.querySelectorAll('.frame')).map(function (frame) {
+        const title = frame.querySelector('[data-frame-label]');
+        return { id: frame.getAttribute('data-chapter-frame'), title: title && title.textContent.trim(), contained: !!title && frame.contains(title) };
       });
-      function labels(selector) {
-        return Array.prototype.slice.call(document.querySelectorAll(selector)).filter(function (el) {
-          const s = getComputedStyle(el);
-          const r = el.getBoundingClientRect();
-          return s.visibility === 'visible' && s.display !== 'none' && r.width > 0 && r.height > 0;
-        }).map(function (el) {
-          const r = el.getBoundingClientRect();
-          const name = el.querySelector('strong');
-          return {
-            id: el.getAttribute('data-region') || el.getAttribute('data-edge'),
-            text: el.textContent.replace(/\s+/g, ' ').trim(),
-            aria: el.getAttribute('aria-label'),
-            font: parseFloat(getComputedStyle(name || el).fontSize),
-            left: r.left,
-            top: r.top,
-            right: r.right,
-            bottom: r.bottom
-          };
-        });
-      }
-      return {
-        canvas: { left: cr.left, top: cr.top, right: cr.right, bottom: cr.bottom },
-        regions: labels('#map-labels .region-label'),
-        cross: labels('#map-labels .cross-label'),
-        expected: expected
-      };
+      const labels = Array.from(document.querySelectorAll('[data-node-label]')).map(function (label) {
+        const node = label.closest('[data-node]');
+        return { id: label.getAttribute('data-node-label'), text: label.textContent.trim(), contained: !!node && node.contains(label) };
+      });
+      const chapterOf = Object.fromEntries(ATLAS.nodes.map(function (node) { return [node.id, node.chapter]; }));
+      const actualCross = ATLAS.edges.map(function (edge, index) {
+        return chapterOf[edge.from] !== chapterOf[edge.to] ? index : null;
+      }).filter(function (index) { return index !== null; });
+      const labelled = Array.from(document.querySelectorAll('.edge-label')).map(function (el) { return Number(el.getAttribute('data-edge-label')); });
+      return { frames: frames, labels: labels, actualCross: actualCross, labelled: labelled };
     });
-
-    assert(m.regions.length === 3, 'three chapter map labels expected, got ' + m.regions.length);
-    m.regions.forEach(function (region) {
-      assert(/A New Home|Stormy Night|Battle for Detroit/.test(region.text), region.id + ' map label does not name its chapter: ' + region.text);
-      assert(region.font >= 14, region.id + ' chapter name font ' + region.font + 'px is too small');
-      assert(region.left >= m.canvas.left - 1 && region.right <= m.canvas.right + 1 &&
-        region.top >= m.canvas.top - 1 && region.bottom <= m.canvas.bottom + 1,
-        region.id + ' chapter map label is outside the canvas');
-      assert(region.aria && /Open /.test(region.aria), region.id + ' chapter map label has no accessible open label');
-    });
-
-    assert(m.cross.length === m.expected.length,
-      'cross labels ' + m.cross.length + ' do not match actual cross-chapter edges ' + m.expected.length);
-    m.cross.forEach(function (label) {
-      const actual = m.expected.filter(function (e) { return e.index === Number(label.id); })[0];
-      assert(actual, 'cross label does not point at an actual edge index: ' + label.id);
-      if (actual.kind === 'hypothesis') {
-        assert(/UNRESOLVED hypothesis/.test(label.text), 'hypothesis cross label must say UNRESOLVED hypothesis: ' + label.text);
-      } else if (actual.kind === 'prerequisite') {
-        assert(/prerequisite gate/.test(label.text), 'gate cross label must say prerequisite gate: ' + label.text);
-      }
-    });
-    m.expected.forEach(function (actual) {
-      assert(m.cross.some(function (label) { return Number(label.id) === actual.index; }),
-        'actual cross-chapter edge ' + actual.index + ' has no map label');
-    });
-    assert(await page.locator('#overview-connectors, .overview-link, .overview-card').count() === 0,
-      'no aggregate or card/report cross-chapter rows may be invented');
+    assert(result.frames.length === 3 && result.frames.every(function (f) { return f.contained && f.title; }), 'chapter names must stay inside all real frames');
+    assert(result.labels.length === 38 && result.labels.every(function (n) { return n.contained && n.text; }), 'all 38 real nodes must retain their full in-box labels');
+    result.actualCross.forEach(function (index) { assert(result.labelled.indexOf(index) !== -1 || !ATLAS.edges[index].label, 'labelled cross-chapter edge ' + index + ' disappeared'); });
+    assert(await page.locator('#overview-connectors, .overview-link, .overview-card').count() === 0, 'no pseudo-map or report surface may replace the graph');
   });
 
-  await ok('zoom keeps one map and hands readable labels to close event text', async function () {
-    const overview = await selectionStyles(page);
-    assert(overview.lod === 'overview', 'should start in the story map');
-    assert(overview.nodesLayer === 'visible' && overview.node === 'visible', 'event boxes must stay on the story map');
-    assert(overview.labelsLayer === 'hidden' && overview.nodeLabel === 'hidden', 'in-box event text must stay hidden at story map scale');
-    assert(overview.regionLabels.length === 3, 'story map should label all three chapters');
-    assert(overview.eventLabels.length >= 6, 'story map should show meaningful event labels, got ' + overview.eventLabels.length);
-    assert(overview.crossLabels.length === 4, 'story map should show the four actual cross-chapter labels');
-    assert(/story map/.test(overview.zoom), 'zoom label should name the story map: ' + overview.zoom);
-    assert(overview.overviewSurface === 0, 'no card/report surface may replace the map');
-
-    await zoomUntil(page, 'structure');
-    const structure = await selectionStyles(page);
-    assert(structure.nodesLayer === 'visible' && structure.node === 'visible', 'event boxes should stay at structure LOD');
-    assert(structure.labelsLayer === 'hidden' && structure.nodeLabel === 'hidden', 'in-box event text should remain hidden at structure LOD');
-    assert(structure.eventLabels.length >= 6, 'structure LOD should label the real events, got ' + structure.eventLabels.length);
-    assert(structure.eventLabels.every(function (l) { return l.font >= 11; }), 'structure event label text is too small');
-    assert(structure.regionLabels.length === 3, 'structure LOD must keep the chapter labels on the same map');
-    assert(/event map/.test(structure.zoom), 'zoom label should name the event map: ' + structure.zoom);
-
-    await zoomUntil(page, 'detail');
-    const detail = await selectionStyles(page);
-    assert(detail.labelsLayer === 'visible' && detail.nodeLabel === 'visible', 'event labels should appear at detail LOD');
-    assert(detail.regionLabels.length === 3, 'detail LOD must keep the chapter labels on the same map');
-    assert(/close map/.test(detail.zoom), 'zoom label should name the close map: ' + detail.zoom);
-
+  await ok('zoom changes only the camera while keeping all real map content in place', async function () {
+    const capture = function () { return page.evaluate(function () {
+      const world = document.getElementById('world');
+      const scale = new DOMMatrixReadOnly(getComputedStyle(world).transform).a;
+      function rect(el) { const r = el.getBoundingClientRect(); const w = world.getBoundingClientRect(); return [(r.left-w.left)/scale,(r.top-w.top)/scale,r.width/scale,r.height/scale].map(function(v){return Math.round(v*10)/10;}); }
+      return {
+        scale: scale,
+        nodes: Array.from(document.querySelectorAll('[data-node]')).map(function (n) { return { id:n.getAttribute('data-node'), text:n.querySelector('[data-node-label]').textContent.trim(), box:rect(n), label:rect(n.querySelector('[data-node-label]')) }; }),
+        edges: Array.from(document.querySelectorAll('path.edge')).map(function (e) { return [e.getAttribute('data-edge'),e.getAttribute('d')]; }),
+        crossLabels: Array.from(document.querySelectorAll('.edge-label')).map(function (e) { return [e.getAttribute('data-edge-label'),e.textContent.trim(),e.style.left,e.style.top]; })
+      };
+    }); };
+    const before = await capture();
+    await page.locator('#plus').click(); await page.locator('#plus').click(); await waitFrames(page);
+    const after = await capture();
+    assert(after.scale > before.scale, 'zoom control did not change the camera scale');
+    assert(JSON.stringify(after.nodes) === JSON.stringify(before.nodes), 'node boxes or in-box labels changed with zoom');
+    assert(JSON.stringify(after.edges) === JSON.stringify(before.edges), 'real connectors changed with zoom');
+    assert(JSON.stringify(after.crossLabels) === JSON.stringify(before.crossLabels), 'real connector labels changed with zoom');
+    assert(/^\d+%$/.test(await textOf(page, '#zoomLabel')), 'scale indicator should not expose a semantic zoom level');
+    assert(await page.locator('#map-labels, #aggregate-edges, #node-dots').count() === 0, 'overlay or summary layers remain mounted');
     await resetAtlas(page);
-    assert(await getLod(page) === 'overview', 'reset should return to the story map after zooming in');
   });
 
   await ok('whole-map and chapter fits stay inside the desktop canvas', async function () {
     await resetAtlas(page);
     const all = await fitSnapshot(page);
-    assert(all.lod === 'overview', 'reset should return to the story map');
+    assert(all.lod === null, 'whole-map fit must not set a semantic zoom level');
     assert(all.frames.length === 3, 'three frames expected');
     all.frames.forEach(function (frame) {
       assert(fullyInside(frame.rect, all.canvas), frame.id + ' frame is clipped by the whole-map fit');
@@ -392,7 +283,7 @@ async function runVariant(browser, variant) {
 
     await openChapter(page, 'home');
     const home = await fitSnapshot(page);
-    assert(home.lod === 'structure', 'a focused chapter should stay at the event map LOD');
+    assert(home.lod === null, 'chapter focus must not set a semantic zoom level');
     assert(await page.locator('[data-chapter="home"]').getAttribute('aria-pressed') === 'true', 'home chapter is not active');
     const homeFrame = home.frames.filter(function (f) { return f.id === 'home'; })[0];
     assert(homeFrame && fullyInside(homeFrame.rect, home.canvas), 'focused home chapter is clipped by the canvas');
@@ -406,12 +297,12 @@ async function runVariant(browser, variant) {
     assert(karaFrame && fullyInside(karaFrame.rect, kara.canvas), 'focused Kara chapter is clipped by the canvas');
     await page.locator('[data-chapter="all"]').click();
     await waitFrames(page);
-    assert(await getLod(page) === 'overview', 'whole atlas should return to the story map');
+    assert(await page.locator('#canvas').getAttribute('data-lod') === null, 'reset must not restore a semantic zoom level');
   });
 
   await ok('Meet Todd keeps its two separate prerequisite gates', async function () {
     await openChapter(page, 'kara');
-    await page.locator('[data-event-node="k_meet"]').click();
+    await page.locator('[data-node="k_meet"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const d = await textOf(page, '#details');
     assert(d.indexOf('Meet Todd') !== -1, 'details heading missing');
@@ -429,7 +320,7 @@ async function runVariant(browser, variant) {
 
   await ok('Alice box keeps a dashed unresolved hypothesis and opens the real later node', async function () {
     await openChapter(page, 'home');
-    await page.locator('[data-event-node="a_box"]').click();
+    await page.locator('[data-node="a_box"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const d = await textOf(page, '#details');
     assert(/open alice/i.test(d), 'box heading missing: ' + d.slice(0, 80));
@@ -462,7 +353,7 @@ async function runVariant(browser, variant) {
   await ok('the two successful non-gun escapes stay separate and Todd links stay inferred', async function () {
     await openChapter(page, 'stormy');
     for (const id of ['s_front_backyard_escape', 's_window_reach_bus']) {
-      await page.locator('[data-event-node="' + id + '"]').click();
+      await page.locator('[data-node="' + id + '"]').click();
       await page.locator('#details').waitFor({ state: 'visible' });
       const d = await textOf(page, '#details');
       assert(d.indexOf('do not state Todd’s later state') !== -1 || d.indexOf("do not state Todd's later state") !== -1,
@@ -478,7 +369,7 @@ async function runVariant(browser, variant) {
       await page.locator('#details').waitFor({ state: 'hidden' });
     }
 
-    await page.locator('[data-event-node="s_window_open"]').click();
+    await page.locator('[data-node="s_window_open"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const windowDetails = await textOf(page, '#details');
     assert(windowDetails.indexOf('route available') !== -1 && windowDetails.indexOf('successful branch') !== -1,
@@ -503,7 +394,7 @@ async function runVariant(browser, variant) {
       return null;
     });
     assert(hypothesis, 'fixture hypothesis edge missing');
-    await page.locator('#map-labels .cross-label.hypothesis[data-edge="' + hypothesis.index + '"]').click();
+    await page.locator('.edge-label.hypothesis[data-edge-label="' + hypothesis.index + '"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const d = await textOf(page, '#details');
     assert(d.indexOf('Todd dialogue') !== -1, 'crosslink should open the actual later endpoint');
@@ -542,7 +433,7 @@ async function runVariant(browser, variant) {
     await page.locator('#details').waitFor({ state: 'hidden' });
 
     await resetAtlas(page);
-    await page.locator('#map-labels .cross-label.prerequisite').first().click();
+    await page.locator('.edge-label.prerequisite').first().click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const gate = await textOf(page, '#details');
     assert(gate.indexOf('Meet Todd') !== -1, 'gate crosslink should open Meet Todd');
@@ -564,7 +455,7 @@ async function runVariant(browser, variant) {
 
   await ok('close button and Escape reduce to the same state and restore focus', async function () {
     await openChapter(page, 'home');
-    await page.locator('[data-event-node="a_talk"]').click();
+    await page.locator('[data-node="a_talk"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const hashBefore = await page.evaluate(function () { return location.hash; });
     await page.locator('#details-close').click();
@@ -579,7 +470,7 @@ async function runVariant(browser, variant) {
     };
     assert(afterButton.focused === 'a_talk', 'focus should return to the event map button, was ' + afterButton.focused);
 
-    await page.locator('[data-event-node="a_talk"]').click();
+    await page.locator('[data-node="a_talk"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     await page.keyboard.press('Escape');
     await page.locator('#details').waitFor({ state: 'hidden' });
@@ -595,7 +486,7 @@ async function runVariant(browser, variant) {
           id: a && (a.getAttribute('data-event-node') || a.getAttribute('data-node')),
           tag: a && a.tagName,
           className: a && a.className,
-          eventMode: document.querySelector('[data-event-node="a_talk"]') && getComputedStyle(document.querySelector('[data-event-node="a_talk"]')).display,
+          eventMode: document.querySelector('[data-node="a_talk"]') && getComputedStyle(document.querySelector('[data-node="a_talk"]')).display,
           nodeMode: document.querySelector('[data-node="a_talk"]') && getComputedStyle(document.querySelector('[data-node="a_talk"]')).visibility
         };
       })
@@ -607,11 +498,11 @@ async function runVariant(browser, variant) {
 
   await ok('history trail records visits and reopens them', async function () {
     await openChapter(page, 'kara');
-    await page.locator('[data-event-node="k_goodbye"]').click();
+    await page.locator('[data-node="k_goodbye"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     await resetAtlas(page);
     await openChapter(page, 'stormy');
-    await page.locator('[data-event-node="s_alive"]').click();
+    await page.locator('[data-node="s_alive"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const items = page.locator('#trail [data-trail]');
     assert(await items.count() >= 2, 'trail should hold the recent visits');
@@ -655,7 +546,7 @@ async function runVariant(browser, variant) {
 
   await ok('palette keeps text contrast at or above 4.5:1', async function () {
     await openChapter(page, 'kara');
-    await page.locator('[data-event-node="k_terminal"]').click();
+    await page.locator('[data-node="k_terminal"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const samples = await page.evaluate(function () {
       function parse(c) {
@@ -682,8 +573,7 @@ async function runVariant(browser, variant) {
         return { r: 0, g: 0, b: 0, a: 1 };
       }
       const sels = [
-        '.region-label', '.region-label span', '.event-label', '.cross-label',
-        '.node .label', '.node .k', '.edge-label.prerequisite',
+        '.frame-title', '.node-label', '.node .sub', '.edge-label.prerequisite',
         '.status', '.details h2', '.details p', '.details .tiny', '.brand span',
         '.chapter', '.chapter small', '.trail button', '.zoom span', '.legend'
       ];
@@ -750,7 +640,7 @@ async function runVariant(browser, variant) {
     assert(!remembered.overlay && !remembered.consentButton, 'remembered consent should skip the cover after reload');
     assert(remembered.stored === '1', 'consent should persist in localStorage');
     assert(remembered.canvas.width > 0 && remembered.canvas.height > 0, 'remembered revisit still needs a usable canvas');
-    assert(remembered.lod === 'overview', 'remembered revisit should open on the story map');
+    assert(remembered.lod === null, 'remembered revisit should have no semantic zoom state');
   });
 
   await ok('hash round-trips restore a node and an edge-focused deep link after consent', async function () {
@@ -803,206 +693,83 @@ async function runVariant(browser, variant) {
    labels, dragging the same canvas, and whole-map/chapter fit. Chromium
    viewport emulation, not a physical phone or a real touch-gesture check. */
 async function runMobileRegression(browser) {
-  console.log('scenario mobile-390 (production CSS, viewport emulation only)');
-  const page = await browser.newPage({
-    viewport: { width: 390, height: 844 },
-    deviceScaleFactor: 1,
-    isMobile: true,
-    hasTouch: true
-  });
+  console.log('scenario mobile-390 stable map');
   const pageErrors = [];
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   page.on('pageerror', function (e) { pageErrors.push('pageerror: ' + e.message); });
   page.on('console', function (m) { if (m.type() === 'error') pageErrors.push('console: ' + m.text()); });
-  const url = baseUrl + '/prototype/poc4-editorial.html';
-  await page.goto(url + '#');
+  await page.goto(baseUrl + '/prototype/poc4-editorial.html#');
   await page.locator('#consent').waitFor({ state: 'visible' });
-  const beforeConsent = await page.evaluate(function () {
-    const canvas = document.getElementById('canvas').getBoundingClientRect();
-    return {
-      overlay: !!document.getElementById('spoiler-overlay'),
-      canvasWidth: canvas.width,
-      canvasHeight: canvas.height,
-      nodes: document.querySelectorAll('[data-node]').length
-    };
+  await ok('mobile spoiler cover keeps the real map underneath', async function () {
+    assert(await page.locator('[data-node]').count() === 38, 'real nodes must be mounted beneath the cover');
+    assert(await page.locator('path.edge').count() === 42, 'real edges must be mounted beneath the cover');
+    assert(await page.locator('#spoiler-overlay').isVisible(), 'spoiler cover should be visible');
   });
-  assert(beforeConsent.overlay, 'mobile cover missing');
-  assert(beforeConsent.canvasWidth > 0 && beforeConsent.canvasHeight > 0, 'map must have layout beneath the mobile cover');
-  assert(beforeConsent.nodes === 38, 'map content must be mounted beneath the mobile cover');
   await page.locator('#consent').click();
   await page.locator('#spoiler-overlay').waitFor({ state: 'detached' });
-  await page.locator('#world').waitFor({ state: 'visible' });
   await waitFrames(page);
 
-  await ok('390x844 keeps the whole-story map and its labels inside the viewport', async function () {
-    const layout = await page.evaluate(function () {
+  await ok('390x844 fit keeps one stable graph and avoids page overflow', async function () {
+    const m = await page.evaluate(function () {
       const canvas = document.getElementById('canvas').getBoundingClientRect();
-      const workspace = document.querySelector('.workspace').getBoundingClientRect();
-      const wrap = document.querySelector('.canvas-wrap').getBoundingClientRect();
-      function labels(selector) {
-        return Array.prototype.slice.call(document.querySelectorAll(selector)).filter(function (el) {
-          const s = getComputedStyle(el);
-          const r = el.getBoundingClientRect();
-          return s.visibility === 'visible' && s.display !== 'none' && r.width > 0 && r.height > 0;
-        }).map(function (el) {
-          const r = el.getBoundingClientRect();
-          const name = el.querySelector('strong');
-          return {
-            id: el.getAttribute('data-region') || el.getAttribute('data-event-node') || el.getAttribute('data-edge'),
-            text: el.textContent.replace(/\s+/g, ' ').trim(),
-            font: parseFloat(getComputedStyle(name || el).fontSize),
-            inside: r.left >= canvas.left - 1 && r.right <= canvas.right + 1 &&
-              r.top >= canvas.top - 1 && r.bottom <= canvas.bottom + 1,
-            intersects: r.right > canvas.left && r.left < canvas.right && r.bottom > canvas.top && r.top < canvas.bottom
-          };
-        });
-      }
+      const world = document.getElementById('world');
+      const matrix = new DOMMatrixReadOnly(getComputedStyle(world).transform);
       return {
-        innerWidth: window.innerWidth,
-        innerHeight: window.innerHeight,
-        canvas: { left: canvas.left, top: canvas.top, width: canvas.width, height: canvas.height },
-        workspace: { width: workspace.width, height: workspace.height },
-        wrap: { width: wrap.width, height: wrap.height },
-        scrollWidth: document.documentElement.scrollWidth,
-        lod: document.getElementById('canvas').getAttribute('data-lod'),
-        density: document.getElementById('canvas').getAttribute('data-density'),
-        canvasTouchAction: getComputedStyle(document.getElementById('canvas')).touchAction,
-        regionLabels: labels('#map-labels .region-label'),
-        eventLabels: labels('#map-labels .event-label'),
-        actualEventIds: ATLAS.nodes.map(function (n) { return n.id; }),
-        crossLabels: labels('#map-labels .cross-label'),
-        overviewSurface: document.querySelectorAll('#overview, .overview-card, .overview-link').length
+        width: canvas.width,
+        viewport: innerWidth,
+        overflow: document.documentElement.scrollWidth > innerWidth + 1,
+        nodes: document.querySelectorAll('[data-node]').length,
+        labels: document.querySelectorAll('[data-node-label]').length,
+        edges: document.querySelectorAll('path.edge').length,
+        frames: Array.from(document.querySelectorAll('.frame')).map(function (f) {
+          const r=f.getBoundingClientRect(); return { inside:r.left>=canvas.left-1&&r.right<=canvas.right+1&&r.top>=canvas.top-1&&r.bottom<=canvas.bottom+1 };
+        }),
+        scale: matrix.a
       };
     });
-    assert(Math.abs(layout.canvas.width - layout.innerWidth) <= 1,
-      'canvas width ' + layout.canvas.width + ' should match viewport ' + layout.innerWidth + ' within 1px');
-    assert(layout.canvas.height > 0, 'canvas height must be > 0, got ' + layout.canvas.height);
-    assert(layout.workspace.width <= layout.innerWidth + 1,
-      'workspace width ' + layout.workspace.width + ' exceeds viewport ' + layout.innerWidth);
-    assert(layout.scrollWidth <= layout.innerWidth + 1,
-      'document horizontally overflows: ' + layout.scrollWidth + ' > ' + layout.innerWidth);
-    assert(layout.wrap.height > 0, 'canvas wrapper height must be > 0');
-    assert(layout.lod === 'overview', 'mobile opening should be the whole-story map');
-    assert(layout.density === 'sparse', 'real sample should be marked sparse');
-    assert(layout.overviewSurface === 0, 'mobile opening must not be a card/report surface');
-    assert(layout.regionLabels.length === 3, 'mobile story map needs three chapter labels');
-    layout.regionLabels.forEach(function (label) {
-      assert(label.font >= 14, label.id + ' mobile chapter label font ' + label.font + 'px is too small');
-      assert(label.inside, label.id + ' mobile chapter label is outside the canvas');
-    });
-    assert(layout.eventLabels.length >= 3, 'mobile story map needs named events in its visible regions, got ' + layout.eventLabels.length);
-    layout.eventLabels.forEach(function (label) {
-      assert(label.font >= 11, label.id + ' mobile event label font ' + label.font + 'px is too small');
-      assert(label.intersects, label.id + ' mobile event label is outside the canvas');
-      assert(layout.actualEventIds.indexOf(label.id) !== -1 && label.text.length > 0,
-        label.id + ' mobile marker must name a real event, not an anonymous box');
-    });
-    assert(layout.crossLabels.length === 4, 'all four actual cross-chapter labels should be available on mobile');
-    assert(layout.canvasTouchAction === 'none', 'mobile map should own pan/zoom gestures, got ' + layout.canvasTouchAction);
-
-    const drag = await page.evaluate(function () {
-      const canvas = document.getElementById('canvas');
-      const r = canvas.getBoundingClientRect();
-      let point = null;
-      for (let y = r.top + 20; y < r.bottom - 20 && !point; y += 12) {
-        for (let x = r.left + 20; x < r.right - 20; x += 12) {
-          const el = document.elementFromPoint(x, y);
-          if (el && el.closest('#canvas') && !el.closest('button, a, input, .legend, .status, .zoom, #map-labels')) {
-            point = { x: x, y: y };
-            break;
-          }
-        }
-      }
-      const world = document.getElementById('world');
-      return {
-        point: point,
-        transform: world.style.transform,
-        draggingBefore: canvas.classList.contains('dragging')
-      };
-    });
-    assert(drag.point, 'could not find a non-control point on the mobile map');
-    await page.mouse.move(drag.point.x, drag.point.y);
-    await page.mouse.down();
-    await page.mouse.move(drag.point.x + 45, drag.point.y - 35, { steps: 6 });
-    await page.mouse.up();
-    await waitFrames(page);
-    const afterDrag = await page.evaluate(function () {
-      const world = document.getElementById('world');
-      const canvas = document.getElementById('canvas');
-      return { transform: world.style.transform, dragging: canvas.classList.contains('dragging') };
-    });
-    assert(!drag.draggingBefore && !afterDrag.dragging, 'map must not stay in camera-drag state');
-    assert(afterDrag.transform !== drag.transform, 'mobile map drag did not pan the same canvas');
+    assert(Math.abs(m.width-m.viewport)<=1, 'canvas width does not fit the mobile viewport');
+    assert(!m.overflow, 'mobile page has horizontal overflow');
+    assert(m.nodes===38&&m.labels===38&&m.edges===42, 'mobile viewport changed graph inventory');
+    assert(m.frames.every(function(f){return f.inside;}), 'whole-map Fit should contain all chapter regions');
+    assert(m.scale>0&&m.scale<1, 'mobile fit should scale the same world map');
   });
 
-  await ok('390x844 whole-map and chapter fits do not clip', async function () {
-    await page.locator('#fit').click();
-    await waitFrames(page);
-    const all = await fitSnapshot(page);
-    assert(all.lod === 'overview', 'mobile fit check should start at the story map');
-    all.frames.forEach(function (frame) {
-      assert(fullyInside(frame.rect, all.canvas), frame.id + ' mobile whole-map frame is clipped');
-    });
-    const fullLabels = await page.evaluate(function () {
-      const c = document.getElementById('canvas').getBoundingClientRect();
-      return Array.prototype.slice.call(document.querySelectorAll('#map-labels .region-label')).map(function (el) {
-        const r = el.getBoundingClientRect();
-        return {
-          id: el.getAttribute('data-region'),
-          inside: r.left >= c.left - 1 && r.right <= c.right + 1 && r.top >= c.top - 1 && r.bottom <= c.bottom + 1
-        };
-      });
-    });
-    assert(fullLabels.length === 3 && fullLabels.every(function (l) { return l.inside; }),
-      'mobile whole-map chapter labels must all stay inside the canvas');
-    assert(!all.horizontalOverflow, 'mobile whole-map fit introduced horizontal overflow');
-
+  await ok('mobile chapter focus and pan preserve the same world-space graph', async function () {
+    const before = await page.evaluate(function () { const w=document.getElementById('world'); const m=new DOMMatrixReadOnly(getComputedStyle(w).transform); return {a:m.a,e:m.e,f:m.f}; });
     await page.locator('[data-chapter="home"]').click();
     await waitFrames(page);
-    const focused = await fitSnapshot(page);
-    assert(focused.lod === 'structure', 'mobile chapter focus should show the event map');
-    assert(await page.locator('[data-chapter="home"]').getAttribute('aria-pressed') === 'true', 'chapter focus did not become active');
-    const home = focused.frames.filter(function (f) { return f.id === 'home'; })[0];
-    assert(home && fullyInside(home.rect, focused.canvas), 'mobile focused chapter is clipped by the canvas');
-    assert(focused.nodeCount === 38 && focused.edgeCount === 42, 'mobile chapter focus must keep the graph mounted');
-    const homeLabels = await page.evaluate(function () {
-      return Array.prototype.slice.call(document.querySelectorAll('#map-labels .event-label')).map(function (el) {
-        return el.getAttribute('data-event-node');
-      });
+    const focused = await page.evaluate(function () {
+      const canvas=document.getElementById('canvas').getBoundingClientRect();
+      const frame=document.querySelector('[data-chapter-frame="home"]').getBoundingClientRect();
+      const world=document.getElementById('world'); const m=new DOMMatrixReadOnly(getComputedStyle(world).transform);
+      return { pressed:document.querySelector('[data-chapter="home"]').getAttribute('aria-pressed'), inside:frame.left>=canvas.left-1&&frame.right<=canvas.right+1&&frame.top>=canvas.top-1&&frame.bottom<=canvas.bottom+1, nodes:document.querySelectorAll('[data-node]').length, labels:document.querySelectorAll('[data-node-label]').length, edges:document.querySelectorAll('path.edge').length, camera:{a:m.a,e:m.e,f:m.f}, text:Array.from(document.querySelectorAll('[data-node-label]')).map(function(x){return x.textContent.trim();}) };
     });
-    assert(homeLabels.length >= 8, 'mobile chapter fit should show readable event labels, got ' + homeLabels.length);
-    assert(!focused.horizontalOverflow, 'mobile chapter focus introduced horizontal overflow');
+    assert(focused.pressed==='true'&&focused.inside, 'mobile chapter focus did not fit its real frame');
+    assert(focused.nodes===38&&focused.labels===38&&focused.edges===42, 'chapter focus swapped or hid real graph content');
+    assert(focused.text.every(Boolean), 'chapter focus has an anonymous event label');
+    const point=await page.evaluate(function(){const c=document.getElementById('canvas'),r=c.getBoundingClientRect();for(let y=r.top+25;y<r.bottom-25;y+=12){for(let x=r.left+25;x<r.right-25;x+=12){const el=document.elementFromPoint(x,y);if(el&&c.contains(el)&&!el.closest('button,a,input,.legend,.status,.zoom'))return{x:x,y:y};}}return null;});
+    assert(point,'no clear map point for mobile pan');
+    await page.mouse.move(point.x,point.y); await page.mouse.down();
+    await page.mouse.move(point.x+45,point.y-35,{steps:5}); await page.mouse.up(); await waitFrames(page);
+    const after=await page.evaluate(function(){const m=new DOMMatrixReadOnly(getComputedStyle(document.getElementById('world')).transform);return {a:m.a,e:m.e,f:m.f};});
+    assert(Math.abs(after.a-focused.camera.a)<1e-6, 'pan changed camera scale');
+    assert(Math.abs(after.e-focused.camera.e)>1||Math.abs(after.f-focused.camera.f)>1, 'pan did not move the world');
+    assert(before.a>0, 'initial mobile camera was invalid');
   });
 
-  await ok('390x844 detail selection remains reachable and contained', async function () {
+  await ok('mobile search opens usable details and preserves the map', async function () {
     await page.locator('#q').fill('meet');
-    const hit = page.locator('#results [data-hit="k_meet"]');
-    assert(await hit.count() === 1, 'mobile search should find Meet Todd');
-    await hit.click();
-    await page.locator('#details').waitFor({ state: 'visible' });
-    assert(await page.locator('#details-close').isVisible(), 'details close control is not reachable');
-    const details = await page.evaluate(function () {
-      const r = document.getElementById('details').getBoundingClientRect();
-      return {
-        left: r.left,
-        right: r.right,
-        width: r.width,
-        innerWidth: window.innerWidth,
-        scrollWidth: document.documentElement.scrollWidth,
-        canvasVisible: document.getElementById('canvas').getBoundingClientRect().width > 0,
-        text: document.getElementById('details').textContent.replace(/\s+/g, ' ').trim()
-      };
-    });
-    assert(details.left >= -1 && details.right <= details.innerWidth + 1,
-      'details panel exceeds the viewport: ' + details.left + '..' + details.right);
-    assert(details.width > 0, 'details panel has no width');
-    assert(details.scrollWidth <= details.innerWidth + 1, 'details selection introduced horizontal overflow');
-    assert(details.canvasVisible, 'map must stay laid out behind the mobile details panel');
-    assert(details.text.indexOf('Meet Todd') !== -1, 'mobile details did not open the selected node');
-    await page.locator('#details-close').click();
-    await page.locator('#details').waitFor({ state: 'hidden' });
-    assert(pageErrors.length === 0, pageErrors.join(' | '));
+    const hit=page.locator('#results [data-hit="k_meet"]');
+    assert(await hit.count()===1, 'search should find Meet Todd');
+    await hit.click(); await page.locator('#details').waitFor({state:'visible'});
+    assert(await page.locator('#details-close').isVisible(), 'details close control is not visible');
+    assert((await textOf(page,'#details')).includes('Meet Todd'), 'wrong event details opened');
+    assert((await page.locator('[data-node]').count())===38, 'map must stay mounted behind details');
+    const r=await page.locator('#details').boundingBox();
+    assert(r&&r.x>=-1&&r.x+r.width<=390+1, 'details panel extends beyond the mobile viewport');
+    await page.keyboard.press('Escape'); await page.locator('#details').waitFor({state:'hidden'});
+    assert(pageErrors.length===0,pageErrors.join(' | '));
   });
-
   await page.close();
 }
 
