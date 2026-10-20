@@ -1,22 +1,41 @@
 /* PoC4 — shared atlas behaviour core.
-   Pure, DOM-free state transitions shared by all three poc4-*.html entries and
-   unit-tested by tests/atlas-core.test.js. Loaded as a classic script after
-   atlas-data.js; in Node the tests evaluate this file in a function scope.
+   Pure, DOM-free state transitions shared by all three poc4-*.html entries,
+   the synthetic benchmark entry, and unit-tested by tests/atlas-core.test.js.
+   Loaded as a classic script after atlas-data.js; in Node the tests evaluate
+   this file in a function scope.
 
-   State shape: { consented, chapter, selected, trail, query }
-     consented — false until the spoiler overlay is accepted.
+   State shape: { consented, chapter, selected, edge, trail, query }
+     consented — false until the spoiler overlay is accepted (persisted by the page).
      chapter   — 'all' or a chapter id; camera preset only, never hides the map.
      selected  — node id with details open, or null.
+     edge      — index into data.edges for a focused cross-chapter connector, or null.
      trail     — most-recent-first selection history (ids), max 8, deduped.
-     query     — current search text. */
+     query     — current search text.
+
+   Whole-story level of detail is a pure function of camera scale:
+     overview  — chapter cards only, shown at whole-atlas fit.
+     structure — event boxes, no event labels.
+     detail    — event boxes and labels.
+   A focused chapter always skips the chapter-card overview so a narrow mobile
+   chapter fit cannot fall back to the story level. */
 
 var ATLAS_CORE = (function () {
   'use strict';
 
   var MAX_TRAIL = 8;
+  var MIN_SCALE = 0.02;
+  var OVERVIEW_MAX_SCALE = 0.52;
+  var DETAIL_MIN_SCALE = 0.8;
 
   function clone(s) {
-    return { consented: s.consented, chapter: s.chapter, selected: s.selected, trail: s.trail.slice(), query: s.query };
+    return {
+      consented: s.consented,
+      chapter: s.chapter,
+      selected: s.selected,
+      edge: s.edge == null ? null : s.edge,
+      trail: s.trail.slice(),
+      query: s.query
+    };
   }
 
   function findNode(data, id) {
@@ -33,11 +52,19 @@ var ATLAS_CORE = (function () {
     return null;
   }
 
+  function validEdgeIndex(data, index) {
+    var i = Number(index);
+    return isFinite(i) && i % 1 === 0 && i >= 0 && i < data.edges.length ? i : null;
+  }
+
   var api = {
     MAX_TRAIL: MAX_TRAIL,
+    MIN_SCALE: MIN_SCALE,
+    OVERVIEW_MAX_SCALE: OVERVIEW_MAX_SCALE,
+    DETAIL_MIN_SCALE: DETAIL_MIN_SCALE,
 
     createState: function () {
-      return { consented: false, chapter: 'all', selected: null, trail: [], query: '' };
+      return { consented: false, chapter: 'all', selected: null, edge: null, trail: [], query: '' };
     },
 
     consent: function (state) {
@@ -46,12 +73,19 @@ var ATLAS_CORE = (function () {
       return s;
     },
 
-    /* Clears the selection and search, returns the camera to the whole atlas.
-       Trail history and consent are intentionally retained. */
+    revokeConsent: function (state) {
+      var s = clone(state);
+      s.consented = false;
+      return s;
+    },
+
+    /* Clears the selection, edge focus and search, returns the camera to the
+       whole atlas. Trail history and consent are intentionally retained. */
     reset: function (state) {
       var s = clone(state);
       s.chapter = 'all';
       s.selected = null;
+      s.edge = null;
       s.query = '';
       return s;
     },
@@ -62,6 +96,7 @@ var ATLAS_CORE = (function () {
       }
       var s = clone(state);
       s.chapter = chapterId;
+      s.edge = null;
       return s;
     },
 
@@ -71,6 +106,7 @@ var ATLAS_CORE = (function () {
       if (!node) throw new Error('unknown node: ' + id);
       var s = clone(state);
       s.selected = id;
+      s.edge = null;
       s.chapter = node.chapter;
       s.trail = s.trail.filter(function (t) { return t !== id; });
       s.trail.unshift(id);
@@ -78,10 +114,23 @@ var ATLAS_CORE = (function () {
       return s;
     },
 
+    /* Focuses one actual cross-chapter edge. The later endpoint is selected so
+       the details panel can show the edge's label, note and evidence sources.
+       No aggregate edge is created: callers pass the real edge index. */
+    focusEdge: function (state, index, data) {
+      var i = validEdgeIndex(data, index);
+      if (i == null) throw new Error('unknown edge: ' + index);
+      var edge = data.edges[i];
+      var s = api.selectNode(state, edge.to, data);
+      s.edge = i;
+      return s;
+    },
+
     /* Both detail-close paths (close button, Escape) reduce to this. */
     closeDetails: function (state) {
       var s = clone(state);
       s.selected = null;
+      s.edge = null;
       return s;
     },
 
@@ -103,33 +152,97 @@ var ATLAS_CORE = (function () {
     },
 
     hashFor: function (state) {
-      return '#' + state.chapter + (state.selected ? '/' + state.selected : '');
+      var h = '#' + state.chapter + (state.selected ? '/' + state.selected : '');
+      if (state.selected && state.edge != null) h += '?edge=' + state.edge;
+      return h;
     },
 
-    /* Parses '#chapter[/node]'; unknown parts degrade to safe defaults. */
+    /* Parses '#chapter[/node][?edge=N]'; unknown parts degrade to safe defaults. */
     applyHash: function (state, hash, data) {
       var s = clone(state);
       var raw = String(hash == null ? '' : hash).replace(/^#/, '');
       try { raw = decodeURIComponent(raw); } catch (e) { /* keep raw */ }
       if (!raw) return s;
+      var edgeIndex = null;
+      var edgeAt = raw.indexOf('?edge=');
+      if (edgeAt !== -1) {
+        edgeIndex = validEdgeIndex(data, raw.slice(edgeAt + 6));
+        raw = raw.slice(0, edgeAt);
+      }
       var parts = raw.split('/');
       var chapterId = parts[0] || 'all';
       var nodeId = parts[1] || null;
       var node = nodeId ? findNode(data, nodeId) : null;
       if (node) {
         s = api.selectNode(s, node.id, data);
+        if (edgeIndex != null && data.edges[edgeIndex].to === node.id) s.edge = edgeIndex;
         return s;
       }
       if (chapterId === 'all' || findChapter(data, chapterId)) {
         s.chapter = chapterId;
         s.selected = null;
+        s.edge = null;
       }
       return s;
     },
 
     /* Same visible target? Used to avoid reapplying a self-inflicted hashchange. */
     sameTarget: function (a, b) {
-      return a.chapter === b.chapter && a.selected === b.selected;
+      return a.chapter === b.chapter && a.selected === b.selected && a.edge === b.edge;
+    },
+
+    /* Whole-story progressive disclosure. Chapter focus deliberately bypasses
+       the chapter-card overview; the user asked for that chapter's events. */
+    lodFor: function (scale, chapter) {
+      if (chapter === 'all' && scale < OVERVIEW_MAX_SCALE) return 'overview';
+      return scale >= DETAIL_MIN_SCALE - 1e-9 ? 'detail' : 'structure';
+    },
+
+    /* Deterministic bounds fit used by both chapter focus and full-map fit.
+       The returned transform keeps box inside [pad, padTop] .. [w-pad, h-pad].
+       No minimum-scale clamp is applied here, so narrow mobile fits cannot clip. */
+    fitBounds: function (viewport, box, pad, padTop) {
+      var p = pad == null ? 0 : pad;
+      var pt = padTop == null ? p : padTop;
+      var availW = Math.max(1, viewport.width - p * 2);
+      var availH = Math.max(1, viewport.height - p - pt);
+      var scale = Math.min(availW / box.w, availH / box.h);
+      if (!isFinite(scale) || scale <= 0) scale = MIN_SCALE;
+      scale = Math.min(scale, 1.5);
+      return {
+        scale: scale,
+        tx: p + (availW - box.w * scale) / 2 - box.x * scale,
+        ty: pt + (availH - box.h * scale) / 2 - box.y * scale
+      };
+    },
+
+    /* Groups only actual edges that cross a chapter boundary. The overview uses
+       these groups for navigation; the renderer never invents a summary edge. */
+    crossChapterLinks: function (data) {
+      var chapterOf = {};
+      var chapterIndex = {};
+      data.nodes.forEach(function (n) { chapterOf[n.id] = n.chapter; });
+      data.chapters.forEach(function (c, i) { chapterIndex[c.id] = i; });
+      var groups = {};
+      var order = [];
+      data.edges.forEach(function (edge, index) {
+        var fromChapter = chapterOf[edge.from];
+        var toChapter = chapterOf[edge.to];
+        if (!fromChapter || !toChapter || fromChapter === toChapter) return;
+        var key = fromChapter + '>' + toChapter;
+        if (!groups[key]) {
+          groups[key] = { key: key, from: fromChapter, to: toChapter, edges: [] };
+          order.push(key);
+        }
+        groups[key].edges.push({ index: index, edge: edge });
+      });
+      order.sort(function (a, b) {
+        var ga = groups[a], gb = groups[b];
+        var af = chapterIndex[ga.from], bf = chapterIndex[gb.from];
+        if (af !== bf) return af - bf;
+        return chapterIndex[ga.to] - chapterIndex[gb.to];
+      });
+      return order.map(function (key) { return groups[key]; });
     }
   };
 

@@ -139,6 +139,16 @@ check('exactly two cross-chapter links, both into the Kara region', () => {
   return errors;
 });
 
+check('cross-chapter edges have connector-specific source refs', () => {
+  const errors = [];
+  const cross = edges.filter(e => byId.has(e.from) && byId.has(e.to) && byId.get(e.from).chapter !== byId.get(e.to).chapter);
+  for (const e of cross) {
+    if (!Array.isArray(e.src) || !e.src.length) errors.push(`cross-chapter edge ${e.from}->${e.to} has no connector-specific source refs`);
+    else for (const key of e.src) if (!ATLAS.refs[key]) errors.push(`cross-chapter edge ${e.from}->${e.to} references unknown ref "${key}"`);
+  }
+  return errors;
+});
+
 check('Meet Todd receives exactly the two reported prerequisite gates', () => {
   const errors = [];
   const incoming = edges.filter(e => e.to === 'k_meet');

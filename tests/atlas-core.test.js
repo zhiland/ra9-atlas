@@ -49,7 +49,7 @@ const edgesTo = function (id) { return ATLAS.edges.filter(function (e) { return 
 
 console.log('atlas-core.js — state transitions');
 check('createState starts unconsented on the whole atlas', function () {
-  eq(C.createState(), { consented: false, chapter: 'all', selected: null, trail: [], query: '' });
+  eq(C.createState(), { consented: false, chapter: 'all', selected: null, edge: null, trail: [], query: '' });
 });
 
 check('consent sets the flag without mutating the input', function () {
@@ -59,6 +59,13 @@ check('consent sets the flag without mutating the input', function () {
   assert(s0.consented === false, 'input state was mutated');
 });
 
+check('revokeConsent restores the warning state without mutating the input', function () {
+  const s0 = C.consent(C.createState());
+  const s1 = C.revokeConsent(s0);
+  assert(s1.consented === false, 'consent was not revoked');
+  assert(s0.consented === true, 'input state was mutated');
+});
+
 check('jumpChapter moves between chapters and accepts "all"', function () {
   const s0 = C.createState();
   const s1 = C.jumpChapter(s0, 'kara', ATLAS);
@@ -66,6 +73,14 @@ check('jumpChapter moves between chapters and accepts "all"', function () {
   eq(s1.chapter, 'kara');
   eq(s2.chapter, 'all');
   eq(s0.chapter, 'all', 'input state was mutated');
+});
+
+check('jumpChapter clears an edge focus but keeps consent', function () {
+  const index = ATLAS.edges.findIndex(function (e) { return e.kind === 'hypothesis'; });
+  const s0 = C.focusEdge(C.consent(C.createState()), index, ATLAS);
+  const s1 = C.jumpChapter(s0, 'home', ATLAS);
+  eq(s1.edge, null);
+  assert(s1.consented === true, 'consent must survive a chapter jump');
 });
 
 check('jumpChapter rejects an unknown chapter and leaves state untouched', function () {
@@ -92,6 +107,34 @@ check('selectNode rejects an unknown node', function () {
   assert(threw, 'unknown node was not rejected');
 });
 
+check('focusEdge selects the real later endpoint and records the edge index', function () {
+  const index = ATLAS.edges.findIndex(function (e) { return e.kind === 'hypothesis'; });
+  const s0 = C.consent(C.createState());
+  const s1 = C.focusEdge(s0, index, ATLAS);
+  eq(s1.selected, 'k_dialogue');
+  eq(s1.edge, index);
+  eq(s1.chapter, 'kara');
+  eq(s1.trail, ['k_dialogue']);
+  assert(s0.selected === null && s0.edge === null, 'input state was mutated');
+});
+
+check('focusEdge rejects an unknown edge', function () {
+  const s0 = C.createState();
+  let threw = false;
+  try { C.focusEdge(s0, 999, ATLAS); } catch (e) { threw = /unknown edge/.test(e.message); }
+  assert(threw, 'unknown edge was not rejected');
+  threw = false;
+  try { C.focusEdge(s0, 'nope', ATLAS); } catch (e) { threw = /unknown edge/.test(e.message); }
+  assert(threw, 'non-numeric edge was not rejected');
+});
+
+check('selectNode clears a previous edge focus', function () {
+  const index = ATLAS.edges.findIndex(function (e) { return e.kind === 'prerequisite'; });
+  const s = C.selectNode(C.focusEdge(C.createState(), index, ATLAS), 'a_box', ATLAS);
+  eq(s.edge, null);
+  eq(s.selected, 'a_box');
+});
+
 check('trail dedupes and keeps the most recent visit first', function () {
   let s = C.createState();
   s = C.selectNode(s, 'a_box', ATLAS);
@@ -109,25 +152,29 @@ check('trail caps at ' + C.MAX_TRAIL + ' entries', function () {
 });
 
 check('closeDetails clears only the selection and both close paths share it', function () {
-  const s1 = C.selectNode(C.createState(), 'a_box', ATLAS);
+  const index = ATLAS.edges.findIndex(function (e) { return e.kind === 'prerequisite'; });
+  const s1 = C.focusEdge(C.createState(), index, ATLAS);
   const buttonPath = C.closeDetails(s1);
   const escapePath = C.closeDetails(s1);
   eq(buttonPath, escapePath, 'the two close paths must reduce to the same state');
   eq(buttonPath.selected, null);
-  eq(buttonPath.trail, ['a_box'], 'history is kept after closing');
-  eq(buttonPath.chapter, 'home', 'camera preset is kept after closing');
+  eq(buttonPath.edge, null, 'edge focus is cleared with the details');
+  eq(buttonPath.trail, ['k_meet'], 'history is kept after closing');
+  eq(buttonPath.chapter, 'kara', 'camera preset is kept after closing');
 });
 
-check('reset clears selection, search and camera but keeps consent and history', function () {
+check('reset clears selection, edge focus, search and camera but keeps consent and history', function () {
   let s = C.consent(C.createState());
-  s = C.selectNode(s, 'k_check', ATLAS);
+  const index = ATLAS.edges.findIndex(function (e) { return e.kind === 'hypothesis'; });
+  s = C.focusEdge(s, index, ATLAS);
   s = C.setQuery(s, 'todd');
   const r = C.reset(s);
   eq(r.chapter, 'all');
   eq(r.selected, null);
+  eq(r.edge, null);
   eq(r.query, '');
   assert(r.consented === true, 'consent must survive reset');
-  eq(r.trail, ['k_check'], 'history must survive reset');
+  eq(r.trail, ['k_dialogue'], 'history must survive reset');
 });
 
 check('setQuery coerces to a string (null means empty)', function () {
@@ -156,6 +203,17 @@ check('applyHash accepts a chapter-only hash', function () {
   eq(s.selected, null);
 });
 
+check('edge focus survives a hash round-trip', function () {
+  const index = ATLAS.edges.findIndex(function (e) { return e.kind === 'hypothesis'; });
+  const direct = C.focusEdge(C.createState(), index, ATLAS);
+  const hash = C.hashFor(direct);
+  assert(/\?edge=\d+$/.test(hash), 'edge hash suffix missing: ' + hash);
+  const round = C.applyHash(C.createState(), hash, ATLAS);
+  assert(C.sameTarget(round, direct), 'edge focus did not round-trip (' + hash + ')');
+  eq(round.edge, index);
+  eq(round.selected, 'k_dialogue');
+});
+
 check('applyHash degrades unknown parts to safe defaults', function () {
   eq(C.applyHash(C.createState(), '', ATLAS), C.createState(), 'empty hash is a no-op');
   const unknownNode = C.applyHash(C.createState(), '#kara/not_a_node', ATLAS);
@@ -179,6 +237,8 @@ check('sameTarget compares visible target only', function () {
   const c = C.selectNode(C.createState(), 'k_away', ATLAS);
   assert(C.sameTarget(a, b));
   assert(!C.sameTarget(a, c));
+  const edgeIndex = ATLAS.edges.findIndex(function (e) { return e.kind === 'hypothesis'; });
+  assert(!C.sameTarget(a, C.focusEdge(C.createState(), edgeIndex, ATLAS)), 'edge focus must be a different target');
 });
 
 console.log('atlas-core.js — history rendering');
@@ -188,6 +248,120 @@ check('trailFor expands ids to label and chapter name', function () {
   eq(items[0].id, 'a_box');
   eq(items[0].chapterName, 'A New Home');
   assert(items[0].label.length > 0, 'label missing');
+});
+
+console.log('atlas-core.js — progressive disclosure');
+check('lodFor reveals chapter cards, then event boxes, then labels', function () {
+  eq(C.lodFor(C.OVERVIEW_MAX_SCALE - 0.01, 'all'), 'overview');
+  eq(C.lodFor(C.OVERVIEW_MAX_SCALE, 'all'), 'structure');
+  eq(C.lodFor(C.DETAIL_MIN_SCALE - 0.01, 'all'), 'structure');
+  eq(C.lodFor(C.DETAIL_MIN_SCALE, 'all'), 'detail');
+  eq(C.lodFor(0.1, 'home'), 'structure', 'a focused chapter must not fall back to the story overview');
+  eq(C.lodFor(2, 'home'), 'detail');
+});
+
+console.log('atlas-core.js — fit bounds');
+function fitBox(viewport, box, pad, padTop) {
+  const fitted = C.fitBounds(viewport, box, pad, padTop);
+  return {
+    fitted: fitted,
+    scale: fitted.scale,
+    left: fitted.tx + box.x * fitted.scale,
+    right: fitted.tx + (box.x + box.w) * fitted.scale,
+    top: fitted.ty + box.y * fitted.scale,
+    bottom: fitted.ty + (box.y + box.h) * fitted.scale
+  };
+}
+
+function inside(rect, viewport, pad, padTop) {
+  const tol = 0.01;
+  return rect.scale > 0 &&
+    rect.left >= pad - tol && rect.right <= viewport.width - pad + tol &&
+    rect.top >= padTop - tol && rect.bottom <= viewport.height - pad + tol;
+}
+
+check('full-map fit stays inside desktop and 390px mobile viewports', function () {
+  const box = { x: 0, y: 0, w: ATLAS.canvas.width, h: ATLAS.canvas.height };
+  [{ width: 1440, height: 757 }, { width: 390, height: 617 }].forEach(function (viewport) {
+    const fitted = fitBox(viewport, box, 28, 28);
+    assert(inside(fitted, viewport, 28, 28),
+      'full map clipped at ' + viewport.width + 'x' + viewport.height +
+      ': ' + JSON.stringify(fitted));
+  });
+});
+
+check('every chapter fit stays inside desktop and 390px mobile viewports', function () {
+  [{ width: 1440, height: 757 }, { width: 390, height: 617 }].forEach(function (viewport) {
+    ATLAS.chapters.forEach(function (chapter) {
+      const fitted = fitBox(viewport, chapter.frame, 56, 110);
+      assert(inside(fitted, viewport, 56, 110),
+        chapter.id + ' clipped at ' + viewport.width + 'x' + viewport.height +
+        ': ' + JSON.stringify(fitted));
+      assert(fitted.fitted.scale >= C.MIN_SCALE, chapter.id + ' fit fell below the global minimum scale');
+    });
+  });
+});
+
+check('fitBounds centers the box in the usable area', function () {
+  const viewport = { width: 1440, height: 757 };
+  const box = { x: 100, y: 50, w: 400, h: 200 };
+  const fitted = fitBox(viewport, box, 40, 40);
+  const leftGap = fitted.left - 40;
+  const rightGap = viewport.width - 40 - fitted.right;
+  const topGap = fitted.top - 40;
+  const bottomGap = viewport.height - 40 - fitted.bottom;
+  assert(Math.abs(leftGap - rightGap) < 0.01, 'horizontal gaps differ: ' + leftGap + ' / ' + rightGap);
+  assert(Math.abs(topGap - bottomGap) < 0.01, 'vertical gaps differ: ' + topGap + ' / ' + bottomGap);
+});
+
+console.log('atlas-core.js — chapter-level crosslinks');
+check('crossChapterLinks returns only actual cross-chapter edges', function () {
+  const groups = C.crossChapterLinks(ATLAS);
+  const flat = groups.reduce(function (out, g) { return out.concat(g.edges); }, []);
+  const expected = ATLAS.edges.filter(function (e) {
+    const a = ATLAS.nodes.find(function (n) { return n.id === e.from; });
+    const b = ATLAS.nodes.find(function (n) { return n.id === e.to; });
+    return a.chapter !== b.chapter;
+  });
+  eq(flat.length, expected.length, 'grouped edge count must match actual cross-chapter edges');
+  flat.forEach(function (item) {
+    const edge = ATLAS.edges[item.index];
+    assert(edge === item.edge, 'group item does not reference its real edge index');
+    const a = ATLAS.nodes.find(function (n) { return n.id === edge.from; });
+    const b = ATLAS.nodes.find(function (n) { return n.id === edge.to; });
+    assert(a.chapter !== b.chapter, 'group must not include an internal edge');
+  });
+  eq(groups.map(function (g) { return g.key; }), ['home>kara', 'stormy>kara']);
+});
+
+check('chapter groups preserve kinds and never synthesize edges', function () {
+  const groups = C.crossChapterLinks(ATLAS);
+  const kinds = groups.map(function (g) { return g.edges.map(function (item) { return item.edge.kind; }); });
+  eq(kinds, [['hypothesis'], ['prerequisite']]);
+  const total = ATLAS.meta.counts.crossChapterEdges;
+  eq(groups.reduce(function (n, g) { return n + g.edges.length; }, 0), total);
+});
+
+check('multiple edges between one chapter pair group by real index for navigation', function () {
+  const data = {
+    chapters: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+    nodes: [
+      { id: 'a1', chapter: 'a' }, { id: 'a2', chapter: 'a' },
+      { id: 'b1', chapter: 'b' }, { id: 'c1', chapter: 'c' }
+    ],
+    edges: [
+      { from: 'a1', to: 'b1', kind: 'hypothesis' },
+      { from: 'a1', to: 'a2', kind: 'traced' },
+      { from: 'a2', to: 'b1', kind: 'prerequisite' },
+      { from: 'b1', to: 'c1', kind: 'conditional' }
+    ]
+  };
+  const groups = C.crossChapterLinks(data);
+  eq(groups.map(function (g) { return g.key; }), ['a>b', 'b>c']);
+  eq(groups[0].edges.map(function (item) { return item.index; }), [0, 2],
+    'the group must reference the two actual cross-chapter edges, not the internal edge');
+  eq(groups[0].edges.map(function (item) { return item.edge.kind; }), ['hypothesis', 'prerequisite']);
+  eq(groups[1].edges.map(function (item) { return item.index; }), [3]);
 });
 
 console.log('atlas-data.js — invariants the details panel relies on');

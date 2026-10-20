@@ -139,14 +139,17 @@ const ATLAS = {
 
     /* Cross-chapter candidate hypothesis — stays dashed, never causal */
     { from: 'a_box', to: 'k_dialogue', kind: 'hypothesis', via: 1870, label: 'UNRESOLVED hypothesis · reported to affect Todd dialogue', labelAt: { x: 1955, y: 575 },
+      src: ['neoseekerKara'],
       note: 'Neoseeker ties the later “[Your Story]” persuasion option to “unlocked Alice’s box during A New Home”. Whether the game checks opening the box, seeing a photo, or another action is unresolved. Drawn as a hypothesis only: it does not guarantee the meeting or its outcome.' },
 
     /* Cross-chapter prerequisite gate — Todd survival out of Stormy Night */
     { from: 's_alive', to: 'k_meet', kind: 'prerequisite', via: 1810, label: 'prerequisite: Todd not killed in Stormy Night',
+      src: ['powerpyxKara'],
       note: 'PowerPyx: Meet Todd is “only possible, if he wasn’t killed in Stormy Night”. The negative state closes the branch; no arrow inside Stormy Night is claimed.' },
 
     /* Battle for Detroit — Kara meeting branch */
     { from: 'k_terminal', to: 'k_meet', kind: 'prerequisite', label: 'prerequisite: at the bus terminal', labelAt: { x: 2200, y: 425 },
+      src: ['powerpyxKara'],
       note: 'PowerPyx lists Meet Todd at the Bus Terminal and says all checkpoint paths lead there; the meeting was not checked in game.' },
     { from: 'k_meet', to: 'k_dialogue', kind: 'traced' },
     { from: 'k_dialogue', fromOption: 0, to: 'k_away', kind: 'traced', label: 'Persuade Todd' },

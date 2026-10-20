@@ -240,6 +240,7 @@ async function measureView(page) {
     const canvas = document.getElementById('canvas');
     if (!world || !canvas) return { error: 'map not rendered' };
     const cr = canvas.getBoundingClientRect();
+    const lod = canvas.getAttribute('data-lod');
     let scale = 1;
     let tx = 0;
     let ty = 0;
@@ -258,18 +259,58 @@ async function measureView(page) {
     function fullyInside(r) {
       return r.left >= cr.left - 1 && r.right <= cr.right + 1 && r.top >= cr.top - 1 && r.bottom <= cr.bottom + 1;
     }
+    function rendered(el) {
+      const s = getComputedStyle(el);
+      return s.visibility === 'visible' && s.display !== 'none';
+    }
     const visibleNodes = nodeEls.filter(function (el) { return intersects(el.getBoundingClientRect()); });
     const fullyVisibleNodes = nodeEls.filter(function (el) { return fullyInside(el.getBoundingClientRect()); });
+    const renderedNodes = visibleNodes.filter(rendered);
     const visibleLabels = labelEls.filter(function (el) {
       if (!el.textContent || !el.textContent.trim()) return false;
       return intersects(el.getBoundingClientRect());
     });
+    const renderedLabels = visibleLabels.filter(rendered);
     const fontSizes = labelEls.map(function (el) { return parseFloat(getComputedStyle(el).fontSize); }).filter(isFinite);
     const effective = fontSizes.map(function (v) { return v * scale; });
     const labelHeights = labelEls.map(function (el) { return el.getBoundingClientRect().height; }).filter(isFinite);
     const clippedNodes = nodeEls.filter(function (el) {
       return el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1;
     });
+    const overviewEl = document.getElementById('overview');
+    const overviewVisible = !!overviewEl && !overviewEl.hidden && rendered(overviewEl);
+    const cardEls = overviewEl ? Array.prototype.slice.call(overviewEl.querySelectorAll('[data-overview-chapter]')) : [];
+    const cardNames = cardEls.map(function (el) {
+      const name = el.querySelector('.ov-name');
+      return name ? name.textContent.replace(/\s+/g, ' ').trim() : '';
+    });
+    const cardFonts = cardEls.map(function (el) {
+      const name = el.querySelector('.ov-name');
+      return name ? parseFloat(getComputedStyle(name).fontSize) : NaN;
+    }).filter(isFinite);
+    const cardRects = cardEls.map(function (el) { return el.getBoundingClientRect(); });
+    const overviewLinks = overviewEl ? Array.prototype.slice.call(overviewEl.querySelectorAll('.overview-link')) : [];
+    const overviewLinkData = overviewLinks.map(function (el) {
+      return {
+        edge: el.hasAttribute('data-edge') ? Number(el.getAttribute('data-edge')) : null,
+        evidence: el.getAttribute('data-evidence'),
+        aggregate: el.classList.contains('aggregate'),
+        fromChapter: el.getAttribute('data-from-chapter') || null,
+        toChapter: el.getAttribute('data-to-chapter') || null,
+        text: el.textContent.replace(/\s+/g, ' ').trim().slice(0, 240)
+      };
+    });
+    const activeChapter = document.querySelector('.chapter.active');
+    const focusedChapter = activeChapter ? activeChapter.getAttribute('data-chapter') : null;
+    const frameEls = Array.prototype.slice.call(document.querySelectorAll('.frame'));
+    const frameRects = frameEls.map(function (el) {
+      return { id: el.getAttribute('data-chapter-frame'), rect: el.getBoundingClientRect() };
+    });
+    const framesIntersecting = frameRects.filter(function (f) { return intersects(f.rect); }).length;
+    const framesFullyInside = frameRects.filter(function (f) { return fullyInside(f.rect); }).length;
+    const focusedFrame = focusedChapter && focusedChapter !== 'all'
+      ? frameRects.filter(function (f) { return f.id === focusedChapter; })[0]
+      : null;
     function box(selector) {
       const el = document.querySelector(selector);
       if (!el) return null;
@@ -302,6 +343,7 @@ async function measureView(page) {
         scale: Math.round(scale * 10000) / 10000,
         tx: Math.round(tx * 100) / 100,
         ty: Math.round(ty * 100) / 100,
+        lod: lod,
         zoomLabel: document.getElementById('zoomLabel') ? document.getElementById('zoomLabel').textContent : null
       },
       canvas: {
@@ -318,11 +360,16 @@ async function measureView(page) {
         svgPaths: document.querySelectorAll('svg path').length,
         edgeLabels: document.querySelectorAll('.edge-label').length,
         frames: document.querySelectorAll('.frame').length,
-        chapters: document.querySelectorAll('[data-chapter]').length - 1
+        chapters: document.querySelectorAll('[data-chapter]').length - 1,
+        overviewCards: cardEls.length,
+        overviewLinks: overviewLinks.length,
+        overviewConnectors: document.querySelectorAll('#overview-connectors path.overview-connector').length
       },
       nodes: {
+        mounted: nodeEls.length,
         visible: visibleNodes.length,
         fullyVisible: fullyVisibleNodes.length,
+        renderedVisible: renderedNodes.length,
         layoutClipped: clippedNodes.length,
         layoutClippedRatio: Math.round((clippedNodes.length / Math.max(1, nodeEls.length)) * 10000) / 10000,
         clippedSamples: clippedNodes.slice(0, 20).map(function (el) {
@@ -333,6 +380,7 @@ async function measureView(page) {
       labels: {
         total: labelEls.length,
         visible: visibleLabels.length,
+        renderedVisible: renderedLabels.length,
         cssFontMin: fontSizes.length ? round(Math.min.apply(null, fontSizes)) : null,
         cssFontMedian: fontSizes.length ? round(median(fontSizes)) : null,
         cssFontMax: fontSizes.length ? round(Math.max.apply(null, fontSizes)) : null,
@@ -341,6 +389,28 @@ async function measureView(page) {
         effectiveFontMax: effective.length ? round(Math.max.apply(null, effective)) : null,
         effectiveAtLeast11: effective.filter(function (v) { return v >= 11; }).length,
         renderedHeightMedian: labelHeights.length ? round(median(labelHeights)) : null
+      },
+      overview: {
+        visible: overviewVisible,
+        clientHeight: overviewEl ? overviewEl.clientHeight : null,
+        scrollHeight: overviewEl ? overviewEl.scrollHeight : null,
+        scrollWidth: overviewEl ? overviewEl.scrollWidth : null,
+        scrollable: !!overviewEl && overviewEl.scrollHeight > overviewEl.clientHeight + 1,
+        cardCount: cardEls.length,
+        cardsIntersectingCanvas: cardRects.filter(function (r) { return intersects(r); }).length,
+        cardNames: cardNames,
+        cardFontMin: cardFonts.length ? round(Math.min.apply(null, cardFonts)) : null,
+        cardFontMedian: cardFonts.length ? round(median(cardFonts)) : null,
+        links: overviewLinkData,
+        aggregateRows: overviewLinkData.filter(function (l) { return l.aggregate; }).length
+      },
+      fit: {
+        frameCount: frameRects.length,
+        framesIntersectingCanvas: framesIntersecting,
+        framesFullyInsideCanvas: framesFullyInside,
+        allFramesInside: frameRects.length > 0 && framesFullyInside === frameRects.length,
+        focusedChapter: focusedChapter,
+        focusedFrameInside: focusedFrame ? fullyInside(focusedFrame.rect) : null
       },
       statusText: document.getElementById('status') ? document.getElementById('status').textContent.replace(/\s+/g, ' ').trim() : null
     };
@@ -384,6 +454,54 @@ async function resetAtlas(page) {
   await page.evaluate(function () {
     return new Promise(function (resolve) {
       requestAnimationFrame(function () { requestAnimationFrame(resolve); });
+    });
+  });
+}
+
+async function zoomUntilLod(page, wanted, maxClicks) {
+  const limit = maxClicks || 24;
+  for (let i = 0; i <= limit; i++) {
+    const lod = await page.locator('#canvas').getAttribute('data-lod');
+    if (lod === wanted) return i;
+    if (i === limit) break;
+    await page.locator('#plus').click();
+    await page.evaluate(function () {
+      return new Promise(function (resolve) {
+        requestAnimationFrame(function () { requestAnimationFrame(resolve); });
+      });
+    });
+  }
+  throw new Error('LOD ' + wanted + ' was not reached');
+}
+
+/* Diagnostic only: the overview is a scroll container, not a camera pan
+   surface. This records whether content can scroll and restores scrollTop. */
+async function measureOverviewScroll(page) {
+  return page.evaluate(function () {
+    const overview = document.getElementById('overview');
+    if (!overview) return { error: 'overview missing' };
+    const start = {
+      clientHeight: overview.clientHeight,
+      scrollHeight: overview.scrollHeight,
+      scrollWidth: overview.scrollWidth,
+      scrollTop: overview.scrollTop
+    };
+    overview.scrollTop = overview.scrollHeight;
+    return new Promise(function (resolve) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          const reached = overview.scrollTop;
+          overview.scrollTop = 0;
+          resolve({
+            clientHeight: start.clientHeight,
+            scrollHeight: start.scrollHeight,
+            scrollWidth: start.scrollWidth,
+            scrollable: start.scrollHeight > start.clientHeight + 1,
+            maxScrollTop: Math.max(0, start.scrollHeight - start.clientHeight),
+            reachedScrollTop: Math.round(reached * 100) / 100
+          });
+        });
+      });
     });
   });
 }
@@ -672,6 +790,7 @@ async function runMeasuredRep(browser, profile, baseURL, fixtureMeta, captureScr
   const consent = await measureConsent(page);
   await page.locator('#world').waitFor({ state: 'visible' });
   const overview = await measureView(page);
+  const overviewScroll = await measureOverviewScroll(page);
 
   const search = await measureSearch(page, fixtureMeta.representative.searchQuery);
   await resetAtlas(page);
@@ -686,7 +805,8 @@ async function runMeasuredRep(browser, profile, baseURL, fixtureMeta, captureScr
   const labelSample = await measureZoomedLabels(page, fixtureMeta.representative.chapterId, SAMPLE_LABEL_COUNT);
 
   await resetAtlas(page);
-  const panOverview = await measurePan(page, 'whole atlas overview');
+  await zoomUntilLod(page, 'structure');
+  const panStructure = await measurePan(page, 'whole atlas structure (one zoom step above overview)');
   await resetAtlas(page);
   const zoomOverview = await measureZoom(page, 'whole atlas overview');
 
@@ -699,6 +819,7 @@ async function runMeasuredRep(browser, profile, baseURL, fixtureMeta, captureScr
     consent: consent,
     bannerVisible: banner,
     overview: overview,
+    overviewScroll: overviewScroll,
     search: search,
     chapterFocus: chapter,
     selection: selection,
@@ -706,7 +827,7 @@ async function runMeasuredRep(browser, profile, baseURL, fixtureMeta, captureScr
     detailView: detailView,
     panDetail: panDetail,
     labelSample: labelSample,
-    panOverview: panOverview,
+    panStructure: panStructure,
     zoomOverview: zoomOverview,
     screenshots: screenshots,
     errors: errors
@@ -734,6 +855,7 @@ async function warmup(browser, profile, baseURL, fixtureMeta) {
   await zoomIn(page);
   await closeDetails(page);
   await resetAtlas(page);
+  await zoomUntilLod(page, 'structure');
   await measurePan(page, 'warmup');
   await resetAtlas(page);
   await measureZoom(page, 'warmup');
@@ -746,7 +868,7 @@ function aggregateProfile(profile, reps) {
   const chapterRuns = reps.map(function (r) { return r.chapterFocus.ms; });
   const selectionRuns = reps.map(function (r) { return r.selection.ms; });
   const zoomInRuns = reps.map(function (r) { return r.zoomIn.ms; });
-  const panOverviewFrames = flatten(reps.map(function (r) { return r.panOverview.frames; }));
+  const panStructureFrames = flatten(reps.map(function (r) { return r.panStructure.frames; }));
   const panDetailFrames = flatten(reps.map(function (r) { return r.panDetail.frames; }));
   const zoomOverviewFrames = flatten(reps.map(function (r) { return r.zoomOverview.frames; }));
   const allErrors = reps.map(function (r) { return r.errors; });
@@ -762,31 +884,39 @@ function aggregateProfile(profile, reps) {
     chapterFocus: { runs: chapterRuns.map(round), stats: stats(chapterRuns) },
     selectionToDetails: { runs: selectionRuns.map(round), stats: stats(selectionRuns) },
     zoomIn: { runs: zoomInRuns.map(round), stats: stats(zoomInRuns) },
-    panOverview: { frameStats: stats(panOverviewFrames), perRep: reps.map(function (r) { return r.panOverview.frameStats; }) },
+    panStructure: { frameStats: stats(panStructureFrames), perRep: reps.map(function (r) { return r.panStructure.frameStats; }) },
     panDetail: { frameStats: stats(panDetailFrames), perRep: reps.map(function (r) { return r.panDetail.frameStats; }) },
     zoomOverview: { frameStats: stats(zoomOverviewFrames), perRep: reps.map(function (r) { return r.zoomOverview.frameStats; }) },
+    overviewScroll: reps[0].overviewScroll,
     overview: {
+      lod: reps[0].overview.camera.lod,
       cameraScale: reps[0].overview.camera.scale,
       canvas: reps[0].overview.canvas,
       layout: reps[0].overview.layout,
       labels: reps[0].overview.labels,
       nodes: reps[0].overview.nodes,
-      counts: reps[0].overview.counts
+      counts: reps[0].overview.counts,
+      overview: reps[0].overview.overview,
+      fit: reps[0].overview.fit
     },
     chapterFocusView: {
+      lod: reps[0].chapterFocus.view.camera.lod,
       cameraScale: reps[0].chapterFocus.view.camera.scale,
       canvas: reps[0].chapterFocus.view.canvas,
       layout: reps[0].chapterFocus.view.layout,
       labels: reps[0].chapterFocus.view.labels,
-      nodes: reps[0].chapterFocus.view.nodes
+      nodes: reps[0].chapterFocus.view.nodes,
+      fit: reps[0].chapterFocus.view.fit
     },
     detailView: {
+      lod: reps[0].detailView.camera.lod,
       cameraScale: reps[0].detailView.camera.scale,
       zoomLabel: reps[0].detailView.camera.zoomLabel,
       canvas: reps[0].detailView.canvas,
       layout: reps[0].detailView.layout,
       labels: reps[0].detailView.labels,
-      nodes: reps[0].detailView.nodes
+      nodes: reps[0].detailView.nodes,
+      fit: reps[0].detailView.fit
     },
     labelSamples: labelSamples,
     screenshots: reps[0].screenshots,
@@ -797,9 +927,9 @@ function aggregateProfile(profile, reps) {
 function gateEvaluation(profileAgg, profileId, reps) {
   const consentRenderOk = profileAgg.consentToRendered.runs.length === REPS &&
     profileAgg.consentToRendered.runs.every(function (ms) { return ms <= 3000; });
-  const panOk = profileAgg.panOverview.frameStats.count > 0 &&
-    profileAgg.panOverview.frameStats.p95 <= 50 &&
-    profileAgg.panOverview.frameStats.max <= 200;
+  const panOk = profileAgg.panStructure.frameStats.count > 0 &&
+    profileAgg.panStructure.frameStats.p95 <= 50 &&
+    profileAgg.panStructure.frameStats.max <= 200;
   const panDetailOk = profileAgg.panDetail.frameStats.count > 0 &&
     profileAgg.panDetail.frameStats.p95 <= 50 &&
     profileAgg.panDetail.frameStats.max <= 200;
@@ -834,7 +964,7 @@ function gateEvaluation(profileAgg, profileId, reps) {
     profile: profileId,
     diagnosticOnly: profileId === 'mobile',
     consentRender: consentRenderOk,
-    panOverview: panOk,
+    panStructure: panOk,
     panDetail: panDetailOk,
     zoom: zoomOk,
     errors: errorsOk,
@@ -929,9 +1059,13 @@ async function main() {
       warmupsPerProfile: WARMUPS,
       measuredRepsPerProfile: REPS,
       frameSampling: 'requestAnimationFrame inter-frame deltas during Playwright mouse drag and wheel input; the first callback seeds the clock and no negative interval is recorded',
-      consentTiming: 'in-page performance.now() from the consent button click through the second animation frame after the synchronous map render. This is not navigation, network page-load, or cold-start timing.',
+      consentTiming: 'in-page performance.now() from the consent button click through the second animation frame after the cover is removed. The map is now built beneath the cover at page load so it stays visible under the spoiler overlay; this is overlay-dismissal timing, not initial graph construction. It is not navigation, network page-load, or cold-start timing.',
       labelSample: SAMPLE_LABEL_COUNT + ' visible nodes from the focused chapter after selection, details close, and one + zoom step',
       labelClipping: 'Intrinsic clipping is node scrollWidth/scrollHeight overflow or rendered label bounding box outside its own node. Label-box intersection with the canvas boundary is reported separately as boundary clipping and is not counted as intrinsic clipping.',
+      overviewLod: 'At whole-atlas fit the renderer shows screen-space chapter cards (overview LOD), not the 1,000 event labels. Nodes, connectors and labels stay mounted and measurable; renderedVisible counts only elements whose computed visibility is actually visible.',
+      overviewCrosslinks: 'Every overview crosslink row exposes the real data.edges index and evidence class. Aggregate rows, if any, are navigation-only and are reported separately; the synthetic fixture groups 150 cross-region edges into chapter pairs.',
+      fitBounds: 'fit.framesFullyInsideCanvas checks all chapter frames against the canvas rect. For a focused chapter, focusedFrameInside checks the requested chapter separately because other chapters are allowed off-screen.',
+      panTarget: 'After the overview becomes a scroll surface, the camera-pan timing sample runs at structure LOD (whole atlas, one zoom step above overview). The pan thresholds are unchanged; only the sampled interaction moved above the new overview layer.',
       mobileLayout: 'The mobile profile loads the production stylesheet at 390x844 with no layout override. The synthetic banner remains visible and its height is included in the measured canvas area.',
       layoutMeasurement: 'Actual #canvas getBoundingClientRect, .workspace, .canvas-wrap, banner, viewport, and document scroll dimensions are recorded for every overview/chapter/detail view.',
       physicalDeviceClaim: 'None. Mobile results are Chromium viewport emulation only.'
@@ -952,9 +1086,10 @@ async function main() {
         reps.push(rep);
         console.log(
           '  rep ' + (i + 1) + ': consent-render ' + round(rep.consent.ms) + 'ms, selection ' +
-          round(rep.selection.ms) + 'ms, pan p95 ' + rep.panOverview.frameStats.p95 +
-          'ms/' + rep.panOverview.frameStats.count + ', zoom p95 ' + rep.zoomOverview.frameStats.p95 +
-          'ms/' + rep.zoomOverview.frameStats.count + ', labels ' + rep.labelSample.unclippedRatio
+          round(rep.selection.ms) + 'ms, pan p95 ' + rep.panStructure.frameStats.p95 +
+          'ms/' + rep.panStructure.frameStats.count + ', zoom p95 ' + rep.zoomOverview.frameStats.p95 +
+          'ms/' + rep.zoomOverview.frameStats.count + ', overview ' + rep.overview.camera.lod +
+          '/' + rep.overview.counts.overviewCards + ' cards, labels ' + rep.labelSample.unclippedRatio
         );
       }
       const agg = aggregateProfile(profile, reps);

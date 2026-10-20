@@ -1,9 +1,18 @@
 # Graph-scale spike — 1,000-node synthetic atlas
 
-Checked: 2026-10-19. Scope: measure the current custom SVG/DOM renderer in
+Checked: 2026-10-20. Scope: measure the current custom SVG/DOM renderer in
 `prototype/atlas-app.js` and `prototype/atlas-core.js` against a deterministic,
 synthetic fixture. This is a renderer stress test, not game content, not
 evidence, and not a claim about final graph size.
+
+> **Follow-up (2026-10-20):** the renderer now opens on a screen-space chapter
+> overview and reveals event boxes, then labels, as the camera zooms. In the
+> synthetic fixture all five frames fit at both profiles (overview scale 0.1772
+> desktop, 0.0428 mobile), chapter cards are 16 px / 14.5 px, and no event label
+> is rendered at overview by design. Pan timing is sampled at structure LOD
+> because the overview is now a scroll surface; gate thresholds are unchanged.
+> The measured tables below are the pre-LOD record and are retained as history.
+> Current numbers and limits are in [overview-lod-slice.md](overview-lod-slice.md).
 
 ## Acceptance gates (fixed before measurement)
 
@@ -262,14 +271,14 @@ Separate follow-ups surfaced by the spike, outside this bounded task:
 
 1. **Label density:** overview and chapter-focus labels are not legible at this
    graph size, and some 35–40-character labels intrinsically clip at the fixed
-   node size. Decide between a label level-of-detail rule, an explicit
-   search/zoom interaction, a smaller default region size, or a node-size
-   adjustment. The existing design direction already anticipates hiding tiny
-   labels at overview scale.
-2. **Mobile overview:** the 0.12 minimum camera clamp prevents a 390 px
-   viewport from fitting the whole synthetic atlas. Only 448/1,000 nodes are
-   visible at overview. A mobile-specific fit policy or a different navigation
-   model needs product review.
+   node size. The LOD follow-up addresses the overview by showing chapter cards
+   and hides event labels at structure LOD; event labels remain available at
+   detail zoom. Node-size or content-density work is still open.
+2. **Mobile overview:** the LOD follow-up removes the minimum-scale fit clamp
+   and fits all five synthetic chapter frames at 390 px, with a scrollable
+   chapter-card overview. Only 448/1,000 event nodes are geometrically visible
+   at the focused-chapter structure view, so dense event navigation still needs
+   product work.
 
 ## Caveats
 
@@ -286,5 +295,6 @@ Separate follow-ups surfaced by the spike, outside this bounded task:
   used Playwright mouse drag and wheel events against the same pointer handlers;
   the mobile context enables touch metadata, but this is not a real touch,
   gesture, iOS Safari, latency, or GPU measurement on a phone.
-- The existing `npm test` suite (validators, 25 unit checks, 44 PoC4 browser
-  checks including the new 390×844 regression) passes after the fix.
+- At the time of this pre-LOD run, the existing `npm test` suite (validators,
+  25 unit checks, 44 PoC4 browser checks including the new 390×844 regression)
+  passed after the fix. The current suite has 38 unit and 48 browser checks.
