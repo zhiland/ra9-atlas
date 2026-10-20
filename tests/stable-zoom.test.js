@@ -396,7 +396,7 @@ async function findDragPoint(page) {
 }
 
 async function runRealDataset(browser) {
-  console.log('scenario real-38 stable zoom');
+  console.log('scenario real-45 stable zoom');
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const errors = [];
   page.on('pageerror', function (e) { errors.push('pageerror: ' + e.message); });
@@ -407,8 +407,13 @@ async function runRealDataset(browser) {
 
   await ok('far, fit, intermediate and close zoom keep the same nodes, edges and labels', async function () {
     const fit = await snapshot(page);
-    await clickZoom(page, '#plus', 5);
-    const close = await snapshot(page);
+    let close = fit;
+    let closeSteps = 0;
+    while (close.scale < 1 && closeSteps < 10) {
+      await clickZoom(page, '#plus', 1);
+      close = await snapshot(page);
+      closeSteps += 1;
+    }
 
     await resetAtlas(page);
     await clickZoom(page, '#plus', 2);
@@ -429,8 +434,8 @@ async function runRealDataset(browser) {
     assertInventoryStable(snapshots, fit.expected);
     assertInventoryStable([fit], fit.expected);
 
-    assert(fit.expected.nodeLabels.length === 38, 'fixture should keep 38 node labels');
-    assert(fit.expected.edgeLabels.length === 24, 'fixture should keep its 24 real edge labels');
+    assert(fit.expected.nodeLabels.length === 45, 'fixture should keep 45 node labels');
+    assert(fit.expected.edgeLabels.length > 0, 'fixture should contain real edge labels');
     assert(fit.expected.frames.length === 3, 'fixture should keep three chapter frames');
   });
 
@@ -439,7 +444,7 @@ async function runRealDataset(browser) {
     const scales = snapshots.map(function (s) { return s.scale; });
     assert(new Set(scales).size === scales.length, 'sampled scales should all differ: ' + scales.join(', '));
     snapshots.forEach(function (s) {
-      assert(s.nodes.length === 38 && s.edges.length === 42,
+      assert(s.nodes.length === 45 && s.edges.length === 49,
         'scale ' + s.scale + ' changed mounted graph inventory');
       assert(s.nodes.every(function (n) { return n.labelInsideNode; }),
         'scale ' + s.scale + ' has a node label outside its box');

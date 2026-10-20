@@ -451,6 +451,40 @@ check('both non-gun escape endpoints link to Todd only through a labelled infere
     'the Todd-state unknown must reference both inference edges');
 });
 
+check('Stormy entry follows source order and keeps the fatal branch distinct', function () {
+  const order = ATLAS.nodes.find(function (n) { return n.id === 's_todd_orders_stay'; });
+  const alice = ATLAS.nodes.find(function (n) { return n.id === 's_alice_runs_upstairs'; });
+  const deviant = ATLAS.nodes.find(function (n) { return n.id === 's_deviant'; });
+  const fatal = ATLAS.nodes.find(function (n) { return n.id === 's_fatal_todd_kills'; });
+  const dead = ATLAS.nodes.find(function (n) { return n.id === 's_dead'; });
+  assert(order && alice && deviant && fatal && dead, 'entry and Todd-fate nodes must exist');
+  [order, alice, deviant].forEach(function (node) {
+    assert(node.kind === 'action', node.id + ' must be a real event, not a supplemental state gate');
+    assert(node.src.indexOf('powerpyxStormy') !== -1 && node.src.indexOf('gamerGuidesStormy') !== -1,
+      node.id + ' must cite both reviewed Stormy Night sources');
+  });
+  eq(edgesFrom('s_todd_orders_stay').map(function (e) { return [e.to, e.kind]; }),
+    [['s_alice_runs_upstairs', 'traced']]);
+  eq(edgesFrom('s_alice_runs_upstairs').map(function (e) { return e.to; }).sort(),
+    ['s_deviant', 's_fatal_todd_kills']);
+  assert(/deviant/i.test(deviant.label), 'the alternate branch must lead to the deviant event');
+  assert(/stay still|obey/i.test(edgesFrom('s_alice_runs_upstairs').find(function (e) { return e.to === 's_fatal_todd_kills'; }).label),
+    'fatal route must be the stay-still response');
+  assert(edgesFrom('s_alice_runs_upstairs').some(function (e) { return e.to === 's_deviant'; }),
+    'the second route must lead to the deviant event');
+  assert(fatal.label !== dead.label && /fatal/i.test(fatal.note || ''), 'fatal outcome must remain distinct from Todd killed');
+  eq(edgesFrom('s_fatal_todd_kills'), [], 'fatal outcome must remain terminal');
+  assert(!ATLAS.edges.some(function (e) { return e.from === 's_fatal_todd_kills' && ['s_alive', 's_dead', 'k_meet', 'k_terminal'].indexOf(e.to) !== -1; }),
+    'fatal outcome must not imply a Todd-state or meeting');
+  eq(edgesFrom('s_deviant').map(function (e) { return e.to; }).sort(), ['s_go_upstairs', 's_reason_todd']);
+  eq(edgesFrom('s_go_upstairs').map(function (e) { return [e.to, e.kind]; }), [['s_reach_alice', 'traced']]);
+  eq(edgesFrom('s_reason_todd').map(function (e) { return [e.to, e.kind]; }), [['s_todd_upstairs_first', 'traced']]);
+  assert(/knocks Kara down|Kara is knocked down/i.test(ATLAS.nodes.find(function (n) { return n.id === 's_todd_upstairs_first'; }).note),
+    'Reason with Todd endpoint must state Kara is knocked down');
+  eq(edgesFrom('s_todd_upstairs_first'), [], 'Reason with Todd endpoint must stay scoped');
+  eq(edgesTo('s_alive').map(function (e) { return e.from; }).sort(), ['s_front_backyard_escape', 's_window_reach_bus']);
+});
+
 check('cross-chapter links connect only the documented chapter pairs', function () {
   const cross = ATLAS.edges.filter(function (e) {
     const a = ATLAS.nodes.find(function (n) { return n.id === e.from; });

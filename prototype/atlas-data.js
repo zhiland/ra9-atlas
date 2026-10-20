@@ -12,13 +12,19 @@
      arrows are omitted rather than invented. The nightstand gun clue and the
      opened Alice's-room window are separate guide-reported events, not claims
      of possession or a successful escape.
-   - Stormy Night: selected gun/window events plus two source-supported
-     successful non-gun escape routes: the corridor/hiding route to the
-     front-door/backyard exit, and the locked-room window route. Internal
-     chapter topology is NOT transcribed in full. The guides do not state
-     Todd's later state for either non-gun route, so their links into the
-     existing Todd-not-killed state are dashed inferences, not traced or
-     confirmed links. Fatal routes and other branches remain outside this slice.
+   - Stormy Night: selected entry events, gun/window events plus two
+     source-supported successful non-gun escape routes: the corridor/hiding
+     route to the front-door/backyard exit, and the locked-room window route.
+     The entry slice keeps the non-deviant fatal outcome ("Todd kills Alice and
+     Kara") separate from "Todd killed" (s_dead), and joins the deviant
+     go-upstairs alternative to the existing Reach Alice route. The reason-with-
+     Todd alternative stops at the source-supported "Todd reaches Alice before
+     Kara"
+     endpoint. Internal chapter topology is NOT transcribed in full. The guides
+     do not state Todd's later state for either non-gun route, so their links
+     into the existing Todd-not-killed state are dashed inferences, not traced
+     or confirmed links. The too-slow path, hidden timers, exact QTE/difficulty,
+     and other fatal or survival routes remain outside this slice.
    - Battle for Detroit — Kara: guide-reported checkpoint detour/timing branch
      and Todd meeting branch. The exact 11-minute boundary is unresolved; no
      <= or >= rule is modelled. The checkpoint route is a chapter-local route,
@@ -48,9 +54,9 @@ const ATLAS = {
     disclaimer: 'Guide-based and screenshot-transcribed only. No transition is verified in game; game version and platform are unknown.',
     counts: {
       chapters: 3,
-      nodes: 38,
-      edges: 42,
-      tracedEdges: 26,
+      nodes: 45,
+      edges: 49,
+      tracedEdges: 33,
       conditionalEdges: 8,
       prerequisiteEdges: 5,
       hypothesisEdges: 3,
@@ -72,14 +78,14 @@ const ATLAS = {
     gamerGuides: 'https://www.gamerguides.com/detroit-become-human/guide/walkthrough/chapter-1/chapter-31-battle-for-detroit-kara'
   },
 
-  canvas: { width: 3050, height: 1080 },
+  canvas: { width: 4450, height: 1080 },
 
   chapters: [
     {
       id: 'home',
       name: 'A New Home',
       code: 'D2 · selected Alice sequence + carried clues',
-      frame: { x: 30, y: 120, w: 520, h: 860 },
+      frame: { x: 30, y: 120, w: 1930, h: 500 },
       desc: 'Selected local sequence transcribed from the Steam chapter screenshot (10 boxes, 9 links), plus two guide-reported carried-state clues: the nightstand gun was seen and Alice’s room window was opened. Chores and unlinked side labels are omitted; the box-to-Todd relationship stays unresolved.',
       coverage: {
         status: 'partial',
@@ -93,13 +99,13 @@ const ATLAS = {
       id: 'stormy',
       name: 'Stormy Night',
       code: 'D2 · selected gun/window + non-gun escape routes',
-      frame: { x: 575, y: 120, w: 1320, h: 860 },
-      desc: 'Selected guide-reported gun and window events, plus two distinct successful non-gun escape routes. The corridor route hides until Todd passes and exits through the front door/backyard; the window route locks the room, goes out, passes the reported QTE and reaches the bus. The guides do not state Todd’s later state for either route, so both links to Todd not killed are explicit inferences. Other internal branches and all fatal escape outcomes are not drawn.',
+      frame: { x: 2000, y: 120, w: 1320, h: 860 },
+      desc: 'Selected guide-reported entry sequence, gun/window events, and two distinct successful non-gun escape routes. Todd orders Kara to stay still, Alice runs upstairs, then Kara can obey and reach the fatal outcome (Todd kills Alice and Kara), or become deviant. The deviant alternatives go upstairs into the existing Reach Alice route or reason with Todd and stop at the reported point where Todd knocks Kara down and reaches Alice first. The corridor route hides until Todd passes and exits through the front door/backyard; the window route locks the room, goes out, passes the reported QTE and reaches the bus. The guides do not state Todd’s later state for either successful escape route, so both links to Todd not killed are explicit inferences. Other internal branches, the too-slow path, and other fatal or survival routes are not drawn.',
       coverage: {
         status: 'partial',
-        scope: 'Selected gun/window events, the existing Todd fate states, and two successful non-gun escape routes.',
-        included: 'Seventeen states/events: Todd not killed, Todd killed, take the nightstand gun, struggle for the gun, Kara shoots Todd, Alice shoots Todd, gun carried forward (Kara only), the window route opened from A New Home, and nine steps/outcomes for the corridor and window escape routes. Seventeen selected internal links.',
-        omitted: 'All other Stormy Night branches, non-gun fatal and miss-bus outcomes, exact QTE requirements/difficulty, unseen hidden triggers, and direct evidence of Todd’s later state after either non-gun escape.',
+        scope: 'Selected entry gates, gun/window events, the existing Todd fate states, and two successful non-gun escape routes.',
+        included: 'Twenty-four states/events: Todd not killed, Todd killed, take the nightstand gun, struggle for the gun, Kara shoots Todd, Alice shoots Todd, gun carried forward (Kara only), the window route opened from A New Home, nine steps/outcomes for the corridor and window escape routes, and seven entry-slice events/outcomes (Todd orders Kara to stay still, Alice runs upstairs, Kara becomes deviant, the fatal outcome, go upstairs, Reason with Todd, and Todd reaches Alice first). Twenty-four selected internal links.',
+        omitted: 'The shared Todd-gets-mad scene as a separate box, the too-slow path, hidden timers, exact QTE requirements/difficulty, other fatal or survival routes, the later gun/fight/escape consequences of the Reason with Todd endpoint, miss-bus outcomes, and direct evidence of Todd’s later state after either successful non-gun escape.',
         sources: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy', 'powerpyxKara', 'fandomBattle']
       }
     },
@@ -107,7 +113,7 @@ const ATLAS = {
       id: 'kara',
       name: 'Battle for Detroit — Kara',
       code: 'D2 · selected checkpoint + Todd meeting branches',
-      frame: { x: 1935, y: 120, w: 1060, h: 900 },
+      frame: { x: 3360, y: 120, w: 1060, h: 900 },
       desc: 'Guide-reported security-checkpoint detour timing branch and Todd meeting branch. The checkpoint route is not carried across chapters; the late-bus outcome still reaches the terminal. Ticket, border and river branches remain omitted.',
       coverage: {
         status: 'partial',
@@ -125,81 +131,97 @@ const ATLAS = {
      is too dense for the full label. It adds no new fact. */
   nodes: [
     /* ---- A New Home: selected Alice sequence (screenshot transcription) ---- */
-    { id: 'a_welcome', chapter: 'home', label: 'WELCOME HOME', short: 'Welcome home', kind: 'action', x: 55, y: 200, w: 195, h: 84, status: 'ocr', src: ['steam'] },
-    { id: 'a_todd', chapter: 'home', label: 'JOIN TODD', short: 'Join Todd', kind: 'action', x: 55, y: 310, w: 195, h: 84, status: 'ocr', src: ['steam'] },
-    { id: 'a_clean1', chapter: 'home', label: 'CLEAN FIRST FLOOR', short: 'Clean first floor', kind: 'action', x: 55, y: 420, w: 195, h: 84, status: 'ocr', src: ['steam'] },
-    { id: 'a_ask', chapter: 'home', label: 'ASK TO GO UPSTAIRS', short: 'Ask to go upstairs', kind: 'action', x: 55, y: 530, w: 195, h: 84, status: 'ocr', src: ['steam'] },
-    { id: 'a_go', chapter: 'home', label: 'GO UPSTAIRS', short: 'Go upstairs', kind: 'action', x: 55, y: 640, w: 195, h: 84, status: 'ocr', src: ['steam'] },
-    { id: 'a_clean2', chapter: 'home', label: 'CLEAN SECOND FLOOR', short: 'Clean second floor', kind: 'action', x: 320, y: 640, w: 195, h: 84, status: 'ocr', src: ['steam'] },
-    { id: 'a_room', chapter: 'home', label: "CLEAN ALICE'S ROOM", short: "Clean Alice's room", kind: 'action', x: 320, y: 530, w: 195, h: 84, status: 'ocr', src: ['steam'] },
-    { id: 'a_talk', chapter: 'home', label: 'TALK WITH ALICE', short: 'Talk with Alice', kind: 'action', x: 320, y: 426, w: 195, h: 84, status: 'ocr', src: ['steam'] },
-    { id: 'a_key', chapter: 'home', label: 'ALICE GIVES KARA A KEY', short: 'Alice gives key', kind: 'flag', x: 320, y: 304, w: 195, h: 84, sub: 'condition single-source', status: 'mixed', src: ['steam', 'gamefaqs', 'powerpyxHome'],
+    { id: 'a_welcome', chapter: 'home', label: 'WELCOME HOME', short: 'Welcome home', kind: 'action', x: 50, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
+    { id: 'a_todd', chapter: 'home', label: 'JOIN TODD', short: 'Join Todd', kind: 'action', x: 240, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
+    { id: 'a_clean1', chapter: 'home', label: 'CLEAN FIRST FLOOR', short: 'Clean first floor', kind: 'action', x: 430, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
+    { id: 'a_ask', chapter: 'home', label: 'ASK TO GO UPSTAIRS', short: 'Ask to go upstairs', kind: 'action', x: 620, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
+    { id: 'a_go', chapter: 'home', label: 'GO UPSTAIRS', short: 'Go upstairs', kind: 'action', x: 810, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
+    { id: 'a_clean2', chapter: 'home', label: 'CLEAN SECOND FLOOR', short: 'Clean second floor', kind: 'action', x: 1000, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
+    { id: 'a_room', chapter: 'home', label: "CLEAN ALICE'S ROOM", short: "Clean Alice's room", kind: 'action', x: 1190, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
+    { id: 'a_talk', chapter: 'home', label: 'TALK WITH ALICE', short: 'Talk with Alice', kind: 'action', x: 1380, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
+    { id: 'a_key', chapter: 'home', label: 'ALICE GIVES KARA A KEY', short: 'Alice gives key', kind: 'flag', x: 1570, y: 250, w: 170, h: 84, sub: 'condition single-source', status: 'mixed', src: ['steam', 'gamefaqs', 'powerpyxHome'],
       note: 'The screenshot shows the link; GameFAQs alone reports a Neutral-or-higher relationship threshold.' },
-    { id: 'a_box', chapter: 'home', label: "OPEN ALICE'S BOX", short: 'Open box', kind: 'action', x: 320, y: 200, w: 195, h: 84, sub: 'later trigger unresolved', status: 'mixed', src: ['steam', 'transcript', 'neoseekerKara'],
+    { id: 'a_box', chapter: 'home', label: "OPEN ALICE'S BOX", short: 'Open box', kind: 'action', x: 1760, y: 250, w: 170, h: 84, sub: 'later trigger unresolved', status: 'mixed', src: ['steam', 'transcript', 'neoseekerKara'],
       note: 'Contents are transcript-supported. Whether this box, a photo, or another action carries the later Todd state is unresolved.' },
 
     /* ---- A New Home: guide-reported carried clues (separate from possession) ---- */
-    { id: 'a_gun_seen', chapter: 'home', label: 'SEE GUN IN TODD’S NIGHTSTAND', short: 'See nightstand gun', kind: 'flag', x: 320, y: 760, w: 195, h: 84, sub: 'clue seen · not possession', status: 'guide', src: ['powerpyxHome'],
+    { id: 'a_gun_seen', chapter: 'home', label: 'SEE GUN IN TODD’S NIGHTSTAND', short: 'See nightstand gun', kind: 'flag', x: 1000, y: 400, w: 170, h: 84, sub: 'clue seen · not possession', status: 'guide', src: ['powerpyxHome'],
       note: 'PowerPyx reports checking Todd’s nightstand while cleaning his room; this records the clue being seen, not the gun being carried.' },
-    { id: 'a_window_open', chapter: 'home', label: 'OPEN ALICE’S ROOM WINDOW', short: 'Open room window', kind: 'action', x: 55, y: 870, w: 195, h: 84, sub: 'opened · future route only', status: 'guide', src: ['powerpyxHome'],
+    { id: 'a_window_open', chapter: 'home', label: 'OPEN ALICE’S ROOM WINDOW', short: 'Open room window', kind: 'action', x: 1190, y: 500, w: 170, h: 84, sub: 'opened · future route only', status: 'guide', src: ['powerpyxHome'],
       note: 'PowerPyx says opening the window unlocks a possible future escape way. The opening is represented; escape success is not.' },
 
     /* ---- Stormy Night: existing carried states + selected gun/window events ---- */
-    { id: 's_alive', chapter: 'stormy', label: 'Todd survives', short: 'Todd not killed', kind: 'flag', x: 1660, y: 500, w: 190, h: 84, sub: 'carried state · guide-reported', status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'],
+    { id: 's_alive', chapter: 'stormy', label: 'Todd survives', short: 'Todd not killed', kind: 'flag', x: 3085, y: 500, w: 190, h: 84, sub: 'carried state · guide-reported', status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'],
       note: 'Reported access condition for the later Todd meeting. Two successful non-gun escape routes now point here only as dashed inferences; the guides do not state Todd’s later state for either route.' },
-    { id: 's_dead', chapter: 'stormy', label: 'Todd killed', short: 'Todd killed', kind: 'flag', x: 1400, y: 360, w: 190, h: 84, sub: 'closes the meeting branch', status: 'guide', src: ['powerpyxStormy', 'powerpyxKara', 'fandomBattle'],
+    { id: 's_dead', chapter: 'stormy', label: 'Todd killed', short: 'Todd killed', kind: 'flag', x: 2825, y: 360, w: 190, h: 84, sub: 'closes the meeting branch', status: 'guide', src: ['powerpyxStormy', 'powerpyxKara', 'fandomBattle'],
       note: 'The selected gun outcomes feed this state. Other ways to reach it and all non-gun Stormy Night branches remain outside this slice.' },
-    { id: 's_take_gun', chapter: 'stormy', label: 'Take the gun', short: 'Take nightstand gun', kind: 'action', x: 620, y: 210, w: 190, h: 84, sub: 'requires gun seen in A New Home', status: 'guide', src: ['powerpyxStormy'],
+    { id: 's_take_gun', chapter: 'stormy', label: 'Take the gun', short: 'Take nightstand gun', kind: 'action', x: 2045, y: 210, w: 190, h: 84, sub: 'requires gun seen in A New Home', status: 'guide', src: ['powerpyxStormy'],
       note: 'PowerPyx reports the gun is available only if it was found in Todd’s nightstand in Chapter 4.' },
-    { id: 's_gun_struggle', chapter: 'stormy', label: 'Gun struggle', short: 'Gun struggle', kind: 'action', x: 880, y: 210, w: 190, h: 84, sub: 'reported confrontation', status: 'guide', src: ['powerpyxStormy'],
+    { id: 's_gun_struggle', chapter: 'stormy', label: 'Gun struggle', short: 'Gun struggle', kind: 'action', x: 2305, y: 210, w: 190, h: 84, sub: 'reported confrontation', status: 'guide', src: ['powerpyxStormy'],
       note: 'PowerPyx describes threatening Todd and a melee combat; exact QTE timing and difficulty are not modelled.' },
-    { id: 's_kara_shoots_todd', chapter: 'stormy', label: 'Kara shoots Todd', short: 'Kara shoots Todd', kind: 'outcome', x: 1140, y: 210, w: 190, h: 84, sub: 'selected shooting outcome', status: 'guide', src: ['powerpyxStormy', 'powerpyxKara'],
+    { id: 's_kara_shoots_todd', chapter: 'stormy', label: 'Kara shoots Todd', short: 'Kara shoots Todd', kind: 'outcome', x: 2565, y: 210, w: 190, h: 84, sub: 'selected shooting outcome', status: 'guide', src: ['powerpyxStormy', 'powerpyxKara'],
       note: 'PowerPyx says Kara regains the gun and shoots Todd, and that this gives Kara the gun for future chapters.' },
-    { id: 's_alice_shoots_todd', chapter: 'stormy', label: 'Alice shoots Todd', short: 'Alice shoots Todd', kind: 'outcome', x: 1140, y: 360, w: 190, h: 84, sub: 'separate shooting outcome', status: 'guide', src: ['powerpyxStormy'],
+    { id: 's_alice_shoots_todd', chapter: 'stormy', label: 'Alice shoots Todd', short: 'Alice shoots Todd', kind: 'outcome', x: 2565, y: 360, w: 190, h: 84, sub: 'separate shooting outcome', status: 'guide', src: ['powerpyxStormy'],
       note: 'PowerPyx says that if Kara does not pick the gun back up, Alice picks it up and shoots Todd. This does not carry the gun forward.' },
-    { id: 's_gun_carried', chapter: 'stormy', label: 'Kara keeps gun', short: 'Gun carried forward', kind: 'flag', x: 1400, y: 210, w: 190, h: 84, sub: 'supplemental carried state · Kara only', status: 'guide', src: ['powerpyxStormy'],
+    { id: 's_gun_carried', chapter: 'stormy', label: 'Kara keeps gun', short: 'Gun carried forward', kind: 'flag', x: 2825, y: 210, w: 190, h: 84, sub: 'supplemental carried state · Kara only', status: 'guide', src: ['powerpyxStormy'],
       note: 'Supplemental carried-state node: only the guide-stated Kara-shoots outcome creates it. No later-chapter use of the gun is modelled.' },
-    { id: 's_window_open', chapter: 'stormy', label: 'Window route', short: 'Window route', kind: 'action', x: 620, y: 500, w: 190, h: 84, sub: 'route available · success branch drawn', status: 'guide', src: ['powerpyxStormy', 'powerpyxHome', 'gamerGuidesStormy', 'gamefaqsStormy'],
+    { id: 's_window_open', chapter: 'stormy', label: 'Window route', short: 'Window route', kind: 'action', x: 2045, y: 500, w: 190, h: 84, sub: 'route available · success branch drawn', status: 'guide', src: ['powerpyxStormy', 'powerpyxHome', 'gamerGuidesStormy', 'gamefaqsStormy'],
       note: 'PowerPyx, Gamer Guides and GameFAQs say the window option is available only if the window was opened in A New Home. Availability is separate from the successful branch drawn after it.' },
 
     /* ---- Battle for Detroit — Kara: checkpoint detour + Todd meeting branches ---- */
-    { id: 'k_terminal', chapter: 'kara', label: 'Reach bus terminal', short: 'Bus terminal', kind: 'flag', x: 2480, y: 200, w: 190, h: 84, sub: 'reported access gate', status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'gamerGuides'],
+    { id: 'k_terminal', chapter: 'kara', label: 'Reach bus terminal', short: 'Bus terminal', kind: 'flag', x: 3905, y: 200, w: 190, h: 84, sub: 'reported access gate', status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'gamerGuides'],
       note: 'PowerPyx and Gamer Guides state all checkpoint ways reach the Bus Terminal; the late-bus outcome still arrives there.' },
-    { id: 'k_meet', chapter: 'kara', label: 'Meet Todd', short: 'Meet Todd', kind: 'action', x: 2480, y: 370, w: 190, h: 84, status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'],
+    { id: 'k_meet', chapter: 'kara', label: 'Meet Todd', short: 'Meet Todd', kind: 'action', x: 3905, y: 370, w: 190, h: 84, status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'],
       note: 'PowerPyx: “only possible, if he wasn’t killed in Stormy Night.” The meeting is listed at the Bus Terminal.' },
-    { id: 'k_dialogue', chapter: 'kara', label: 'Todd dialogue', short: 'Todd dialogue', kind: 'choice', x: 2740, y: 410, w: 210, h: 110, options: ['Persuade Todd', 'Fail to persuade Todd'], status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara', 'gamerGuides'],
+    { id: 'k_dialogue', chapter: 'kara', label: 'Todd dialogue', short: 'Todd dialogue', kind: 'choice', x: 4165, y: 410, w: 210, h: 110, options: ['Persuade Todd', 'Fail to persuade Todd'], status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara', 'gamerGuides'],
       note: 'Positive options persuade Todd; negative options trigger a security check (guides agree).' },
-    { id: 'k_away', chapter: 'kara', label: 'Todd sends soldiers away', short: 'Soldiers away', kind: 'outcome', x: 2740, y: 250, w: 210, h: 84, status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'] },
-    { id: 'k_check', chapter: 'kara', label: 'Security check follows', short: 'Security check', kind: 'outcome', x: 2740, y: 650, w: 210, h: 84, status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'gamerGuides'] },
-    { id: 'k_goodbye', chapter: 'kara', label: 'Alice says goodbye to Todd', short: 'Alice says goodbye', kind: 'outcome', x: 2480, y: 540, w: 190, h: 84, sub: 'reported sequence', status: 'user', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'],
+    { id: 'k_away', chapter: 'kara', label: 'Todd sends soldiers away', short: 'Soldiers away', kind: 'outcome', x: 4165, y: 250, w: 210, h: 84, status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'] },
+    { id: 'k_check', chapter: 'kara', label: 'Security check follows', short: 'Security check', kind: 'outcome', x: 4165, y: 650, w: 210, h: 84, status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'gamerGuides'] },
+    { id: 'k_goodbye', chapter: 'kara', label: 'Alice says goodbye to Todd', short: 'Alice says goodbye', kind: 'outcome', x: 3905, y: 540, w: 190, h: 84, sub: 'reported sequence', status: 'user', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'],
       note: 'User-provided sequence; the same wording appears in the inspected PowerPyx, Fandom and Neoseeker pages. No gameplay verification.' },
-    { id: 'k_checkpoint', chapter: 'kara', label: 'Checkpoint choice', short: 'Checkpoint route', kind: 'choice', x: 1980, y: 220, w: 190, h: 110, options: ['Take Detour', 'Approach Checkpoint'], sub: 'chapter-local route choice', status: 'guide', src: ['powerpyxKara', 'gamerGuides'],
+    { id: 'k_checkpoint', chapter: 'kara', label: 'Checkpoint choice', short: 'Checkpoint route', kind: 'choice', x: 3405, y: 220, w: 190, h: 110, options: ['Take Detour', 'Approach Checkpoint'], sub: 'chapter-local route choice', status: 'guide', src: ['powerpyxKara', 'gamerGuides'],
       note: 'The route choice is local to this chapter and is not a carried cross-chapter state.' },
-    { id: 'k_detour', chapter: 'kara', label: 'Take detour', short: 'Take detour', kind: 'action', x: 2230, y: 480, w: 190, h: 84, sub: 'reported timing condition', status: 'guide', src: ['powerpyxKara', 'gamerGuides'],
+    { id: 'k_detour', chapter: 'kara', label: 'Take detour', short: 'Take detour', kind: 'action', x: 3655, y: 480, w: 190, h: 84, sub: 'reported timing condition', status: 'guide', src: ['powerpyxKara', 'gamerGuides'],
       note: 'PowerPyx and Gamer Guides report a timing-dependent detour outcome; the exact 11-minute boundary is unresolved.' },
-    { id: 'k_late_bus', chapter: 'kara', label: 'Bus has left', short: 'Last bus gone', kind: 'outcome', x: 2230, y: 780, w: 190, h: 84, sub: 'still reaches the terminal', status: 'guide', src: ['powerpyxKara', 'gamerGuides'],
+    { id: 'k_late_bus', chapter: 'kara', label: 'Bus has left', short: 'Last bus gone', kind: 'outcome', x: 3655, y: 780, w: 190, h: 84, sub: 'still reaches the terminal', status: 'guide', src: ['powerpyxKara', 'gamerGuides'],
       note: 'Reported when the detour is taken after waiting and the timer is below 11 minutes. This is a late-bus outcome at the terminal, not a loss of terminal or Todd-meeting access.' },
 
     /* ---- Stormy Night: two distinct successful non-gun escape routes ---- */
-    { id: 's_reach_alice', chapter: 'stormy', label: 'Reach Alice', short: 'Reach Alice', kind: 'action', x: 880, y: 500, w: 190, h: 84, sub: 'go-upstairs route', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+    { id: 's_reach_alice', chapter: 'stormy', label: 'Reach Alice', short: 'Reach Alice', kind: 'action', x: 2305, y: 500, w: 190, h: 84, sub: 'go-upstairs route', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
       note: 'PowerPyx and Gamer Guides both place the non-gun routes after going upstairs and reaching Alice before Todd.' },
-    { id: 's_run_away', chapter: 'stormy', label: 'Run away', short: 'Run away', kind: 'action', x: 620, y: 640, w: 190, h: 84, sub: 'reported route step', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+    { id: 's_run_away', chapter: 'stormy', label: 'Run away', short: 'Run away', kind: 'action', x: 2045, y: 640, w: 190, h: 84, sub: 'reported route step', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
       note: 'PowerPyx and Gamer Guides report a Run Away option that takes Alice out of her room.' },
-    { id: 's_hide_corridor', chapter: 'stormy', label: 'Hide', short: 'Hide', kind: 'action', x: 880, y: 640, w: 190, h: 84, sub: 'reported route step', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+    { id: 's_hide_corridor', chapter: 'stormy', label: 'Hide', short: 'Hide', kind: 'action', x: 2305, y: 640, w: 190, h: 84, sub: 'reported route step', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
       note: 'Both guides describe hiding outside Alice’s room rather than standing still; the exact hiding inputs are not modelled.' },
-    { id: 's_todd_passes', chapter: 'stormy', label: 'Todd passes', short: 'Todd passes', kind: 'outcome', x: 1140, y: 640, w: 190, h: 84, sub: 'reported hiding timing', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+    { id: 's_todd_passes', chapter: 'stormy', label: 'Todd passes', short: 'Todd passes', kind: 'outcome', x: 2565, y: 640, w: 190, h: 84, sub: 'reported hiding timing', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
       note: 'PowerPyx says Todd walks past the hiding place; Gamer Guides says to wait until he walks by. Exact timing is not modelled.' },
-    { id: 's_front_backyard_escape', chapter: 'stormy', label: 'Door/yard exit', short: 'Door/yard exit', kind: 'outcome', x: 1400, y: 640, w: 190, h: 84, sub: 'successful non-gun exit · Todd state not stated', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+    { id: 's_front_backyard_escape', chapter: 'stormy', label: 'Door/yard exit', short: 'Door/yard exit', kind: 'outcome', x: 2825, y: 640, w: 190, h: 84, sub: 'successful non-gun exit · Todd state not stated', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
       note: 'After Todd passes, PowerPyx and Gamer Guides report the front-door/backyard route. GameFAQs also reports the front-door alternative when the window route was not opened. This records a successful exit, not a later Todd state.' },
 
-    { id: 's_lock_room', chapter: 'stormy', label: 'Lock room', short: 'Lock room', kind: 'action', x: 620, y: 790, w: 190, h: 84, sub: 'window-route branch', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+    { id: 's_lock_room', chapter: 'stormy', label: 'Lock room', short: 'Lock room', kind: 'action', x: 2045, y: 790, w: 190, h: 84, sub: 'window-route branch', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
       note: 'All three guides report locking Alice’s room before using the window. The precise time limit is not modelled.' },
-    { id: 's_window_go_out', chapter: 'stormy', label: 'Window exit', short: 'Window exit', kind: 'action', x: 880, y: 790, w: 190, h: 84, sub: 'choose Go out', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+    { id: 's_window_go_out', chapter: 'stormy', label: 'Window exit', short: 'Window exit', kind: 'action', x: 2305, y: 790, w: 190, h: 84, sub: 'choose Go out', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
       note: 'PowerPyx says to open the window and choose Go out; Gamer Guides and GameFAQs describe placing Alice outside and following her.' },
-    { id: 's_window_qte', chapter: 'stormy', label: 'Pass QTE', short: 'Pass QTE', kind: 'action', x: 1140, y: 790, w: 190, h: 84, sub: 'reported success condition', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+    { id: 's_window_qte', chapter: 'stormy', label: 'Pass QTE', short: 'Pass QTE', kind: 'action', x: 2565, y: 790, w: 190, h: 84, sub: 'reported success condition', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
       note: 'PowerPyx reports passing the QTE while Todd tries to stop the climb. The exact difficulty, prompts and hidden triggers are not modelled.' },
-    { id: 's_window_reach_bus', chapter: 'stormy', label: 'Reach bus', short: 'Reach bus', kind: 'outcome', x: 1400, y: 790, w: 190, h: 84, sub: 'successful window escape · Todd state not stated', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
-      note: 'PowerPyx, Gamer Guides and GameFAQs describe passing the climb, taking Alice down and reaching the bus. This records the successful escape, not Todd’s later state.' }
+    { id: 's_window_reach_bus', chapter: 'stormy', label: 'Reach bus', short: 'Reach bus', kind: 'outcome', x: 2825, y: 790, w: 190, h: 84, sub: 'successful window escape · Todd state not stated', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'PowerPyx, Gamer Guides and GameFAQs describe passing the climb, taking Alice down and reaching the bus. This records the successful escape, not Todd’s later state.' },
+
+    /* ---- Stormy Night: source-backed entry gates before the selected routes ---- */
+    { id: 's_todd_orders_stay', chapter: 'stormy', label: 'Todd orders Kara to stay still', short: 'Todd: stay still', kind: 'action', x: 2240, y: 120, w: 190, h: 84, status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Entry event reported in PowerPyx (Todd Gets Mad / Becoming Deviant or not, reviewed lines 27–37) and Gamer Guides (Branch 1, reviewed lines 182–212). Alice then runs upstairs before Kara’s response branch.' },
+    { id: 's_alice_runs_upstairs', chapter: 'stormy', label: 'Alice runs upstairs', short: 'Alice runs upstairs', kind: 'action', x: 2500, y: 120, w: 190, h: 84, status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Both reviewed guides place Alice running upstairs after Todd orders Kara to stay still and before Kara’s stay-still or deviant response.' },
+    { id: 's_deviant', chapter: 'stormy', label: 'Kara becomes deviant', short: 'Become deviant', kind: 'action', x: 2760, y: 120, w: 190, h: 84, status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'The deviant response follows Alice running upstairs. The guides then report two alternatives: go upstairs immediately or reason with Todd. The too-slow path is deliberately omitted.' },
+    { id: 's_fatal_todd_kills', chapter: 'stormy', label: 'Todd kills Alice and Kara', short: 'Todd kills Alice and Kara', kind: 'outcome', x: 2240, y: 300, w: 190, h: 84, status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Fatal non-deviant outcome. Both guides say Todd kills Alice and Kara after Kara stays still. This is not “Todd killed” (s_dead); it has no connector to “Todd survives” (s_alive) or the later meeting.' },
+    { id: 's_go_upstairs', chapter: 'stormy', label: 'Go upstairs', short: 'Go upstairs', kind: 'action', x: 3085, y: 120, w: 190, h: 84, status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Both guides report going upstairs straight away to protect Alice instead of talking to Todd. This is one alternative under the deviant entry, not the non-deviant path.' },
+    { id: 's_reason_todd', chapter: 'stormy', label: 'Reason with Todd', short: 'Reason with Todd', kind: 'action', x: 3085, y: 690, w: 190, h: 84, status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Both guides report talking to Todd instead of going upstairs; Todd knocks Kara down. Only the reported endpoint is drawn from here.' },
+    { id: 's_todd_upstairs_first', chapter: 'stormy', label: 'Todd reaches Alice before Kara', short: 'Todd reaches Alice first', kind: 'outcome', x: 3085, y: 864, w: 190, h: 84, status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Source-supported endpoint for the Reason with Todd alternative: Todd knocks Kara down and reaches Alice before Kara. No later gun, fight, survival or fatal outcome is claimed from this endpoint.' }
   ],
 
   /* id is the stable link id; array index and order stay unchanged for ?edge=N.
@@ -217,56 +239,56 @@ const ATLAS = {
     { id: 'e_home_go_clean2', from: 'a_go', to: 'a_clean2', kind: 'traced', src: ['steam'] },
     { id: 'e_home_clean2_room', from: 'a_clean2', to: 'a_room', kind: 'traced', src: ['steam'] },
     { id: 'e_home_room_talk', from: 'a_room', to: 'a_talk', kind: 'traced', src: ['steam'] },
-    { id: 'e_home_talk_key', from: 'a_talk', to: 'a_key', kind: 'conditional', label: 'reported condition: relationship threshold (single source)', labelAt: { x: 455, y: 407 },
+    { id: 'e_home_talk_key', from: 'a_talk', to: 'a_key', kind: 'conditional', label: 'reported condition: relationship threshold (single source)', labelAt: { x: 1650, y: 230 },
       src: ['steam', 'gamefaqs', 'powerpyxHome'],
       note: 'The screenshot shows the link itself. GameFAQs alone reports the key is given at Neutral or higher; PowerPyx describes the conversation without a threshold.' },
     { id: 'e_home_key_box', from: 'a_key', to: 'a_box', kind: 'traced', src: ['steam'] },
 
     /* Cross-chapter candidate hypothesis — stays dashed, never causal */
-    { id: 'e_home_box_kara_dialogue_hypothesis', from: 'a_box', to: 'k_dialogue', kind: 'hypothesis', via: 560, label: 'UNRESOLVED hypothesis · reported to affect Todd dialogue', labelAt: { x: 2100, y: 465 },
+    { id: 'e_home_box_kara_dialogue_hypothesis', from: 'a_box', to: 'k_dialogue', kind: 'hypothesis', via: 1985, label: 'UNRESOLVED hypothesis · reported to affect Todd dialogue', labelAt: { x: 1985, y: 465 },
       src: ['neoseekerKara'],
       note: 'Neoseeker ties the later “[Your Story]” persuasion option to “unlocked Alice’s box during A New Home”. Whether the game checks opening the box, seeing a photo, or another action is unresolved. Drawn as a hypothesis only: it does not guarantee the meeting or its outcome.' },
 
     /* Cross-chapter prerequisite gate — Todd survival out of Stormy Night */
-    { id: 'e_stormy_alive_meet', from: 's_alive', to: 'k_meet', kind: 'prerequisite', via: 1915, label: 'prerequisite: Todd not killed in Stormy Night', labelAt: { x: 2100, y: 412 },
+    { id: 'e_stormy_alive_meet', from: 's_alive', to: 'k_meet', kind: 'prerequisite', via: 3340, label: 'prerequisite: Todd not killed in Stormy Night', labelAt: { x: 3525, y: 412 },
       src: ['powerpyxKara'],
       note: 'PowerPyx: Meet Todd is “only possible, if he wasn’t killed in Stormy Night”. The negative state closes the branch; no arrow inside Stormy Night is claimed.' },
 
     /* Battle for Detroit — Kara meeting branch */
-    { id: 'e_kara_terminal_meet', from: 'k_terminal', to: 'k_meet', kind: 'prerequisite', label: 'prerequisite: at the bus terminal', labelAt: { x: 2645, y: 327 },
+    { id: 'e_kara_terminal_meet', from: 'k_terminal', to: 'k_meet', kind: 'prerequisite', label: 'prerequisite: at the bus terminal', labelAt: { x: 4070, y: 327 },
       src: ['powerpyxKara'],
       note: 'PowerPyx lists Meet Todd at the Bus Terminal and says all checkpoint paths lead there; the meeting was not checked in game.' },
-    { id: 'e_kara_meet_dialogue', from: 'k_meet', to: 'k_dialogue', kind: 'traced', via: 2715, src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'] },
-    { id: 'e_kara_dialogue_away', from: 'k_dialogue', fromOption: 0, to: 'k_away', kind: 'traced', labelAt: { x: 2845, y: 372 }, label: 'Persuade Todd', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'] },
-    { id: 'e_kara_dialogue_check', from: 'k_dialogue', fromOption: 1, to: 'k_check', kind: 'traced', labelAt: { x: 2845, y: 585 }, label: 'Fail to persuade', src: ['powerpyxKara', 'fandomBattle', 'gamerGuides'] },
-    { id: 'e_kara_away_goodbye', from: 'k_away', to: 'k_goodbye', kind: 'traced', via: 2700, src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'] },
+    { id: 'e_kara_meet_dialogue', from: 'k_meet', to: 'k_dialogue', kind: 'traced', via: 4140, src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'] },
+    { id: 'e_kara_dialogue_away', from: 'k_dialogue', fromOption: 0, to: 'k_away', kind: 'traced', labelAt: { x: 4270, y: 372 }, label: 'Persuade Todd', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'] },
+    { id: 'e_kara_dialogue_check', from: 'k_dialogue', fromOption: 1, to: 'k_check', kind: 'traced', labelAt: { x: 4270, y: 585 }, label: 'Fail to persuade', src: ['powerpyxKara', 'fandomBattle', 'gamerGuides'] },
+    { id: 'e_kara_away_goodbye', from: 'k_away', to: 'k_goodbye', kind: 'traced', via: 4125, src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'] },
 
     /* A New Home expansion — separate guide-reported clue/window events */
-    { id: 'e_home_go_gun_seen', from: 'a_go', to: 'a_gun_seen', kind: 'conditional', label: 'optional upstairs clue', labelAt: { x: 285, y: 742 },
+    { id: 'e_home_go_gun_seen', from: 'a_go', to: 'a_gun_seen', kind: 'conditional', label: 'optional upstairs clue', labelAt: { x: 895, y: 370 },
       src: ['powerpyxHome'],
       note: 'PowerPyx places the nightstand check while cleaning Todd’s room after going upstairs. The screenshot sequence does not show this optional side clue.' },
-    { id: 'e_home_room_window', from: 'a_room', to: 'a_window_open', kind: 'conditional', via: 540, label: 'optional room action', labelAt: { x: 540, y: 910 },
+    { id: 'e_home_room_window', from: 'a_room', to: 'a_window_open', kind: 'conditional', via: 1180, label: 'optional room action', labelAt: { x: 1280, y: 425 },
       src: ['powerpyxHome'],
       note: 'PowerPyx: while cleaning Alice’s room, opening the window is an optional room action. The node records opening, not merely discovering the window, and the connector does not assert a required next step.' },
 
     /* Cross-chapter carried-state gates: A New Home → Stormy Night */
-    { id: 'e_home_gun_stormy_take', from: 'a_gun_seen', to: 's_take_gun', kind: 'prerequisite', via: 560, label: 'prerequisite: gun was seen in A New Home', labelAt: { x: 650, y: 460 },
+    { id: 'e_home_gun_stormy_take', from: 'a_gun_seen', to: 's_take_gun', kind: 'prerequisite', via: 1985, label: 'prerequisite: gun was seen in A New Home', labelAt: { x: 1985, y: 370 },
       src: ['powerpyxStormy', 'powerpyxHome'],
       note: 'PowerPyx Stormy Night says Kara can take the gun only if it was found in Todd’s nightstand in Chapter 4; the A New Home guide reports that sighting. This gates availability to take it in Stormy Night, not possession in A New Home.' },
-    { id: 'e_home_window_stormy_route', from: 'a_window_open', to: 's_window_open', kind: 'prerequisite', via: 560, label: 'prerequisite: window opened in A New Home', labelAt: { x: 650, y: 755 },
+    { id: 'e_home_window_stormy_route', from: 'a_window_open', to: 's_window_open', kind: 'prerequisite', via: 1985, label: 'prerequisite: window opened in A New Home', labelAt: { x: 1915, y: 530 },
       src: ['powerpyxStormy', 'powerpyxHome'],
       note: 'PowerPyx Stormy Night says the window option is available if the route was found in Chapter 4; the A New Home guide reports opening Alice’s room window. This enables the route, not a successful escape.' },
 
     /* Stormy Night expansion — guide-stated gun confrontation and outcomes */
     { id: 'e_stormy_take_gun_struggle', from: 's_take_gun', to: 's_gun_struggle', kind: 'traced', src: ['powerpyxStormy'],
       note: 'PowerPyx says taking the gun leads to threatening Todd and a melee combat.' },
-    { id: 'e_stormy_struggle_kara_shoots', from: 's_gun_struggle', to: 's_kara_shoots_todd', kind: 'conditional', label: 'Kara keeps the gun', labelAt: { x: 1105, y: 180 },
+    { id: 'e_stormy_struggle_kara_shoots', from: 's_gun_struggle', to: 's_kara_shoots_todd', kind: 'conditional', label: 'Kara keeps the gun', labelAt: { x: 2600, y: 305 },
       src: ['powerpyxStormy'],
       note: 'PowerPyx reports that picking the gun back up during the prompt makes Kara shoot Todd. Exact QTE timing and difficulty are not modelled.' },
-    { id: 'e_stormy_struggle_alice_shoots', from: 's_gun_struggle', to: 's_alice_shoots_todd', kind: 'conditional', label: 'Alice takes the gun', labelAt: { x: 1105, y: 330 },
+    { id: 'e_stormy_struggle_alice_shoots', from: 's_gun_struggle', to: 's_alice_shoots_todd', kind: 'conditional', label: 'Alice takes the gun', labelAt: { x: 2530, y: 330 },
       src: ['powerpyxStormy'],
       note: 'PowerPyx reports that not picking the gun back up makes Alice pick it up and shoot Todd. This is a separate outcome, not a generic gun-outcome choice.' },
-    { id: 'e_stormy_kara_gun_carried', from: 's_kara_shoots_todd', to: 's_gun_carried', kind: 'traced', label: 'guide-stated future carry', labelAt: { x: 1365, y: 180 },
+    { id: 'e_stormy_kara_gun_carried', from: 's_kara_shoots_todd', to: 's_gun_carried', kind: 'traced', label: 'guide-stated future carry', labelAt: { x: 2830, y: 320 },
       src: ['powerpyxStormy'],
       note: 'PowerPyx’s cross-chapter note says only this Kara-shoots approach gives Kara the gun for future chapters.' },
     { id: 'e_stormy_kara_dead', from: 's_kara_shoots_todd', to: 's_dead', kind: 'traced', src: ['powerpyxStormy', 'powerpyxKara'],
@@ -275,18 +297,18 @@ const ATLAS = {
       note: 'Stormy Night reports Alice shoots Todd; the Kara finale guide treats Todd killed in Stormy Night as closing the meeting.' },
 
     /* Battle for Detroit — Kara checkpoint detour/timing branch */
-    { id: 'e_kara_checkpoint_detour', from: 'k_checkpoint', fromOption: 0, to: 'k_detour', kind: 'traced', label: 'Take Detour', labelAt: { x: 2190, y: 390 },
+    { id: 'e_kara_checkpoint_detour', from: 'k_checkpoint', fromOption: 0, to: 'k_detour', kind: 'traced', label: 'Take Detour', labelAt: { x: 3615, y: 390 },
       src: ['powerpyxKara', 'gamerGuides'] },
-    { id: 'e_kara_checkpoint_terminal', from: 'k_checkpoint', fromOption: 1, to: 'k_terminal', kind: 'traced', label: 'Approach Checkpoint', labelAt: { x: 2350, y: 242 },
+    { id: 'e_kara_checkpoint_terminal', from: 'k_checkpoint', fromOption: 1, to: 'k_terminal', kind: 'traced', label: 'Approach Checkpoint', labelAt: { x: 3775, y: 242 },
       src: ['powerpyxKara', 'gamerGuides'],
       note: 'The guarded-checkpoint interactions are omitted; both reviewed guides state all checkpoint ways lead to the Bus Terminal.' },
-    { id: 'e_kara_detour_late', from: 'k_detour', to: 'k_late_bus', kind: 'conditional', label: 'wait, then detour · below 11 min (reported)', labelAt: { x: 2325, y: 650 },
+    { id: 'e_kara_detour_late', from: 'k_detour', to: 'k_late_bus', kind: 'conditional', label: 'wait, then detour · below 11 min (reported)', labelAt: { x: 3750, y: 650 },
       src: ['powerpyxKara', 'gamerGuides'],
       note: 'Both reviewed guides describe waiting before taking the detour with the timer reported below 11 minutes and a delayed/last-bus result. Independence is unknown; the exact 11:00 boundary is not stated and is left unresolved.' },
-    { id: 'e_kara_detour_terminal', from: 'k_detour', to: 'k_terminal', kind: 'conditional', via: 2435, label: 'detour immediately · above 11 min (reported)', labelAt: { x: 2350, y: 350 },
+    { id: 'e_kara_detour_terminal', from: 'k_detour', to: 'k_terminal', kind: 'conditional', via: 3860, label: 'detour immediately · above 11 min (reported)', labelAt: { x: 3775, y: 350 },
       src: ['powerpyxKara', 'gamerGuides'],
       note: 'Both reviewed guides describe taking the detour immediately with the timer reported above 11 minutes and reaching the terminal on time. Independence is unknown; the exact 11:00 boundary is not stated and is left unresolved.' },
-    { id: 'e_kara_late_terminal', from: 'k_late_bus', to: 'k_terminal', kind: 'traced', via: 2465, label: 'still reaches the terminal', labelAt: { x: 2465, y: 315 },
+    { id: 'e_kara_late_terminal', from: 'k_late_bus', to: 'k_terminal', kind: 'traced', via: 3890, label: 'still reaches the terminal', labelAt: { x: 3890, y: 315 },
       src: ['powerpyxKara', 'gamerGuides'],
       note: 'The guides state all checkpoint ways, including the late/last-bus outcome, lead to the Bus Terminal. This branch therefore does not block the terminal or Todd-meeting gates.' },
 
@@ -300,32 +322,57 @@ const ATLAS = {
     { id: 'e_stormy_hide_todd_passes', from: 's_hide_corridor', to: 's_todd_passes', kind: 'traced',
       src: ['powerpyxStormy', 'gamerGuidesStormy'],
       note: 'PowerPyx says to wait until Todd walks past; Gamer Guides says to hide until he walks by. Exact hiding inputs and timing are not modelled.' },
-    { id: 'e_stormy_todd_passes_front_backyard', from: 's_todd_passes', to: 's_front_backyard_escape', kind: 'traced', labelAt: { x: 1365, y: 755 }, label: 'reported exit route',
+    { id: 'e_stormy_todd_passes_front_backyard', from: 's_todd_passes', to: 's_front_backyard_escape', kind: 'traced', labelAt: { x: 2790, y: 755 }, label: 'reported exit route',
       src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
       note: 'PowerPyx and Gamer Guides connect the hiding route to the front-door/backyard exit. GameFAQs also reports the front-door alternative when the window route is unavailable. Exact door, yard and QTE steps are omitted; only the successful route is represented.' },
-    { id: 'e_stormy_front_backyard_alive', from: 's_front_backyard_escape', to: 's_alive', kind: 'hypothesis', via: 1615, label: 'UNRESOLVED inference · Todd state not stated', labelAt: { x: 1615, y: 610 },
+    { id: 'e_stormy_front_backyard_alive', from: 's_front_backyard_escape', to: 's_alive', kind: 'hypothesis', via: 3040, label: 'UNRESOLVED inference · Todd state unstated', labelAt: { x: 3040, y: 610 },
       src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
       note: 'The reviewed guides describe a successful non-gun escape but do not state Todd’s later state. Linking this route to the existing Todd-not-killed state is an inference, not a traced or confirmed outcome. The meeting still needs the separate terminal gate.' },
 
     /* Stormy Night expansion — locked-room window successful non-gun route */
-    { id: 'e_stormy_reach_lock_room', from: 's_reach_alice', to: 's_lock_room', kind: 'traced', via: 820,
+    { id: 'e_stormy_reach_lock_room', from: 's_reach_alice', to: 's_lock_room', kind: 'traced', via: 2245,
       src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
       note: 'All three guides report locking Alice’s room after reaching her on the go-upstairs branch. The reported time window is not modelled.' },
-    { id: 'e_stormy_window_go_out_access', from: 's_window_open', to: 's_window_go_out', kind: 'prerequisite', via: 870, labelAt: { x: 845, y: 610 }, label: 'prerequisite: window route opened in A New Home',
+    { id: 'e_stormy_window_go_out_access', from: 's_window_open', to: 's_window_go_out', kind: 'prerequisite', via: 2295, labelAt: { x: 2270, y: 610 }, label: 'prerequisite: window route opened in A New Home',
       src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy', 'powerpyxHome'],
       note: 'All three Stormy Night guides say the window option is available only if that window route was opened in A New Home. This gates the window exit, not locking the room or a successful escape by itself.' },
     { id: 'e_stormy_lock_go_out', from: 's_lock_room', to: 's_window_go_out', kind: 'traced',
       src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
       note: 'PowerPyx reports opening the window and choosing Go out; Gamer Guides and GameFAQs describe placing Alice outside and following.' },
-    { id: 'e_stormy_go_out_qte', from: 's_window_go_out', to: 's_window_qte', kind: 'conditional', labelAt: { x: 1105, y: 755 }, label: 'pass reported QTE',
+    { id: 'e_stormy_go_out_qte', from: 's_window_go_out', to: 's_window_qte', kind: 'conditional', labelAt: { x: 2530, y: 755 }, label: 'pass reported QTE',
       src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
       note: 'PowerPyx reports a QTE while Todd tries to stop the climb; Gamer Guides and GameFAQs describe the successful climb. Only the success condition is represented. Exact prompts, difficulty and hidden triggers are not modelled.' },
-    { id: 'e_stormy_qte_bus', from: 's_window_qte', to: 's_window_reach_bus', kind: 'traced', labelAt: { x: 1365, y: 905 }, label: 'take Alice down',
+    { id: 'e_stormy_qte_bus', from: 's_window_qte', to: 's_window_reach_bus', kind: 'traced', labelAt: { x: 2790, y: 905 }, label: 'take Alice down',
       src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
       note: 'After the reported QTE, the guides describe taking Alice down and reaching the bus. Exact animations and inputs are omitted.' },
-    { id: 'e_stormy_window_bus_alive', from: 's_window_reach_bus', to: 's_alive', kind: 'hypothesis', via: 1635, label: 'UNRESOLVED inference · Todd state not stated', labelAt: { x: 1635, y: 755 },
+    { id: 'e_stormy_window_bus_alive', from: 's_window_reach_bus', to: 's_alive', kind: 'hypothesis', via: 3060, label: 'UNRESOLVED inference · Todd state unstated', labelAt: { x: 3150, y: 650 },
       src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
-      note: 'The reviewed guides describe the successful window escape but do not state Todd’s later state. Linking this route to Todd not killed is an inference, not a traced or confirmed outcome. The meeting still needs the separate terminal gate.' }
+      note: 'The reviewed guides describe the successful window escape but do not state Todd’s later state. Linking this route to Todd not killed is an inference, not a traced or confirmed outcome. The meeting still needs the separate terminal gate.' },
+
+    /* Stormy Night entry slice — non-deviant fatal and deviant alternatives */
+    { id: 'e_stormy_todd_orders_alice_upstairs', from: 's_todd_orders_stay', to: 's_alice_runs_upstairs', kind: 'traced',
+      src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Both reviewed guides report the shared entry sequence: Todd orders Kara to stay still, then Alice runs upstairs.' },
+    { id: 'e_stormy_alice_upstairs_stay_still', from: 's_alice_runs_upstairs', to: 's_fatal_todd_kills', kind: 'traced', via: 2500,
+      label: 'obey · stay still', labelAt: { x: 2500, y: 360 },
+      src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'The non-deviant response is to obey Todd and stay still. PowerPyx says Todd goes upstairs and kills Alice and Kara; Gamer Guides states he kills Alice, then Kara. This is separate from s_dead (Todd killed) and has no outgoing connector.' },
+    { id: 'e_stormy_alice_upstairs_deviant', from: 's_alice_runs_upstairs', to: 's_deviant', kind: 'traced',
+      src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Both guides report breaking programming after Alice runs upstairs as the deviant response, which opens the go-upstairs and Reason with Todd alternatives.' },
+    { id: 'e_stormy_deviant_go_upstairs', from: 's_deviant', to: 's_go_upstairs', kind: 'traced',
+      src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Both guides place the go-upstairs alternative under the deviant entry: head upstairs straight away to protect Alice instead of talking to Todd.' },
+    { id: 'e_stormy_go_upstairs_reach_alice', from: 's_go_upstairs', to: 's_reach_alice', kind: 'traced', via: 3020,
+      label: 'join selected Reach Alice route', labelAt: { x: 2800, y: 525 },
+      src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Both guides connect going upstairs immediately with reaching Alice before Todd. This joins the existing selected non-gun route at s_reach_alice; it does not add a direct Todd-state or meeting outcome.' },
+    { id: 'e_stormy_deviant_reason', from: 's_deviant', to: 's_reason_todd', kind: 'traced', via: 3020,
+      src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Both guides place Reason with Todd under the deviant entry as the alternative to going upstairs. The edge carries no later gun, fight, escape or Todd-state claim.' },
+    { id: 'e_stormy_reason_knocked', from: 's_reason_todd', to: 's_todd_upstairs_first', kind: 'traced',
+      src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'PowerPyx says Todd smacks Kara to the ground and is upstairs before she can get there. Gamer Guides says Todd always pushes Kara down and marches upstairs himself. The endpoint claims only this reported point; no s_dead or s_alive consequence is added.' }
   ],
 
   /* Conditions are plain-English groups over existing edges. They add no edge
@@ -408,9 +455,9 @@ const ATLAS = {
     {
       id: 'u_stormy_internal',
       status: 'unknown',
-      explanation: 'Only the selected gun outcomes into Todd killed and two selected successful non-gun escape routes are drawn. Other Stormy Night branches, including fatal escape outcomes and other ways Todd is spared or avoided, remain outside this slice. The two non-gun routes are not evidence of Todd’s later state.',
-      nodes: ['s_alive', 's_dead', 's_front_backyard_escape', 's_window_reach_bus'],
-      edges: ['e_stormy_alive_meet', 'e_stormy_front_backyard_alive', 'e_stormy_window_bus_alive'],
+      explanation: 'The selected entry slice draws Todd ordering Kara to stay still, Alice running upstairs, then the obey/stay-still fatal route or deviant alternatives. The shared scene details beyond these selected events, the too-slow path, hidden timers, exact QTE/difficulty, other fatal or survival routes, and any later consequence of the Reason with Todd endpoint remain outside this slice. The fatal entry outcome does not connect to Todd survives or the later meeting. The two successful non-gun routes are still not evidence of Todd’s later state.',
+      nodes: ['s_alive', 's_dead', 's_front_backyard_escape', 's_window_reach_bus', 's_todd_orders_stay', 's_alice_runs_upstairs', 's_deviant', 's_fatal_todd_kills', 's_go_upstairs', 's_reason_todd', 's_todd_upstairs_first'],
+      edges: ['e_stormy_alive_meet', 'e_stormy_front_backyard_alive', 'e_stormy_window_bus_alive', 'e_stormy_todd_orders_alice_upstairs', 'e_stormy_alice_upstairs_stay_still', 'e_stormy_alice_upstairs_deviant', 'e_stormy_deviant_go_upstairs', 'e_stormy_go_upstairs_reach_alice', 'e_stormy_deviant_reason', 'e_stormy_reason_knocked'],
       sources: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy', 'powerpyxKara', 'fandomBattle']
     },
     {
@@ -586,6 +633,50 @@ const ATLAS = {
       unknown: 'The guides do not state Todd’s later state, and the exact descent animations/inputs are not modelled. The dashed link to Todd not killed is an inference.',
       cross: { chapter: 'stormy', node: 's_alive', label: 'Show the inferred Todd state' },
       src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy']
+    },
+    s_todd_orders_stay: {
+      status: 'Guide-reported · selected event',
+      summary: 'PowerPyx (Todd Gets Mad / Becoming Deviant or not, reviewed lines 27–37) and Gamer Guides (Branch 1, reviewed lines 182–212) report that Todd orders Kara to stay still before Alice runs upstairs.',
+      unknown: 'The too-slow path is deliberately omitted. This is a guide-backed Stormy Night event, not a transcribed chart box.',
+      src: ['powerpyxStormy', 'gamerGuidesStormy']
+    },
+    s_alice_runs_upstairs: {
+      status: 'Guide-reported · selected event',
+      summary: 'Both reviewed guides place Alice running upstairs after Todd orders Kara to stay still. Kara’s stay-still or deviant response branches from this point.',
+      unknown: 'The too-slow path and other intervening timed actions are not represented.',
+      src: ['powerpyxStormy', 'gamerGuidesStormy']
+    },
+    s_deviant: {
+      status: 'Guide-reported · selected event',
+      summary: 'After Alice runs upstairs, Kara can break programming and become deviant. The guides report two alternatives: go upstairs to protect Alice, or reason with Todd.',
+      unknown: 'The too-slow path, hidden timers, exact QTE/difficulty and other branches remain outside this slice.',
+      src: ['powerpyxStormy', 'gamerGuidesStormy']
+    },
+    s_fatal_todd_kills: {
+      status: 'Guide-reported · fatal non-deviant outcome',
+      summary: 'PowerPyx says that if Kara fails to become deviant and simply stands still, Todd goes upstairs and kills Alice and Kara. Gamer Guides says Todd kills Alice, returns to Kara and kills her too. The node records that fatal outcome only.',
+      unknown: 'This is a different state from “Todd killed” (s_dead). It has no connector to “Todd survives” (s_alive), the bus terminal or the later Todd meeting.',
+      src: ['powerpyxStormy', 'gamerGuidesStormy']
+    },
+    s_go_upstairs: {
+      status: 'Guide-reported · deviant alternative',
+      summary: 'Both guides report going upstairs straight away to protect Alice instead of choosing to talk to Todd. This action joins the existing selected Reach Alice route.',
+      unknown: 'Exact movement timing and hidden checks before reaching Alice are not modelled.',
+      cross: { chapter: 'stormy', node: 's_reach_alice', label: 'Show the existing Reach Alice route' },
+      src: ['powerpyxStormy', 'gamerGuidesStormy']
+    },
+    s_reason_todd: {
+      status: 'Guide-reported · deviant alternative',
+      summary: 'Both guides report talking to Todd instead of going upstairs. Todd knocks Kara down and reaches the stairs/upstairs before she can.',
+      unknown: 'The later gun pickup, fight, escape and Todd-state consequences are not connected from this endpoint in this slice.',
+      cross: { chapter: 'stormy', node: 's_todd_upstairs_first', label: 'Show the supported endpoint' },
+      src: ['powerpyxStormy', 'gamerGuidesStormy']
+    },
+    s_todd_upstairs_first: {
+      status: 'Guide-reported · supported branch endpoint',
+      summary: 'PowerPyx says Todd smacks Kara to the ground and is upstairs before she can get there. Gamer Guides says Todd always pushes Kara down and marches upstairs himself. The node records that Todd reaches Alice before Kara.',
+      unknown: 'No later gun, fight, survival or fatal outcome is claimed from this endpoint, and it is not wired to s_dead, s_alive, the terminal or the meeting.',
+      src: ['powerpyxStormy', 'gamerGuidesStormy']
     },
     k_terminal: {
       status: 'Guide-reported · access gate',

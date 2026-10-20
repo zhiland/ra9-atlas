@@ -34,9 +34,12 @@ passing the reported climb/QTE, and taking Alice down to the bus.
 
 These are secondary guides and may share wording or sources; independence is
 unknown. Exact movement timing, hiding inputs, prompt sequences, difficulty,
-and hidden triggers are not modelled. Fatal non-gun routes, Fail to Hide,
-Defend Alice, failed window QTEs, miss-bus outcomes, and other
-difficulty-specific failures are deliberately omitted.
+and hidden triggers are not modelled. Other fatal or survival branches,
+including the too-slow path, Fail to Hide, Defend Alice, failed window QTEs,
+miss-bus outcomes, and other difficulty-specific failures, are deliberately
+omitted. The separately added [entry slice](stormy-entry-slice.md) represents
+only the non-deviant fatal outcome and the deviant go-upstairs/Reason with Todd
+alternatives.
 
 ## Todd state remains unresolved
 
@@ -56,11 +59,12 @@ reported meeting gates.
 
 ## Counts and validation
 
-The atlas now contains **38 nodes and 42 edges**: 26 traced + 8 conditional +
-5 prerequisite + 3 unresolved hypotheses, with 4 cross-chapter connectors,
-5 conditions, 7 uncertainty records and 0 conflicts. All previously published
-node/edge IDs and array order remain; the nine nodes and eleven internal edges
-above are appended.
+After the later [entry slice](stormy-entry-slice.md), the atlas contains
+**45 nodes and 49 edges**: 33 traced + 8 conditional + 5 prerequisite +
+3 unresolved hypotheses, with 4 cross-chapter connectors, 5 conditions,
+7 uncertainty records and 0 conflicts. All previously published node/edge IDs
+and array order remain; this escape slice's nine nodes and eleven internal
+edges stay ahead of the seven entry nodes and seven entry edges appended later.
 
 Conditions remain transition-local: the QTE success condition applies only to the QTE edge; later route steps do not become prerequisites for earlier actions. The A New Home window availability stays a separate prerequisite edge.
 
@@ -69,11 +73,15 @@ Full validation was re-run on 2026-10-20:
 - `node prototype/validate-atlas-data.js` — all checks pass, including route
   distinctness, the window prerequisite, the endpoint-to-`s_alive` inference
   fence, and the separate terminal/meeting gates.
-- `node tests/atlas-data-contract.test.js` — 45/45 pass.
-- `node tests/atlas-core.test.js` — 42/42 pass.
-- `node tests/map-first.test.js` — 13/13 pass.
-- `node tests/poc4-browser.test.js` — 51/51 pass in headless Chromium over
-  localhost HTTP, including the new route/inference details check.
+- `node tests/atlas-data-contract.test.js` — 51/51 pass after the later entry
+  slice.
+- `node tests/atlas-core.test.js` — 42/42 pass after the later entry slice.
+- `node tests/map-first.test.js` — 4/4 pass.
+- `node tests/poc4-browser.test.js` — 55/55 pass in headless Chromium over
+  localhost HTTP, including the route/inference details check.
+- `node tests/stable-zoom.test.js` — 10/10 pass; close-scale sampling now zooms
+  until the actual camera reaches 100%, independent of the fitted map width.
+- `node tests/atlas-layout.test.js` — 9/9 pass with the 45-node inventory.
 
 Browser screenshots used for visual review were served over localhost, not
 `file://`. No game transition was checked in game.

@@ -10,7 +10,7 @@
    consent, the continuous story map, the three LOD steps, fit bounds,
    chapter focus, actual cross-chapter navigation, both detail-close paths,
    history, search keyboard handling, hash round-trips and text contrast in
-   all three palettes, plus a scoped 390x844 mobile-emulation layout,
+   all three palettes, plus a scoped 390x845 mobile-emulation layout,
    scrolling and interaction regression. It does NOT verify any Detroit:
    Become Human gameplay, a physical phone, Safari/iOS, or touch gestures on
    real hardware. */
@@ -157,7 +157,7 @@ async function runVariant(browser, variant) {
     p.on('console', function (m) { if (m.type() === 'error') pageErrors.push('console: ' + m.text()); });
   };
 
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const page = await browser.newPage({ viewport: { width: 1450, height: 900 } });
   track(page);
   const url = baseUrl + '/prototype/' + variant.file;
   await page.goto(url + '#');
@@ -192,8 +192,8 @@ async function runVariant(browser, variant) {
     assert(state.focused === 'consent', 'consent should receive focus, was ' + state.focused);
     assert(state.world && state.world.width > 0 && state.world.height > 0, 'map world must be rendered but covered');
     assert(state.canvas && state.canvas.width > 0 && state.canvas.height > 0, 'canvas must have layout under the cover');
-    assert(state.nodes === 38, '38 nodes should be rendered behind the cover, got ' + state.nodes);
-    assert(state.edges === 42, '42 connectors should be rendered behind the cover, got ' + state.edges);
+    assert(state.nodes === 45, '45 nodes should be rendered behind the cover, got ' + state.nodes);
+    assert(state.edges === 49, '49 connectors should be rendered behind the cover, got ' + state.edges);
     assert(state.lod === null, 'the map must not carry a semantic LOD attribute');
   });
 
@@ -208,7 +208,7 @@ async function runVariant(browser, variant) {
     assert(await page.locator('#trail').isVisible(), 'history trail not visible');
     assert(!(await page.locator('#atlas-shell').getAttribute('inert')), 'shell stayed inert after consent');
     const status = await textOf(page, '#status');
-    assert(status.indexOf('3 chapters · 38 events · 42 connectors') !== -1, 'status line counts: ' + status);
+    assert(status.indexOf('3 chapters · 45 events · 49 connectors') !== -1, 'status line counts: ' + status);
     assert(status.indexOf('not in-game verified') !== -1, 'status line must keep the not-verified qualifier');
     assert(status.indexOf('version/platform unknown') === -1 && status.length <= 180,
       'primary status must stay a concise slice summary, got: ' + status);
@@ -217,10 +217,10 @@ async function runVariant(browser, variant) {
     assert(/^\d+%$/.test(zoom), 'zoom label should report camera scale only: ' + zoom);
     assert(await page.locator('#overview').count() === 0, 'the card/report overview surface must stay removed');
     assert(await page.locator('.frame').count() === 3, 'three chapter frames must stay mounted');
-    assert(await page.locator('[data-node]').count() === 38, '38 event nodes must stay mounted');
-    assert(await page.locator('path.edge').count() === 42, '42 connectors must stay mounted');
+    assert(await page.locator('[data-node]').count() === 45, '45 event nodes must stay mounted');
+    assert(await page.locator('path.edge').count() === 49, '49 connectors must stay mounted');
     assert(await page.locator('[data-frame-label]').count() === 3, 'three chapter names must remain on the map');
-    assert(await page.locator('[data-node-label]').count() === 38, 'every event box must keep its label');
+    assert(await page.locator('[data-node-label]').count() === 45, 'every event box must keep its label');
   });
 
   await ok('map names and labels stay attached to real chapters, nodes and cross-chapter edges', async function () {
@@ -241,7 +241,7 @@ async function runVariant(browser, variant) {
       return { frames: frames, labels: labels, actualCross: actualCross, labelled: labelled };
     });
     assert(result.frames.length === 3 && result.frames.every(function (f) { return f.contained && f.title; }), 'chapter names must stay inside all real frames');
-    assert(result.labels.length === 38 && result.labels.every(function (n) { return n.contained && n.text; }), 'all 38 real nodes must retain their full in-box labels');
+    assert(result.labels.length === 45 && result.labels.every(function (n) { return n.contained && n.text; }), 'all 45 real nodes must retain their full in-box labels');
     result.actualCross.forEach(function (index) { assert(result.labelled.indexOf(index) !== -1 || !ATLAS.edges[index].label, 'labelled cross-chapter edge ' + index + ' disappeared'); });
     assert(await page.locator('#overview-connectors, .overview-link, .overview-card').count() === 0, 'no pseudo-map or report surface may replace the graph');
   });
@@ -278,7 +278,7 @@ async function runVariant(browser, variant) {
     all.frames.forEach(function (frame) {
       assert(fullyInside(frame.rect, all.canvas), frame.id + ' frame is clipped by the whole-map fit');
     });
-    assert(all.canvas.left >= 0 && all.canvas.right <= 1441, 'canvas itself leaves the viewport');
+    assert(all.canvas.left >= 0 && all.canvas.right <= 1451, 'canvas itself leaves the viewport');
     assert(!all.horizontalOverflow, 'whole-map fit introduced horizontal overflow');
 
     await openChapter(page, 'home');
@@ -287,7 +287,7 @@ async function runVariant(browser, variant) {
     assert(await page.locator('[data-chapter="home"]').getAttribute('aria-pressed') === 'true', 'home chapter is not active');
     const homeFrame = home.frames.filter(function (f) { return f.id === 'home'; })[0];
     assert(homeFrame && fullyInside(homeFrame.rect, home.canvas), 'focused home chapter is clipped by the canvas');
-    assert(home.nodeCount === 38 && home.edgeCount === 42, 'chapter focus must keep the whole graph mounted');
+    assert(home.nodeCount === 45 && home.edgeCount === 49, 'chapter focus must keep the whole graph mounted');
     assert(!home.horizontalOverflow, 'chapter focus introduced horizontal overflow');
 
     await page.locator('[data-chapter="kara"]').click();
@@ -384,6 +384,87 @@ async function runVariant(browser, variant) {
       'the window opening must not claim a direct escape outcome');
     await page.locator('#details-close').click();
     await page.locator('#details').waitFor({ state: 'hidden' });
+  });
+
+  await ok('Stormy entry keeps the source order and distinct response branches in the rendered map', async function () {
+    await openChapter(page, 'stormy');
+    await page.locator('[data-node="s_todd_orders_stay"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    let d = await textOf(page, '#details');
+    assert(d.indexOf('Todd orders Kara to stay still') !== -1, 'Todd order event missing');
+    assert(await page.locator('#details .rowlist [data-goto="s_alice_runs_upstairs"]').count() === 1,
+      'Todd order must lead to Alice running upstairs');
+    await page.locator('#details-close').click();
+    await page.locator('#details').waitFor({ state: 'hidden' });
+
+    await page.locator('[data-node="s_alice_runs_upstairs"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    assert(await page.locator('#details .rowlist [data-goto="s_fatal_todd_kills"]').count() === 1,
+      'stay-still response should reach the distinct fatal outcome');
+    assert(await page.locator('#details .rowlist [data-goto="s_deviant"]').count() === 1,
+      'Alice-upstairs event should also offer becoming deviant');
+    await page.locator('#details-close').click();
+    await page.locator('#details').waitFor({ state: 'hidden' });
+
+    await page.locator('[data-node="s_alice_runs_upstairs"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    assert(await page.locator('#details .rowlist [data-goto="s_fatal_todd_kills"]').count() === 1, 'stay-still response should reach fatal outcome');
+    assert(await page.locator('#details .rowlist [data-goto="s_deviant"]').count() === 1, 'deviant response should remain separate');
+    await page.locator('#details-close').click();
+    await page.locator('#details').waitFor({ state: 'hidden' });
+
+    await page.locator('[data-node="s_fatal_todd_kills"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    d = await textOf(page, '#details');
+    assert(d.indexOf('Todd kills Alice and Kara') !== -1, 'fatal outcome heading missing');
+    assert(/fatal/i.test(d), 'fatal outcome details should state that it is fatal');
+    assert(await page.locator('#details .rowlist [data-goto="s_alive"], #details .rowlist [data-goto="s_dead"], #details .rowlist [data-goto="k_meet"], #details .rowlist [data-goto="k_terminal"]').count() === 0,
+      'fatal outcome must not connect to Todd states or later meeting nodes');
+    await page.locator('#details-close').click();
+    await page.locator('#details').waitFor({ state: 'hidden' });
+
+    await page.locator('[data-node="s_deviant"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    assert(await page.locator('#details .rowlist [data-goto="s_go_upstairs"]').count() === 1,
+      'deviant response should offer going upstairs');
+    assert(await page.locator('#details .rowlist [data-goto="s_reason_todd"]').count() === 1,
+      'deviant response should offer Reason with Todd');
+    await page.locator('#details-close').click();
+    await page.locator('#details').waitFor({ state: 'hidden' });
+
+    await page.locator('[data-node="s_go_upstairs"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    assert(await page.locator('#details .rowlist [data-goto="s_reach_alice"]').count() === 1,
+      'go-upstairs should join the existing Reach Alice route');
+    await page.locator('#details-close').click();
+    await page.locator('#details').waitFor({ state: 'hidden' });
+
+    await page.locator('[data-node="s_reason_todd"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    assert(await page.locator('#details .rowlist [data-goto="s_todd_upstairs_first"]').count() === 1,
+      'Reason with Todd should end at Todd reaching Alice first');
+    assert(await page.locator('#details .rowlist [data-goto="s_alive"], #details .rowlist [data-goto="s_dead"]').count() === 0,
+      'Reason with Todd must not claim a Todd fate');
+    await page.locator('#details-close').click();
+    await page.locator('#details').waitFor({ state: 'hidden' });
+
+    const separation = await page.evaluate(function () {
+      const edgeIds = new Set(ATLAS.edges.map(function (e) { return e.id; }));
+      return {
+        fatalOut: ATLAS.edges.filter(function (e) { return e.from === 's_fatal_todd_kills'; }).length,
+        deviantOut: ATLAS.edges.filter(function (e) { return e.from === 's_deviant'; }).map(function (e) { return e.to; }).sort(),
+        mountedEdges: document.querySelectorAll('path.edge').length,
+        entryEdges: ['e_stormy_todd_orders_alice_upstairs', 'e_stormy_alice_upstairs_stay_still',
+          'e_stormy_alice_upstairs_deviant', 'e_stormy_deviant_go_upstairs',
+          'e_stormy_go_upstairs_reach_alice', 'e_stormy_deviant_reason', 'e_stormy_reason_knocked']
+          .filter(function (id) { return edgeIds.has(id); }).length
+      };
+    });
+    assert(separation.fatalOut === 0, 'the fatal outcome must remain terminal on the map');
+    assert(separation.mountedEdges === 49 && separation.entryEdges === 7,
+      'all entry connectors must stay mounted with the map');
+    assert(JSON.stringify(separation.deviantOut) === JSON.stringify(['s_go_upstairs', 's_reason_todd']),
+      'deviant response connectors changed: ' + separation.deviantOut.join(','));
   });
 
   await ok('map cross-label opens the actual edge with evidence and a permalink', async function () {
@@ -620,7 +701,7 @@ async function runVariant(browser, variant) {
     assert(locked.focus === 'consent', 're-lock should focus the consent button');
     assert(locked.overlayZ >= 40, 're-locked overlay must cover the map');
     assert(locked.canvasWidth > 0 && locked.canvasHeight > 0 && locked.worldVisible, 'map must stay visible beneath the re-locked overlay');
-    assert(locked.nodes === 38, 'map content must stay mounted beneath the re-locked overlay');
+    assert(locked.nodes === 45, 'map content must stay mounted beneath the re-locked overlay');
     assert(locked.detailsHidden, 're-lock should happen from a closed-details state');
     assert(locked.stored === null, 'reset should clear the stored consent key');
 
@@ -646,7 +727,7 @@ async function runVariant(browser, variant) {
   });
 
   await ok('hash round-trips restore a node and an edge-focused deep link after consent', async function () {
-    const fresh = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    const fresh = await browser.newPage({ viewport: { width: 1450, height: 900 } });
     track(fresh);
     await fresh.goto(url + '#kara/k_check');
     await fresh.locator('#consent').click();
@@ -663,7 +744,7 @@ async function runVariant(browser, variant) {
       return null;
     });
     assert(hypothesis, 'fixture hypothesis edge missing');
-    const freshEdge = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    const freshEdge = await browser.newPage({ viewport: { width: 1450, height: 900 } });
     track(freshEdge);
     await freshEdge.goto(url + '#kara/' + hypothesis.to + '?edge=' + hypothesis.index);
     await freshEdge.locator('#consent').click();
@@ -697,21 +778,21 @@ async function runVariant(browser, variant) {
 async function runMobileRegression(browser) {
   console.log('scenario mobile-390 stable map');
   const pageErrors = [];
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const page = await browser.newPage({ viewport: { width: 390, height: 845 } });
   page.on('pageerror', function (e) { pageErrors.push('pageerror: ' + e.message); });
   page.on('console', function (m) { if (m.type() === 'error') pageErrors.push('console: ' + m.text()); });
   await page.goto(baseUrl + '/prototype/poc4-editorial.html#');
   await page.locator('#consent').waitFor({ state: 'visible' });
   await ok('mobile spoiler cover keeps the real map underneath', async function () {
-    assert(await page.locator('[data-node]').count() === 38, 'real nodes must be mounted beneath the cover');
-    assert(await page.locator('path.edge').count() === 42, 'real edges must be mounted beneath the cover');
+    assert(await page.locator('[data-node]').count() === 45, 'real nodes must be mounted beneath the cover');
+    assert(await page.locator('path.edge').count() === 49, 'real edges must be mounted beneath the cover');
     assert(await page.locator('#spoiler-overlay').isVisible(), 'spoiler cover should be visible');
   });
   await page.locator('#consent').click();
   await page.locator('#spoiler-overlay').waitFor({ state: 'detached' });
   await waitFrames(page);
 
-  await ok('390x844 fit keeps one stable graph and avoids page overflow', async function () {
+  await ok('390x845 fit keeps one stable graph and avoids page overflow', async function () {
     const m = await page.evaluate(function () {
       const canvas = document.getElementById('canvas').getBoundingClientRect();
       const world = document.getElementById('world');
@@ -731,7 +812,7 @@ async function runMobileRegression(browser) {
     });
     assert(Math.abs(m.width-m.viewport)<=1, 'canvas width does not fit the mobile viewport');
     assert(!m.overflow, 'mobile page has horizontal overflow');
-    assert(m.nodes===38&&m.labels===38&&m.edges===42, 'mobile viewport changed graph inventory');
+    assert(m.nodes===45&&m.labels===45&&m.edges===49, 'mobile viewport changed graph inventory');
     assert(m.frames.every(function(f){return f.inside;}), 'whole-map Fit should contain all chapter regions');
     assert(m.scale>0&&m.scale<1, 'mobile fit should scale the same world map');
   });
@@ -747,7 +828,7 @@ async function runMobileRegression(browser) {
       return { pressed:document.querySelector('[data-chapter="home"]').getAttribute('aria-pressed'), inside:frame.left>=canvas.left-1&&frame.right<=canvas.right+1&&frame.top>=canvas.top-1&&frame.bottom<=canvas.bottom+1, nodes:document.querySelectorAll('[data-node]').length, labels:document.querySelectorAll('[data-node-label]').length, edges:document.querySelectorAll('path.edge').length, camera:{a:m.a,e:m.e,f:m.f}, text:Array.from(document.querySelectorAll('[data-node-label]')).map(function(x){return x.textContent.trim();}) };
     });
     assert(focused.pressed==='true'&&focused.inside, 'mobile chapter focus did not fit its real frame');
-    assert(focused.nodes===38&&focused.labels===38&&focused.edges===42, 'chapter focus swapped or hid real graph content');
+    assert(focused.nodes===45&&focused.labels===45&&focused.edges===49, 'chapter focus swapped or hid real graph content');
     assert(focused.text.every(Boolean), 'chapter focus has an anonymous event label');
     const point=await page.evaluate(function(){const c=document.getElementById('canvas'),r=c.getBoundingClientRect();for(let y=r.top+25;y<r.bottom-25;y+=12){for(let x=r.left+25;x<r.right-25;x+=12){const el=document.elementFromPoint(x,y);if(el&&c.contains(el)&&!el.closest('button,a,input,.legend,.status,.zoom'))return{x:x,y:y};}}return null;});
     assert(point,'no clear map point for mobile pan');
@@ -766,7 +847,7 @@ async function runMobileRegression(browser) {
     await hit.click(); await page.locator('#details').waitFor({state:'visible'});
     assert(await page.locator('#details-close').isVisible(), 'details close control is not visible');
     assert((await textOf(page,'#details')).includes('Meet Todd'), 'wrong event details opened');
-    assert((await page.locator('[data-node]').count())===38, 'map must stay mounted behind details');
+    assert((await page.locator('[data-node]').count())===45, 'map must stay mounted behind details');
     const r=await page.locator('#details').boundingBox();
     assert(r&&r.x>=-1&&r.x+r.width<=390+1, 'details panel extends beyond the mobile viewport');
     await page.keyboard.press('Escape'); await page.locator('#details').waitFor({state:'hidden'});

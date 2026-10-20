@@ -39,6 +39,7 @@ function validateAtlas(ATLAS) {
   const byId = new Map(nodes.map(n => [n.id, n]));
   const chapterById = new Map(chapters.map(c => [c.id, c]));
   const edgeById = new Map(edges.filter(e => e && e.id).map(e => [e.id, e]));
+  const confirmedKinds = new Set(['traced', 'conditional', 'prerequisite']);
 
   const checks = [];
   const check = (name, run) => checks.push({ name, errors: run() });
@@ -586,6 +587,94 @@ function validateAtlas(ATLAS) {
     return errors;
   });
 
+  check('Stormy Night entry slice keeps fatal and deviant states separate and source-backed', () => {
+    const errors = [];
+    const requiredNodes = {
+      s_todd_orders_stay: 'Todd orders Kara to stay still',
+      s_alice_runs_upstairs: 'Alice runs upstairs',
+      s_deviant: 'Kara becomes deviant',
+      s_fatal_todd_kills: 'Todd kills Alice and Kara',
+      s_go_upstairs: 'Go upstairs',
+      s_reason_todd: 'Reason with Todd',
+      s_todd_upstairs_first: 'Todd reaches Alice before Kara'
+    };
+    for (const [id, label] of Object.entries(requiredNodes)) {
+      const node = byId.get(id);
+      if (!node) { errors.push(`${id} is missing`); continue; }
+      if (node.chapter !== 'stormy') errors.push(`${id} must stay in the Stormy Night chapter`);
+      if (node.label !== label) errors.push(`${id} label should be "${label}", found "${node.label}"`);
+      if (!node.src || !node.src.includes('powerpyxStormy') || !node.src.includes('gamerGuidesStormy')) {
+        errors.push(`${id} needs both Stormy Night entry sources`);
+      }
+    }
+    const order = byId.get('s_todd_orders_stay'), aliceUpstairs = byId.get('s_alice_runs_upstairs');
+    if (order && order.kind !== 'action') errors.push('s_todd_orders_stay must be an event, not a carried-state gate');
+    if (aliceUpstairs && aliceUpstairs.kind !== 'action') errors.push('s_alice_runs_upstairs must be an event');
+    if (order && !/Alice then runs upstairs/i.test(order.note || '')) errors.push('the Todd order note must preserve the Alice-upstairs sequence');
+    const fatal = byId.get('s_fatal_todd_kills'), dead = byId.get('s_dead'), alive = byId.get('s_alive');
+    if (fatal && dead && fatal.label === dead.label) errors.push('the fatal non-deviant outcome must not reuse the Todd-killed label');
+    if (fatal && !/fatal/i.test(fatal.note || '')) errors.push('s_fatal_todd_kills must identify itself as a fatal outcome');
+    if (fatal && !/not .*Todd killed|distinct|separate/i.test(fatal.note || '')) {
+      errors.push('s_fatal_todd_kills must distinguish itself from Todd killed');
+    }
+
+    const orderEdges = edges.filter(e => e.from === 's_todd_orders_stay');
+    if (orderEdges.length !== 1 || orderEdges[0].to !== 's_alice_runs_upstairs' || orderEdges[0].kind !== 'traced') {
+      errors.push('Todd’s stay-still order must lead to Alice running upstairs');
+    }
+    const aliceEdges = edges.filter(e => e.from === 's_alice_runs_upstairs');
+    const deviantNode = nodes.find(n => n.id === 's_deviant');
+    if (aliceEdges.length !== 2 || !aliceEdges.some(e => e.to === 's_fatal_todd_kills' && /stay still|obey/i.test(e.label || '')) ||
+        !aliceEdges.some(e => e.to === 's_deviant') || !/deviant/i.test(deviantNode && deviantNode.label || '')) {
+      errors.push('Alice running upstairs must branch to obey/stay-still fatal outcome or the deviant event');
+    }
+    const fatalIn = edges.filter(e => e.to === 's_fatal_todd_kills');
+    if (fatalIn.length !== 1 || fatalIn[0].from !== 's_alice_runs_upstairs') {
+      errors.push('s_fatal_todd_kills must follow the stay-still branch after Alice runs upstairs');
+    }
+    if (edges.some(e => e.from === 's_fatal_todd_kills')) {
+      errors.push('s_fatal_todd_kills must remain terminal');
+    }
+
+    const deviantOut = edges.filter(e => e.from === 's_deviant').map(e => e.to).sort().join(',');
+    if (deviantOut !== 's_go_upstairs,s_reason_todd') {
+      errors.push(`s_deviant should offer only go-upstairs and reason-with-Todd alternatives, found "${deviantOut}"`);
+    }
+    const upstairsOut = edges.filter(e => e.from === 's_go_upstairs').map(e => e.to).join(',');
+    if (upstairsOut !== 's_reach_alice') errors.push(`s_go_upstairs should join only s_reach_alice, found "${upstairsOut}"`);
+    const reasonOut = edges.filter(e => e.from === 's_reason_todd').map(e => e.to).join(',');
+    if (reasonOut !== 's_todd_upstairs_first') errors.push(`s_reason_todd should stop at s_todd_upstairs_first, found "${reasonOut}"`);
+    if (edges.some(e => e.from === 's_todd_upstairs_first')) errors.push('s_todd_upstairs_first must remain a scoped endpoint');
+
+    const entryEdgeIds = [
+      'e_stormy_todd_orders_alice_upstairs', 'e_stormy_alice_upstairs_stay_still',
+      'e_stormy_alice_upstairs_deviant',
+      'e_stormy_deviant_go_upstairs',
+      'e_stormy_go_upstairs_reach_alice', 'e_stormy_deviant_reason',
+      'e_stormy_reason_knocked'
+    ];
+    for (const id of entryEdgeIds) {
+      const edge = edgeById.get(id);
+      if (!edge) { errors.push(`${id} is missing`); continue; }
+      if (edge.kind !== 'traced') errors.push(`${id} should stay a directly guide-stated traced edge`);
+      if (!edge.src || !edge.src.includes('powerpyxStormy') || !edge.src.includes('gamerGuidesStormy')) {
+        errors.push(`${id} needs both Stormy Night entry sources`);
+      }
+      if (['s_alive', 's_dead', 'k_terminal', 'k_meet'].includes(edge.to)) {
+        errors.push(`${id} must not imply a Todd-state or later-meeting outcome`);
+      }
+    }
+
+    if (alive) {
+      const aliveIn = edges.filter(e => e.to === 's_alive').map(e => e.from).sort();
+      const expectedAlive = ['s_front_backyard_escape', 's_window_reach_bus'];
+      if (JSON.stringify(aliveIn) !== JSON.stringify(expectedAlive)) {
+        errors.push(`s_alive should keep only the two inferred escape endpoints, found "${aliveIn.join(',')}"`);
+      }
+    }
+    return errors;
+  });
+
   check('fatal or escape states cannot bypass the separate terminal and meeting gates', () => {
     const errors = [];
     const terminalIn = edges.filter(e => e.to === 'k_terminal');
@@ -604,11 +693,19 @@ function validateAtlas(ATLAS) {
     for (const kara of ['k_terminal', 'k_meet', 'k_dialogue', 'k_away', 'k_goodbye', 'k_check']) {
       if (dead.has(kara)) errors.push(`s_dead must not reach ${kara} through drawn edges`);
     }
+    const fatal = byId.get('s_fatal_todd_kills');
+    if (fatal) {
+      const fatalOut = edges.filter(e => e.from === 's_fatal_todd_kills');
+      if (fatalOut.length) errors.push('s_fatal_todd_kills gained an outgoing edge; the fatal non-deviant outcome must stop there');
+      const fatalReach = reachableFrom('s_fatal_todd_kills');
+      for (const kara of ['s_alive', 's_dead', 'k_terminal', 'k_meet', 'k_dialogue', 'k_away', 'k_check', 'k_goodbye']) {
+        if (fatalReach.has(kara)) errors.push(`s_fatal_todd_kills must not reach ${kara} through drawn edges`);
+      }
+    }
     return errors;
   });
 
   /* ---------- 5. Reachability over non-hypothesis edges ---------- */
-  const confirmedKinds = new Set(['traced', 'conditional', 'prerequisite']);
   function reachableFrom(startId) {
     const seen = new Set([startId]);
     const queue = [startId];
@@ -677,8 +774,8 @@ function validateAtlas(ATLAS) {
     for (const [key, value] of Object.entries(actual)) {
       if (counts[key] !== value) errors.push(`meta.counts.${key} is ${counts[key]} but the data has ${value}`);
     }
-    if (actual.nodes !== 38) errors.push(`expected 38 boxes, found ${actual.nodes}`);
-    if (actual.edges !== 42) errors.push(`expected 42 connectors, found ${actual.edges}`);
+    if (actual.nodes !== 45) errors.push(`expected 45 boxes, found ${actual.nodes}`);
+    if (actual.edges !== 49) errors.push(`expected 49 connectors, found ${actual.edges}`);
     return errors;
   });
 

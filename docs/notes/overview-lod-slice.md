@@ -40,13 +40,15 @@ remains within 80 world pixels of its connector.
 
 ## Verification
 
-`npm test` passes the validators, 45 contract checks, 41 unit checks, 4 stable
-map checks, 10 stable-zoom checks, 8 static-layout checks, and 52 browser
-checks. The stable-zoom suite
-compares all 38 sample node IDs, 42 edge paths, original labels, connector
-labels, and world-space geometry at fit, far, intermediate, and close scales. It
-also verifies the full 1,000-node / 1,650-edge synthetic inventory at several
-scales. Browser tests cover desktop, all three palettes, consent, search,
+At the time of this slice, `npm test` passed the validators, 45 contract
+checks, 41 unit checks, 4 stable map checks, 10 stable-zoom checks, 8
+static-layout checks, and 52 browser checks. Later content slices changed the
+inventory and test totals; see [STATUS](../STATUS.md) and
+[PoC4 coverage](poc4-coverage.md). The stable-zoom suite compares the current
+sample's 45 node IDs and 49 edge paths (38/42 at the time of this slice),
+original labels, connector labels, and world-space geometry at fit, far,
+intermediate, and close scales. It also verifies the full 1,000-node /
+1,650-edge synthetic inventory at several scales. Browser tests cover desktop, all three palettes, consent, search,
 source/evidence inspection, cross-chapter navigation, history, hash links,
 X/Escape, and 390×844 Chromium viewport emulation.
 
@@ -68,8 +70,8 @@ local QA evidence and are not committed.
 
 ## Limits
 
-The game graph remains a selected, guide-backed sample: 3 chapter regions, 38
-events, and 42 connectors. Coverage is partial and no transition is verified
+The game graph remains a selected, guide-backed sample: 3 chapter regions, 45
+events, and 49 connectors. Coverage is partial and no transition is verified
 in-game. Synthetic benchmark labels and topology are not game content. The
 The A New Home relationship-threshold caption now clears its adjacent boxes.
 Physical phones, Safari/iOS, and real touch input were not tested.
