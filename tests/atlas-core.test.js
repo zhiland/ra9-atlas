@@ -251,12 +251,12 @@ check('trailFor expands ids to label and chapter name', function () {
 });
 
 console.log('atlas-core.js — progressive disclosure');
-check('lodFor reveals chapter cards, then event boxes, then labels', function () {
+check('lodFor keeps the story map, then the event map, then close labels', function () {
   eq(C.lodFor(C.OVERVIEW_MAX_SCALE - 0.01, 'all'), 'overview');
   eq(C.lodFor(C.OVERVIEW_MAX_SCALE, 'all'), 'structure');
   eq(C.lodFor(C.DETAIL_MIN_SCALE - 0.01, 'all'), 'structure');
   eq(C.lodFor(C.DETAIL_MIN_SCALE, 'all'), 'detail');
-  eq(C.lodFor(0.1, 'home'), 'structure', 'a focused chapter must not fall back to the story overview');
+  eq(C.lodFor(0.1, 'home'), 'structure', 'a focused chapter must not fall back to the whole-story overview');
   eq(C.lodFor(2, 'home'), 'detail');
 });
 

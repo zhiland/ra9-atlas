@@ -13,19 +13,24 @@
      query     — current search text.
 
    Whole-story level of detail is a pure function of camera scale:
-     overview  — chapter cards only, shown at whole-atlas fit.
-     structure — event boxes, no event labels.
-     detail    — event boxes and labels.
-   A focused chapter always skips the chapter-card overview so a narrow mobile
-   chapter fit cannot fall back to the story level. */
+     overview  — the spatial story map: chapter regions, meaningful event
+                 labels and actual cross-chapter labels.
+     structure — the event map: event labels for sparse data; labelled
+                 region/branch summaries for dense data.
+     detail    — close scale: in-box event text and connector labels at 100%+.
+   A focused chapter always stays on the same map; it must not fall back to a
+   separate whole-story card/report surface. */
 
 var ATLAS_CORE = (function () {
   'use strict';
 
   var MAX_TRAIL = 8;
   var MIN_SCALE = 0.02;
-  var OVERVIEW_MAX_SCALE = 0.52;
-  var DETAIL_MIN_SCALE = 0.8;
+  var OVERVIEW_MAX_SCALE = 0.7;
+  /* 100% is the hand-off from map annotations to the in-node detail labels.
+     Chapter fit is almost always below it (the widest real chapter fits at
+     about 97%), so a chapter view keeps the readable map labels. */
+  var DETAIL_MIN_SCALE = 1;
 
   function clone(s) {
     return {

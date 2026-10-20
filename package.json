@@ -5,8 +5,9 @@
   "scripts": {
     "validate": "node prototype/validate-map-data.js && node prototype/validate-hostage-data.js && node prototype/validate-atlas-data.js",
     "test:unit": "node tests/atlas-core.test.js",
+    "test:map": "node tests/map-first.test.js",
     "test:browser": "node tests/poc4-browser.test.js",
-    "test": "npm run validate && npm run test:unit && npm run test:browser",
+    "test": "npm run validate && npm run test:unit && npm run test:map && npm run test:browser",
     "bench:scale": "node benchmark/scale/run-benchmark.js"
   },
   "devDependencies": {

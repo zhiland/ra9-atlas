@@ -7,7 +7,7 @@
 
    What this suite does and does not prove: it serves the static pages from
    localhost and drives them in headless Chromium. It exercises consent and remembered
-   consent, the chapter-level overview, the three LOD steps, fit bounds,
+   consent, the continuous story map, the three LOD steps, fit bounds,
    chapter focus, actual cross-chapter navigation, both detail-close paths,
    history, search keyboard handling, hash round-trips and text contrast in
    all three palettes, plus a scoped 390x844 mobile-emulation layout,
@@ -138,26 +138,41 @@ async function selectionStyles(page) {
     const label = node ? node.querySelector('.label') : null;
     const style = function (el) { return el ? getComputedStyle(el).visibility : 'missing'; };
     const c = document.getElementById('canvas').getBoundingClientRect();
-    const visibleEventLabels = Array.prototype.slice.call(document.querySelectorAll('#nodes .node .label')).filter(function (el) {
-      if (getComputedStyle(el).visibility !== 'visible') return false;
-      const r = el.getBoundingClientRect();
-      return r.right > c.left && r.left < c.right && r.bottom > c.top && r.top < c.bottom;
-    }).length;
+    function mapLabels(selector) {
+      return Array.prototype.slice.call(document.querySelectorAll(selector)).filter(function (el) {
+        const s = getComputedStyle(el);
+        if (s.visibility !== 'visible' || s.display === 'none') return false;
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
+      }).map(function (el) {
+        const r = el.getBoundingClientRect();
+        return {
+          id: el.getAttribute('data-event-node') || el.getAttribute('data-region') || el.getAttribute('data-edge'),
+          text: el.textContent.replace(/\s+/g, ' ').trim(),
+          font: parseFloat(getComputedStyle(el).fontSize),
+          intersectsCanvas: r.right > c.left && r.left < c.right && r.bottom > c.top && r.top < c.bottom
+        };
+      });
+    }
+    const eventLabels = mapLabels('#map-labels .event-label');
     return {
       lod: document.getElementById('canvas').getAttribute('data-lod'),
       nodesLayer: style(document.getElementById('nodes')),
       labelsLayer: style(document.getElementById('labels')),
       node: style(node),
       nodeLabel: style(label),
-      eventLabelsVisibleInCanvas: visibleEventLabels,
+      eventLabels: eventLabels,
+      regionLabels: mapLabels('#map-labels .region-label'),
+      crossLabels: mapLabels('#map-labels .cross-label'),
+      overviewSurface: document.querySelectorAll('#overview, .overview-card, .overview-link').length,
       zoom: document.getElementById('zoomLabel') ? document.getElementById('zoomLabel').textContent : ''
     };
   });
 }
 
 /* Reads the current world transform and each chapter frame in canvas
-   coordinates. Hidden layers keep their layout boxes, so the same measurement
-   covers the overview LOD and the visible event views. */
+   coordinates. The same measurement covers every LOD because one world stays
+   mounted. */
 async function fitSnapshot(page) {
   return page.evaluate(function () {
     function rect(r) {
@@ -236,7 +251,7 @@ async function runVariant(browser, variant) {
     assert(state.canvas && state.canvas.width > 0 && state.canvas.height > 0, 'canvas must have layout under the cover');
     assert(state.nodes === 18, '18 nodes should be rendered behind the cover, got ' + state.nodes);
     assert(state.edges === 16, '16 connectors should be rendered behind the cover, got ' + state.edges);
-    assert(state.lod === 'overview', 'the covered map should start at the overview LOD, got ' + state.lod);
+    assert(state.lod === 'overview', 'the covered map should start at the story map LOD, got ' + state.lod);
   });
 
   await page.locator('#consent').click();
@@ -244,152 +259,130 @@ async function runVariant(browser, variant) {
   await page.locator('#world').waitFor({ state: 'visible' });
   await waitFrames(page);
 
-  await ok('consent reveals the whole atlas at chapter level', async function () {
+  await ok('consent reveals the continuous whole-story map', async function () {
     assert(await page.locator('#canvas').isVisible(), 'canvas not visible after consent');
     assert(await page.locator('#details').isHidden(), 'details should start hidden');
     assert(await page.locator('#trail').isVisible(), 'history trail not visible');
     assert(!(await page.locator('#atlas-shell').getAttribute('inert')), 'shell stayed inert after consent');
     const status = await textOf(page, '#status');
-    assert(status.indexOf('3 chapters · 18 boxes · 16 connectors') !== -1, 'status line counts: ' + status);
-    assert(status.indexOf('version/platform unknown') !== -1, 'status line must state version/platform unknown');
-    assert(await getLod(page) === 'overview', 'whole-atlas fit should open on the chapter overview');
+    assert(status.indexOf('3 chapters · 18 events · 16 connectors') !== -1, 'status line counts: ' + status);
+    assert(status.indexOf('not in-game verified') !== -1, 'status line must keep the not-verified qualifier');
+    assert(status.indexOf('version/platform unknown') === -1 && status.length <= 180,
+      'primary status must stay a concise slice summary, got: ' + status);
+    assert(await getLod(page) === 'overview', 'whole-atlas fit should open on the story map');
     const zoom = await textOf(page, '#zoomLabel');
-    assert(/chapter overview/.test(zoom), 'zoom label should name the overview LOD: ' + zoom);
-    assert(await page.locator('#overview').isVisible(), 'chapter overview is not visible');
-    assert(await page.locator('.overview-card').count() === 3, 'three chapter cards expected');
+    assert(/story map/.test(zoom), 'zoom label should name the story map LOD: ' + zoom);
+    assert(await page.locator('#overview').count() === 0, 'the card/report overview surface must stay removed');
     assert(await page.locator('.frame').count() === 3, 'three chapter frames must stay mounted');
     assert(await page.locator('[data-node]').count() === 18, '18 event nodes must stay mounted');
     assert(await page.locator('path.edge').count() === 16, '16 connectors must stay mounted');
+    assert(await page.locator('#map-labels .region-label').count() === 3, 'three chapter map labels expected');
+    assert(await page.locator('#map-labels .cross-label').count() === 2, 'two actual cross labels expected');
   });
 
-  await ok('opening overview keeps chapter names legible and links only to actual cross-chapter edges', async function () {
+  await ok('opening map keeps chapter names legible and cross labels point only at actual cross-chapter edges', async function () {
     const m = await page.evaluate(function () {
-      const overview = document.getElementById('overview');
-      const ovr = overview.getBoundingClientRect();
-      const cards = Array.prototype.slice.call(overview.querySelectorAll('[data-overview-chapter]')).map(function (card) {
-        const r = card.getBoundingClientRect();
-        const name = card.querySelector('.ov-name');
-        return {
-          id: card.getAttribute('data-overview-chapter'),
-          text: card.textContent.replace(/\s+/g, ' ').trim(),
-          aria: card.getAttribute('aria-label'),
-          name: name ? name.textContent : '',
-          fontSize: name ? parseFloat(getComputedStyle(name).fontSize) : 0,
-          insideWidth: r.left >= ovr.left - 1 && r.right <= ovr.right + 1,
-          insideViewport: r.top >= ovr.top - 1 && r.bottom <= ovr.bottom + 1,
-          width: r.width,
-          height: r.height
-        };
-      });
-
+      const canvas = document.getElementById('canvas');
+      const cr = canvas.getBoundingClientRect();
       const chapterOf = {};
       ATLAS.nodes.forEach(function (n) { chapterOf[n.id] = n.chapter; });
       const expected = [];
       ATLAS.edges.forEach(function (edge, index) {
         if (chapterOf[edge.from] !== chapterOf[edge.to]) {
-          expected.push({ index: index, kind: edge.kind, from: edge.from, to: edge.to, label: edge.label || '' });
+          expected.push({ index: index, kind: edge.kind, from: edge.from, to: edge.to });
         }
       });
-
-      const links = Array.prototype.slice.call(overview.querySelectorAll('.overview-link')).map(function (link) {
-        const index = Number(link.getAttribute('data-edge'));
-        const edge = isFinite(index) ? ATLAS.edges[index] : null;
-        return {
-          index: index,
-          kind: edge ? edge.kind : null,
-          from: edge ? edge.from : null,
-          to: edge ? edge.to : null,
-          label: edge ? (edge.label || '') : '',
-          fromChapter: link.getAttribute('data-from-chapter'),
-          toChapter: link.getAttribute('data-to-chapter'),
-          evidence: link.getAttribute('data-evidence'),
-          text: link.textContent.replace(/\s+/g, ' ').trim()
-        };
-      });
-
-      const paths = Array.prototype.slice.call(document.querySelectorAll('#overview-connectors path.overview-connector')).map(function (p) {
-        return p.getAttribute('class');
-      });
+      function labels(selector) {
+        return Array.prototype.slice.call(document.querySelectorAll(selector)).filter(function (el) {
+          const s = getComputedStyle(el);
+          const r = el.getBoundingClientRect();
+          return s.visibility === 'visible' && s.display !== 'none' && r.width > 0 && r.height > 0;
+        }).map(function (el) {
+          const r = el.getBoundingClientRect();
+          const name = el.querySelector('strong');
+          return {
+            id: el.getAttribute('data-region') || el.getAttribute('data-edge'),
+            text: el.textContent.replace(/\s+/g, ' ').trim(),
+            aria: el.getAttribute('aria-label'),
+            font: parseFloat(getComputedStyle(name || el).fontSize),
+            left: r.left,
+            top: r.top,
+            right: r.right,
+            bottom: r.bottom
+          };
+        });
+      }
       return {
-        intro: document.querySelector('.overview-intro') ? document.querySelector('.overview-intro').textContent.replace(/\s+/g, ' ').trim() : '',
-        cards: cards,
-        expected: expected,
-        links: links,
-        aggregateCount: overview.querySelectorAll('.overview-link.aggregate').length,
-        connectorPaths: paths
+        canvas: { left: cr.left, top: cr.top, right: cr.right, bottom: cr.bottom },
+        regions: labels('#map-labels .region-label'),
+        cross: labels('#map-labels .cross-label'),
+        expected: expected
       };
     });
 
-    assert(m.cards.length === 3, 'three chapter cards expected');
-    m.cards.forEach(function (card) {
-      assert(card.name.length > 0, card.id + ' has no chapter name');
-      assert(card.fontSize >= 14, card.id + ' chapter name font ' + card.fontSize + 'px is too small');
-      assert(card.width > 120 && card.height > 60, card.id + ' card is too small: ' + card.width + 'x' + card.height);
-      assert(card.insideWidth, card.id + ' card overflows the overview width');
-      assert(card.insideViewport, card.id + ' card should be visible in the opening overview');
-      assert(/boxes/.test(card.text) && /cross-chapter/.test(card.text), card.id + ' card does not summarise the real slice');
-      assert(/Selected slice/.test(card.text), card.id + ' card must not imply full chapter coverage');
-      assert(card.aria && /Open /.test(card.aria), card.id + ' card has no accessible open label');
+    assert(m.regions.length === 3, 'three chapter map labels expected, got ' + m.regions.length);
+    m.regions.forEach(function (region) {
+      assert(/A New Home|Stormy Night|Battle for Detroit/.test(region.text), region.id + ' map label does not name its chapter: ' + region.text);
+      assert(region.font >= 14, region.id + ' chapter name font ' + region.font + 'px is too small');
+      assert(region.left >= m.canvas.left - 1 && region.right <= m.canvas.right + 1 &&
+        region.top >= m.canvas.top - 1 && region.bottom <= m.canvas.bottom + 1,
+        region.id + ' chapter map label is outside the canvas');
+      assert(region.aria && /Open /.test(region.aria), region.id + ' chapter map label has no accessible open label');
     });
-    assert(/actual connectors/.test(m.intro), 'overview intro should say rows use actual connectors');
-    assert(m.links.length === m.expected.length, 'overview links ' + m.links.length + ' do not match actual cross-chapter edges ' + m.expected.length);
-    assert(m.aggregateCount === 0, 'this slice should not need aggregate rows when every chapter pair has one actual edge');
-    assert(m.connectorPaths.length === m.expected.length, 'overview connectors should be drawn for each actual cross-chapter group');
-    m.links.forEach(function (link) {
-      const actual = m.expected.filter(function (e) { return e.index === link.index; })[0];
-      assert(actual, 'overview link does not point at an actual edge index: ' + link.index);
-      assert(link.kind === actual.kind && link.from === actual.from && link.to === actual.to,
-        'overview link ' + link.index + ' does not match the underlying edge');
-      if (actual.label) assert(link.text.indexOf(actual.label) !== -1, 'overview link must show the actual connector label');
+
+    assert(m.cross.length === m.expected.length,
+      'cross labels ' + m.cross.length + ' do not match actual cross-chapter edges ' + m.expected.length);
+    m.cross.forEach(function (label) {
+      const actual = m.expected.filter(function (e) { return e.index === Number(label.id); })[0];
+      assert(actual, 'cross label does not point at an actual edge index: ' + label.id);
       if (actual.kind === 'hypothesis') {
-        assert(link.evidence === 'unresolved', 'hypothesis link must expose unresolved evidence');
-        assert(/UNRESOLVED hypothesis/.test(link.text), 'hypothesis link must say UNRESOLVED hypothesis');
-        assert(/not a confirmed causal link/.test(link.text), 'hypothesis link must not present a causal claim');
-        assert(/Unknown:/.test(link.text), 'hypothesis link must state what remains unknown');
+        assert(/UNRESOLVED hypothesis/.test(label.text), 'hypothesis cross label must say UNRESOLVED hypothesis: ' + label.text);
       } else if (actual.kind === 'prerequisite') {
-        assert(link.evidence === 'prerequisite', 'gate link must expose prerequisite evidence');
-        assert(/Reported prerequisite/.test(link.text), 'gate link must say Reported prerequisite');
-        assert(/not verified in game/.test(link.text), 'gate link must state the access check is unverified');
+        assert(/prerequisite gate/.test(label.text), 'gate cross label must say prerequisite gate: ' + label.text);
       }
     });
     m.expected.forEach(function (actual) {
-      assert(m.links.some(function (link) { return link.index === actual.index; }),
-        'actual cross-chapter edge ' + actual.index + ' is missing from the overview');
+      assert(m.cross.some(function (label) { return Number(label.id) === actual.index; }),
+        'actual cross-chapter edge ' + actual.index + ' has no map label');
     });
-    m.connectorPaths.forEach(function (cls) {
-      assert(/overview-connector/.test(cls), 'overview connector should use the connector class');
-      assert(/hypothesis|prerequisite|conditional|traced/.test(cls), 'overview connector must name an actual edge kind');
-      assert(!/aggregate/.test(cls), 'single actual edges must not be drawn as aggregate relations');
-    });
+    assert(await page.locator('#overview-connectors, .overview-link, .overview-card').count() === 0,
+      'no aggregate or card/report cross-chapter rows may be invented');
   });
 
-  await ok('zoom reveals event structure, then event labels', async function () {
+  await ok('zoom keeps one map and hands readable labels to close event text', async function () {
     const overview = await selectionStyles(page);
-    assert(overview.lod === 'overview', 'should start in overview');
-    assert(overview.nodesLayer === 'hidden' && overview.node === 'hidden', 'event nodes must stay hidden at chapter overview');
-    assert(overview.labelsLayer === 'hidden' && overview.nodeLabel === 'hidden', 'event labels must stay hidden at chapter overview');
+    assert(overview.lod === 'overview', 'should start in the story map');
+    assert(overview.nodesLayer === 'visible' && overview.node === 'visible', 'event boxes must stay on the story map');
+    assert(overview.labelsLayer === 'hidden' && overview.nodeLabel === 'hidden', 'in-box event text must stay hidden at story map scale');
+    assert(overview.regionLabels.length === 3, 'story map should label all three chapters');
+    assert(overview.eventLabels.length >= 6, 'story map should show meaningful event labels, got ' + overview.eventLabels.length);
+    assert(overview.crossLabels.length === 2, 'story map should show the two actual cross-chapter labels');
+    assert(/story map/.test(overview.zoom), 'zoom label should name the story map: ' + overview.zoom);
+    assert(overview.overviewSurface === 0, 'no card/report surface may replace the map');
 
     await zoomUntil(page, 'structure');
     const structure = await selectionStyles(page);
-    assert(structure.nodesLayer === 'visible' && structure.node === 'visible', 'event nodes should appear at structure LOD');
-    assert(structure.labelsLayer === 'hidden' && structure.nodeLabel === 'hidden', 'event labels should remain hidden at structure LOD');
-    assert(structure.eventLabelsVisibleInCanvas === 0, 'no event labels should be visible in structure LOD');
-    assert(/event structure/.test(structure.zoom), 'zoom label should name event structure: ' + structure.zoom);
+    assert(structure.nodesLayer === 'visible' && structure.node === 'visible', 'event boxes should stay at structure LOD');
+    assert(structure.labelsLayer === 'hidden' && structure.nodeLabel === 'hidden', 'in-box event text should remain hidden at structure LOD');
+    assert(structure.eventLabels.length >= 6, 'structure LOD should label the real events, got ' + structure.eventLabels.length);
+    assert(structure.eventLabels.every(function (l) { return l.font >= 11; }), 'structure event label text is too small');
+    assert(structure.regionLabels.length === 3, 'structure LOD must keep the chapter labels on the same map');
+    assert(/event map/.test(structure.zoom), 'zoom label should name the event map: ' + structure.zoom);
 
     await zoomUntil(page, 'detail');
     const detail = await selectionStyles(page);
     assert(detail.labelsLayer === 'visible' && detail.nodeLabel === 'visible', 'event labels should appear at detail LOD');
-    assert(detail.eventLabelsVisibleInCanvas > 0, 'at least one event label should be visible in the canvas at detail LOD');
-    assert(/event labels/.test(detail.zoom), 'zoom label should name event labels: ' + detail.zoom);
+    assert(detail.regionLabels.length === 3, 'detail LOD must keep the chapter labels on the same map');
+    assert(/close map/.test(detail.zoom), 'zoom label should name the close map: ' + detail.zoom);
 
     await resetAtlas(page);
-    assert(await getLod(page) === 'overview', 'reset should return to the overview after zooming in');
+    assert(await getLod(page) === 'overview', 'reset should return to the story map after zooming in');
   });
 
   await ok('whole-map and chapter fits stay inside the desktop canvas', async function () {
     await resetAtlas(page);
     const all = await fitSnapshot(page);
-    assert(all.lod === 'overview', 'reset should return to the overview');
+    assert(all.lod === 'overview', 'reset should return to the story map');
     assert(all.frames.length === 3, 'three frames expected');
     all.frames.forEach(function (frame) {
       assert(fullyInside(frame.rect, all.canvas), frame.id + ' frame is clipped by the whole-map fit');
@@ -399,7 +392,7 @@ async function runVariant(browser, variant) {
 
     await openChapter(page, 'home');
     const home = await fitSnapshot(page);
-    assert(home.lod === 'structure', 'a focused chapter should skip the chapter-card overview');
+    assert(home.lod === 'structure', 'a focused chapter should stay at the event map LOD');
     assert(await page.locator('[data-chapter="home"]').getAttribute('aria-pressed') === 'true', 'home chapter is not active');
     const homeFrame = home.frames.filter(function (f) { return f.id === 'home'; })[0];
     assert(homeFrame && fullyInside(homeFrame.rect, home.canvas), 'focused home chapter is clipped by the canvas');
@@ -413,12 +406,12 @@ async function runVariant(browser, variant) {
     assert(karaFrame && fullyInside(karaFrame.rect, kara.canvas), 'focused Kara chapter is clipped by the canvas');
     await page.locator('[data-chapter="all"]').click();
     await waitFrames(page);
-    assert(await getLod(page) === 'overview', 'whole atlas should return to the overview');
+    assert(await getLod(page) === 'overview', 'whole atlas should return to the story map');
   });
 
   await ok('Meet Todd keeps its two separate prerequisite gates', async function () {
-    await openChapter(page, 'home');
-    await page.locator('[data-node="k_meet"]').click();
+    await openChapter(page, 'kara');
+    await page.locator('[data-event-node="k_meet"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const d = await textOf(page, '#details');
     assert(d.indexOf('Meet Todd') !== -1, 'details heading missing');
@@ -436,7 +429,7 @@ async function runVariant(browser, variant) {
 
   await ok('Alice box keeps a dashed unresolved hypothesis and opens the real later node', async function () {
     await openChapter(page, 'home');
-    await page.locator('[data-node="a_box"]').click();
+    await page.locator('[data-event-node="a_box"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const d = await textOf(page, '#details');
     assert(/open alice/i.test(d), 'box heading missing: ' + d.slice(0, 80));
@@ -466,7 +459,7 @@ async function runVariant(browser, variant) {
     await page.locator('#details').waitFor({ state: 'hidden' });
   });
 
-  await ok('overview crosslink opens the actual edge with evidence and a permalink', async function () {
+  await ok('map cross-label opens the actual edge with evidence and a permalink', async function () {
     await resetAtlas(page);
     const hypothesis = await page.evaluate(function () {
       for (let i = 0; i < ATLAS.edges.length; i++) {
@@ -476,7 +469,7 @@ async function runVariant(browser, variant) {
       return null;
     });
     assert(hypothesis, 'fixture hypothesis edge missing');
-    await page.locator('#overview .overview-link.hypothesis').click();
+    await page.locator('#map-labels .cross-label.hypothesis[data-edge="' + hypothesis.index + '"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const d = await textOf(page, '#details');
     assert(d.indexOf('Todd dialogue') !== -1, 'crosslink should open the actual later endpoint');
@@ -515,7 +508,7 @@ async function runVariant(browser, variant) {
     await page.locator('#details').waitFor({ state: 'hidden' });
 
     await resetAtlas(page);
-    await page.locator('#overview .overview-link.prerequisite').click();
+    await page.locator('#map-labels .cross-label.prerequisite').first().click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const gate = await textOf(page, '#details');
     assert(gate.indexOf('Meet Todd') !== -1, 'gate crosslink should open Meet Todd');
@@ -537,37 +530,54 @@ async function runVariant(browser, variant) {
 
   await ok('close button and Escape reduce to the same state and restore focus', async function () {
     await openChapter(page, 'home');
-    await page.locator('[data-node="a_talk"]').click();
+    await page.locator('[data-event-node="a_talk"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const hashBefore = await page.evaluate(function () { return location.hash; });
     await page.locator('#details-close').click();
     await page.locator('#details').waitFor({ state: 'hidden' });
+    await page.waitForFunction(function () {
+      const active = document.activeElement;
+      return active && (active.getAttribute('data-event-node') === 'a_talk' || active.getAttribute('data-node') === 'a_talk');
+    }, null, { timeout: 1500 });
     const afterButton = {
       hash: await page.evaluate(function () { return location.hash; }),
-      focused: await page.evaluate(function () { return document.activeElement && document.activeElement.getAttribute('data-node'); })
+      focused: await page.evaluate(function () { return document.activeElement && (document.activeElement.getAttribute('data-event-node') || document.activeElement.getAttribute('data-node')); })
     };
-    assert(afterButton.focused === 'a_talk', 'focus should return to the node button, was ' + afterButton.focused);
+    assert(afterButton.focused === 'a_talk', 'focus should return to the event map button, was ' + afterButton.focused);
 
-    await page.locator('[data-node="a_talk"]').click();
+    await page.locator('[data-event-node="a_talk"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     await page.keyboard.press('Escape');
     await page.locator('#details').waitFor({ state: 'hidden' });
+    await page.waitForFunction(function () {
+      const active = document.activeElement;
+      return active && (active.getAttribute('data-event-node') === 'a_talk' || active.getAttribute('data-node') === 'a_talk');
+    }, null, { timeout: 1500 });
     const afterEscape = {
       hash: await page.evaluate(function () { return location.hash; }),
-      focused: await page.evaluate(function () { return document.activeElement && document.activeElement.getAttribute('data-node'); })
+      focused: await page.evaluate(function () {
+        const a = document.activeElement;
+        return {
+          id: a && (a.getAttribute('data-event-node') || a.getAttribute('data-node')),
+          tag: a && a.tagName,
+          className: a && a.className,
+          eventMode: document.querySelector('[data-event-node="a_talk"]') && getComputedStyle(document.querySelector('[data-event-node="a_talk"]')).display,
+          nodeMode: document.querySelector('[data-node="a_talk"]') && getComputedStyle(document.querySelector('[data-node="a_talk"]')).visibility
+        };
+      })
     };
-    assert(afterEscape.focused === 'a_talk', 'Escape should return focus to the node button');
+    assert(afterEscape.focused.id === 'a_talk', 'Escape should return focus to the event map button: ' + JSON.stringify(afterEscape.focused));
     assert(afterButton.hash === afterEscape.hash, 'close paths must leave the same hash: ' + afterButton.hash + ' vs ' + afterEscape.hash);
     assert(hashBefore === afterButton.hash, 'closing details should not rewrite the selected hash');
   });
 
   await ok('history trail records visits and reopens them', async function () {
     await openChapter(page, 'kara');
-    await page.locator('[data-node="k_goodbye"]').click();
+    await page.locator('[data-event-node="k_goodbye"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     await resetAtlas(page);
     await openChapter(page, 'stormy');
-    await page.locator('[data-node="s_alive"]').click();
+    await page.locator('[data-event-node="s_alive"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const items = page.locator('#trail [data-trail]');
     assert(await items.count() >= 2, 'trail should hold the recent visits');
@@ -611,7 +621,7 @@ async function runVariant(browser, variant) {
 
   await ok('palette keeps text contrast at or above 4.5:1', async function () {
     await openChapter(page, 'kara');
-    await page.locator('[data-node="k_terminal"]').click();
+    await page.locator('[data-event-node="k_terminal"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const samples = await page.evaluate(function () {
       function parse(c) {
@@ -638,9 +648,8 @@ async function runVariant(browser, variant) {
         return { r: 0, g: 0, b: 0, a: 1 };
       }
       const sels = [
-        '.overview-card .ov-name', '.overview-card .ov-meta', '.overview-card .ov-note',
-        '.overview-intro', '.overview-cross h2', '.overview-link strong', '.ov-evidence',
-        '.link-kind.unresolved', '.node .label', '.node .k', '.edge-label.prerequisite',
+        '.region-label', '.region-label span', '.event-label', '.cross-label',
+        '.node .label', '.node .k', '.edge-label.prerequisite',
         '.status', '.details h2', '.details p', '.details .tiny', '.brand span',
         '.chapter', '.chapter small', '.trail button', '.zoom span', '.legend'
       ];
@@ -707,7 +716,7 @@ async function runVariant(browser, variant) {
     assert(!remembered.overlay && !remembered.consentButton, 'remembered consent should skip the cover after reload');
     assert(remembered.stored === '1', 'consent should persist in localStorage');
     assert(remembered.canvas.width > 0 && remembered.canvas.height > 0, 'remembered revisit still needs a usable canvas');
-    assert(remembered.lod === 'overview', 'remembered revisit should open on the chapter overview');
+    assert(remembered.lod === 'overview', 'remembered revisit should open on the story map');
   });
 
   await ok('hash round-trips restore a node and an edge-focused deep link after consent', async function () {
@@ -756,9 +765,9 @@ async function runVariant(browser, variant) {
 
 /* Scoped regression for the <=900px responsive layout: the production
    stylesheet used to give the canvas zero height and let .workspace exceed the
-   viewport at 390px. This version also covers the chapter overview scroll
-   container and overview LOD fit. Chromium viewport emulation, not a physical
-   phone or a real touch-gesture check. */
+   viewport at 390px. This version covers the continuous story map, mobile map
+   labels, dragging the same canvas, and whole-map/chapter fit. Chromium
+   viewport emulation, not a physical phone or a real touch-gesture check. */
 async function runMobileRegression(browser) {
   console.log('scenario mobile-390 (production CSS, viewport emulation only)');
   const page = await browser.newPage({
@@ -790,23 +799,29 @@ async function runMobileRegression(browser) {
   await page.locator('#world').waitFor({ state: 'visible' });
   await waitFrames(page);
 
-  await ok('390x844 keeps the overview inside the viewport and readable', async function () {
+  await ok('390x844 keeps the whole-story map and its labels inside the viewport', async function () {
     const layout = await page.evaluate(function () {
       const canvas = document.getElementById('canvas').getBoundingClientRect();
       const workspace = document.querySelector('.workspace').getBoundingClientRect();
       const wrap = document.querySelector('.canvas-wrap').getBoundingClientRect();
-      const overview = document.getElementById('overview');
-      const ovr = overview.getBoundingClientRect();
-      const cards = Array.prototype.slice.call(document.querySelectorAll('.overview-card')).map(function (card) {
-        const r = card.getBoundingClientRect();
-        const name = card.querySelector('.ov-name');
-        return {
-          id: card.getAttribute('data-overview-chapter'),
-          fontSize: name ? parseFloat(getComputedStyle(name).fontSize) : 0,
-          insideWidth: r.left >= ovr.left - 1 && r.right <= ovr.right + 1,
-          width: r.width
-        };
-      });
+      function labels(selector) {
+        return Array.prototype.slice.call(document.querySelectorAll(selector)).filter(function (el) {
+          const s = getComputedStyle(el);
+          const r = el.getBoundingClientRect();
+          return s.visibility === 'visible' && s.display !== 'none' && r.width > 0 && r.height > 0;
+        }).map(function (el) {
+          const r = el.getBoundingClientRect();
+          const name = el.querySelector('strong');
+          return {
+            id: el.getAttribute('data-region') || el.getAttribute('data-event-node') || el.getAttribute('data-edge'),
+            text: el.textContent.replace(/\s+/g, ' ').trim(),
+            font: parseFloat(getComputedStyle(name || el).fontSize),
+            inside: r.left >= canvas.left - 1 && r.right <= canvas.right + 1 &&
+              r.top >= canvas.top - 1 && r.bottom <= canvas.bottom + 1,
+            intersects: r.right > canvas.left && r.left < canvas.right && r.bottom > canvas.top && r.top < canvas.bottom
+          };
+        });
+      }
       return {
         innerWidth: window.innerWidth,
         innerHeight: window.innerHeight,
@@ -815,15 +830,13 @@ async function runMobileRegression(browser) {
         wrap: { width: wrap.width, height: wrap.height },
         scrollWidth: document.documentElement.scrollWidth,
         lod: document.getElementById('canvas').getAttribute('data-lod'),
-        overview: {
-          clientHeight: overview.clientHeight,
-          scrollHeight: overview.scrollHeight,
-          scrollTop: overview.scrollTop,
-          touchAction: getComputedStyle(overview).touchAction
-        },
+        density: document.getElementById('canvas').getAttribute('data-density'),
         canvasTouchAction: getComputedStyle(document.getElementById('canvas')).touchAction,
-        cards: cards,
-        crosslinks: document.querySelectorAll('#overview .overview-link').length
+        regionLabels: labels('#map-labels .region-label'),
+        eventLabels: labels('#map-labels .event-label'),
+        actualEventIds: ATLAS.nodes.map(function (n) { return n.id; }),
+        crossLabels: labels('#map-labels .cross-label'),
+        overviewSurface: document.querySelectorAll('#overview, .overview-card, .overview-link').length
       };
     });
     assert(Math.abs(layout.canvas.width - layout.innerWidth) <= 1,
@@ -834,31 +847,23 @@ async function runMobileRegression(browser) {
     assert(layout.scrollWidth <= layout.innerWidth + 1,
       'document horizontally overflows: ' + layout.scrollWidth + ' > ' + layout.innerWidth);
     assert(layout.wrap.height > 0, 'canvas wrapper height must be > 0');
-    assert(layout.lod === 'overview', 'mobile opening should be the chapter overview');
-    assert(layout.cards.length === 3, 'three overview cards expected on mobile');
-    layout.cards.forEach(function (card) {
-      assert(card.width > 120, card.id + ' mobile card is too narrow: ' + card.width);
-      assert(card.fontSize >= 14, card.id + ' mobile chapter name font ' + card.fontSize + 'px is too small');
-      assert(card.insideWidth, card.id + ' mobile card overflows the overview width');
+    assert(layout.lod === 'overview', 'mobile opening should be the whole-story map');
+    assert(layout.density === 'sparse', 'real sample should be marked sparse');
+    assert(layout.overviewSurface === 0, 'mobile opening must not be a card/report surface');
+    assert(layout.regionLabels.length === 3, 'mobile story map needs three chapter labels');
+    layout.regionLabels.forEach(function (label) {
+      assert(label.font >= 14, label.id + ' mobile chapter label font ' + label.font + 'px is too small');
+      assert(label.inside, label.id + ' mobile chapter label is outside the canvas');
     });
-    assert(layout.crosslinks === 2, 'both actual cross-chapter rows should be available on mobile');
-    assert(layout.overview.scrollHeight > layout.overview.clientHeight + 1,
-      'mobile overview content should be scrollable rather than clipped');
-    assert(layout.overview.touchAction === 'pan-y', 'overview should allow vertical panning, got ' + layout.overview.touchAction);
-    assert(layout.canvasTouchAction === 'pan-y', 'overview canvas should allow vertical panning, got ' + layout.canvasTouchAction);
-
-    const scrolled = await page.evaluate(function () {
-      const overview = document.getElementById('overview');
-      overview.scrollTop = overview.scrollHeight;
-      return new Promise(function (resolve) {
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            resolve({ top: overview.scrollTop, max: overview.scrollHeight - overview.clientHeight });
-          });
-        });
-      });
+    assert(layout.eventLabels.length >= 3, 'mobile story map needs named events in its visible regions, got ' + layout.eventLabels.length);
+    layout.eventLabels.forEach(function (label) {
+      assert(label.font >= 11, label.id + ' mobile event label font ' + label.font + 'px is too small');
+      assert(label.intersects, label.id + ' mobile event label is outside the canvas');
+      assert(layout.actualEventIds.indexOf(label.id) !== -1 && label.text.length > 0,
+        label.id + ' mobile marker must name a real event, not an anonymous box');
     });
-    assert(scrolled.top > 0 && Math.abs(scrolled.top - scrolled.max) <= 2, 'mobile overview did not scroll to its crosslink rows');
+    assert(layout.crossLabels.length === 2, 'both actual cross-chapter labels should be available on mobile');
+    assert(layout.canvasTouchAction === 'none', 'mobile map should own pan/zoom gestures, got ' + layout.canvasTouchAction);
 
     const drag = await page.evaluate(function () {
       const canvas = document.getElementById('canvas');
@@ -867,7 +872,10 @@ async function runMobileRegression(browser) {
       for (let y = r.top + 20; y < r.bottom - 20 && !point; y += 12) {
         for (let x = r.left + 20; x < r.right - 20; x += 12) {
           const el = document.elementFromPoint(x, y);
-          if (el && el.closest('#overview') && !el.closest('button, a, input')) { point = { x: x, y: y }; break; }
+          if (el && el.closest('#canvas') && !el.closest('button, a, input, .legend, .status, .zoom, #map-labels')) {
+            point = { x: x, y: y };
+            break;
+          }
         }
       }
       const world = document.getElementById('world');
@@ -877,7 +885,7 @@ async function runMobileRegression(browser) {
         draggingBefore: canvas.classList.contains('dragging')
       };
     });
-    assert(drag.point, 'could not find a non-control point in the mobile overview');
+    assert(drag.point, 'could not find a non-control point on the mobile map');
     await page.mouse.move(drag.point.x, drag.point.y);
     await page.mouse.down();
     await page.mouse.move(drag.point.x + 45, drag.point.y - 35, { steps: 6 });
@@ -888,30 +896,46 @@ async function runMobileRegression(browser) {
       const canvas = document.getElementById('canvas');
       return { transform: world.style.transform, dragging: canvas.classList.contains('dragging') };
     });
-    assert(!drag.draggingBefore && !afterDrag.dragging, 'overview must not enter camera-drag state');
-    assert(afterDrag.transform === drag.transform, 'overview pointer drag must not pan the hidden camera');
+    assert(!drag.draggingBefore && !afterDrag.dragging, 'map must not stay in camera-drag state');
+    assert(afterDrag.transform !== drag.transform, 'mobile map drag did not pan the same canvas');
   });
 
   await ok('390x844 whole-map and chapter fits do not clip', async function () {
     await page.locator('#fit').click();
     await waitFrames(page);
-    const overviewScrollTop = await page.evaluate(function () { return document.getElementById('overview').scrollTop; });
-    assert(overviewScrollTop === 0, 'Fit should return the mobile overview to its chapter cards, got scrollTop ' + overviewScrollTop);
     const all = await fitSnapshot(page);
-    assert(all.lod === 'overview', 'mobile fit check should start at overview');
+    assert(all.lod === 'overview', 'mobile fit check should start at the story map');
     all.frames.forEach(function (frame) {
       assert(fullyInside(frame.rect, all.canvas), frame.id + ' mobile whole-map frame is clipped');
     });
+    const fullLabels = await page.evaluate(function () {
+      const c = document.getElementById('canvas').getBoundingClientRect();
+      return Array.prototype.slice.call(document.querySelectorAll('#map-labels .region-label')).map(function (el) {
+        const r = el.getBoundingClientRect();
+        return {
+          id: el.getAttribute('data-region'),
+          inside: r.left >= c.left - 1 && r.right <= c.right + 1 && r.top >= c.top - 1 && r.bottom <= c.bottom + 1
+        };
+      });
+    });
+    assert(fullLabels.length === 3 && fullLabels.every(function (l) { return l.inside; }),
+      'mobile whole-map chapter labels must all stay inside the canvas');
     assert(!all.horizontalOverflow, 'mobile whole-map fit introduced horizontal overflow');
 
     await page.locator('[data-chapter="home"]').click();
     await waitFrames(page);
     const focused = await fitSnapshot(page);
-    assert(focused.lod === 'structure', 'mobile chapter focus should show event structure');
+    assert(focused.lod === 'structure', 'mobile chapter focus should show the event map');
     assert(await page.locator('[data-chapter="home"]').getAttribute('aria-pressed') === 'true', 'chapter focus did not become active');
     const home = focused.frames.filter(function (f) { return f.id === 'home'; })[0];
     assert(home && fullyInside(home.rect, focused.canvas), 'mobile focused chapter is clipped by the canvas');
     assert(focused.nodeCount === 18 && focused.edgeCount === 16, 'mobile chapter focus must keep the graph mounted');
+    const homeLabels = await page.evaluate(function () {
+      return Array.prototype.slice.call(document.querySelectorAll('#map-labels .event-label')).map(function (el) {
+        return el.getAttribute('data-event-node');
+      });
+    });
+    assert(homeLabels.length >= 8, 'mobile chapter fit should show readable event labels, got ' + homeLabels.length);
     assert(!focused.horizontalOverflow, 'mobile chapter focus introduced horizontal overflow');
   });
 
