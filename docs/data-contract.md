@@ -10,11 +10,10 @@ and the [specification](spec.md).
 - [x] This document matches the normalised PoC4 data and the validator.
 - [x] Claim/evidence status is separate from chapter coverage status, with
       explicit vocabularies and a distinction between `unknown` and `conflict`.
-- [x] Conditions are plain English; only the sample's single reported condition
-      and the two separate Meet Todd requirements are grouped, with no new game
-      claim or edge.
-- [x] Existing 18 node IDs, 16 edges, edge order, topology and claims are
-      unchanged; edge records gain only stable IDs and source references.
+- [x] Conditions are plain English; Meet Todd's two gates and the separate
+      timing predicates stay attached to their own outcome edges.
+- [x] The original 18 nodes and 16 edges remain; this bounded slice adds
+      source-attributed content without changing the renderer.
 - [x] Existing `?edge=N` links keep working; stable edge IDs are accepted as
       aliases.
 - [x] The validator rejects deliberate fixtures for duplicate IDs, dangling
@@ -24,8 +23,8 @@ and the [specification](spec.md).
 
 ## Scope and record shape
 
-The contract covers the three existing chapter regions, 18 nodes, 16 edges, two
-condition groups, three uncertainty records and no conflict records in
+The contract covers the three existing chapter regions, 29 nodes, 31 edges, four
+condition groups, six uncertainty records and no conflict records in
 `prototype/atlas-data.js`. The sample declares `meta.contractVersion: '1.0'`.
 
 | Record | Required fields |
@@ -67,9 +66,10 @@ Chapter `coverage.status` values:
 | `partial` | Only the listed selected sample is present |
 | `checked-against-chart` | The whole chapter was checked against a chart; not used by PoC4 |
 
-All three sample chapters are `partial`: A New Home is a selected screenshot
-sequence, Stormy Night is two carried states only, and Battle for Detroit — Kara
-is one selected meeting branch. The omitted parts are recorded per chapter.
+All three sample chapters are `partial`: A New Home has a selected screenshot
+sequence plus guide-reported optional actions, Stormy Night has a selected gun
+confrontation and carried states, and Battle for Detroit — Kara has selected
+checkpoint and meeting branches. The omitted parts are recorded per chapter.
 Version and platform remain `unknown`; no transition is gameplay-verified.
 
 Edge `kind` is a relation vocabulary, not a coverage or verification claim:
@@ -94,7 +94,7 @@ topology or game claims. `operator` is one of:
 | `AND` | At least two requirements that are reported together |
 | `OR` | At least two alternatives; reserved and unused by the current sample |
 
-The current sample has two records:
+The current sample has four records:
 
 - `cond_key_relationship` (`SINGLE`) applies to `e_home_talk_key`: GameFAQs
   alone reports the Neutral-or-higher relationship threshold. The screenshot and
@@ -106,20 +106,29 @@ The current sample has two records:
   1. Todd was not killed in Stormy Night.
   2. Kara and Alice reached the bus terminal.
 
-No `OR` record is invented because the reviewed sample does not support one.
+- `cond_checkpoint_detour_late` (`AND`) applies only to
+  `e_kara_detour_late`: wait before taking the detour AND the timer is reported
+  below 11 minutes.
+- `cond_checkpoint_detour_ontime` (`AND`) applies only to
+  `e_kara_detour_terminal`: take the detour immediately AND the timer is
+  reported above 11 minutes. The exact 11:00 boundary remains unknown. Separate
+  records prevent either outcome from inheriting the other outcome's predicate.
+
+No `OR` record combines the two timing outcomes. The `OR` vocabulary remains
+available for a supported set of alternatives within one outcome.
 
 ## Stable IDs and permalinks
 
-Node and chapter IDs are unchanged. Each existing edge now has a stable `e_*` ID;
-edge array order and topology are unchanged.
+The original node and edge IDs remain. New IDs extend the sample; original edge
+array order is preserved, and each edge has a stable `e_*` ID.
 
 - `?edge=N` remains the canonical written form and continues to address the same
   array index.
 - `?edge=<stable-id>` is accepted as an input alias and resolves to the same edge
   index. `hashFor` continues to write `?edge=N`, so old links and new IDs do not
   create two competing canonical forms.
-- The state still stores the edge index; rendering, order, LOD, geometry and UI
-  behaviour are unchanged.
+- The state still stores the edge index; rendering, LOD, geometry and UI
+  behaviour are unchanged by this content expansion.
 
 The stable IDs are identifiers only. They do not add evidence or assert that an
 edge is more verified than its source and status state.

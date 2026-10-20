@@ -293,18 +293,27 @@ function validateAtlas(ATLAS) {
   });
 
   /* ---------- 4. Cross-chapter structure ---------- */
-  check('exactly two cross-chapter links, both into the Kara region', () => {
+  check('exactly four documented cross-chapter links keep their chapter directions', () => {
     const errors = [];
     const cross = edges.filter(e => byId.has(e.from) && byId.has(e.to) && byId.get(e.from).chapter !== byId.get(e.to).chapter);
-    if (cross.length !== 2) errors.push(`expected 2 cross-chapter edges, found ${cross.length}`);
-    for (const e of cross) {
-      if (byId.get(e.to).chapter !== 'kara') errors.push(`cross-chapter edge ${e.from}->${e.to} does not land in "kara"`);
-      if (e.kind !== 'hypothesis' && e.kind !== 'prerequisite') {
-        errors.push(`cross-chapter edge ${e.from}->${e.to} must be a hypothesis or prerequisite, not "${e.kind}"`);
+    const expected = [
+      { from: 'a_box', to: 'k_dialogue', kind: 'hypothesis' },
+      { from: 's_alive', to: 'k_meet', kind: 'prerequisite' },
+      { from: 'a_gun_seen', to: 's_take_gun', kind: 'prerequisite' },
+      { from: 'a_window_open', to: 's_window_open', kind: 'prerequisite' }
+    ];
+    if (cross.length !== expected.length) errors.push(`expected 4 cross-chapter edges, found ${cross.length}`);
+    const actual = new Set(cross.map(e => `${e.from}->${e.to}:${e.kind}`));
+    for (const want of expected) {
+      if (!actual.has(`${want.from}->${want.to}:${want.kind}`)) {
+        errors.push(`missing documented cross-chapter edge ${want.from}->${want.to} (${want.kind})`);
       }
     }
-    const kinds = cross.map(e => e.kind).sort().join(',');
-    if (kinds !== 'hypothesis,prerequisite') errors.push(`cross-chapter kinds should be hypothesis + prerequisite, found "${kinds}"`);
+    for (const e of cross) {
+      if (!expected.some(want => want.from === e.from && want.to === e.to && want.kind === e.kind)) {
+        errors.push(`unexpected cross-chapter edge ${e.from}->${e.to} (${e.kind})`);
+      }
+    }
     return errors;
   });
 
@@ -368,6 +377,117 @@ function validateAtlas(ATLAS) {
     return errors;
   });
 
+  check('checkpoint detour reaches the terminal while the 11-minute boundary stays unresolved', () => {
+    const errors = [];
+    const checkpoint = byId.get('k_checkpoint'), detour = byId.get('k_detour'), late = byId.get('k_late_bus');
+    if (!checkpoint || !detour || !late) {
+      errors.push('k_checkpoint/k_detour/k_late_bus missing');
+      return errors;
+    }
+    if (checkpoint.kind !== 'choice' || !Array.isArray(checkpoint.options) || checkpoint.options.length !== 2) {
+      errors.push('k_checkpoint must stay a two-option choice');
+    }
+    const fromCheckpoint = edges.filter(e => e.from === 'k_checkpoint');
+    if (!fromCheckpoint.some(e => e.fromOption === 0 && e.to === 'k_detour')) errors.push('checkpoint option 0 should lead to k_detour');
+    if (!fromCheckpoint.some(e => e.fromOption === 1 && e.to === 'k_terminal')) errors.push('checkpoint option 1 should lead to k_terminal');
+    const fromDetour = edges.filter(e => e.from === 'k_detour');
+    if (!fromDetour.some(e => e.to === 'k_late_bus')) errors.push('k_detour should keep its late-bus branch');
+    if (!fromDetour.some(e => e.to === 'k_terminal')) errors.push('k_detour should keep its on-time terminal branch');
+    if (!edges.some(e => e.from === 'k_late_bus' && e.to === 'k_terminal')) {
+      errors.push('k_late_bus must not be a silent dead end; it should still reach k_terminal');
+    }
+    const timer = uncertainties.find(u => u.id === 'u_checkpoint_timer_11');
+    if (!timer) errors.push('u_checkpoint_timer_11 is missing');
+    else {
+      if (!timer.nodes || !timer.nodes.includes('k_detour') || !timer.nodes.includes('k_late_bus')) {
+        errors.push('u_checkpoint_timer_11 must reference the detour and late-bus nodes');
+      }
+      const hasBoth = ['e_kara_detour_late', 'e_kara_detour_terminal'].every(id => timer.edges && timer.edges.includes(id));
+      if (!hasBoth) errors.push('u_checkpoint_timer_11 must reference both detour timing edges');
+    }
+    const timingEdges = ['e_kara_detour_late', 'e_kara_detour_terminal']
+      .map(id => edgeById.get(id)).filter(Boolean);
+    const texts = [
+      (checkpoint.sub || '') + ' ' + (checkpoint.note || ''),
+      (detour.sub || '') + ' ' + (detour.note || ''),
+      (late.sub || '') + ' ' + (late.note || ''),
+      timingEdges.map(e => (e.label || '') + ' ' + (e.note || '')).join(' '),
+      timer ? timer.explanation || '' : ''
+    ].join(' ');
+    if (!/11/.test(texts) || !/unresolved/i.test(texts)) {
+      errors.push('checkpoint/detour/late-bus notes must state the unresolved 11-minute boundary');
+    }
+    if (/<=|>=/.test(texts)) errors.push('checkpoint branch must not invent <= or >= boundary wording');
+    return errors;
+  });
+
+  check('checkpoint timing predicates stay attached to their own outcome edges', () => {
+    const errors = [];
+    const late = conditions.find(c => c.id === 'cond_checkpoint_detour_late');
+    const ontime = conditions.find(c => c.id === 'cond_checkpoint_detour_ontime');
+    if (!late || !ontime) return ['both edge-specific checkpoint timing conditions are required'];
+    if (late.operator !== 'AND' || JSON.stringify(late.appliesTo) !== JSON.stringify(['e_kara_detour_late'])) {
+      errors.push('late timing condition must apply only to e_kara_detour_late with AND');
+    }
+    if (ontime.operator !== 'AND' || JSON.stringify(ontime.appliesTo) !== JSON.stringify(['e_kara_detour_terminal'])) {
+      errors.push('on-time condition must apply only to e_kara_detour_terminal with AND');
+    }
+    const lateText = JSON.stringify(late);
+    const ontimeText = JSON.stringify(ontime);
+    if (!/wait/i.test(lateText) || !/below 11/i.test(lateText) || /above 11/i.test(lateText)) {
+      errors.push('late condition must state wait + below 11 only');
+    }
+    if (!/immediately/i.test(ontimeText) || !/above 11/i.test(ontimeText) || /below 11/i.test(ontimeText)) {
+      errors.push('on-time condition must state immediate + above 11 only');
+    }
+    return errors;
+  });
+
+  check('optional A New Home room actions are not asserted as traced chart links', () => {
+    const errors = [];
+    for (const id of ['e_home_go_gun_seen', 'e_home_room_window']) {
+      const edge = edgeById.get(id);
+      if (!edge) errors.push(`${id} is missing`);
+      else if (edge.kind !== 'conditional' || !/optional/i.test(`${edge.label || ''} ${edge.note || ''}`)) {
+        errors.push(`${id} must be a sourced optional-action connector, not a traced chart link`);
+      }
+    }
+    return errors;
+  });
+
+  check('only Kara shooting Todd carries the gun; the window stays a route, not an escape', () => {
+    const errors = [];
+    const gunIn = edges.filter(e => e.to === 's_gun_carried');
+    if (gunIn.length !== 1 || gunIn[0].from !== 's_kara_shoots_todd') {
+      errors.push('s_gun_carried must have exactly one incoming edge from s_kara_shoots_todd');
+    }
+    if (edges.some(e => e.from === 's_alice_shoots_todd' && e.to === 's_gun_carried')) {
+      errors.push('s_alice_shoots_todd must not feed s_gun_carried');
+    }
+    if (!edges.some(e => e.from === 's_kara_shoots_todd' && e.to === 's_dead')) errors.push('Kara shooting Todd should reach s_dead');
+    if (!edges.some(e => e.from === 's_alice_shoots_todd' && e.to === 's_dead')) errors.push('Alice shooting Todd should reach s_dead');
+    if (!edges.some(e => e.from === 's_take_gun' && e.to === 's_gun_struggle')) errors.push('taking the gun should lead to the reported struggle');
+    const struggleOut = edges.filter(e => e.from === 's_gun_struggle').map(e => e.to).sort().join(',');
+    if (struggleOut !== 's_alice_shoots_todd,s_kara_shoots_todd') {
+      errors.push(`gun struggle outcomes should stay Kara + Alice, found "${struggleOut}"`);
+    }
+    if (!edges.some(e => e.from === 'a_gun_seen' && e.to === 's_take_gun' && e.kind === 'prerequisite')) {
+      errors.push('the A New Home gun sighting should stay a prerequisite into s_take_gun');
+    }
+    if (!edges.some(e => e.from === 'a_window_open' && e.to === 's_window_open' && e.kind === 'prerequisite')) {
+      errors.push('the A New Home opened window should stay a prerequisite into s_window_open');
+    }
+    if (edges.some(e => e.from === 's_window_open')) {
+      errors.push('s_window_open must not claim a successful escape or downstream outcome in this slice');
+    }
+    const window = uncertainties.find(u => u.id === 'u_window_route_outcome');
+    if (!window) errors.push('u_window_route_outcome is missing');
+    else if (!window.nodes || !window.nodes.includes('s_window_open')) {
+      errors.push('u_window_route_outcome must reference s_window_open');
+    }
+    return errors;
+  });
+
   /* ---------- 5. Reachability over non-hypothesis edges ---------- */
   const confirmedKinds = new Set(['traced', 'conditional', 'prerequisite']);
   function reachableFrom(startId) {
@@ -395,6 +515,19 @@ function validateAtlas(ATLAS) {
 
     const terminal = reachableFrom('k_terminal');
     if (!terminal.has('k_meet')) errors.push('k_terminal can no longer reach k_meet');
+
+    const checkpoint = reachableFrom('k_checkpoint');
+    for (const kara of ['k_detour', 'k_late_bus', 'k_terminal', 'k_meet']) {
+      if (!checkpoint.has(kara)) errors.push(`k_checkpoint can no longer reach ${kara} through confirmed edges`);
+    }
+    const late = reachableFrom('k_late_bus');
+    if (!late.has('k_terminal')) errors.push('k_late_bus can no longer reach k_terminal through confirmed edges');
+    if (!late.has('k_meet')) errors.push('k_late_bus can no longer reach k_meet through confirmed edges');
+
+    const gunCarried = reachableFrom('s_kara_shoots_todd');
+    if (!gunCarried.has('s_gun_carried')) errors.push('Kara shooting Todd no longer reaches the carried-gun state');
+    const aliceShoots = reachableFrom('s_alice_shoots_todd');
+    if (aliceShoots.has('s_gun_carried')) errors.push('Alice shooting Todd must not reach the carried-gun state');
 
     const dead = reachableFrom('s_dead');
     for (const kara of ['k_meet', 'k_dialogue', 'k_away', 'k_check', 'k_goodbye']) {
@@ -425,8 +558,8 @@ function validateAtlas(ATLAS) {
     for (const [key, value] of Object.entries(actual)) {
       if (counts[key] !== value) errors.push(`meta.counts.${key} is ${counts[key]} but the data has ${value}`);
     }
-    if (actual.nodes !== 18) errors.push(`expected 18 boxes, found ${actual.nodes}`);
-    if (actual.edges !== 16) errors.push(`expected 16 connectors, found ${actual.edges}`);
+    if (actual.nodes !== 29) errors.push(`expected 29 boxes, found ${actual.nodes}`);
+    if (actual.edges !== 31) errors.push(`expected 31 connectors, found ${actual.edges}`);
     return errors;
   });
 
@@ -558,7 +691,7 @@ function main() {
 
   const c = ATLAS.meta.counts;
   console.log(`\nInventory: ${c.chapters} chapters, ${c.nodes} boxes, ${c.edges} connectors ` +
-    `(${c.tracedEdges} traced + ${c.conditionalEdges} reported condition + ${c.prerequisiteEdges} prerequisite gates + ${c.hypothesisEdges} unresolved hypothesis; ${c.crossChapterEdges} cross-chapter).`);
+    `(${c.tracedEdges} traced + ${c.conditionalEdges} conditional + ${c.prerequisiteEdges} prerequisite gates + ${c.hypothesisEdges} unresolved hypothesis; ${c.crossChapterEdges} cross-chapter).`);
   console.log(`Contract: ${result.counts.conditions} conditions, ${result.counts.uncertainties} uncertainties, ${result.counts.conflicts} conflicts.`);
 
   if (result.failed) {

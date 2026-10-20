@@ -355,13 +355,13 @@ check('crossChapterLinks returns only actual cross-chapter edges', function () {
     const b = ATLAS.nodes.find(function (n) { return n.id === edge.to; });
     assert(a.chapter !== b.chapter, 'group must not include an internal edge');
   });
-  eq(groups.map(function (g) { return g.key; }), ['home>kara', 'stormy>kara']);
+  eq(groups.map(function (g) { return g.key; }), ['home>stormy', 'home>kara', 'stormy>kara']);
 });
 
 check('chapter groups preserve kinds and never synthesize edges', function () {
   const groups = C.crossChapterLinks(ATLAS);
   const kinds = groups.map(function (g) { return g.edges.map(function (item) { return item.edge.kind; }); });
-  eq(kinds, [['hypothesis'], ['prerequisite']]);
+  eq(kinds, [['prerequisite', 'prerequisite'], ['hypothesis'], ['prerequisite']]);
   const total = ATLAS.meta.counts.crossChapterEdges;
   eq(groups.reduce(function (n, g) { return n + g.edges.length; }, 0), total);
 });
@@ -416,17 +416,19 @@ check('Todd survival and terminal arrival stay separate prerequisites', function
   assert(froms.indexOf('s_alive') !== froms.indexOf('k_terminal'), 'gates must be two distinct edges');
 });
 
-check('cross-chapter links only enter the Kara region', function () {
+check('cross-chapter links connect only the documented chapter pairs', function () {
   const cross = ATLAS.edges.filter(function (e) {
     const a = ATLAS.nodes.find(function (n) { return n.id === e.from; });
     const b = ATLAS.nodes.find(function (n) { return n.id === e.to; });
     return a.chapter !== b.chapter;
   });
-  eq(cross.length, 2);
-  cross.forEach(function (e) {
+  eq(cross.length, 4);
+  const pairs = cross.map(function (e) {
+    const a = ATLAS.nodes.find(function (n) { return n.id === e.from; });
     const b = ATLAS.nodes.find(function (n) { return n.id === e.to; });
-    eq(b.chapter, 'kara', 'cross-chapter edges into ' + b.id);
+    return a.chapter + '>' + b.chapter;
   });
+  eq(pairs.sort(), ['home>kara', 'home>stormy', 'home>stormy', 'stormy>kara']);
 });
 
 check('declared counts match the data', function () {

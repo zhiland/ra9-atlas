@@ -51,9 +51,9 @@ verified in game.
 | Measure | Count | Note |
 |---|---:|---|
 | Chapter regions | **3** | A New Home, Stormy Night, Battle for Detroit — Kara |
-| Boxes (nodes) | **18** | 10 home + 2 stormy states + 6 Kara |
-| Connectors (edges) | **16** | 12 traced + 1 reported condition + 2 prerequisite gates + 1 unresolved hypothesis |
-| Cross-chapter connectors | **2** | Both enter the Kara region: the survival gate and the box hypothesis |
+| Boxes (nodes) | **29** | 12 A New Home events/clues + 8 Stormy Night events/states + 9 Kara events/outcomes |
+| Connectors (edges) | **31** | 19 traced + 7 conditional + 4 prerequisite gates + 1 unresolved hypothesis |
+| Cross-chapter connectors | **4** | Two A New Home → Stormy Night prerequisites and two existing Stormy Night/A New Home → Kara links |
 
 ## Data/provenance contract
 
@@ -63,13 +63,14 @@ from chapter coverage status (`not-added`, `partial`, `checked-against-chart`);
 all three chapters are `partial`. Each chapter now carries an explicit
 `coverage` record with scope, included sample, omissions and source references.
 
-The 16 existing edges keep their order and topology and gain stable `e_*` IDs.
-Array-index `?edge=N` links remain canonical; stable IDs are accepted as input
-aliases. Two plain-English condition groups normalise existing claims only:
-`cond_key_relationship` (`SINGLE`, the single-source relationship threshold) and
-`cond_meet_todd_access` (`AND`, the two separate Meet Todd requirements). Three
-`unknown` records cover the box trigger, the key threshold and the unshown Stormy
-Night internals. No source-vs-source conflict is recorded or invented.
+The original 16 edges keep their order; new content is appended and every edge
+has a stable `e_*` ID. Array-index `?edge=N` links remain canonical; stable IDs
+are accepted as input aliases. Four plain-English condition groups cover the
+key threshold (`SINGLE`), the two separate Meet Todd gates (`AND`), and the
+separate below-11 late-bus and above-11 on-time detour outcomes (`AND` per
+edge). Six `unknown` records cover the box trigger, key threshold, Stormy Night
+internals, exact 11:00 boundary, the exact gun-state check, and window-route
+outcomes. No source-vs-source conflict is recorded or invented.
 
 ## Included per chapter
 
@@ -79,8 +80,15 @@ Night internals. No source-vs-source conflict is recorded or invented.
   ALICE GIVES KARA A KEY → OPEN ALICE'S BOX`.
 - **Stormy Night — selected carried state only.** Two states: *Todd not
   killed* (reported prerequisite for the later meeting) and *Todd killed*
-  (closes the meeting branch, drawn with no outgoing connector). No internal
-  chapter topology is transcribed and no in-chapter arrow is claimed.
+  (closes the meeting branch). A bounded gun confrontation adds distinct
+  Kara-shoots and Alice-shoots outcomes; only Kara's outcome carries the gun.
+  No other internal chapter topology is transcribed.
+- **Additional A New Home actions.** Optional nightstand-gun inspection and
+  opening Alice's window are guide-reported side actions, not claimed as
+  exclusive or required next steps in the screenshot sequence.
+- **Checkpoint detour.** The local route choice, reported timing split,
+  late-bus outcome, and terminal connection are included. Both timing paths
+  reach the terminal; exactly 11:00 remains unknown.
 - **Battle for Detroit — Kara — selected Todd meeting branch.**
   `Kara and Alice reach the bus terminal` and `Todd not killed` are drawn as
   **two separate prerequisite gates** into `Meet Todd`. The meeting leads to
@@ -94,12 +102,10 @@ Night internals. No source-vs-source conflict is recorded or invented.
   screenshot does not resolve; not invented.
 - All **Stormy Night** internal branches: guides differ on how Todd can be
   spared, avoided or killed; nothing is inferred.
-- Most of **Battle for Detroit — Kara**: checkpoint, ticket, border and river
-  branches, and downstream responses such as Luther's diversion.
-- The **checkpoint-detour timing segment (D3)**: outside this slice. The
-  reviewed pages also disagree at the boundary — Fandom states "11 minutes or
-  more" while PowerPyx states "above 11 minutes" — so an exactly-11:00 claim
-  stays unresolved and is not shown anywhere in the prototype.
+- Most of **Battle for Detroit — Kara**: guarded checkpoint interactions,
+  ticket, border and river branches, and downstream responses.
+- The rest of **Stormy Night**, including non-gun paths, exact QTE branches,
+  and successful window-escape outcomes.
 - Other chapters and any full-game coverage.
 
 ## Unresolved claims kept visibly unresolved
@@ -127,26 +133,29 @@ Night internals. No source-vs-source conflict is recorded or invented.
   vocabularies; chapter coverage records and source refs; node/edge/detail
   source refs; edge endpoints; no self-loops/duplicates; uncertainty styling
   with notes; plain-English condition groups (`SINGLE`, `AND`) over existing
-  edge IDs; complete `unknown` records; exactly two cross-chapter links, both
-  into Kara; `Meet Todd` receiving exactly the two reported gates; single
+  edge IDs; complete `unknown` records; exactly four cross-chapter links; `Meet
+  Todd` receiving exactly the two reported gates; single
   unresolved hypothesis for the box; terminal negative state; confirmed
   reachability of the positive outcome without the hypothesis; declared
   counts; canvas/frame containment; no node overlaps; orthogonal routes avoid
-  unrelated nodes. Inventory: 3 chapters, 18 boxes, 16 connectors (12 traced +
-  1 reported condition + 2 prerequisite gates + 1 unresolved hypothesis);
-  2 conditions, 3 uncertainties, 0 conflicts.
+  unrelated nodes. Inventory: 3 chapters, 29 boxes, 31 connectors (19 traced +
+  7 conditional + 4 prerequisite gates + 1 unresolved hypothesis);
+  4 conditions, 6 uncertainties, 0 conflicts.
 - `node --check` on every prototype script and validator — syntax OK.
-- `node tests/atlas-data-contract.test.js` — **29/29 pass**: the real sample is
-  accepted; 23 deliberate fixtures reject duplicate IDs, dangling endpoints,
+- `node tests/atlas-data-contract.test.js` — **38/38 pass**: the real sample is
+  accepted; deliberate fixtures reject duplicate IDs, dangling endpoints,
   missing/unknown sources, invalid claim/coverage statuses, malformed
   conditions, and incomplete uncertainty/conflict records.
 - `node tests/atlas-core.test.js` — **40/40 pass**: consent, chapter jump,
   selection, trail cap 8 + dedupe, both close paths reducing to one state,
   reset, hash round-trip for every node, stable-edge-ID aliases, and the data
   invariants above.
-- `node tests/poc4-browser.test.js` — current run **48/48 pass** (15 checks × 3 variants + 3 mobile checks)
+- `node tests/map-first.test.js` — **13/13 pass**, including all sparse labels,
+  cross-chapter navigation, desktop/mobile fit, dense summaries, and rendered
+  event-box non-overlap at full-map and chapter fits.
+- `node tests/poc4-browser.test.js` — **48/48 pass** (15 checks × 3 variants + 3 mobile checks)
   in headless Chromium over localhost HTTP: no page errors; consent gate; whole
-  surface with 3 frames/18 nodes/16 connectors; cross-chapter gate and
+  surface with 3 frames/29 nodes/31 connectors; cross-chapter gate and
   hypothesis labels visible before any navigation; chapter jumps as camera
   presets that keep every region mounted; both `Meet Todd` gates; the box
   hypothesis dashed, correctly labelled, and not a gate; cross-chapter jump;

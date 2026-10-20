@@ -9,7 +9,7 @@
  *   - chapter regions, chapter labels, meaningful event labels and actual
  *     cross-chapter connectors are visible at whole-story fit;
  *   - chapter fit and intermediate zoom keep readable event labels and branch
- *     structure for the real 18-node sample;
+ *     structure for the real 29-node sample;
  *   - the same world canvas stays mounted across LOD changes;
  *   - the dense synthetic fixture uses labelled region/branch summaries derived
  *     from its real topology instead of only blank event rectangles;
@@ -80,6 +80,20 @@ function startServer() {
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg || 'assertion failed');
+}
+
+function assertNoNodeBoxOverlap(map, scene) {
+  const boxes = map.nodes.filter(function (node) { return node.visible; });
+  for (let i = 0; i < boxes.length; i++) {
+    for (let j = i + 1; j < boxes.length; j++) {
+      const a = boxes[i].rect;
+      const b = boxes[j].rect;
+      const overlapX = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+      const overlapY = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+      assert(overlapX <= 1 || overlapY <= 1,
+        scene + ': event boxes ' + boxes[i].id + ' and ' + boxes[j].id + ' overlap (' + overlapX.toFixed(1) + 'x' + overlapY.toFixed(1) + 'px)');
+    }
+  }
 }
 
 async function ok(name, fn) {
@@ -256,11 +270,12 @@ async function runDesktop(browser) {
     assert(m.worldPresent, 'world canvas is not visible at whole-story fit');
     assert(m.frames.length === 3 && m.frames.every(function (f) { return f.visible; }),
       'all three chapter regions must stay visible at whole-story fit');
-    assert(m.nodes.length === 18 && m.nodes.every(function (n) { return n.visible && n.labelled; }),
-      'whole-story fit must render all 18 actual events as labeled map boxes');
+    assert(m.nodes.length === 29 && m.nodes.every(function (n) { return n.visible && n.labelled; }),
+      'whole-story fit must render all 29 actual events as labeled map boxes');
+    assertNoNodeBoxOverlap(m, 'whole-map fit');
     assert(m.nodeLabelsMode === 'in-box', 'desktop whole-story fit should keep event labels inside boxes, got ' + m.nodeLabelsMode);
-    assert(m.edges.length === 16 && m.edges.every(function (e) { return e.visible; }),
-      'all 16 actual connectors must stay visible at whole-story fit');
+    assert(m.edges.length === 31 && m.edges.every(function (e) { return e.visible; }),
+      'all 31 actual connectors must stay visible at whole-story fit');
   });
 
   await ok('whole-story fit shows legible chapter labels, meaningful event labels and actual cross-chapter connectors', async function () {
@@ -273,7 +288,7 @@ async function runDesktop(browser) {
       assert(names.some(function (name) { return label.text.indexOf(name) !== -1; }),
         label.id + ' chapter label does not name the chapter: ' + label.text);
     });
-    assert(m.eventLabels.length === 18, 'all 18 sparse events need meaningful labels at desktop whole-story fit, got ' + m.eventLabels.length);
+    assert(m.eventLabels.length === 29, 'all 29 sparse events need meaningful labels at desktop whole-story fit, got ' + m.eventLabels.length);
     m.eventLabels.forEach(function (label) {
       assert(label.font >= 11, label.id + ' event label font ' + label.font + 'px is too small');
       assert(label.insideCanvas, label.id + ' event label is outside the canvas');
@@ -284,11 +299,11 @@ async function runDesktop(browser) {
       assert(label.full.length > 0, label.id + ' event label has no full source label');
     });
     const crossPaths = m.edges.filter(function (e) { return e.cross; });
-    assert(crossPaths.length === 2, 'two actual cross-chapter paths expected, got ' + crossPaths.length);
+    assert(crossPaths.length === 4, 'four actual cross-chapter paths expected, got ' + crossPaths.length);
     crossPaths.forEach(function (e) {
       assert(e.visible && e.strokeWidth >= 1.4, 'cross-chapter path ' + e.index + ' is not visibly emphasised');
     });
-    assert(m.crossLabels.length === 2, 'two actual cross-chapter map labels expected, got ' + m.crossLabels.length);
+    assert(m.crossLabels.length === 4, 'four actual cross-chapter map labels expected, got ' + m.crossLabels.length);
     const crossIndices = crossPaths.map(function (e) { return e.index; }).sort(function (a, b) { return a - b; });
     const labelIndices = m.crossLabels.map(function (l) { return Number(l.id); }).sort(function (a, b) { return a - b; });
     assert(JSON.stringify(crossIndices) === JSON.stringify(labelIndices),
@@ -307,7 +322,7 @@ async function runDesktop(browser) {
         f.rect.top >= m.canvas.top - 2 && f.rect.bottom <= m.canvas.bottom + 2,
         f.id + ' frame is clipped by the full-map fit');
     });
-    assert(/3 chapters/i.test(m.status) && /18 events/i.test(m.status) && /16 connectors/i.test(m.status),
+    assert(/3 chapters/i.test(m.status) && /29 events/i.test(m.status) && /31 connectors/i.test(m.status),
       'status should concisely state the selected slice counts: ' + m.status);
     assert(m.status.length <= 180, 'primary status should stay concise, got ' + m.status.length + ' chars');
     assert(/not in-game verified|not verified/i.test(m.status), 'status must keep the not-verified qualifier: ' + m.status);
@@ -321,7 +336,8 @@ async function runDesktop(browser) {
     assert(home.nodes.filter(function (n) { return n.id.indexOf('a_') === 0; }).every(function (n) { return n.visible && n.labelled; }),
       'chapter fit must show each home event as a labeled box');
     assert(home.frames.filter(function (f) { return f.id === 'home'; })[0].visible, 'focused home frame is not visible');
-    assert(home.eventLabels.length === 10, 'home chapter fit should label all 10 sample events, got ' + home.eventLabels.length);
+    assert(home.eventLabels.length === 12, 'home chapter fit should label all 12 sample events, got ' + home.eventLabels.length);
+    assertNoNodeBoxOverlap(home, 'A New Home chapter fit');
     home.eventLabels.forEach(function (label) {
       assert(label.font >= 11, label.id + ' chapter-fit label font ' + label.font + 'px is too small');
       assert(label.insideCanvas, label.id + ' chapter-fit label is outside the canvas');
@@ -339,6 +355,7 @@ async function runDesktop(browser) {
     await waitFrames(page);
     const kara = await mapSnapshot(page);
     assert(kara.lod === 'structure' || kara.lod === 'detail', 'Kara chapter fit should show events, got ' + kara.lod);
+    assertNoNodeBoxOverlap(kara, 'Battle for Detroit chapter fit');
     const branchLabels = ['k_meet', 'k_dialogue', 'k_away', 'k_check'];
     const karaLabelled = kara.eventLabels.map(function (l) { return l.id; });
     branchLabels.forEach(function (id) {
@@ -346,6 +363,17 @@ async function runDesktop(browser) {
     });
     const visibleBranches = kara.edges.filter(function (e) { return e.visible && [11, 12, 13, 14].indexOf(e.index) !== -1; });
     assert(visibleBranches.length >= 4, 'Kara branch connectors must remain visible at chapter fit');
+
+    await page.locator('[data-chapter="stormy"]').click();
+    await waitFrames(page);
+    const stormy = await mapSnapshot(page);
+    assert(stormy.lod === 'structure' || stormy.lod === 'detail', 'Stormy Night chapter fit should show events, got ' + stormy.lod);
+    assertNoNodeBoxOverlap(stormy, 'Stormy Night chapter fit');
+    const stormyIds = ['s_alive', 's_dead', 's_take_gun', 's_gun_struggle', 's_kara_shoots_todd', 's_alice_shoots_todd', 's_gun_carried', 's_window_open'];
+    const stormyLabels = stormy.eventLabels.map(function (label) { return label.id; });
+    stormyIds.forEach(function (id) {
+      assert(stormyLabels.indexOf(id) !== -1, 'Stormy Night chapter fit is missing the label for ' + id);
+    });
   });
 
   await ok('intermediate zoom keeps one continuous map with readable event labels', async function () {
@@ -366,7 +394,7 @@ async function runDesktop(browser) {
     const m = await mapSnapshot(page);
     assert(m.worldPresent && m.frames.length === 3 && m.frames.every(function (f) { return f.visible; }),
       'chapter regions must stay on the same spatial canvas at intermediate zoom');
-    assert(m.nodes.length === 18, 'intermediate zoom must retain all actual event nodes');
+    assert(m.nodes.length === 29, 'intermediate zoom must retain all actual event nodes');
     const fullyVisible = m.nodes.filter(function (n) { return n.insideCanvas; });
     assert(fullyVisible.length >= 8, 'intermediate zoom should show most events spatially, got ' + fullyVisible.length + ' fully visible');
     fullyVisible.forEach(function (n) {
@@ -475,7 +503,7 @@ async function runMobile(browser) {
       assert(label.font >= 11, label.id + ' mobile event label font ' + label.font + 'px is too small');
       assert(label.insideCanvas, label.id + ' mobile event label is outside the canvas');
     });
-    assert(m.crossLabels.length === 2, 'mobile whole-story map needs the two actual cross labels');
+    assert(m.crossLabels.length === 4, 'mobile whole-story map needs the four actual cross labels');
     assert(!m.horizontalOverflow, 'mobile map overflowed horizontally');
   });
 
@@ -484,9 +512,9 @@ async function runMobile(browser) {
     await waitFrames(page);
     const m = await mapSnapshot(page);
     assert(m.lod === 'structure' || m.lod === 'detail', 'mobile chapter fit should show events, got ' + m.lod);
-    assert(m.nodes.length === 18, 'mobile chapter focus must retain all real event nodes');
+    assert(m.nodes.length === 29, 'mobile chapter focus must retain all real event nodes');
     assert(m.nodeLabelsMode === 'in-box', 'mobile chapter focus should use readable in-box labels, got ' + m.nodeLabelsMode);
-    assert(m.eventLabels.length === 10, 'mobile home chapter focus should label all 10 real events, got ' + m.eventLabels.length);
+    assert(m.eventLabels.length === 12, 'mobile home chapter focus should label all 12 real events, got ' + m.eventLabels.length + ': ' + m.eventLabels.map(function (l) { return l.id; }).join(', '));
     m.eventLabels.forEach(function (label) {
       assert(label.font >= 11, label.id + ' mobile chapter-fit font ' + label.font + 'px is too small');
       assert(label.insideCanvas, label.id + ' mobile chapter-fit label is outside the canvas');
