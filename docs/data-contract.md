@@ -26,8 +26,8 @@ and the [specification](spec.md).
 
 ## Scope and record shape
 
-The contract covers the three existing chapter regions, 45 nodes, 49 edges, five
-condition groups, seven uncertainty records and no conflict records in
+The contract covers the three existing chapter regions, 56 nodes, 53 edges, five
+condition groups, eight uncertainty records and no conflict records in
 `prototype/atlas-data.js`. The sample declares `meta.contractVersion: '1.0'`.
 
 | Record | Required fields |
@@ -70,23 +70,28 @@ Chapter `coverage.status` values:
 | `checked-against-chart` | The whole chapter was checked against a chart; not used by PoC4 |
 
 All three sample chapters are `partial`: A New Home has a selected screenshot
-sequence plus guide-reported optional actions. Stormy Night has a selected
-ordered entry sequence with response branches, a non-deviant fatal outcome, a
-selected gun confrontation, two successful non-gun escape routes and inferred
-Todd states. Battle for Detroit — Kara has selected checkpoint and meeting
-branches. The omitted parts are recorded per chapter.
-Version and platform remain `unknown`; no transition is gameplay-verified.
+sequence plus two guide-reported clue actions and eleven selected first-floor
+events. Four local progressions are drawn. Other order and requirements remain
+unknown. Stormy Night has a selected ordered entry sequence with response
+branches, a non-deviant fatal outcome, a selected gun confrontation, two
+successful non-gun escape routes and inferred Todd states. Battle for Detroit —
+Kara has selected checkpoint and meeting branches. The omitted parts are
+recorded per chapter. Version and platform remain `unknown`; no transition is
+gameplay-verified.
 
 Edge `kind` is a relation vocabulary, not a coverage or verification claim:
 
 | Value | Meaning |
 |---|---|
 | `traced` | Link transcribed or directly guide-stated |
-| `conditional` | Guide-stated link with a single-source reported condition |
+| `conditional` | Guide-stated link with a reported condition; the note explains the source and condition |
 | `prerequisite` | Reported access gate into a later node |
 | `hypothesis` | Unresolved candidate link; never presented as causal |
 
 Edges also carry `src` references and evidence notes where uncertainty applies.
+The first-floor event sample uses only directly reported local progressions. It
+does not create generic activity spokes or infer order, requirements, or
+exclusivity from guide omissions.
 
 ## Conditions
 
@@ -151,9 +156,10 @@ edge is more verified than its source and status state.
 
 - An `unknown` record describes incomplete evidence: the reviewed sources cannot
   settle a value, trigger or mechanism. Current records:
-  `u_box_trigger`, `u_key_threshold`, `u_stormy_internal`,
-  `u_checkpoint_timer_11`, `u_gun_state_check`, `u_window_route_outcome` and
-  `u_stormy_escape_todd_state`. The last record specifically holds the missing
+  `u_box_trigger`, `u_key_threshold`, `u_home_first_floor_order`,
+  `u_stormy_internal`, `u_checkpoint_timer_11`, `u_gun_state_check`,
+  `u_window_route_outcome` and `u_stormy_escape_todd_state`. The first-floor record holds unresolved ordering, requirements, and
+  exclusivity among eleven selected events. The last record specifically holds the missing
   Todd state after either successful non-gun escape; the dashed links to
   `s_alive` are inferences, not confirmed outcomes.
 - A `conflict` record would describe sources that disagree with each other. The
@@ -184,6 +190,11 @@ structural error, not a silent caveat.
   response branches; the non-deviant fatal outcome is distinct from `s_dead`
   and never reaches `s_alive` or the later meeting; go-upstairs joins only the existing
   `s_reach_alice` route, and Reason with Todd stops at its reported endpoint;
+- first-floor event fences: eleven selected events carry scoped source refs;
+  four documented local progressions are drawn (laundry to backyard to washer
+  to Red Ice to Todd reaction, and TV stare to blocking Todd’s view);
+  unrelated tasks have no invented spokes, the existing `a_clean1 → a_ask`
+  sequence remains, and the unknown record covers order and requirements;
 - the previous graph invariants, inventory counts, layout and routing checks.
 
 `tests/atlas-data-contract.test.js` accepts the real sample and rejects

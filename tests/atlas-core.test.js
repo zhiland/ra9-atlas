@@ -399,6 +399,30 @@ check('Todd killed is a terminal negative state', function () {
   eq(edgesFrom('s_dead'), [], 'no outgoing connector may leave the negative state');
 });
 
+check('A New Home first-floor events keep only source-supported progressions', function () {
+  const byId = Object.fromEntries(ATLAS.nodes.map(function (n) { return [n.id, n]; }));
+  const edges = Object.fromEntries(ATLAS.edges.map(function (e) { return [e.id, e]; }));
+  const events = [
+    'a_read_android_power', 'a_read_connecting_dots', 'a_wash_dishes', 'a_take_laundry_backyard',
+    'a_rewash_clothes', 'a_find_red_ice', 'a_enrage_todd', 'a_watch_todd_tv',
+    'a_block_todd_view', 'a_activate_vacuum', 'a_take_out_trash'
+  ];
+  events.forEach(function (id) {
+    assert(byId[id] && byId[id].chapter === 'home', id + ' must be a sourced A New Home event');
+    assert(byId[id].src.length > 0, id + ' must name its evidence');
+    assert(!/\b(optional (activity|event|action|branch)|is mandatory|must be completed|are exclusive|mutually exclusive)\b/i.test(byId[id].note || ''), id + ' must not claim unsupported optionality or requirements');
+  });
+  eq([edges.e_home_backyard_rewash_clothes.from, edges.e_home_backyard_rewash_clothes.to], ['a_take_laundry_backyard', 'a_rewash_clothes']);
+  eq([edges.e_home_rewash_red_ice.from, edges.e_home_rewash_red_ice.to], ['a_rewash_clothes', 'a_find_red_ice']);
+  eq([edges.e_home_red_ice_enrage_todd.from, edges.e_home_red_ice_enrage_todd.to], ['a_find_red_ice', 'a_enrage_todd']);
+  eq([edges.e_home_watch_tv_block_view.from, edges.e_home_watch_tv_block_view.to], ['a_watch_todd_tv', 'a_block_todd_view']);
+  eq([edges.e_home_backyard_rewash_clothes.from, edges.e_home_backyard_rewash_clothes.to], ['a_take_laundry_backyard', 'a_rewash_clothes']);
+  eq(edgesFrom('a_clean1').map(function (e) { return e.to; }), ['a_ask']);
+  const unknown = ATLAS.uncertainties.find(function (u) { return u.id === 'u_home_first_floor_order'; });
+  assert(unknown && unknown.status === 'unknown', 'unresolved first-floor order and requirements must be recorded');
+  events.forEach(function (id) { assert(unknown.nodes.includes(id), id + ' must appear in the uncertainty record'); });
+});
+
 check('Todd survival and terminal arrival stay separate prerequisites', function () {
   const froms = edgesTo('k_meet').map(function (e) { return e.from; });
   assert(froms.indexOf('s_alive') !== -1 && froms.indexOf('k_terminal') !== -1,

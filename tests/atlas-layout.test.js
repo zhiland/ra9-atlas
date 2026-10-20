@@ -42,7 +42,7 @@ const MIME = {
 const EXPECTED = {
   canvas: { width: 4450, height: 1080 },
   frames: {
-    home: { x: 30, y: 120, w: 1930, h: 500 },
+    home: { x: 30, y: 120, w: 1930, h: 530 },
     stormy: { x: 2000, y: 120, w: 1320, h: 860 },
     kara: { x: 3360, y: 120, w: 1060, h: 900 }
   },
@@ -59,6 +59,17 @@ const EXPECTED = {
     a_box: { x: 1760, y: 250, w: 170, h: 84 },
     a_gun_seen: { x: 1000, y: 400, w: 170, h: 84 },
     a_window_open: { x: 1190, y: 500, w: 170, h: 84 },
+    a_read_android_power: { x: 620, y: 132, w: 170, h: 54 },
+    a_read_connecting_dots: { x: 810, y: 192, w: 170, h: 54 },
+    a_wash_dishes: { x: 620, y: 338, w: 170, h: 54 },
+    a_take_laundry_backyard: { x: 620, y: 416, w: 170, h: 54 },
+    a_rewash_clothes: { x: 620, y: 490, w: 170, h: 54 },
+    a_find_red_ice: { x: 810, y: 384, w: 170, h: 54 },
+    a_enrage_todd: { x: 1000, y: 500, w: 170, h: 54 },
+    a_watch_todd_tv: { x: 810, y: 448, w: 170, h: 54 },
+    a_block_todd_view: { x: 1000, y: 580, w: 170, h: 54 },
+    a_activate_vacuum: { x: 810, y: 523, w: 170, h: 54 },
+    a_take_out_trash: { x: 620, y: 562, w: 170, h: 54 },
     s_take_gun: { x: 2045, y: 210, w: 190, h: 84 },
     s_gun_struggle: { x: 2305, y: 210, w: 190, h: 84 },
     s_kara_shoots_todd: { x: 2565, y: 210, w: 190, h: 84 },
@@ -267,10 +278,10 @@ async function run(browser) {
     assert(kara.w >= 1000, 'Kara checkpoint region lost its widened bounds: ' + kara.w);
   });
 
-  await ok('all 45 node boxes keep the expected static world geometry', async function () {
+  await ok('all 56 node boxes keep the expected static world geometry', async function () {
     const actual = {};
     snapshot.nodes.forEach(function (node) { actual[node.id] = node.layout; });
-    assert(snapshot.nodes.length === 45, 'expected 45 node boxes, got ' + snapshot.nodes.length);
+    assert(snapshot.nodes.length === 56, 'expected 56 node boxes, got ' + snapshot.nodes.length);
     Object.keys(EXPECTED.nodes).forEach(function (id) {
       assert(actual[id], 'missing node ' + id);
       sameBox(actual[id], EXPECTED.nodes[id], 'node ' + id);
@@ -287,6 +298,26 @@ async function run(browser) {
     });
     assert(byId.a_gun_seen.y > byId.a_clean2.y, 'nightstand clue is not below the upstairs cleaning step');
     assert(byId.a_window_open.y > byId.a_room.y, 'window action is not below Alice’s room cleaning step');
+  });
+
+  await ok('first-floor events stay in the A New Home side lane', async function () {
+    const ids = ['a_read_android_power', 'a_read_connecting_dots', 'a_wash_dishes', 'a_take_laundry_backyard',
+      'a_rewash_clothes', 'a_find_red_ice', 'a_enrage_todd', 'a_watch_todd_tv', 'a_block_todd_view', 'a_activate_vacuum', 'a_take_out_trash'];
+    const byId = Object.fromEntries(snapshot.nodes.map(function (node) { return [node.id, node.layout]; }));
+    const clean = byId.a_clean1;
+    ids.forEach(function (id) {
+      assert(byId[id], 'missing first-floor event ' + id);
+      assert(byId[id].x > clean.x, id + ' must branch to the right of CLEAN FIRST FLOOR');
+      assert(byId[id].y !== clean.y, id + ' must not sit on the mandatory main row');
+      assert(byId[id].x + byId[id].w <= EXPECTED.frames.home.x + EXPECTED.frames.home.w,
+        id + ' leaves the A New Home frame');
+      assert(byId[id].y >= EXPECTED.frames.home.y && byId[id].y + byId[id].h <= EXPECTED.frames.home.y + EXPECTED.frames.home.h,
+        id + ' leaves the A New Home frame vertically');
+    });
+    assert(byId.a_read_android_power.x === 620 && byId.a_read_connecting_dots.x === 810,
+      'the magazine readings should use the two upper activity columns');
+    assert(byId.a_enrage_todd.x > byId.a_find_red_ice.x && byId.a_block_todd_view.x > byId.a_watch_todd_tv.x,
+      'known local first-floor sequences must read left to right');
   });
 
   await ok('Stormy and checkpoint nodes keep clear row and column gutters', async function () {

@@ -192,8 +192,8 @@ async function runVariant(browser, variant) {
     assert(state.focused === 'consent', 'consent should receive focus, was ' + state.focused);
     assert(state.world && state.world.width > 0 && state.world.height > 0, 'map world must be rendered but covered');
     assert(state.canvas && state.canvas.width > 0 && state.canvas.height > 0, 'canvas must have layout under the cover');
-    assert(state.nodes === 45, '45 nodes should be rendered behind the cover, got ' + state.nodes);
-    assert(state.edges === 49, '49 connectors should be rendered behind the cover, got ' + state.edges);
+    assert(state.nodes === 56, '56 nodes should be rendered behind the cover, got ' + state.nodes);
+    assert(state.edges === 53, '53 connectors should be rendered behind the cover, got ' + state.edges);
     assert(state.lod === null, 'the map must not carry a semantic LOD attribute');
   });
 
@@ -208,7 +208,7 @@ async function runVariant(browser, variant) {
     assert(await page.locator('#trail').isVisible(), 'history trail not visible');
     assert(!(await page.locator('#atlas-shell').getAttribute('inert')), 'shell stayed inert after consent');
     const status = await textOf(page, '#status');
-    assert(status.indexOf('3 chapters · 45 events · 49 connectors') !== -1, 'status line counts: ' + status);
+    assert(status.indexOf('3 chapters · 56 events · 53 connectors') !== -1, 'status line counts: ' + status);
     assert(status.indexOf('not in-game verified') !== -1, 'status line must keep the not-verified qualifier');
     assert(status.indexOf('version/platform unknown') === -1 && status.length <= 180,
       'primary status must stay a concise slice summary, got: ' + status);
@@ -217,10 +217,10 @@ async function runVariant(browser, variant) {
     assert(/^\d+%$/.test(zoom), 'zoom label should report camera scale only: ' + zoom);
     assert(await page.locator('#overview').count() === 0, 'the card/report overview surface must stay removed');
     assert(await page.locator('.frame').count() === 3, 'three chapter frames must stay mounted');
-    assert(await page.locator('[data-node]').count() === 45, '45 event nodes must stay mounted');
-    assert(await page.locator('path.edge').count() === 49, '49 connectors must stay mounted');
+    assert(await page.locator('[data-node]').count() === 56, '56 event nodes must stay mounted');
+    assert(await page.locator('path.edge').count() === 53, '53 connectors must stay mounted');
     assert(await page.locator('[data-frame-label]').count() === 3, 'three chapter names must remain on the map');
-    assert(await page.locator('[data-node-label]').count() === 45, 'every event box must keep its label');
+    assert(await page.locator('[data-node-label]').count() === 56, 'every event box must keep its label');
   });
 
   await ok('map names and labels stay attached to real chapters, nodes and cross-chapter edges', async function () {
@@ -241,7 +241,7 @@ async function runVariant(browser, variant) {
       return { frames: frames, labels: labels, actualCross: actualCross, labelled: labelled };
     });
     assert(result.frames.length === 3 && result.frames.every(function (f) { return f.contained && f.title; }), 'chapter names must stay inside all real frames');
-    assert(result.labels.length === 45 && result.labels.every(function (n) { return n.contained && n.text; }), 'all 45 real nodes must retain their full in-box labels');
+    assert(result.labels.length === 56 && result.labels.every(function (n) { return n.contained && n.text; }), 'all 56 real nodes must retain their full in-box labels');
     result.actualCross.forEach(function (index) { assert(result.labelled.indexOf(index) !== -1 || !ATLAS.edges[index].label, 'labelled cross-chapter edge ' + index + ' disappeared'); });
     assert(await page.locator('#overview-connectors, .overview-link, .overview-card').count() === 0, 'no pseudo-map or report surface may replace the graph');
   });
@@ -287,7 +287,7 @@ async function runVariant(browser, variant) {
     assert(await page.locator('[data-chapter="home"]').getAttribute('aria-pressed') === 'true', 'home chapter is not active');
     const homeFrame = home.frames.filter(function (f) { return f.id === 'home'; })[0];
     assert(homeFrame && fullyInside(homeFrame.rect, home.canvas), 'focused home chapter is clipped by the canvas');
-    assert(home.nodeCount === 45 && home.edgeCount === 49, 'chapter focus must keep the whole graph mounted');
+    assert(home.nodeCount === 56 && home.edgeCount === 53, 'chapter focus must keep the whole graph mounted');
     assert(!home.horizontalOverflow, 'chapter focus introduced horizontal overflow');
 
     await page.locator('[data-chapter="kara"]').click();
@@ -461,7 +461,7 @@ async function runVariant(browser, variant) {
       };
     });
     assert(separation.fatalOut === 0, 'the fatal outcome must remain terminal on the map');
-    assert(separation.mountedEdges === 49 && separation.entryEdges === 7,
+    assert(separation.mountedEdges === 53 && separation.entryEdges === 7,
       'all entry connectors must stay mounted with the map');
     assert(JSON.stringify(separation.deviantOut) === JSON.stringify(['s_go_upstairs', 's_reason_todd']),
       'deviant response connectors changed: ' + separation.deviantOut.join(','));
@@ -701,7 +701,7 @@ async function runVariant(browser, variant) {
     assert(locked.focus === 'consent', 're-lock should focus the consent button');
     assert(locked.overlayZ >= 40, 're-locked overlay must cover the map');
     assert(locked.canvasWidth > 0 && locked.canvasHeight > 0 && locked.worldVisible, 'map must stay visible beneath the re-locked overlay');
-    assert(locked.nodes === 45, 'map content must stay mounted beneath the re-locked overlay');
+    assert(locked.nodes === 56, 'map content must stay mounted beneath the re-locked overlay');
     assert(locked.detailsHidden, 're-lock should happen from a closed-details state');
     assert(locked.stored === null, 'reset should clear the stored consent key');
 
@@ -784,8 +784,8 @@ async function runMobileRegression(browser) {
   await page.goto(baseUrl + '/prototype/poc4-editorial.html#');
   await page.locator('#consent').waitFor({ state: 'visible' });
   await ok('mobile spoiler cover keeps the real map underneath', async function () {
-    assert(await page.locator('[data-node]').count() === 45, 'real nodes must be mounted beneath the cover');
-    assert(await page.locator('path.edge').count() === 49, 'real edges must be mounted beneath the cover');
+    assert(await page.locator('[data-node]').count() === 56, 'real nodes must be mounted beneath the cover');
+    assert(await page.locator('path.edge').count() === 53, 'real edges must be mounted beneath the cover');
     assert(await page.locator('#spoiler-overlay').isVisible(), 'spoiler cover should be visible');
   });
   await page.locator('#consent').click();
@@ -812,7 +812,7 @@ async function runMobileRegression(browser) {
     });
     assert(Math.abs(m.width-m.viewport)<=1, 'canvas width does not fit the mobile viewport');
     assert(!m.overflow, 'mobile page has horizontal overflow');
-    assert(m.nodes===45&&m.labels===45&&m.edges===49, 'mobile viewport changed graph inventory');
+    assert(m.nodes===56&&m.labels===56&&m.edges===53, 'mobile viewport changed graph inventory');
     assert(m.frames.every(function(f){return f.inside;}), 'whole-map Fit should contain all chapter regions');
     assert(m.scale>0&&m.scale<1, 'mobile fit should scale the same world map');
   });
@@ -828,7 +828,7 @@ async function runMobileRegression(browser) {
       return { pressed:document.querySelector('[data-chapter="home"]').getAttribute('aria-pressed'), inside:frame.left>=canvas.left-1&&frame.right<=canvas.right+1&&frame.top>=canvas.top-1&&frame.bottom<=canvas.bottom+1, nodes:document.querySelectorAll('[data-node]').length, labels:document.querySelectorAll('[data-node-label]').length, edges:document.querySelectorAll('path.edge').length, camera:{a:m.a,e:m.e,f:m.f}, text:Array.from(document.querySelectorAll('[data-node-label]')).map(function(x){return x.textContent.trim();}) };
     });
     assert(focused.pressed==='true'&&focused.inside, 'mobile chapter focus did not fit its real frame');
-    assert(focused.nodes===45&&focused.labels===45&&focused.edges===49, 'chapter focus swapped or hid real graph content');
+    assert(focused.nodes===56&&focused.labels===56&&focused.edges===53, 'chapter focus swapped or hid real graph content');
     assert(focused.text.every(Boolean), 'chapter focus has an anonymous event label');
     const point=await page.evaluate(function(){const c=document.getElementById('canvas'),r=c.getBoundingClientRect();for(let y=r.top+25;y<r.bottom-25;y+=12){for(let x=r.left+25;x<r.right-25;x+=12){const el=document.elementFromPoint(x,y);if(el&&c.contains(el)&&!el.closest('button,a,input,.legend,.status,.zoom'))return{x:x,y:y};}}return null;});
     assert(point,'no clear map point for mobile pan');
@@ -847,7 +847,7 @@ async function runMobileRegression(browser) {
     await hit.click(); await page.locator('#details').waitFor({state:'visible'});
     assert(await page.locator('#details-close').isVisible(), 'details close control is not visible');
     assert((await textOf(page,'#details')).includes('Meet Todd'), 'wrong event details opened');
-    assert((await page.locator('[data-node]').count())===45, 'map must stay mounted behind details');
+    assert((await page.locator('[data-node]').count())===56, 'map must stay mounted behind details');
     const r=await page.locator('#details').boundingBox();
     assert(r&&r.x>=-1&&r.x+r.width<=390+1, 'details panel extends beyond the mobile viewport');
     await page.keyboard.press('Escape'); await page.locator('#details').waitFor({state:'hidden'});

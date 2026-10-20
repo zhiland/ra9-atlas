@@ -69,7 +69,7 @@ check('the sample declares contract version 1.0 and separate coverage records', 
   });
 });
 
-check('the original 38 node IDs keep their order and the entry slice is appended', () => {
+check('published node IDs keep their order and later slices are appended', () => {
   eq(real.nodes.map(n => n.id), [
     'a_welcome', 'a_todd', 'a_clean1', 'a_ask', 'a_go', 'a_clean2', 'a_room', 'a_talk', 'a_key', 'a_box',
     'a_gun_seen', 'a_window_open',
@@ -79,12 +79,14 @@ check('the original 38 node IDs keep their order and the entry slice is appended
     'k_checkpoint', 'k_detour', 'k_late_bus',
     's_reach_alice', 's_run_away', 's_hide_corridor', 's_todd_passes', 's_front_backyard_escape',
     's_lock_room', 's_window_go_out', 's_window_qte', 's_window_reach_bus',
-    's_todd_orders_stay', 's_alice_runs_upstairs', 's_deviant', 's_fatal_todd_kills', 's_go_upstairs', 's_reason_todd', 's_todd_upstairs_first'
+    's_todd_orders_stay', 's_alice_runs_upstairs', 's_deviant', 's_fatal_todd_kills', 's_go_upstairs', 's_reason_todd', 's_todd_upstairs_first',
+    'a_read_android_power', 'a_read_connecting_dots', 'a_wash_dishes', 'a_take_laundry_backyard',
+    'a_rewash_clothes', 'a_find_red_ice', 'a_enrage_todd', 'a_watch_todd_tv', 'a_block_todd_view', 'a_activate_vacuum', 'a_take_out_trash'
   ]);
-  eq(real.nodes.length, 45);
+  eq(real.nodes.length, 56);
 });
 
-check('the original 42 edge IDs keep their order and only append new connectors', () => {
+check('published edge IDs keep their order and later slices are appended', () => {
   eq(real.edges.map(e => e.id), [
     'e_home_welcome_todd', 'e_home_todd_clean1', 'e_home_clean1_ask', 'e_home_ask_go',
     'e_home_go_clean2', 'e_home_clean2_room', 'e_home_room_talk', 'e_home_talk_key',
@@ -103,9 +105,10 @@ check('the original 42 edge IDs keep their order and only append new connectors'
     'e_stormy_go_out_qte', 'e_stormy_qte_bus', 'e_stormy_window_bus_alive',
     'e_stormy_todd_orders_alice_upstairs', 'e_stormy_alice_upstairs_stay_still',
     'e_stormy_alice_upstairs_deviant', 'e_stormy_deviant_go_upstairs',
-    'e_stormy_go_upstairs_reach_alice', 'e_stormy_deviant_reason', 'e_stormy_reason_knocked'
+    'e_stormy_go_upstairs_reach_alice', 'e_stormy_deviant_reason', 'e_stormy_reason_knocked',
+    'e_home_rewash_red_ice', 'e_home_red_ice_enrage_todd', 'e_home_watch_tv_block_view', 'e_home_backyard_rewash_clothes'
   ]);
-  eq(real.edges.length, 49);
+  eq(real.edges.length, 53);
   eq(real.edges.map(e => [e.from, e.to, e.kind]), [
     ['a_welcome', 'a_todd', 'traced'], ['a_todd', 'a_clean1', 'traced'],
     ['a_clean1', 'a_ask', 'traced'], ['a_ask', 'a_go', 'traced'],
@@ -133,7 +136,11 @@ check('the original 42 edge IDs keep their order and only append new connectors'
     ['s_alice_runs_upstairs', 's_fatal_todd_kills', 'traced'], ['s_alice_runs_upstairs', 's_deviant', 'traced'],
     ['s_deviant', 's_go_upstairs', 'traced'],
     ['s_go_upstairs', 's_reach_alice', 'traced'], ['s_deviant', 's_reason_todd', 'traced'],
-    ['s_reason_todd', 's_todd_upstairs_first', 'traced']
+    ['s_reason_todd', 's_todd_upstairs_first', 'traced'],
+    ['a_rewash_clothes', 'a_find_red_ice', 'traced'],
+    ['a_find_red_ice', 'a_enrage_todd', 'traced'],
+    ['a_watch_todd_tv', 'a_block_todd_view', 'traced'],
+    ['a_take_laundry_backyard', 'a_rewash_clothes', 'traced']
   ]);
 });
 
@@ -202,9 +209,9 @@ check('conditions keep each checkpoint timing alternative attached to its own ed
 });
 
 check('unknowns stay unknown and no source-vs-source conflict is invented', () => {
-  eq(real.uncertainties.map(u => u.status), ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown']);
+  eq(real.uncertainties.map(u => u.status), ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown']);
   eq(real.uncertainties.map(u => u.id), [
-    'u_box_trigger', 'u_key_threshold', 'u_stormy_internal',
+    'u_box_trigger', 'u_key_threshold', 'u_home_first_floor_order', 'u_stormy_internal',
     'u_checkpoint_timer_11', 'u_gun_state_check', 'u_window_route_outcome',
     'u_stormy_escape_todd_state'
   ]);
@@ -234,6 +241,48 @@ check('optional Home chapter clues are not represented as traced chart paths', (
     eq(edge.kind, 'conditional');
     assert(/optional/i.test(edge.label || '') && /optional/i.test(edge.note || ''), id + ' must be labeled as an optional action');
   }
+});
+
+check('A New Home first-floor events keep only source-supported local progressions', () => {
+  const byId = new Map(real.nodes.map(n => [n.id, n]));
+  const sources = {
+    a_read_android_power: ['powerpyxHome'],
+    a_read_connecting_dots: ['powerpyxHome'],
+    a_wash_dishes: ['powerpyxHome', 'gamefaqs'],
+    a_take_laundry_backyard: ['powerpyxHome', 'gamefaqs'],
+    a_rewash_clothes: ['powerpyxHome', 'gamefaqs'],
+    a_find_red_ice: ['powerpyxHome', 'gamefaqs'],
+    a_enrage_todd: ['powerpyxHome', 'gamefaqs'],
+    a_watch_todd_tv: ['gamefaqs'],
+    a_block_todd_view: ['powerpyxHome', 'gamefaqs'],
+    a_activate_vacuum: ['powerpyxHome', 'gamefaqs'],
+    a_take_out_trash: ['powerpyxHome', 'gamefaqs']
+  };
+  Object.entries(sources).forEach(([id, refs]) => {
+    const node = byId.get(id);
+    assert(node && node.chapter === 'home', id + ' must be an A New Home event');
+    assert(refs.every(ref => node.src.includes(ref)), id + ' must cite its supporting source');
+    assert(!/\b(optional (activity|event|action|branch)|is mandatory|must be completed|are exclusive|mutually exclusive)\b/i.test(node.note || ''), id + ' must not claim unsupported optionality or requirements');
+  });
+  const expected = [
+    ['e_home_backyard_rewash_clothes', 'a_take_laundry_backyard', 'a_rewash_clothes'],
+    ['e_home_rewash_red_ice', 'a_rewash_clothes', 'a_find_red_ice'],
+    ['e_home_red_ice_enrage_todd', 'a_find_red_ice', 'a_enrage_todd'],
+    ['e_home_watch_tv_block_view', 'a_watch_todd_tv', 'a_block_todd_view']
+  ];
+  expected.forEach(([id, from, to]) => {
+    const edge = real.edges.find(e => e.id === id);
+    assert(edge && edge.kind === 'traced' && edge.from === from && edge.to === to, id + ' must keep its local source-stated progression');
+    assert(edge.src.length > 0, id + ' must cite its source');
+  });
+  assert(!real.edges.some(e => e.from === 'a_clean1' && Object.keys(sources).includes(e.to)),
+    'do not invent generic first-floor context spokes');
+  const mandatory = real.edges.find(e => e.id === 'e_home_clean1_ask');
+  eq([mandatory.from, mandatory.to, mandatory.kind], ['a_clean1', 'a_ask', 'traced']);
+  const unknown = real.uncertainties.find(u => u.id === 'u_home_first_floor_order');
+  assert(unknown && unknown.status === 'unknown', 'unresolved order and requirements must be recorded');
+  Object.keys(sources).forEach(id => assert(unknown.nodes.includes(id), id + ' missing from first-floor uncertainty'));
+  ['e_home_backyard_rewash_clothes', 'e_home_rewash_red_ice', 'e_home_red_ice_enrage_todd', 'e_home_watch_tv_block_view'].forEach(id => assert(unknown.edges.includes(id), id + ' missing from first-floor uncertainty'));
 });
 
 check('gun and window expansion keeps possession, outcomes and route limits separate', () => {
@@ -400,6 +449,27 @@ rejects('rejects a deviant shortcut that skips the reported go-upstairs step', d
 rejects('rejects extending the Reason with Todd endpoint into Todd killed', d => {
   d.edges.push({ id: 'e_fixture_reason_dead', from: 's_todd_upstairs_first', to: 's_dead', kind: 'traced', src: ['powerpyxStormy'] });
 }, /s_todd_upstairs_first must remain a scoped endpoint/);
+
+rejects('rejects a duplicate first-floor event ID', d => {
+  const node = d.nodes.find(n => n.id === 'a_wash_dishes');
+  node.id = 'a_take_out_trash';
+}, /duplicate node id "a_take_out_trash"/);
+
+rejects('rejects removing the laundry to Red Ice progression', d => {
+  d.edges = d.edges.filter(e => e.id !== 'e_home_rewash_red_ice');
+}, /u_home_first_floor_order.*missing edge|A New Home first-floor events|e_home_rewash_red_ice must preserve/);
+
+rejects('rejects a generic chore spoke from the first-floor stage', d => {
+  d.edges.push({ id: 'e_fixture_chore_spoke', from: 'a_clean1', to: 'a_wash_dishes', kind: 'conditional', src: ['powerpyxHome'] });
+}, /unsupported CLEAN FIRST FLOOR spokes/);
+
+rejects('rejects claiming that first-floor chores are optional', d => {
+  d.nodes.find(n => n.id === 'a_wash_dishes').note = 'Optional activity.';
+}, /must not claim unsupported optionality/);
+
+rejects('rejects removing the first-floor ordering uncertainty', d => {
+  d.uncertainties = d.uncertainties.filter(u => u.id !== 'u_home_first_floor_order');
+}, /u_home_first_floor_order must remain explicit/);
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);
