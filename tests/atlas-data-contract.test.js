@@ -69,7 +69,7 @@ check('the sample declares contract version 1.0 and separate coverage records', 
   });
 });
 
-check('the original 29 node IDs keep their order and the expansion is appended', () => {
+check('the original 38 node IDs keep their order and the entry slice is appended', () => {
   eq(real.nodes.map(n => n.id), [
     'a_welcome', 'a_todd', 'a_clean1', 'a_ask', 'a_go', 'a_clean2', 'a_room', 'a_talk', 'a_key', 'a_box',
     'a_gun_seen', 'a_window_open',
@@ -78,12 +78,13 @@ check('the original 29 node IDs keep their order and the expansion is appended',
     'k_terminal', 'k_meet', 'k_dialogue', 'k_away', 'k_check', 'k_goodbye',
     'k_checkpoint', 'k_detour', 'k_late_bus',
     's_reach_alice', 's_run_away', 's_hide_corridor', 's_todd_passes', 's_front_backyard_escape',
-    's_lock_room', 's_window_go_out', 's_window_qte', 's_window_reach_bus'
+    's_lock_room', 's_window_go_out', 's_window_qte', 's_window_reach_bus',
+    's_todd_orders_stay', 's_alice_runs_upstairs', 's_deviant', 's_fatal_todd_kills', 's_go_upstairs', 's_reason_todd', 's_todd_upstairs_first'
   ]);
-  eq(real.nodes.length, 38);
+  eq(real.nodes.length, 45);
 });
 
-check('the original 31 edge IDs keep their order and only append new connectors', () => {
+check('the original 42 edge IDs keep their order and only append new connectors', () => {
   eq(real.edges.map(e => e.id), [
     'e_home_welcome_todd', 'e_home_todd_clean1', 'e_home_clean1_ask', 'e_home_ask_go',
     'e_home_go_clean2', 'e_home_clean2_room', 'e_home_room_talk', 'e_home_talk_key',
@@ -99,9 +100,12 @@ check('the original 31 edge IDs keep their order and only append new connectors'
     'e_stormy_reach_run_away', 'e_stormy_run_hide', 'e_stormy_hide_todd_passes',
     'e_stormy_todd_passes_front_backyard', 'e_stormy_front_backyard_alive',
     'e_stormy_reach_lock_room', 'e_stormy_window_go_out_access', 'e_stormy_lock_go_out',
-    'e_stormy_go_out_qte', 'e_stormy_qte_bus', 'e_stormy_window_bus_alive'
+    'e_stormy_go_out_qte', 'e_stormy_qte_bus', 'e_stormy_window_bus_alive',
+    'e_stormy_todd_orders_alice_upstairs', 'e_stormy_alice_upstairs_stay_still',
+    'e_stormy_alice_upstairs_deviant', 'e_stormy_deviant_go_upstairs',
+    'e_stormy_go_upstairs_reach_alice', 'e_stormy_deviant_reason', 'e_stormy_reason_knocked'
   ]);
-  eq(real.edges.length, 42);
+  eq(real.edges.length, 49);
   eq(real.edges.map(e => [e.from, e.to, e.kind]), [
     ['a_welcome', 'a_todd', 'traced'], ['a_todd', 'a_clean1', 'traced'],
     ['a_clean1', 'a_ask', 'traced'], ['a_ask', 'a_go', 'traced'],
@@ -124,8 +128,49 @@ check('the original 31 edge IDs keep their order and only append new connectors'
     ['s_front_backyard_escape', 's_alive', 'hypothesis'],
     ['s_reach_alice', 's_lock_room', 'traced'], ['s_window_open', 's_window_go_out', 'prerequisite'],
     ['s_lock_room', 's_window_go_out', 'traced'], ['s_window_go_out', 's_window_qte', 'conditional'],
-    ['s_window_qte', 's_window_reach_bus', 'traced'], ['s_window_reach_bus', 's_alive', 'hypothesis']
+    ['s_window_qte', 's_window_reach_bus', 'traced'], ['s_window_reach_bus', 's_alive', 'hypothesis'],
+    ['s_todd_orders_stay', 's_alice_runs_upstairs', 'traced'],
+    ['s_alice_runs_upstairs', 's_fatal_todd_kills', 'traced'], ['s_alice_runs_upstairs', 's_deviant', 'traced'],
+    ['s_deviant', 's_go_upstairs', 'traced'],
+    ['s_go_upstairs', 's_reach_alice', 'traced'], ['s_deviant', 's_reason_todd', 'traced'],
+    ['s_reason_todd', 's_todd_upstairs_first', 'traced']
   ]);
+});
+
+check('the Stormy Night entry follows source order and keeps fatal and deviant branches distinct', () => {
+  const byId = new Map(real.nodes.map(n => [n.id, n]));
+  const from = id => real.edges.filter(e => e.from === id);
+  const to = id => real.edges.filter(e => e.to === id);
+  const required = ['s_todd_orders_stay', 's_alice_runs_upstairs', 's_deviant', 's_fatal_todd_kills',
+    's_go_upstairs', 's_reason_todd', 's_todd_upstairs_first'];
+  required.forEach(id => {
+    const node = byId.get(id);
+    assert(node && node.src.includes('powerpyxStormy') && node.src.includes('gamerGuidesStormy'),
+      id + ' must exist and cite both reviewed Stormy Night sources');
+  });
+  eq(from('s_todd_orders_stay').map(e => [e.to, e.kind]), [['s_alice_runs_upstairs', 'traced']]);
+  eq(from('s_alice_runs_upstairs').map(e => e.to).sort(), ['s_deviant', 's_fatal_todd_kills']);
+  assert(/stay still|obey/i.test(from('s_alice_runs_upstairs').find(e => e.to === 's_fatal_todd_kills').label),
+    'the fatal branch must follow obeying/staying still');
+  assert(/deviant/i.test(byId.get('s_deviant').label),
+    'the alternate branch must lead to the deviant event');
+  eq(to('s_fatal_todd_kills').map(e => e.from), ['s_alice_runs_upstairs']);
+  eq(from('s_fatal_todd_kills'), []);
+  eq(from('s_deviant').map(e => e.to).sort(), ['s_go_upstairs', 's_reason_todd']);
+  eq(from('s_go_upstairs').map(e => e.to), ['s_reach_alice']);
+  eq(from('s_reason_todd').map(e => e.to), ['s_todd_upstairs_first']);
+  eq(from('s_todd_upstairs_first'), []);
+  assert(!real.edges.some(e => e.from === 's_fatal_todd_kills' || e.to === 's_alive' && e.from === 's_fatal_todd_kills'),
+    'fatal outcome must not imply Todd survived or died');
+  const ids = ['e_stormy_todd_orders_alice_upstairs', 'e_stormy_alice_upstairs_stay_still',
+    'e_stormy_alice_upstairs_deviant', 'e_stormy_deviant_go_upstairs',
+    'e_stormy_go_upstairs_reach_alice', 'e_stormy_deviant_reason', 'e_stormy_reason_knocked'];
+  eq(ids.length, 7);
+  ids.forEach(id => {
+    const edge = real.edges.find(e => e.id === id);
+    assert(edge && edge.kind === 'traced' && edge.src.includes('powerpyxStormy') && edge.src.includes('gamerGuidesStormy'),
+      id + ' must be a sourced traced transition');
+  });
 });
 
 check('conditions keep each checkpoint timing alternative attached to its own edge', () => {
@@ -335,6 +380,26 @@ rejects('rejects attaching a whole-route condition to early route transitions', 
 rejects('rejects removing the explicit Todd-state inference record', d => {
   d.uncertainties = d.uncertainties.filter(u => u.id !== 'u_stormy_escape_todd_state');
 }, /u_stormy_escape_todd_state is missing/);
+
+rejects('rejects a Stormy entry edge with no source refs', d => {
+  d.edges.find(e => e.id === 'e_stormy_deviant_go_upstairs').src = [];
+}, /edge s_deviant->s_go_upstairs has no src keys/);
+
+rejects('rejects merging the fatal non-deviant outcome into Todd killed', d => {
+  d.nodes.find(n => n.id === 's_fatal_todd_kills').label = 'Todd killed';
+}, /fatal non-deviant outcome must not reuse the Todd-killed label/);
+
+rejects('rejects linking the fatal non-deviant outcome to Todd survives', d => {
+  d.edges.push({ id: 'e_fixture_fatal_alive', from: 's_fatal_todd_kills', to: 's_alive', kind: 'traced', src: ['powerpyxStormy'] });
+}, /s_fatal_todd_kills must remain terminal|s_fatal_todd_kills must not reach s_alive/);
+
+rejects('rejects a deviant shortcut that skips the reported go-upstairs step', d => {
+  d.edges.push({ id: 'e_fixture_deviant_alice', from: 's_deviant', to: 's_reach_alice', kind: 'traced', src: ['powerpyxStormy'] });
+}, /s_deviant should offer only go-upstairs and reason-with-Todd alternatives/);
+
+rejects('rejects extending the Reason with Todd endpoint into Todd killed', d => {
+  d.edges.push({ id: 'e_fixture_reason_dead', from: 's_todd_upstairs_first', to: 's_dead', kind: 'traced', src: ['powerpyxStormy'] });
+}, /s_todd_upstairs_first must remain a scoped endpoint/);
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

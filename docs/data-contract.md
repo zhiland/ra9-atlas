@@ -20,11 +20,13 @@ and the [specification](spec.md).
 - [x] The validator rejects deliberate fixtures for duplicate IDs, dangling
       endpoints, missing/unknown sources, invalid claim/coverage statuses,
       malformed conditions, and incomplete uncertainty/conflict records.
-- [x] The real sample passes; `npm test` passes; benchmark code is untouched.
+- [x] The real sample passes its validator, contract, unit, map, stable-zoom,
+      layout and browser checks. The synthetic benchmark implementation is
+      unchanged. See [STATUS](STATUS.md) for the current test boundary.
 
 ## Scope and record shape
 
-The contract covers the three existing chapter regions, 38 nodes, 42 edges, five
+The contract covers the three existing chapter regions, 45 nodes, 49 edges, five
 condition groups, seven uncertainty records and no conflict records in
 `prototype/atlas-data.js`. The sample declares `meta.contractVersion: '1.0'`.
 
@@ -68,10 +70,11 @@ Chapter `coverage.status` values:
 | `checked-against-chart` | The whole chapter was checked against a chart; not used by PoC4 |
 
 All three sample chapters are `partial`: A New Home has a selected screenshot
-sequence plus guide-reported optional actions, Stormy Night has a selected gun
-confrontation, two successful non-gun escape routes and inferred Todd states,
-and Battle for Detroit — Kara has selected checkpoint and meeting branches. The
-omitted parts are recorded per chapter.
+sequence plus guide-reported optional actions. Stormy Night has a selected
+ordered entry sequence with response branches, a non-deviant fatal outcome, a
+selected gun confrontation, two successful non-gun escape routes and inferred
+Todd states. Battle for Detroit — Kara has selected checkpoint and meeting
+branches. The omitted parts are recorded per chapter.
 Version and platform remain `unknown`; no transition is gameplay-verified.
 
 Edge `kind` is a relation vocabulary, not a coverage or verification claim:
@@ -177,6 +180,10 @@ structural error, not a silent caveat.
   unlocks the other, the window opening is only a prerequisite, and both
   endpoint-to-`s_alive` links stay `hypothesis` edges labelled as unresolved
   inferences with an explicit unknown record;
+- entry-slice fences: Todd's order and Alice running upstairs precede the
+  response branches; the non-deviant fatal outcome is distinct from `s_dead`
+  and never reaches `s_alive` or the later meeting; go-upstairs joins only the existing
+  `s_reach_alice` route, and Reason with Todd stops at its reported endpoint;
 - the previous graph invariants, inventory counts, layout and routing checks.
 
 `tests/atlas-data-contract.test.js` accepts the real sample and rejects

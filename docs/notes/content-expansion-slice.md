@@ -3,8 +3,9 @@
 Updated: 2026-10-20. This note records a bounded addition to the existing
 three-region sample. It is not full chapter coverage or gameplay verification.
 The subsequent [Stormy Night escape slice](stormy-escape-slice.md) adds two
-successful non-gun routes; this note remains the record of the earlier
-checkpoint/gun/window-availability expansion.
+successful non-gun routes and the [entry slice](stormy-entry-slice.md) adds the
+ordered Stormy Night entry events and response branches; this note remains the record of the
+earlier checkpoint/gun/window-availability expansion.
 
 ## Added graph claims
 
@@ -22,10 +23,11 @@ box hypothesis blocks terminal or meeting access.
 
 ## Coverage and validation boundary
 
-The atlas now contains **38 nodes and 42 edges** across three chapter regions
-after the later Stormy Night escape slice. All three chapter coverage records
-remain `partial`. The sample does not transcribe all checkpoint interactions,
-all Stormy Night branches, or fatal/non-gun failure outcomes. No source
-independence or gameplay verification is claimed. The structural validator
-checks IDs, source references, branch separation, cross-chapter prerequisites
-and layout; it cannot prove a guide claim or the game's behavior.
+The atlas now contains **45 nodes and 49 edges** across three chapter regions
+after the later Stormy Night escape and entry slices. All three chapter coverage
+records remain `partial`. The sample does not transcribe all checkpoint
+interactions, all Stormy Night branches, or fatal/survival routes beyond the
+selected non-deviant fatal outcome. No source independence or gameplay
+verification is claimed. The structural validator checks IDs, source
+references, branch separation, cross-chapter prerequisites and layout; it
+cannot prove a guide claim or the game's behavior.

@@ -1,6 +1,6 @@
 # PoC4 execution checklist
 
-Status: implementation complete; focused review and checks completed — updated 2026-10-19. Executor: OpenCode (DeepSeek V4.1 Flash Free session, model `opencode/deepseek-v4.1-flash-free`). Scope authority: [poc4-plan.md](poc4-plan.md). Evidence limits: [verification-d2.md](notes/verification-d2.md), [verification-d1-d3.md](notes/verification-d1-d3.md), [map-reference-analysis.md](notes/map-reference-analysis.md), [SOURCES.md](SOURCES.md). Source-rights evidence and recommendations: [source-license-audit.md](notes/source-license-audit.md). Git checkpoint and non-forced push are being completed.
+Status: PoC4 implementation and bounded content slices complete; focused review and checks recorded in [STATUS.md](STATUS.md) and [PoC4 coverage](notes/poc4-coverage.md). Current checked graph: 45 nodes, 49 edges. This historical checklist records the original implementation boundaries; later notes record the added Stormy Night routes and ordered entry sequence.
 
 ## Steps
 
@@ -28,7 +28,7 @@ Status: implementation complete; focused review and checks completed — updated
 
 ## Verification record
 
-Historical record: implementation completed 2026-10-18; updated 2026-10-19 with source-license audit, arrow connectors, neutral-gray default, and the test results at that time. Counts below describe the initial slice; the current 38-node/42-edge inventory and test totals are in [PoC4 coverage](notes/poc4-coverage.md) and [STATUS](../STATUS.md).
+Historical record: implementation completed 2026-10-18; updated 2026-10-19 with source-license audit, arrow connectors, neutral-gray default, and the test results at that time. Counts below describe the initial slice; the current 45-node/49-edge inventory and test totals are in [PoC4 coverage](notes/poc4-coverage.md) and [STATUS](../STATUS.md).
 
 **Passed**
 

@@ -5,19 +5,19 @@ Checked: 2026-10-20. Scope: measure the current custom SVG/DOM renderer in
 synthetic fixture. This is a renderer stress test, not game content, not
 evidence, and not a claim about final graph size.
 
-> **Follow-up (2026-10-20):** the renderer now opens on a screen-space chapter
-> overview and reveals event boxes, then labels, as the camera zooms. In the
-> synthetic fixture all five frames fit at both profiles (overview scale 0.1772
-> desktop, 0.0428 mobile), chapter cards are 16 px / 14.5 px, and no event label
-> is rendered at overview by design. Pan timing is sampled at structure LOD
-> because the overview is now a scroll surface; gate thresholds are unchanged.
-> The measured tables below are the pre-LOD record and are retained as history.
-> Current numbers and limits are in [overview-lod-slice.md](overview-lod-slice.md).
+> **Current stable-zoom rerun (2026-10-20):** semantic LOD, label overlays,
+> node dots, and grouped pseudo-connectors are removed. The same synthetic
+> nodes, labels, and actual paths stay in one world while only the camera
+> transform changes. Latest results and limits are below. The original
+> measurements later in this file are historical results from the superseded
+> LOD renderer; they do not describe the current interface.
 
-## Acceptance gates (fixed before measurement)
+## Original acceptance gates (historical LOD run)
 
-These gates were written before the benchmark was implemented or run. The
-measured results below do not change the gates.
+These gates were written before the earlier LOD experiment. They remain here to
+document that run. Its label-legibility gate is not a current acceptance gate;
+the stable-zoom benchmark below checks mounted graph inventory and performance
+without claiming readable 1,000-node text at whole-map fit.
 
 | # | Gate | Desktop Chromium | Mobile viewport emulation |
 |---|---|---|---|
@@ -152,7 +152,30 @@ The results below replace the earlier provisional probe numbers. The
 `?layoutProbe=1` mechanism and the separate "unmodified mobile" run were
 removed.
 
-## Final measured result
+## Current stable-zoom rerun
+
+`npm run bench:scale` regenerates the deterministic fixture and measures one
+warmup plus five repetitions per profile. All current desktop gates pass; the
+mobile profile is diagnostic only. The benchmark does not require readable
+labels at fit. It reports the complete graph inventory, viewport intersections,
+intrinsic overflow, and frame timings. A text-fit gate checks every generated
+node box, including the three choice titles and all six choice options.
+
+| Profile | Fit scale | Nodes / paths / labels mounted | Internal node overflow | Pan p95 | Zoom p95 | Consent→render median | Gates |
+|---|---:|---:|---:|---:|---:|---:|---|
+| Desktop 1440×900 | 0.1639 | 1,000 / 1,650 / 1,006 | 0 / 1,000 | 16.8 ms | 16.7 ms | 36.3 ms | All pass |
+| Mobile emulation 390×844 | 0.0428 | 1,000 / 1,650 / 1,006 | 0 / 1,000 | 16.7 ms | 16.8 ms | 29.5 ms | Diagnostic; all measured gates pass |
+
+Both profiles report 1,000 node buttons, 1,650 actual edge paths, 363
+data-labeled edge buttons, five chapter regions, no overview cards, no grouped
+connectors, and no browser/network errors. The benchmark report is generated at
+`benchmark/scale/out/results.json` and ignored by Git. The synthetic text is
+small at whole-map fit; full-map label readability is not claimed. The three
+choice nodes have taller boxes and later nodes in their columns shift down so
+that all choice text fits without clipping. Mobile is Chromium emulation, not
+device testing.
+
+## Historical measured result: pre-stable-map LOD renderer
 
 ### Desktop Chromium, 1440×900 (production stylesheet)
 
@@ -189,7 +212,7 @@ The final screenshots were inspected: `desktop-overview.jpg` and
 `mobile-overview.jpg` and `mobile-detail.jpg` show the 390 px production
 layout with the banner, the 617.66 px canvas, and the details overlay.
 
-## Label legibility and interpretation
+## Historical label legibility and interpretation
 
 - **Whole-atlas overview (desktop, scale 0.1741):** all 1,000 node boxes render
   and all 1,003 label elements are visible; 37 node boxes report internal
@@ -246,7 +269,7 @@ harness files, not part of a production load. No runtime dependency was added;
 the benchmark uses the already-installed Playwright devDependency and Node's
 built-in `http`/`zlib`.
 
-## Gate evaluation
+## Historical gate evaluation
 
 - Desktop (production stylesheet): **all seven gates pass.**
 - Mobile viewport emulation (production stylesheet, 390×844): **all seven
@@ -256,7 +279,7 @@ built-in `http`/`zlib`.
   scoped browser regression. The mobile profile is no longer a probe and is not
   counted as a separate unmodified page.
 
-## Recommendation
+## Historical recommendation
 
 Provisionally **retain the current custom SVG/DOM renderer for this synthetic
 density**. At 1,000 nodes and 1,650 edges the desktop gates pass with wide
@@ -267,18 +290,17 @@ renderer comparison was performed. This is a provisional choice for this
 synthetic fixture, not a capacity guarantee or an architecture commitment for a
 larger real graph.
 
-Separate follow-ups surfaced by the spike, outside this bounded task:
+The historical follow-ups below were superseded by the stable-zoom slice. The
+current product limitation is that a dense real graph needs spatial room and
+cannot be read all at once at fit; it may be panned and zoomed without hiding
+parts of the graph.
 
-1. **Label density:** overview and chapter-focus labels are not legible at this
-   graph size, and some 35–40-character labels intrinsically clip at the fixed
-   node size. The LOD follow-up addresses the overview by showing chapter cards
-   and hides event labels at structure LOD; event labels remain available at
-   detail zoom. Node-size or content-density work is still open.
-2. **Mobile overview:** the LOD follow-up removes the minimum-scale fit clamp
-   and fits all five synthetic chapter frames at 390 px, with a scrollable
-   chapter-card overview. Only 448/1,000 event nodes are geometrically visible
-   at the focused-chapter structure view, so dense event navigation still needs
-   product work.
+1. The old chapter-card and label-visibility behavior is retired. Do not treat
+   the historical grouped overview as the current map or restore it as a zoom
+   level.
+2. The synthetic fixture remains a stress test. It does not prove real-game
+   content correctness, usability for a complete-game graph, or legibility at
+   mobile fit.
 
 ## Caveats
 
@@ -295,7 +317,6 @@ Separate follow-ups surfaced by the spike, outside this bounded task:
   used Playwright mouse drag and wheel events against the same pointer handlers;
   the mobile context enables touch metadata, but this is not a real touch,
   gesture, iOS Safari, latency, or GPU measurement on a phone.
-- At the time of this pre-LOD run, the existing `npm test` suite (validators,
-  25 unit checks, 44 PoC4 browser checks including the new 390×844 regression)
-  passed after the fix. The current suite also has 45 contract-fixture checks,
-  42 unit checks, 13 map checks and 51 browser checks.
+- The historical test counts above describe an older renderer. Current test
+  counts are recorded in [project status](../STATUS.md) and the [stable zoom
+  map slice](overview-lod-slice.md).

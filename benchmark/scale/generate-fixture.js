@@ -29,10 +29,11 @@ const EDGE_TARGET = 1650;
 const COLUMNS = 16;
 const NODE_W = 120;
 const NODE_H = 52;
+const CHOICE_H = 144;
 const GAP_X = 36;
 const GAP_Y = 18;
 const FRAME_W = 2524;
-const FRAME_H = 1058;
+const FRAME_H = 1240;
 const MARGIN = 40;
 const REGION_GAP = 80;
 
@@ -232,27 +233,30 @@ function buildNodes() {
     const frame = FRAME_POSITIONS[regionIndex];
     const regionNodes = [];
     const columns = [];
-    for (let c = 0; c < COLUMNS; c++) columns.push([]);
+    const columnExtra = [];
+    for (let c = 0; c < COLUMNS; c++) { columns.push([]); columnExtra.push(0); }
 
     for (let local = 0; local < region.size; local++) {
       const col = Math.floor(local / rows);
       const row = local % rows;
       const id = 'syn-' + String(globalIndex + 1).padStart(4, '0');
       const kind = kindFor(globalIndex);
+      const height = kind === 'choice' ? CHOICE_H : NODE_H;
       const node = {
         id: id,
         chapter: region.id,
         label: labelFor(globalIndex),
         kind: kind,
         x: frame.x + 32 + col * (NODE_W + GAP_X),
-        y: frame.y + 64 + row * (NODE_H + GAP_Y),
+        y: frame.y + 64 + row * (NODE_H + GAP_Y) + columnExtra[col],
         w: NODE_W,
-        h: NODE_H,
+        h: height,
         status: 'synthetic',
         note: 'Synthetic fixture node. Not game content, evidence, or a real workflow.'
       };
       const options = optionsFor(globalIndex);
       if (options) node.options = options;
+      columnExtra[col] += height - NODE_H;
       nodes.push(node);
       regionNodes.push(node);
       columns[col].push(node);

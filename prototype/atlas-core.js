@@ -13,25 +13,16 @@
      trail     — most-recent-first selection history (ids), max 8, deduped.
      query     — current search text.
 
-   Whole-story level of detail is a pure function of camera scale:
-     overview  — the spatial story map: chapter regions, meaningful event
-                 labels and actual cross-chapter labels.
-     structure — the event map: event labels for sparse data; labelled
-                 region/branch summaries for dense data.
-     detail    — close scale: in-box event text and connector labels at 100%+.
-   A focused chapter always stays on the same map; it must not fall back to a
-   separate whole-story card/report surface. */
+   There is one stable spatial chart at every camera scale. Zoom and pan change
+   only the camera transform; no LOD threshold swaps or hides content. A focused
+   chapter always stays on the same map; it must not fall back to a separate
+   whole-story card/report surface. */
 
 var ATLAS_CORE = (function () {
   'use strict';
 
   var MAX_TRAIL = 8;
   var MIN_SCALE = 0.02;
-  var OVERVIEW_MAX_SCALE = 0.7;
-  /* 100% is the hand-off from map annotations to the in-node detail labels.
-     Chapter fit is almost always below it (the widest real chapter fits at
-     about 97%), so a chapter view keeps the readable map labels. */
-  var DETAIL_MIN_SCALE = 1;
 
   function clone(s) {
     return {
@@ -79,8 +70,6 @@ var ATLAS_CORE = (function () {
   var api = {
     MAX_TRAIL: MAX_TRAIL,
     MIN_SCALE: MIN_SCALE,
-    OVERVIEW_MAX_SCALE: OVERVIEW_MAX_SCALE,
-    DETAIL_MIN_SCALE: DETAIL_MIN_SCALE,
 
     createState: function () {
       return { consented: false, chapter: 'all', selected: null, edge: null, trail: [], query: '' };
@@ -211,13 +200,6 @@ var ATLAS_CORE = (function () {
       return a.chapter === b.chapter && a.selected === b.selected && a.edge === b.edge;
     },
 
-    /* Whole-story progressive disclosure. Chapter focus deliberately bypasses
-       the chapter-card overview; the user asked for that chapter's events. */
-    lodFor: function (scale, chapter) {
-      if (chapter === 'all' && scale < OVERVIEW_MAX_SCALE) return 'overview';
-      return scale >= DETAIL_MIN_SCALE - 1e-9 ? 'detail' : 'structure';
-    },
-
     /* Deterministic bounds fit used by both chapter focus and full-map fit.
        The returned transform keeps box inside [pad, padTop] .. [w-pad, h-pad].
        No minimum-scale clamp is applied here, so narrow mobile fits cannot clip. */
@@ -236,8 +218,7 @@ var ATLAS_CORE = (function () {
       };
     },
 
-    /* Groups only actual edges that cross a chapter boundary. The overview uses
-       these groups for navigation; the renderer never invents a summary edge. */
+    /* Groups only actual edges that cross a chapter boundary. */
     crossChapterLinks: function (data) {
       var chapterOf = {};
       var chapterIndex = {};
