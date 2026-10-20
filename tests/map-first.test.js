@@ -9,7 +9,7 @@
  *   - chapter regions, chapter labels, meaningful event labels and actual
  *     cross-chapter connectors are visible at whole-story fit;
  *   - chapter fit and intermediate zoom keep readable event labels and branch
- *     structure for the real 29-node sample;
+ *     structure for the real 38-node sample;
  *   - the same world canvas stays mounted across LOD changes;
  *   - the dense synthetic fixture uses labelled region/branch summaries derived
  *     from its real topology instead of only blank event rectangles;
@@ -270,12 +270,12 @@ async function runDesktop(browser) {
     assert(m.worldPresent, 'world canvas is not visible at whole-story fit');
     assert(m.frames.length === 3 && m.frames.every(function (f) { return f.visible; }),
       'all three chapter regions must stay visible at whole-story fit');
-    assert(m.nodes.length === 29 && m.nodes.every(function (n) { return n.visible && n.labelled; }),
-      'whole-story fit must render all 29 actual events as labeled map boxes');
+    assert(m.nodes.length === 38 && m.nodes.every(function (n) { return n.visible && n.labelled; }),
+      'whole-story fit must render all 38 actual events as labeled map boxes');
     assertNoNodeBoxOverlap(m, 'whole-map fit');
     assert(m.nodeLabelsMode === 'in-box', 'desktop whole-story fit should keep event labels inside boxes, got ' + m.nodeLabelsMode);
-    assert(m.edges.length === 31 && m.edges.every(function (e) { return e.visible; }),
-      'all 31 actual connectors must stay visible at whole-story fit');
+    assert(m.edges.length === 42 && m.edges.every(function (e) { return e.visible; }),
+      'all 42 actual connectors must stay visible at whole-story fit');
   });
 
   await ok('whole-story fit shows legible chapter labels, meaningful event labels and actual cross-chapter connectors', async function () {
@@ -288,7 +288,7 @@ async function runDesktop(browser) {
       assert(names.some(function (name) { return label.text.indexOf(name) !== -1; }),
         label.id + ' chapter label does not name the chapter: ' + label.text);
     });
-    assert(m.eventLabels.length === 29, 'all 29 sparse events need meaningful labels at desktop whole-story fit, got ' + m.eventLabels.length);
+    assert(m.eventLabels.length === 38, 'all 38 sparse events need meaningful labels at desktop whole-story fit, got ' + m.eventLabels.length);
     m.eventLabels.forEach(function (label) {
       assert(label.font >= 11, label.id + ' event label font ' + label.font + 'px is too small');
       assert(label.insideCanvas, label.id + ' event label is outside the canvas');
@@ -322,7 +322,7 @@ async function runDesktop(browser) {
         f.rect.top >= m.canvas.top - 2 && f.rect.bottom <= m.canvas.bottom + 2,
         f.id + ' frame is clipped by the full-map fit');
     });
-    assert(/3 chapters/i.test(m.status) && /29 events/i.test(m.status) && /31 connectors/i.test(m.status),
+    assert(/3 chapters/i.test(m.status) && /38 events/i.test(m.status) && /42 connectors/i.test(m.status),
       'status should concisely state the selected slice counts: ' + m.status);
     assert(m.status.length <= 180, 'primary status should stay concise, got ' + m.status.length + ' chars');
     assert(/not in-game verified|not verified/i.test(m.status), 'status must keep the not-verified qualifier: ' + m.status);
@@ -369,8 +369,15 @@ async function runDesktop(browser) {
     const stormy = await mapSnapshot(page);
     assert(stormy.lod === 'structure' || stormy.lod === 'detail', 'Stormy Night chapter fit should show events, got ' + stormy.lod);
     assertNoNodeBoxOverlap(stormy, 'Stormy Night chapter fit');
-    const stormyIds = ['s_alive', 's_dead', 's_take_gun', 's_gun_struggle', 's_kara_shoots_todd', 's_alice_shoots_todd', 's_gun_carried', 's_window_open'];
+    const stormyIds = [
+      's_alive', 's_dead', 's_take_gun', 's_gun_struggle', 's_kara_shoots_todd', 's_alice_shoots_todd',
+      's_gun_carried', 's_window_open',
+      's_reach_alice', 's_run_away', 's_hide_corridor', 's_todd_passes', 's_front_backyard_escape',
+      's_lock_room', 's_window_go_out', 's_window_qte', 's_window_reach_bus'
+    ];
     const stormyLabels = stormy.eventLabels.map(function (label) { return label.id; });
+    assert(stormy.eventLabels.length === stormyIds.length,
+      'Stormy Night chapter fit should label all 17 events, got ' + stormy.eventLabels.length);
     stormyIds.forEach(function (id) {
       assert(stormyLabels.indexOf(id) !== -1, 'Stormy Night chapter fit is missing the label for ' + id);
     });
@@ -394,7 +401,7 @@ async function runDesktop(browser) {
     const m = await mapSnapshot(page);
     assert(m.worldPresent && m.frames.length === 3 && m.frames.every(function (f) { return f.visible; }),
       'chapter regions must stay on the same spatial canvas at intermediate zoom');
-    assert(m.nodes.length === 29, 'intermediate zoom must retain all actual event nodes');
+    assert(m.nodes.length === 38, 'intermediate zoom must retain all actual event nodes');
     const fullyVisible = m.nodes.filter(function (n) { return n.insideCanvas; });
     assert(fullyVisible.length >= 8, 'intermediate zoom should show most events spatially, got ' + fullyVisible.length + ' fully visible');
     fullyVisible.forEach(function (n) {
@@ -512,7 +519,7 @@ async function runMobile(browser) {
     await waitFrames(page);
     const m = await mapSnapshot(page);
     assert(m.lod === 'structure' || m.lod === 'detail', 'mobile chapter fit should show events, got ' + m.lod);
-    assert(m.nodes.length === 29, 'mobile chapter focus must retain all real event nodes');
+    assert(m.nodes.length === 38, 'mobile chapter focus must retain all real event nodes');
     assert(m.nodeLabelsMode === 'in-box', 'mobile chapter focus should use readable in-box labels, got ' + m.nodeLabelsMode);
     assert(m.eventLabels.length === 12, 'mobile home chapter focus should label all 12 real events, got ' + m.eventLabels.length + ': ' + m.eventLabels.map(function (l) { return l.id; }).join(', '));
     m.eventLabels.forEach(function (label) {

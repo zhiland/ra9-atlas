@@ -416,6 +416,51 @@ check('Todd survival and terminal arrival stay separate prerequisites', function
   assert(froms.indexOf('s_alive') !== froms.indexOf('k_terminal'), 'gates must be two distinct edges');
 });
 
+check('the two successful non-gun escape routes stay distinct', function () {
+  const corridor = ['s_reach_alice', 's_run_away', 's_hide_corridor', 's_todd_passes', 's_front_backyard_escape'];
+  const window = ['s_lock_room', 's_window_go_out', 's_window_qte', 's_window_reach_bus'];
+  for (let i = 0; i < corridor.length - 1; i++) {
+    const outs = edgesFrom(corridor[i]).map(function (e) { return e.to; });
+    assert(outs.indexOf(corridor[i + 1]) !== -1, 'corridor route step missing: ' + corridor[i] + ' -> ' + corridor[i + 1]);
+  }
+  for (let i = 0; i < window.length - 1; i++) {
+    const outs = edgesFrom(window[i]).map(function (e) { return e.to; });
+    assert(outs.indexOf(window[i + 1]) !== -1, 'window route step missing: ' + window[i] + ' -> ' + window[i + 1]);
+  }
+  assert(corridor.slice(0, -1).every(function (id) { return window.indexOf(id) === -1; }),
+    'the corridor route must not reuse window-only steps');
+  assert(window.every(function (id) { return corridor.indexOf(id) === -1; }),
+    'the window route must not reuse corridor-only steps');
+  assert(!edgesFrom('s_front_backyard_escape').some(function (e) { return e.to === 's_window_reach_bus'; }) &&
+    !edgesFrom('s_window_reach_bus').some(function (e) { return e.to === 's_front_backyard_escape'; }),
+    'one escape route must not unlock the other');
+  const access = edgesFrom('s_window_open');
+  eq(access.map(function (e) { return e.to; }), ['s_window_go_out']);
+  eq(access[0].kind, 'prerequisite');
+  assert(!edgesFrom('s_window_open').some(function (e) { return e.to === 'k_terminal' || e.to === 'k_meet'; }),
+    'the window opening must not claim a direct escape outcome');
+});
+
+check('both non-gun escape endpoints link to Todd only through a labelled inference', function () {
+  [['s_front_backyard_escape', 'e_stormy_front_backyard_alive'],
+    ['s_window_reach_bus', 'e_stormy_window_bus_alive']].forEach(function (pair) {
+    const out = edgesFrom(pair[0]);
+    eq(out.map(function (e) { return e.id; }), [pair[1]]);
+    eq(out[0].kind, 'hypothesis');
+    eq(out[0].to, 's_alive');
+    assert(/UNRESOLVED inference/i.test(out[0].label || ''), pair[1] + ' must label itself as an inference');
+    assert(/not state|does not state|unstated/i.test(out[0].note || ''),
+      pair[1] + ' must say the source does not state Todd’s later state');
+    assert(!out.some(function (e) { return e.to === 'k_terminal' || e.to === 'k_meet'; }),
+      pair[0] + ' must not connect directly to the meeting or terminal');
+  });
+  const unknown = ATLAS.uncertainties.find(function (u) { return u.id === 'u_stormy_escape_todd_state'; });
+  assert(unknown && unknown.status === 'unknown', 'the shared Todd-state inference needs an explicit unknown record');
+  assert(unknown.edges.indexOf('e_stormy_front_backyard_alive') !== -1 &&
+    unknown.edges.indexOf('e_stormy_window_bus_alive') !== -1,
+    'the Todd-state unknown must reference both inference edges');
+});
+
 check('cross-chapter links connect only the documented chapter pairs', function () {
   const cross = ATLAS.edges.filter(function (e) {
     const a = ATLAS.nodes.find(function (n) { return n.id === e.from; });

@@ -249,8 +249,8 @@ async function runVariant(browser, variant) {
     assert(state.focused === 'consent', 'consent should receive focus, was ' + state.focused);
     assert(state.world && state.world.width > 0 && state.world.height > 0, 'map world must be rendered but covered');
     assert(state.canvas && state.canvas.width > 0 && state.canvas.height > 0, 'canvas must have layout under the cover');
-    assert(state.nodes === 29, '29 nodes should be rendered behind the cover, got ' + state.nodes);
-    assert(state.edges === 31, '31 connectors should be rendered behind the cover, got ' + state.edges);
+    assert(state.nodes === 38, '38 nodes should be rendered behind the cover, got ' + state.nodes);
+    assert(state.edges === 42, '42 connectors should be rendered behind the cover, got ' + state.edges);
     assert(state.lod === 'overview', 'the covered map should start at the story map LOD, got ' + state.lod);
   });
 
@@ -265,7 +265,7 @@ async function runVariant(browser, variant) {
     assert(await page.locator('#trail').isVisible(), 'history trail not visible');
     assert(!(await page.locator('#atlas-shell').getAttribute('inert')), 'shell stayed inert after consent');
     const status = await textOf(page, '#status');
-    assert(status.indexOf('3 chapters · 29 events · 31 connectors') !== -1, 'status line counts: ' + status);
+    assert(status.indexOf('3 chapters · 38 events · 42 connectors') !== -1, 'status line counts: ' + status);
     assert(status.indexOf('not in-game verified') !== -1, 'status line must keep the not-verified qualifier');
     assert(status.indexOf('version/platform unknown') === -1 && status.length <= 180,
       'primary status must stay a concise slice summary, got: ' + status);
@@ -274,8 +274,8 @@ async function runVariant(browser, variant) {
     assert(/story map/.test(zoom), 'zoom label should name the story map LOD: ' + zoom);
     assert(await page.locator('#overview').count() === 0, 'the card/report overview surface must stay removed');
     assert(await page.locator('.frame').count() === 3, 'three chapter frames must stay mounted');
-    assert(await page.locator('[data-node]').count() === 29, '29 event nodes must stay mounted');
-    assert(await page.locator('path.edge').count() === 31, '31 connectors must stay mounted');
+    assert(await page.locator('[data-node]').count() === 38, '38 event nodes must stay mounted');
+    assert(await page.locator('path.edge').count() === 42, '42 connectors must stay mounted');
     assert(await page.locator('#map-labels .region-label').count() === 3, 'three chapter map labels expected');
     assert(await page.locator('#map-labels .cross-label').count() === 4, 'four actual cross labels expected');
   });
@@ -396,7 +396,7 @@ async function runVariant(browser, variant) {
     assert(await page.locator('[data-chapter="home"]').getAttribute('aria-pressed') === 'true', 'home chapter is not active');
     const homeFrame = home.frames.filter(function (f) { return f.id === 'home'; })[0];
     assert(homeFrame && fullyInside(homeFrame.rect, home.canvas), 'focused home chapter is clipped by the canvas');
-    assert(home.nodeCount === 29 && home.edgeCount === 31, 'chapter focus must keep the whole graph mounted');
+    assert(home.nodeCount === 38 && home.edgeCount === 42, 'chapter focus must keep the whole graph mounted');
     assert(!home.horizontalOverflow, 'chapter focus introduced horizontal overflow');
 
     await page.locator('[data-chapter="kara"]').click();
@@ -455,6 +455,40 @@ async function runVariant(browser, variant) {
       return b.right > c.left && b.left < c.right && b.bottom > c.top && b.top < c.bottom;
     });
     assert(centered, 'the opened node should be brought into view');
+    await page.locator('#details-close').click();
+    await page.locator('#details').waitFor({ state: 'hidden' });
+  });
+
+  await ok('the two successful non-gun escapes stay separate and Todd links stay inferred', async function () {
+    await openChapter(page, 'stormy');
+    for (const id of ['s_front_backyard_escape', 's_window_reach_bus']) {
+      await page.locator('[data-event-node="' + id + '"]').click();
+      await page.locator('#details').waitFor({ state: 'visible' });
+      const d = await textOf(page, '#details');
+      assert(d.indexOf('do not state Todd’s later state') !== -1 || d.indexOf("do not state Todd's later state") !== -1,
+        id + ' must keep the missing Todd-state evidence');
+      assert(/dashed link to Todd not killed is an inference/i.test(d), id + ' must label the Todd link as an inference');
+      assert(await page.locator('#details .rowlist [data-goto="s_alive"]').count() === 1,
+        id + ' should have exactly one inferred connector to s_alive');
+      const kind = await page.locator('#details .rowlist [data-goto="s_alive"] .kind').textContent();
+      assert(/unresolved hypothesis/i.test(kind || ''), id + ' Todd link must be an unresolved hypothesis, got ' + kind);
+      assert(await page.locator('#details .rowlist [data-goto="k_terminal"], #details .rowlist [data-goto="k_meet"]').count() === 0,
+        id + ' must not bypass the separate terminal or meeting gates');
+      await page.locator('#details-close').click();
+      await page.locator('#details').waitFor({ state: 'hidden' });
+    }
+
+    await page.locator('[data-event-node="s_window_open"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    const windowDetails = await textOf(page, '#details');
+    assert(windowDetails.indexOf('route available') !== -1 && windowDetails.indexOf('successful branch') !== -1,
+      'window availability and successful branch must stay distinct');
+    assert(await page.locator('#details .rowlist [data-goto="s_window_go_out"]').count() === 1,
+      'window route must lead to the go-out step');
+    const windowKind = await page.locator('#details .rowlist [data-goto="s_window_go_out"] .kind').textContent();
+    assert(/prerequisite/i.test(windowKind || ''), 'the window opening should gate the exit as a prerequisite, got ' + windowKind);
+    assert(await page.locator('#details .rowlist [data-goto="k_terminal"], #details .rowlist [data-goto="k_meet"]').count() === 0,
+      'the window opening must not claim a direct escape outcome');
     await page.locator('#details-close').click();
     await page.locator('#details').waitFor({ state: 'hidden' });
   });
@@ -694,7 +728,7 @@ async function runVariant(browser, variant) {
     assert(locked.focus === 'consent', 're-lock should focus the consent button');
     assert(locked.overlayZ >= 40, 're-locked overlay must cover the map');
     assert(locked.canvasWidth > 0 && locked.canvasHeight > 0 && locked.worldVisible, 'map must stay visible beneath the re-locked overlay');
-    assert(locked.nodes === 29, 'map content must stay mounted beneath the re-locked overlay');
+    assert(locked.nodes === 38, 'map content must stay mounted beneath the re-locked overlay');
     assert(locked.detailsHidden, 're-lock should happen from a closed-details state');
     assert(locked.stored === null, 'reset should clear the stored consent key');
 
@@ -793,7 +827,7 @@ async function runMobileRegression(browser) {
   });
   assert(beforeConsent.overlay, 'mobile cover missing');
   assert(beforeConsent.canvasWidth > 0 && beforeConsent.canvasHeight > 0, 'map must have layout beneath the mobile cover');
-  assert(beforeConsent.nodes === 29, 'map content must be mounted beneath the mobile cover');
+  assert(beforeConsent.nodes === 38, 'map content must be mounted beneath the mobile cover');
   await page.locator('#consent').click();
   await page.locator('#spoiler-overlay').waitFor({ state: 'detached' });
   await page.locator('#world').waitFor({ state: 'visible' });
@@ -929,7 +963,7 @@ async function runMobileRegression(browser) {
     assert(await page.locator('[data-chapter="home"]').getAttribute('aria-pressed') === 'true', 'chapter focus did not become active');
     const home = focused.frames.filter(function (f) { return f.id === 'home'; })[0];
     assert(home && fullyInside(home.rect, focused.canvas), 'mobile focused chapter is clipped by the canvas');
-    assert(focused.nodeCount === 29 && focused.edgeCount === 31, 'mobile chapter focus must keep the graph mounted');
+    assert(focused.nodeCount === 38 && focused.edgeCount === 42, 'mobile chapter focus must keep the graph mounted');
     const homeLabels = await page.evaluate(function () {
       return Array.prototype.slice.call(document.querySelectorAll('#map-labels .event-label')).map(function (el) {
         return el.getAttribute('data-event-node');

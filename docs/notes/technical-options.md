@@ -12,7 +12,7 @@ GitHub Pages is the simplest hosting candidate because the public repository and
 
 | Candidate | Fit and trade-offs |
 |---|---|
-| **Current custom SVG/DOM** | Smallest change and no added runtime package. Existing code has orthogonal paths and distinct edge types. It has only been exercised at PoC scale (18 nodes/16 edges in PoC4; 33/36 in PoC3); whole-game scale is unknown. Keyboard navigation of the graph is not yet implemented. |
+| **Current custom SVG/DOM** | Smallest change and no added runtime package. Existing code has orthogonal paths and distinct edge types. It has only been exercised at PoC scale (38 nodes/42 edges in PoC4; 33/36 in PoC3); whole-game scale is unknown. Keyboard navigation of the graph is not yet implemented. |
 | **Cytoscape.js** | MIT, supports touch gestures and right-angle “taxi” edges. Routing is best-effort and documented taxi edges have at most two turns. Official docs give performance tuning advice but no numeric graph limit. The docs do not describe screen-reader or keyboard graph navigation; a custom accessible interface would need assessment. Best fallback if the spike shows the current renderer is inadequate. |
 | **React Flow** | MIT and has the strongest documented keyboard and screen-reader features. It adds React and a build stack. Its core provides step paths, while automatic obstacle-avoiding edge routing is shown as a Pro feature. This is more than the first release needs. |
 

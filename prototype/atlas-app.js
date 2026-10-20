@@ -60,6 +60,9 @@
   var SOURCE_LABEL = {
     steam: 'Steam chapter flowcharts (screenshot reference)',
     powerpyxHome: 'PowerPyx · A New Home',
+    powerpyxStormy: 'PowerPyx · Stormy Night',
+    gamerGuidesStormy: 'Gamer Guides · Stormy Night',
+    gamefaqsStormy: 'GameFAQs · Stormy Night',
     gamefaqs: 'GameFAQs · A New Home',
     transcript: 'Fandom transcript · A New Home',
     powerpyxKara: 'PowerPyx · Battle for Detroit — Kara',
