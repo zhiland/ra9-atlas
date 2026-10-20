@@ -38,8 +38,8 @@ full-game coverage.
 
 ## Verification
 
-`npm test` passes the repository validators, 29 contract-fixture checks, 40 unit
-checks, 13 map-first checks, and 48 Chromium browser checks. Playwright serves the repository on localhost;
+`npm test` passes the repository validators, 45 contract-fixture checks, 42 unit
+checks, 13 map-first checks, and 51 Chromium browser checks. Playwright serves the repository on localhost;
 no `file://` route is used. The map-first checks cover desktop opening, chapter
 fit, intermediate zoom, cross-link navigation, dense aggregation, and 390×844
 viewport emulation. Browser checks retain spoiler, search, deep-link, evidence,

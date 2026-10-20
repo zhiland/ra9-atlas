@@ -1,6 +1,6 @@
 # PoC4 — multi-chapter atlas coverage and source note
 
-Date: 2026-10-19; bounded data/provenance contract added 2026-10-20. Scope: the static PoC4 prototype showing selected parts of
+Date: 2026-10-19; bounded data/provenance contract and Stormy Night escape routes added 2026-10-20. Scope: the static PoC4 prototype showing selected parts of
 **A New Home**, **Stormy Night** and **Battle for Detroit — Kara** on one
 surface. The default [poc4-editorial.html](../../prototype/poc4-editorial.html)
 entry now uses the neutral gray PoC3 palette, with orthogonal connectors ending
@@ -38,7 +38,7 @@ PoC3 files were published previously and remain unchanged by this PoC4 work.
 | Type | Meaning in the prototype | Where it appears |
 |---|---|---|
 | Screenshot transcription | Steam "100% Chapter Flowcharts" reference image, read 2026-10-18; structure only | The **A New Home** local sequence (see [map-reference-analysis.md](map-reference-analysis.md)) |
-| Guide-reported (secondary) | PowerPyx *A New Home* and *Battle for Detroit — Kara*, GameFAQs *A New Home*, Gamer Guides *Battle for Detroit — Kara* | Kara branch nodes/edges, relationship-threshold condition, Stormy Night carried states |
+| Guide-reported (secondary) | PowerPyx *A New Home*, *Stormy Night* and *Battle for Detroit — Kara*; Gamer Guides *Stormy Night* and *Battle for Detroit — Kara*; GameFAQs *A New Home* and *Stormy Night* | Kara branch nodes/edges, relationship-threshold condition, Stormy Night gun states and two successful non-gun routes |
 | User-provided claim | The user-supplied Fandom node sequence; the same wording appears in the inspected PowerPyx, Fandom and Neoseeker pages | `Alice says goodbye to Todd` chip and its details entry |
 | Transcript | Fandom *A New Home* transcript lines 1947–1964 | Box-contents summary in the details panel |
 | Unresolved | Candidate links that the reviewed sources cannot distinguish | The dashed box → dialogue hypothesis |
@@ -51,8 +51,8 @@ verified in game.
 | Measure | Count | Note |
 |---|---:|---|
 | Chapter regions | **3** | A New Home, Stormy Night, Battle for Detroit — Kara |
-| Boxes (nodes) | **29** | 12 A New Home events/clues + 8 Stormy Night events/states + 9 Kara events/outcomes |
-| Connectors (edges) | **31** | 19 traced + 7 conditional + 4 prerequisite gates + 1 unresolved hypothesis |
+| Boxes (nodes) | **38** | 12 A New Home events/clues + 17 Stormy Night events/states + 9 Kara events/outcomes |
+| Connectors (edges) | **42** | 26 traced + 8 conditional + 5 prerequisite gates + 3 unresolved hypotheses |
 | Cross-chapter connectors | **4** | Two A New Home → Stormy Night prerequisites and two existing Stormy Night/A New Home → Kara links |
 
 ## Data/provenance contract
@@ -63,14 +63,17 @@ from chapter coverage status (`not-added`, `partial`, `checked-against-chart`);
 all three chapters are `partial`. Each chapter now carries an explicit
 `coverage` record with scope, included sample, omissions and source references.
 
-The original 16 edges keep their order; new content is appended and every edge
-has a stable `e_*` ID. Array-index `?edge=N` links remain canonical; stable IDs
-are accepted as input aliases. Four plain-English condition groups cover the
-key threshold (`SINGLE`), the two separate Meet Todd gates (`AND`), and the
-separate below-11 late-bus and above-11 on-time detour outcomes (`AND` per
-edge). Six `unknown` records cover the box trigger, key threshold, Stormy Night
-internals, exact 11:00 boundary, the exact gun-state check, and window-route
-outcomes. No source-vs-source conflict is recorded or invented.
+Every previously published edge keeps its order; new content is appended and
+every edge has a stable `e_*` ID. Array-index `?edge=N` links remain canonical;
+stable IDs are accepted as input aliases. Five plain-English condition groups
+cover the key threshold (`SINGLE`), the two separate Meet Todd gates (`AND`),
+the separate below-11 late-bus and above-11 on-time detour outcomes (`AND` per
+edge), and the window QTE success step (`SINGLE`). Route transitions do not
+inherit requirements from later steps; the window-opening prerequisite remains
+a separate edge. Seven `unknown` records cover the box trigger, key threshold,
+Stormy Night internals, exact 11:00 boundary, the exact gun-state check,
+window-route outcomes, and the missing Todd state after either successful
+non-gun escape. No source-vs-source conflict is recorded or invented.
 
 ## Included per chapter
 
@@ -78,10 +81,17 @@ outcomes. No source-vs-source conflict is recorded or invented.
   `WELCOME HOME → JOIN TODD → CLEAN FIRST FLOOR → ASK TO GO UPSTAIRS →
   GO UPSTAIRS → CLEAN SECOND FLOOR → CLEAN ALICE'S ROOM → TALK WITH ALICE →
   ALICE GIVES KARA A KEY → OPEN ALICE'S BOX`.
-- **Stormy Night — selected carried state only.** Two states: *Todd not
-  killed* (reported prerequisite for the later meeting) and *Todd killed*
-  (closes the meeting branch). A bounded gun confrontation adds distinct
-  Kara-shoots and Alice-shoots outcomes; only Kara's outcome carries the gun.
+- **Stormy Night — selected states and two successful non-gun routes.** Two
+  states: *Todd not killed* (reported prerequisite for the later meeting) and
+  *Todd killed* (closes the meeting branch). A bounded gun confrontation adds
+  distinct Kara-shoots and Alice-shoots outcomes; only Kara's outcome carries
+  the gun. Two distinct successful non-gun routes are included:
+  `Reach Alice → Run away → Hide in corridor → Todd walks past →
+  Escape via door/yard`, and `Reach Alice → Lock room → Open window, go out →
+  Pass window QTE → Take Alice down to bus`. The window route requires the
+  window opened in A New Home; the corridor route does not. Neither route
+  unlocks the other. Both exit endpoints link to *Todd not killed* only by
+  dashed inference edges because the guides do not state Todd’s later state.
   No other internal chapter topology is transcribed.
 - **Additional A New Home actions.** Optional nightstand-gun inspection and
   opening Alice's window are guide-reported side actions, not claimed as
@@ -100,12 +110,14 @@ outcomes. No source-vs-source conflict is recorded or invented.
 
 - The rest of **A New Home**: chores and unlinked side labels whose arrows the
   screenshot does not resolve; not invented.
-- All **Stormy Night** internal branches: guides differ on how Todd can be
-  spared, avoided or killed; nothing is inferred.
+- Other **Stormy Night** internal branches: non-gun fatal outcomes, Fail to
+  Hide/Defend Alice alternatives, failed window QTEs, miss-bus outcomes,
+  difficulty-specific prompts, and other ways Todd can be spared, avoided or
+  killed.
 - Most of **Battle for Detroit — Kara**: guarded checkpoint interactions,
   ticket, border and river branches, and downstream responses.
-- The rest of **Stormy Night**, including non-gun paths, exact QTE branches,
-  and successful window-escape outcomes.
+- Exact non-gun route inputs, QTE requirements/difficulty, hidden triggers, and
+  the later Todd state after either successful non-gun escape.
 - Other chapters and any full-game coverage.
 
 ## Unresolved claims kept visibly unresolved
@@ -125,8 +137,14 @@ outcomes. No source-vs-source conflict is recorded or invented.
   options** is unknown; the details panel says so on both related nodes.
 - **How the Stormy Night survival state is reached** is outside the reviewed
   evidence; the state node says so.
+- **Todd’s later state after either non-gun escape** is not stated by the
+  reviewed guides. Both endpoint-to-`s_alive` edges are dashed `hypothesis`
+  links labelled “UNRESOLVED inference”, and
+  `u_stormy_escape_todd_state` records that the question remains open. The
+  corridor and window routes do not merge, and neither bypasses the separate
+  terminal and meeting gates.
 
-## Checks run (2026-10-18; contract re-run 2026-10-20)
+## Checks run (2026-10-18; contract and Stormy expansion re-run 2026-10-20)
 
 - `node prototype/validate-atlas-data.js` — **all checks pass**: unique node,
   chapter, edge, condition, uncertainty and conflict IDs; claim/coverage
@@ -138,31 +156,38 @@ outcomes. No source-vs-source conflict is recorded or invented.
   unresolved hypothesis for the box; terminal negative state; confirmed
   reachability of the positive outcome without the hypothesis; declared
   counts; canvas/frame containment; no node overlaps; orthogonal routes avoid
-  unrelated nodes. Inventory: 3 chapters, 29 boxes, 31 connectors (19 traced +
-  7 conditional + 4 prerequisite gates + 1 unresolved hypothesis);
-  4 conditions, 6 uncertainties, 0 conflicts.
+  unrelated nodes. Route-specific fences also check that the two successful
+  non-gun routes stay distinct, neither unlocks the other, the window opening
+  remains a prerequisite rather than an outcome, and both endpoint-to-`s_alive`
+  links stay `hypothesis` edges with an explicit unknown. Inventory: 3
+  chapters, 38 boxes, 42 connectors (26 traced + 8 conditional + 5 prerequisite
+  gates + 3 unresolved hypotheses); 5 conditions, 7 uncertainties, 0 conflicts.
 - `node --check` on every prototype script and validator — syntax OK.
-- `node tests/atlas-data-contract.test.js` — **38/38 pass**: the real sample is
+- `node tests/atlas-data-contract.test.js` — **45/45 pass**: the real sample is
   accepted; deliberate fixtures reject duplicate IDs, dangling endpoints,
   missing/unknown sources, invalid claim/coverage statuses, malformed
-  conditions, and incomplete uncertainty/conflict records.
-- `node tests/atlas-core.test.js` — **40/40 pass**: consent, chapter jump,
+  conditions, incomplete uncertainty/conflict records, lost route steps,
+  traced-instead-of-inferred Todd links, missing window prerequisites, escape
+  endpoints wired straight to the meeting, and whole-route conditions attached to early route transitions.
+- `node tests/atlas-core.test.js` — **42/42 pass**: consent, chapter jump,
   selection, trail cap 8 + dedupe, both close paths reducing to one state,
   reset, hash round-trip for every node, stable-edge-ID aliases, and the data
-  invariants above.
+  invariants above, including route distinctness and the inferred Todd links.
 - `node tests/map-first.test.js` — **13/13 pass**, including all sparse labels,
   cross-chapter navigation, desktop/mobile fit, dense summaries, and rendered
   event-box non-overlap at full-map and chapter fits.
-- `node tests/poc4-browser.test.js` — **48/48 pass** (15 checks × 3 variants + 3 mobile checks)
+- `node tests/poc4-browser.test.js` — **51/51 pass** (16 checks × 3 variants + 3 mobile checks)
   in headless Chromium over localhost HTTP: no page errors; consent gate; whole
-  surface with 3 frames/29 nodes/31 connectors; cross-chapter gate and
+  surface with 3 frames/38 nodes/42 connectors; cross-chapter gate and
   hypothesis labels visible before any navigation; chapter jumps as camera
   presets that keep every region mounted; both `Meet Todd` gates; the box
-  hypothesis dashed, correctly labelled, and not a gate; cross-chapter jump;
-  close-button and Escape paths equal with focus restored; history trail;
-  search with Escape priority; hash deep link; text contrast ≥ 4.5:1 for the
-  sampled text roles (minimums: editorial 6.07:1, amber 6.16:1, darkcyan
-  7.59:1).
+  hypothesis dashed, correctly labelled, and not a gate; each non-gun escape
+  endpoint showing its unresolved Todd inference and no direct terminal/meeting
+  connector; the window opening showing its prerequisite without claiming an
+  escape outcome; cross-chapter jump; close-button and Escape paths equal with
+  focus restored; history trail; search with Escape priority; hash deep link;
+  text contrast ≥ 4.5:1 for the sampled text roles (minimums: editorial
+  6.07:1, amber 6.16:1, darkcyan 7.59:1).
 - Earlier visual screenshot review covered all three palettes (whole atlas,
   focused chapters, details open, search). One layout defect was found and
   fixed: the legend overlay covered a focused chapter's title; chapter fits

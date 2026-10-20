@@ -69,19 +69,21 @@ check('the sample declares contract version 1.0 and separate coverage records', 
   });
 });
 
-check('the original 18 node IDs keep their order and the expansion is appended', () => {
+check('the original 29 node IDs keep their order and the expansion is appended', () => {
   eq(real.nodes.map(n => n.id), [
     'a_welcome', 'a_todd', 'a_clean1', 'a_ask', 'a_go', 'a_clean2', 'a_room', 'a_talk', 'a_key', 'a_box',
     'a_gun_seen', 'a_window_open',
     's_alive', 's_dead', 's_take_gun', 's_gun_struggle', 's_kara_shoots_todd',
     's_alice_shoots_todd', 's_gun_carried', 's_window_open',
     'k_terminal', 'k_meet', 'k_dialogue', 'k_away', 'k_check', 'k_goodbye',
-    'k_checkpoint', 'k_detour', 'k_late_bus'
+    'k_checkpoint', 'k_detour', 'k_late_bus',
+    's_reach_alice', 's_run_away', 's_hide_corridor', 's_todd_passes', 's_front_backyard_escape',
+    's_lock_room', 's_window_go_out', 's_window_qte', 's_window_reach_bus'
   ]);
-  eq(real.nodes.length, 29);
+  eq(real.nodes.length, 38);
 });
 
-check('the original 16 edge IDs keep their order and only append new connectors', () => {
+check('the original 31 edge IDs keep their order and only append new connectors', () => {
   eq(real.edges.map(e => e.id), [
     'e_home_welcome_todd', 'e_home_todd_clean1', 'e_home_clean1_ask', 'e_home_ask_go',
     'e_home_go_clean2', 'e_home_clean2_room', 'e_home_room_talk', 'e_home_talk_key',
@@ -93,9 +95,13 @@ check('the original 16 edge IDs keep their order and only append new connectors'
     'e_stormy_take_gun_struggle', 'e_stormy_struggle_kara_shoots', 'e_stormy_struggle_alice_shoots',
     'e_stormy_kara_gun_carried', 'e_stormy_kara_dead', 'e_stormy_alice_dead',
     'e_kara_checkpoint_detour', 'e_kara_checkpoint_terminal',
-    'e_kara_detour_late', 'e_kara_detour_terminal', 'e_kara_late_terminal'
+    'e_kara_detour_late', 'e_kara_detour_terminal', 'e_kara_late_terminal',
+    'e_stormy_reach_run_away', 'e_stormy_run_hide', 'e_stormy_hide_todd_passes',
+    'e_stormy_todd_passes_front_backyard', 'e_stormy_front_backyard_alive',
+    'e_stormy_reach_lock_room', 'e_stormy_window_go_out_access', 'e_stormy_lock_go_out',
+    'e_stormy_go_out_qte', 'e_stormy_qte_bus', 'e_stormy_window_bus_alive'
   ]);
-  eq(real.edges.length, 31);
+  eq(real.edges.length, 42);
   eq(real.edges.map(e => [e.from, e.to, e.kind]), [
     ['a_welcome', 'a_todd', 'traced'], ['a_todd', 'a_clean1', 'traced'],
     ['a_clean1', 'a_ask', 'traced'], ['a_ask', 'a_go', 'traced'],
@@ -112,7 +118,13 @@ check('the original 16 edge IDs keep their order and only append new connectors'
     ['s_kara_shoots_todd', 's_dead', 'traced'], ['s_alice_shoots_todd', 's_dead', 'traced'],
     ['k_checkpoint', 'k_detour', 'traced'], ['k_checkpoint', 'k_terminal', 'traced'],
     ['k_detour', 'k_late_bus', 'conditional'], ['k_detour', 'k_terminal', 'conditional'],
-    ['k_late_bus', 'k_terminal', 'traced']
+    ['k_late_bus', 'k_terminal', 'traced'],
+    ['s_reach_alice', 's_run_away', 'traced'], ['s_run_away', 's_hide_corridor', 'traced'],
+    ['s_hide_corridor', 's_todd_passes', 'traced'], ['s_todd_passes', 's_front_backyard_escape', 'traced'],
+    ['s_front_backyard_escape', 's_alive', 'hypothesis'],
+    ['s_reach_alice', 's_lock_room', 'traced'], ['s_window_open', 's_window_go_out', 'prerequisite'],
+    ['s_lock_room', 's_window_go_out', 'traced'], ['s_window_go_out', 's_window_qte', 'conditional'],
+    ['s_window_qte', 's_window_reach_bus', 'traced'], ['s_window_reach_bus', 's_alive', 'hypothesis']
   ]);
 });
 
@@ -121,7 +133,8 @@ check('conditions keep each checkpoint timing alternative attached to its own ed
     ['cond_key_relationship', 'SINGLE'],
     ['cond_meet_todd_access', 'AND'],
     ['cond_checkpoint_detour_late', 'AND'],
-    ['cond_checkpoint_detour_ontime', 'AND']
+    ['cond_checkpoint_detour_ontime', 'AND'],
+    ['cond_window_qte_success', 'SINGLE']
   ]);
   const meet = real.conditions.find(c => c.id === 'cond_meet_todd_access');
   eq(meet.appliesTo, ['e_stormy_alive_meet', 'e_kara_terminal_meet']);
@@ -144,10 +157,11 @@ check('conditions keep each checkpoint timing alternative attached to its own ed
 });
 
 check('unknowns stay unknown and no source-vs-source conflict is invented', () => {
-  eq(real.uncertainties.map(u => u.status), ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown']);
+  eq(real.uncertainties.map(u => u.status), ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown']);
   eq(real.uncertainties.map(u => u.id), [
     'u_box_trigger', 'u_key_threshold', 'u_stormy_internal',
-    'u_checkpoint_timer_11', 'u_gun_state_check', 'u_window_route_outcome'
+    'u_checkpoint_timer_11', 'u_gun_state_check', 'u_window_route_outcome',
+    'u_stormy_escape_todd_state'
   ]);
   eq(real.conflicts, []);
   real.uncertainties.forEach(u => {
@@ -182,7 +196,11 @@ check('gun and window expansion keeps possession, outcomes and route limits sepa
   eq(from('s_kara_shoots_todd'), ['s_dead', 's_gun_carried']);
   eq(from('s_alice_shoots_todd'), ['s_dead']);
   eq(from('s_gun_struggle'), ['s_alice_shoots_todd', 's_kara_shoots_todd']);
-  eq(from('s_window_open'), []);
+  eq(from('s_window_open'), ['s_window_go_out']);
+  const windowAccess = real.edges.find(e => e.id === 'e_stormy_window_go_out_access');
+  assert(windowAccess && windowAccess.kind === 'prerequisite', 'window availability must stay a prerequisite');
+  assert(!real.edges.some(e => e.from === 's_window_open' && ['k_terminal', 'k_meet'].includes(e.to)),
+    'the window route must not connect directly to the terminal or meeting');
   const gunIn = real.edges.filter(e => e.to === 's_gun_carried');
   eq(gunIn.map(e => e.from), ['s_kara_shoots_todd']);
   const gun = real.nodes.find(n => n.id === 's_gun_carried');
@@ -190,6 +208,65 @@ check('gun and window expansion keeps possession, outcomes and route limits sepa
   const window = real.uncertainties.find(u => u.id === 'u_window_route_outcome');
   assert(window && window.nodes.includes('a_window_open') && window.nodes.includes('s_window_open'),
     'window uncertainty must attach to both window nodes');
+});
+
+check('the two successful non-gun escape routes stay separate and Todd links stay inferential', () => {
+  const edgesFrom = (id) => real.edges.filter(e => e.from === id);
+  const corridor = edgesFrom('s_reach_alice').filter(e => e.to === 's_run_away');
+  eq(corridor.map(e => e.id), ['e_stormy_reach_run_away']);
+  eq(edgesFrom('s_run_away').map(e => e.to), ['s_hide_corridor']);
+  eq(edgesFrom('s_hide_corridor').map(e => e.to), ['s_todd_passes']);
+  eq(edgesFrom('s_todd_passes').map(e => e.to), ['s_front_backyard_escape']);
+
+  eq(edgesFrom('s_reach_alice').filter(e => e.to === 's_lock_room').map(e => e.id),
+    ['e_stormy_reach_lock_room']);
+  eq(edgesFrom('s_lock_room').map(e => e.to), ['s_window_go_out']);
+  eq(edgesFrom('s_window_go_out').map(e => e.to), ['s_window_qte']);
+  eq(edgesFrom('s_window_qte').map(e => e.to), ['s_window_reach_bus']);
+
+  const corridorNodes = ['s_reach_alice', 's_run_away', 's_hide_corridor', 's_todd_passes', 's_front_backyard_escape'];
+  const windowNodes = ['s_reach_alice', 's_lock_room', 's_window_go_out', 's_window_qte', 's_window_reach_bus'];
+  corridorNodes.forEach(id => assert(!windowNodes.includes(id) || id === 's_reach_alice',
+    'routes must not share intermediate nodes: ' + id));
+  assert(!edgesFrom('s_front_backyard_escape').some(e => e.to === 's_window_reach_bus'),
+    'the corridor route must not feed the window route');
+  assert(!edgesFrom('s_window_reach_bus').some(e => e.to === 's_front_backyard_escape'),
+    'the window route must not feed the corridor route');
+
+  for (const [from, id] of [
+    ['s_front_backyard_escape', 'e_stormy_front_backyard_alive'],
+    ['s_window_reach_bus', 'e_stormy_window_bus_alive']
+  ]) {
+    const out = edgesFrom(from);
+    eq(out.map(e => e.id), [id]);
+    eq(out[0].kind, 'hypothesis');
+    assert(/UNRESOLVED inference/i.test(out[0].label || ''), id + ' must label itself as an unresolved inference');
+    assert(/not state|does not state|unstated/i.test(out[0].note || ''),
+      id + ' must say the source does not state Todd’s later state');
+    assert(out[0].src.length > 0, id + ' needs its own source refs');
+  }
+
+  const qteCondition = real.conditions.find(c => c.id === 'cond_window_qte_success');
+  eq(qteCondition.appliesTo, ['e_stormy_go_out_qte']);
+  eq(qteCondition.requirements, ['Pass the reported window-climb QTE.']);
+  assert(!real.conditions.some(c => ['cond_corridor_escape', 'cond_window_escape'].includes(c.id)),
+    'whole-route conditions must not be attached to earlier transition edges');
+  const byEdge = new Map(real.conditions.flatMap(c => c.appliesTo.map(id => [id, c])));
+  for (const id of ['e_stormy_reach_run_away', 'e_stormy_run_hide', 'e_stormy_hide_todd_passes',
+    'e_stormy_todd_passes_front_backyard', 'e_stormy_reach_lock_room', 'e_stormy_lock_go_out',
+    'e_stormy_qte_bus']) {
+    assert(!byEdge.has(id), id + ' must not inherit requirements from later route steps');
+  }
+  eq(byEdge.get('e_stormy_go_out_qte').id, 'cond_window_qte_success');
+
+  const unknown = real.uncertainties.find(u => u.id === 'u_stormy_escape_todd_state');
+  assert(unknown, 'the shared Todd-state inference must have an explicit unknown record');
+  assert(unknown.nodes.includes('s_alive') && unknown.nodes.includes('s_front_backyard_escape') &&
+    unknown.nodes.includes('s_window_reach_bus'), 'Todd-state unknown must attach to both endpoints');
+  assert(unknown.edges.includes('e_stormy_front_backyard_alive') &&
+    unknown.edges.includes('e_stormy_window_bus_alive'), 'Todd-state unknown must attach to both inference edges');
+  assert(/not state|does not state|unstated/i.test(unknown.explanation) && /inference/i.test(unknown.explanation),
+    'Todd-state unknown must explain the missing state and the inference');
 });
 
 console.log('atlas-data.js — malformed fixtures');
@@ -231,7 +308,7 @@ rejects('rejects a gun-carry edge from Alice shooting Todd', d => {
 }, /s_alice_shoots_todd must not feed s_gun_carried|s_gun_carried must have exactly one incoming edge/);
 rejects('rejects a window route that claims a downstream escape outcome', d => {
   d.edges.push({ id: 'e_fixture_window_escape', from: 's_window_open', to: 'k_terminal', kind: 'traced', src: ['powerpyxStormy'] });
-}, /s_window_open must not claim a successful escape/);
+}, /s_window_open must not connect directly to the terminal or meeting|s_window_open should have exactly one prerequisite edge/);
 rejects('rejects removing the unresolved 11-minute uncertainty', d => {
   d.uncertainties = d.uncertainties.filter(u => u.id !== 'u_checkpoint_timer_11');
 }, /u_checkpoint_timer_11 is missing/);
@@ -239,6 +316,25 @@ rejects('rejects inventing an inclusive 11-minute boundary', d => {
   const edge = d.edges.find(e => e.id === 'e_kara_detour_late');
   edge.note = 'Timer <= 11 minutes gives the late bus.';
 }, /must not invent <= or >=/);
+rejects('rejects a non-gun corridor route that loses its exit step', d => {
+  d.edges = d.edges.filter(e => e.id !== 'e_stormy_todd_passes_front_backyard');
+}, /e_stormy_todd_passes_front_backyard.*is missing/);
+rejects('rejects a non-gun escape link presented as traced rather than inferred', d => {
+  d.edges.find(e => e.id === 'e_stormy_front_backyard_alive').kind = 'traced';
+}, /e_stormy_front_backyard_alive must be a hypothesis from s_front_backyard_escape to s_alive/);
+rejects('rejects dropping the window prerequisite into the window exit', d => {
+  d.edges = d.edges.filter(e => e.id !== 'e_stormy_window_go_out_access');
+}, /s_window_open should have exactly one prerequisite edge into the window exit/);
+rejects('rejects a route that connects an escape endpoint straight to the meeting', d => {
+  d.edges.push({ id: 'e_fixture_escape_meet', from: 's_window_reach_bus', to: 'k_meet', kind: 'traced', src: ['powerpyxStormy'] });
+}, /s_window_reach_bus must not connect directly to the terminal or meeting/);
+rejects('rejects attaching a whole-route condition to early route transitions', d => {
+  d.conditions.push({ id: 'cond_corridor_escape', appliesTo: ['e_stormy_reach_run_away', 'e_stormy_todd_passes_front_backyard'], operator: 'AND', summary: 'Whole route.', requirements: ['Early step.', 'Later exit.'], sources: ['powerpyxStormy'] });
+}, /cond_corridor_escape must not attach whole-route requirements/);
+
+rejects('rejects removing the explicit Todd-state inference record', d => {
+  d.uncertainties = d.uncertainties.filter(u => u.id !== 'u_stormy_escape_todd_state');
+}, /u_stormy_escape_todd_state is missing/);
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

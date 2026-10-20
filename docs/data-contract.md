@@ -12,8 +12,9 @@ and the [specification](spec.md).
       explicit vocabularies and a distinction between `unknown` and `conflict`.
 - [x] Conditions are plain English; Meet Todd's two gates and the separate
       timing predicates stay attached to their own outcome edges.
-- [x] The original 18 nodes and 16 edges remain; this bounded slice adds
-      source-attributed content without changing the renderer.
+- [x] Every previously published node and edge ID and its array order remain;
+      each bounded expansion appends only source-attributed content without
+      changing the renderer.
 - [x] Existing `?edge=N` links keep working; stable edge IDs are accepted as
       aliases.
 - [x] The validator rejects deliberate fixtures for duplicate IDs, dangling
@@ -23,8 +24,8 @@ and the [specification](spec.md).
 
 ## Scope and record shape
 
-The contract covers the three existing chapter regions, 29 nodes, 31 edges, four
-condition groups, six uncertainty records and no conflict records in
+The contract covers the three existing chapter regions, 38 nodes, 42 edges, five
+condition groups, seven uncertainty records and no conflict records in
 `prototype/atlas-data.js`. The sample declares `meta.contractVersion: '1.0'`.
 
 | Record | Required fields |
@@ -68,8 +69,9 @@ Chapter `coverage.status` values:
 
 All three sample chapters are `partial`: A New Home has a selected screenshot
 sequence plus guide-reported optional actions, Stormy Night has a selected gun
-confrontation and carried states, and Battle for Detroit — Kara has selected
-checkpoint and meeting branches. The omitted parts are recorded per chapter.
+confrontation, two successful non-gun escape routes and inferred Todd states,
+and Battle for Detroit — Kara has selected checkpoint and meeting branches. The
+omitted parts are recorded per chapter.
 Version and platform remain `unknown`; no transition is gameplay-verified.
 
 Edge `kind` is a relation vocabulary, not a coverage or verification claim:
@@ -94,7 +96,7 @@ topology or game claims. `operator` is one of:
 | `AND` | At least two requirements that are reported together |
 | `OR` | At least two alternatives; reserved and unused by the current sample |
 
-The current sample has four records:
+The current sample has five records:
 
 - `cond_key_relationship` (`SINGLE`) applies to `e_home_talk_key`: GameFAQs
   alone reports the Neutral-or-higher relationship threshold. The screenshot and
@@ -113,9 +115,16 @@ The current sample has four records:
   `e_kara_detour_terminal`: take the detour immediately AND the timer is
   reported above 11 minutes. The exact 11:00 boundary remains unknown. Separate
   records prevent either outcome from inheriting the other outcome's predicate.
+- `cond_window_qte_success` (`SINGLE`) applies only to
+  `e_stormy_go_out_qte`: pass the reported window-climb QTE. Exact prompts and
+  difficulty are not stated.
 
-No `OR` record combines the two timing outcomes. The `OR` vocabulary remains
-available for a supported set of alternatives within one outcome.
+The escape routes are represented as source-attributed transitions. Do not
+attach an entire route's requirements to every edge in that route: a later
+exit or QTE is not a prerequisite for an earlier action. Conditions must name
+only the transition they describe, unless a source explicitly states a
+condition gates multiple edges. The A New Home window requirement remains a
+separate prerequisite edge into the window-exit option.
 
 ## Stable IDs and permalinks
 
@@ -139,7 +148,11 @@ edge is more verified than its source and status state.
 
 - An `unknown` record describes incomplete evidence: the reviewed sources cannot
   settle a value, trigger or mechanism. Current records:
-  `u_box_trigger`, `u_key_threshold`, `u_stormy_internal`.
+  `u_box_trigger`, `u_key_threshold`, `u_stormy_internal`,
+  `u_checkpoint_timer_11`, `u_gun_state_check`, `u_window_route_outcome` and
+  `u_stormy_escape_todd_state`. The last record specifically holds the missing
+  Todd state after either successful non-gun escape; the dashed links to
+  `s_alive` are inferences, not confirmed outcomes.
 - A `conflict` record would describe sources that disagree with each other. The
   current sample has no normalised source-vs-source conflict, so `conflicts` is
   empty. The schema is still validated and malformed conflict fixtures are
@@ -160,6 +173,10 @@ structural error, not a silent caveat.
 - condition operators, requirement counts, plain-English summaries and
   `appliesTo` edge IDs;
 - uncertainty/conflict status, explanation, node/edge references and sources;
+- route-specific fences: the two non-gun escape routes stay distinct, neither
+  unlocks the other, the window opening is only a prerequisite, and both
+  endpoint-to-`s_alive` links stay `hypothesis` edges labelled as unresolved
+  inferences with an explicit unknown record;
 - the previous graph invariants, inventory counts, layout and routing checks.
 
 `tests/atlas-data-contract.test.js` accepts the real sample and rejects
@@ -171,7 +188,9 @@ transition occurs in game.
 
 - This contract is bounded to the existing PoC4 sample; full-game coverage and
   the full-product data contract remain open.
-- No game claim, source, node, edge or topology was added by this contract.
+- No game claim, source, node, edge or topology is added by this contract
+  document itself; the corresponding source-backed data changes are recorded in
+  the coverage notes.
 - The conflict record shape is documented and fixture-tested but has no real
   sample instance.
 - Stored evidence status describes source basis, not gameplay verification.

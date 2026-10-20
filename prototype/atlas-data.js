@@ -12,10 +12,13 @@
      arrows are omitted rather than invented. The nightstand gun clue and the
      opened Alice's-room window are separate guide-reported events, not claims
      of possession or a successful escape.
-   - Stormy Night: selected gun/window carried-state events only. Internal
-     chapter topology is NOT transcribed in full; only the guide-stated gun
-     confrontation and its two shooting outcomes are drawn. Other ways to reach
-     a surviving or killed Todd remain outside this slice.
+   - Stormy Night: selected gun/window events plus two source-supported
+     successful non-gun escape routes: the corridor/hiding route to the
+     front-door/backyard exit, and the locked-room window route. Internal
+     chapter topology is NOT transcribed in full. The guides do not state
+     Todd's later state for either non-gun route, so their links into the
+     existing Todd-not-killed state are dashed inferences, not traced or
+     confirmed links. Fatal routes and other branches remain outside this slice.
    - Battle for Detroit — Kara: guide-reported checkpoint detour/timing branch
      and Todd meeting branch. The exact 11-minute boundary is unresolved; no
      <= or >= rule is modelled. The checkpoint route is a chapter-local route,
@@ -45,12 +48,12 @@ const ATLAS = {
     disclaimer: 'Guide-based and screenshot-transcribed only. No transition is verified in game; game version and platform are unknown.',
     counts: {
       chapters: 3,
-      nodes: 29,
-      edges: 31,
-      tracedEdges: 19,
-      conditionalEdges: 7,
-      prerequisiteEdges: 4,
-      hypothesisEdges: 1,
+      nodes: 38,
+      edges: 42,
+      tracedEdges: 26,
+      conditionalEdges: 8,
+      prerequisiteEdges: 5,
+      hypothesisEdges: 3,
       crossChapterEdges: 4
     }
   },
@@ -59,6 +62,8 @@ const ATLAS = {
     steam: 'https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882',
     powerpyxHome: 'https://www.powerpyx.com/detroit-become-human-a-new-home-walkthrough-100/',
     powerpyxStormy: 'https://www.powerpyx.com/detroit-become-human-stormy-night-walkthrough-100/',
+    gamerGuidesStormy: 'https://www.gamerguides.com/detroit-become-human/guide/walkthrough/chapter-1/chapter-6-stormy-night',
+    gamefaqsStormy: 'https://gamefaqs.gamespot.com/ps4/182637-detroit-become-human/faqs/76123/stormy-night',
     gamefaqs: 'https://gamefaqs.gamespot.com/ps4/182637-detroit-become-human/faqs/76123/a-new-home',
     transcript: 'https://detroit-become-human.fandom.com/wiki/A_New_Home_%28Transcript%29',
     powerpyxKara: 'https://www.powerpyx.com/detroit-become-human-battle-for-detroit-kara-walkthrough-100/',
@@ -87,15 +92,15 @@ const ATLAS = {
     {
       id: 'stormy',
       name: 'Stormy Night',
-      code: 'D2 · selected gun/window carried states',
-      frame: { x: 575, y: 120, w: 730, h: 790 },
-      desc: 'Selected guide-reported gun and window states only. The gun confrontation and its two shooting outcomes are drawn; other internal branches, how Todd survives, and escape outcomes are not. No full chapter topology is claimed.',
+      code: 'D2 · selected gun/window + non-gun escape routes',
+      frame: { x: 575, y: 120, w: 730, h: 860 },
+      desc: 'Selected guide-reported gun and window events, plus two distinct successful non-gun escape routes. The corridor route hides until Todd passes and exits through the front door/backyard; the window route locks the room, goes out, passes the reported QTE and reaches the bus. The guides do not state Todd’s later state for either route, so both links to Todd not killed are explicit inferences. Other internal branches and all fatal escape outcomes are not drawn.',
       coverage: {
         status: 'partial',
-        scope: 'Selected gun/window carried-state events and the existing Todd fate states.',
-        included: 'Eight states/events: Todd not killed, Todd killed, take the nightstand gun, struggle for the gun, Kara shoots Todd, Alice shoots Todd, gun carried forward (Kara only), and the window route opened from A New Home. Six selected internal links.',
-        omitted: 'All other Stormy Night branches, QTEs/escape outcomes, how Todd is spared or avoided, and how the window route resolves.',
-        sources: ['powerpyxStormy', 'powerpyxKara', 'fandomBattle', 'neoseekerKara']
+        scope: 'Selected gun/window events, the existing Todd fate states, and two successful non-gun escape routes.',
+        included: 'Seventeen states/events: Todd not killed, Todd killed, take the nightstand gun, struggle for the gun, Kara shoots Todd, Alice shoots Todd, gun carried forward (Kara only), the window route opened from A New Home, and nine steps/outcomes for the corridor and window escape routes. Seventeen selected internal links.',
+        omitted: 'All other Stormy Night branches, non-gun fatal and miss-bus outcomes, exact QTE requirements/difficulty, unseen hidden triggers, and direct evidence of Todd’s later state after either non-gun escape.',
+        sources: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy', 'powerpyxKara', 'fandomBattle']
       }
     },
     {
@@ -141,7 +146,7 @@ const ATLAS = {
 
     /* ---- Stormy Night: existing carried states + selected gun/window events ---- */
     { id: 's_alive', chapter: 'stormy', label: 'Todd survives', short: 'Todd not killed', kind: 'flag', x: 1135, y: 500, w: 150, h: 84, sub: 'carried state · guide-reported', status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'],
-      note: 'Reported access condition for the later Todd meeting. How this state is reached is not covered here.' },
+      note: 'Reported access condition for the later Todd meeting. Two successful non-gun escape routes now point here only as dashed inferences; the guides do not state Todd’s later state for either route.' },
     { id: 's_dead', chapter: 'stormy', label: 'Todd killed', short: 'Todd killed', kind: 'flag', x: 1135, y: 370, w: 150, h: 84, sub: 'closes the meeting branch', status: 'guide', src: ['powerpyxStormy', 'powerpyxKara', 'fandomBattle'],
       note: 'The selected gun outcomes feed this state. Other ways to reach it and all non-gun Stormy Night branches remain outside this slice.' },
     { id: 's_take_gun', chapter: 'stormy', label: 'Take the gun', short: 'Take nightstand gun', kind: 'action', x: 595, y: 220, w: 150, h: 84, sub: 'requires gun seen in A New Home', status: 'guide', src: ['powerpyxStormy'],
@@ -154,8 +159,8 @@ const ATLAS = {
       note: 'PowerPyx says that if Kara does not pick the gun back up, Alice picks it up and shoots Todd. This does not carry the gun forward.' },
     { id: 's_gun_carried', chapter: 'stormy', label: 'Kara keeps gun', short: 'Gun carried forward', kind: 'flag', x: 1135, y: 220, w: 150, h: 84, sub: 'supplemental carried state · Kara only', status: 'guide', src: ['powerpyxStormy'],
       note: 'Supplemental carried-state node: only the guide-stated Kara-shoots outcome creates it. No later-chapter use of the gun is modelled.' },
-    { id: 's_window_open', chapter: 'stormy', label: 'Window route', short: 'Window route', kind: 'action', x: 595, y: 500, w: 150, h: 84, sub: 'route enabled · escape not modelled', status: 'guide', src: ['powerpyxStormy', 'powerpyxHome'],
-      note: 'PowerPyx says the window can be opened if the route was found in Chapter 4. Availability is not a successful escape.' },
+    { id: 's_window_open', chapter: 'stormy', label: 'Window route', short: 'Window route', kind: 'action', x: 595, y: 500, w: 150, h: 84, sub: 'route available · success branch drawn', status: 'guide', src: ['powerpyxStormy', 'powerpyxHome', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'PowerPyx, Gamer Guides and GameFAQs say the window option is available only if the window was opened in A New Home. Availability is separate from the successful branch drawn after it.' },
 
     /* ---- Battle for Detroit — Kara: checkpoint detour + Todd meeting branches ---- */
     { id: 'k_terminal', chapter: 'kara', label: 'Reach bus terminal', short: 'Bus terminal', kind: 'flag', x: 1740, y: 230, w: 170, h: 84, sub: 'reported access gate', status: 'guide', src: ['powerpyxKara', 'fandomBattle', 'gamerGuides'],
@@ -173,15 +178,36 @@ const ATLAS = {
     { id: 'k_detour', chapter: 'kara', label: 'Take detour', short: 'Take detour', kind: 'action', x: 1540, y: 520, w: 150, h: 84, sub: 'reported timing condition', status: 'guide', src: ['powerpyxKara', 'gamerGuides'],
       note: 'PowerPyx and Gamer Guides report a timing-dependent detour outcome; the exact 11-minute boundary is unresolved.' },
     { id: 'k_late_bus', chapter: 'kara', label: 'Bus has left', short: 'Last bus gone', kind: 'outcome', x: 1540, y: 680, w: 150, h: 84, sub: 'still reaches the terminal', status: 'guide', src: ['powerpyxKara', 'gamerGuides'],
-      note: 'Reported when the detour is taken after waiting and the timer is below 11 minutes. This is a late-bus outcome at the terminal, not a loss of terminal or Todd-meeting access.' }
+      note: 'Reported when the detour is taken after waiting and the timer is below 11 minutes. This is a late-bus outcome at the terminal, not a loss of terminal or Todd-meeting access.' },
+
+    /* ---- Stormy Night: two distinct successful non-gun escape routes ---- */
+    { id: 's_reach_alice', chapter: 'stormy', label: 'Reach Alice', short: 'Reach Alice', kind: 'action', x: 775, y: 500, w: 150, h: 84, sub: 'go-upstairs route', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'PowerPyx and Gamer Guides both place the non-gun routes after going upstairs and reaching Alice before Todd.' },
+    { id: 's_run_away', chapter: 'stormy', label: 'Run away', short: 'Run away', kind: 'action', x: 595, y: 635, w: 150, h: 84, sub: 'reported route step', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'PowerPyx and Gamer Guides report a Run Away option that takes Alice out of her room.' },
+    { id: 's_hide_corridor', chapter: 'stormy', label: 'Hide', short: 'Hide', kind: 'action', x: 775, y: 635, w: 150, h: 84, sub: 'reported route step', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Both guides describe hiding outside Alice’s room rather than standing still; the exact hiding inputs are not modelled.' },
+    { id: 's_todd_passes', chapter: 'stormy', label: 'Todd passes', short: 'Todd passes', kind: 'outcome', x: 955, y: 635, w: 150, h: 84, sub: 'reported hiding timing', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'PowerPyx says Todd walks past the hiding place; Gamer Guides says to wait until he walks by. Exact timing is not modelled.' },
+    { id: 's_front_backyard_escape', chapter: 'stormy', label: 'Door/yard exit', short: 'Door/yard exit', kind: 'outcome', x: 1135, y: 740, w: 150, h: 84, sub: 'successful non-gun exit · Todd state not stated', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'After Todd passes, PowerPyx and Gamer Guides report the front-door/backyard route. GameFAQs also reports the front-door alternative when the window route was not opened. This records a successful exit, not a later Todd state.' },
+
+    { id: 's_lock_room', chapter: 'stormy', label: 'Lock room', short: 'Lock room', kind: 'action', x: 595, y: 740, w: 150, h: 84, sub: 'window-route branch', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'All three guides report locking Alice’s room before using the window. The precise time limit is not modelled.' },
+    { id: 's_window_go_out', chapter: 'stormy', label: 'Window exit', short: 'Window exit', kind: 'action', x: 775, y: 740, w: 150, h: 84, sub: 'choose Go out', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'PowerPyx says to open the window and choose Go out; Gamer Guides and GameFAQs describe placing Alice outside and following her.' },
+    { id: 's_window_qte', chapter: 'stormy', label: 'Pass QTE', short: 'Pass QTE', kind: 'action', x: 955, y: 740, w: 150, h: 84, sub: 'reported success condition', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'PowerPyx reports passing the QTE while Todd tries to stop the climb. The exact difficulty, prompts and hidden triggers are not modelled.' },
+    { id: 's_window_reach_bus', chapter: 'stormy', label: 'Reach bus', short: 'Reach bus', kind: 'outcome', x: 955, y: 845, w: 150, h: 84, sub: 'successful window escape · Todd state not stated', status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'PowerPyx, Gamer Guides and GameFAQs describe passing the climb, taking Alice down and reaching the bus. This records the successful escape, not Todd’s later state.' }
   ],
 
   /* id is the stable link id; array index and order stay unchanged for ?edge=N.
-     The first 16 edges keep their legacy order; the expansion appends new
-     edges after them. from/to reference node ids. fromOption selects a choice
-     row (0 = first). via = explicit orthogonal mid-x when the automatic channel
-     would cross nodes. labelAt = explicit label position when the path midpoint
-     is a poor spot. */
+     Every previously published edge keeps its position; later expansions append
+     new edges after them. from/to reference node ids. fromOption selects a
+     choice row (0 = first). via = explicit orthogonal mid-x when the automatic
+     channel would cross nodes. labelAt = explicit label position when the path
+     midpoint is a poor spot. */
   edges: [
     /* A New Home local sequence — transcribed from the Steam screenshot */
     { id: 'e_home_welcome_todd', from: 'a_welcome', to: 'a_todd', kind: 'traced', src: ['steam'] },
@@ -262,7 +288,44 @@ const ATLAS = {
       note: 'Both reviewed guides describe taking the detour immediately with the timer reported above 11 minutes and reaching the terminal on time. Independence is unknown; the exact 11:00 boundary is not stated and is left unresolved.' },
     { id: 'e_kara_late_terminal', from: 'k_late_bus', to: 'k_terminal', kind: 'traced', label: 'still reaches the terminal', labelAt: { x: 1725, y: 375 },
       src: ['powerpyxKara', 'gamerGuides'],
-      note: 'The guides state all checkpoint ways, including the late/last-bus outcome, lead to the Bus Terminal. This branch therefore does not block the terminal or Todd-meeting gates.' }
+      note: 'The guides state all checkpoint ways, including the late/last-bus outcome, lead to the Bus Terminal. This branch therefore does not block the terminal or Todd-meeting gates.' },
+
+    /* Stormy Night expansion — corridor/hiding successful non-gun route */
+    { id: 'e_stormy_reach_run_away', from: 's_reach_alice', to: 's_run_away', kind: 'traced',
+      src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'PowerPyx and Gamer Guides both place Run Away under reaching Alice before Todd on the go-upstairs branch.' },
+    { id: 'e_stormy_run_hide', from: 's_run_away', to: 's_hide_corridor', kind: 'traced',
+      src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'Both guides report leaving Alice’s room and hiding in the corridor; this is not the separate Fail to Hide outcome.' },
+    { id: 'e_stormy_hide_todd_passes', from: 's_hide_corridor', to: 's_todd_passes', kind: 'traced',
+      src: ['powerpyxStormy', 'gamerGuidesStormy'],
+      note: 'PowerPyx says to wait until Todd walks past; Gamer Guides says to hide until he walks by. Exact hiding inputs and timing are not modelled.' },
+    { id: 'e_stormy_todd_passes_front_backyard', from: 's_todd_passes', to: 's_front_backyard_escape', kind: 'traced', label: 'reported exit route',
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'PowerPyx and Gamer Guides connect the hiding route to the front-door/backyard exit. GameFAQs also reports the front-door alternative when the window route is unavailable. Exact door, yard and QTE steps are omitted; only the successful route is represented.' },
+    { id: 'e_stormy_front_backyard_alive', from: 's_front_backyard_escape', to: 's_alive', kind: 'hypothesis', label: 'UNRESOLVED inference · Todd state not stated', labelAt: { x: 1205, y: 606 },
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'The reviewed guides describe a successful non-gun escape but do not state Todd’s later state. Linking this route to the existing Todd-not-killed state is an inference, not a traced or confirmed outcome. The meeting still needs the separate terminal gate.' },
+
+    /* Stormy Night expansion — locked-room window successful non-gun route */
+    { id: 'e_stormy_reach_lock_room', from: 's_reach_alice', to: 's_lock_room', kind: 'traced', via: 750,
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'All three guides report locking Alice’s room after reaching her on the go-upstairs branch. The reported time window is not modelled.' },
+    { id: 'e_stormy_window_go_out_access', from: 's_window_open', to: 's_window_go_out', kind: 'prerequisite', via: 765, label: 'prerequisite: window route opened in A New Home',
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy', 'powerpyxHome'],
+      note: 'All three Stormy Night guides say the window option is available only if that window route was opened in A New Home. This gates the window exit, not locking the room or a successful escape by itself.' },
+    { id: 'e_stormy_lock_go_out', from: 's_lock_room', to: 's_window_go_out', kind: 'traced',
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'PowerPyx reports opening the window and choosing Go out; Gamer Guides and GameFAQs describe placing Alice outside and following.' },
+    { id: 'e_stormy_go_out_qte', from: 's_window_go_out', to: 's_window_qte', kind: 'conditional', label: 'pass reported QTE',
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'PowerPyx reports a QTE while Todd tries to stop the climb; Gamer Guides and GameFAQs describe the successful climb. Only the success condition is represented. Exact prompts, difficulty and hidden triggers are not modelled.' },
+    { id: 'e_stormy_qte_bus', from: 's_window_qte', to: 's_window_reach_bus', kind: 'traced', label: 'take Alice down',
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'After the reported QTE, the guides describe taking Alice down and reaching the bus. Exact animations and inputs are omitted.' },
+    { id: 'e_stormy_window_bus_alive', from: 's_window_reach_bus', to: 's_alive', kind: 'hypothesis', label: 'UNRESOLVED inference · Todd state not stated', labelAt: { x: 1145, y: 690 },
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy'],
+      note: 'The reviewed guides describe the successful window escape but do not state Todd’s later state. Linking this route to Todd not killed is an inference, not a traced or confirmed outcome. The meeting still needs the separate terminal gate.' }
   ],
 
   /* Conditions are plain-English groups over existing edges. They add no edge
@@ -311,6 +374,14 @@ const ATLAS = {
         'Timer reported above 11 minutes.'
       ],
       sources: ['powerpyxKara', 'gamerGuides']
+    },
+    {
+      id: 'cond_window_qte_success',
+      appliesTo: ['e_stormy_go_out_qte'],
+      operator: 'SINGLE',
+      summary: 'The successful window route requires passing the reported climb QTE; exact prompts and difficulty are not stated.',
+      requirements: ['Pass the reported window-climb QTE.'],
+      sources: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy']
     }
   ],
 
@@ -337,10 +408,10 @@ const ATLAS = {
     {
       id: 'u_stormy_internal',
       status: 'unknown',
-      explanation: 'Only the selected gun outcomes into Todd killed are drawn. Other Stormy Night branches that produce survival or death, the escape routes, and the exact way Todd is spared remain outside this slice.',
-      nodes: ['s_alive', 's_dead'],
-      edges: ['e_stormy_alive_meet'],
-      sources: ['powerpyxStormy', 'powerpyxKara', 'fandomBattle']
+      explanation: 'Only the selected gun outcomes into Todd killed and two selected successful non-gun escape routes are drawn. Other Stormy Night branches, including fatal escape outcomes and other ways Todd is spared or avoided, remain outside this slice. The two non-gun routes are not evidence of Todd’s later state.',
+      nodes: ['s_alive', 's_dead', 's_front_backyard_escape', 's_window_reach_bus'],
+      edges: ['e_stormy_alive_meet', 'e_stormy_front_backyard_alive', 'e_stormy_window_bus_alive'],
+      sources: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy', 'powerpyxKara', 'fandomBattle']
     },
     {
       id: 'u_checkpoint_timer_11',
@@ -361,10 +432,18 @@ const ATLAS = {
     {
       id: 'u_window_route_outcome',
       status: 'unknown',
-      explanation: 'Opening the window in A New Home enables a reported window route in Stormy Night, but the route’s QTEs and escape outcomes are outside this slice. Route availability is not a successful escape.',
-      nodes: ['a_window_open', 's_window_open'],
-      edges: ['e_home_window_stormy_route'],
-      sources: ['powerpyxHome', 'powerpyxStormy']
+      explanation: 'Opening the window in A New Home enables a reported Stormy Night window route. The selected successful window branch is now drawn, but the exact QTE requirements/difficulty and Todd’s later state are not stated by the reviewed guides.',
+      nodes: ['a_window_open', 's_window_open', 's_lock_room', 's_window_go_out', 's_window_qte', 's_window_reach_bus'],
+      edges: ['e_home_window_stormy_route', 'e_stormy_window_go_out_access', 'e_stormy_go_out_qte', 'e_stormy_window_bus_alive'],
+      sources: ['powerpyxHome', 'powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy']
+    },
+    {
+      id: 'u_stormy_escape_todd_state',
+      status: 'unknown',
+      explanation: 'The corridor and window escape guides describe Kara and Alice escaping successfully, but they do not state Todd’s later state. The dashed links from both escape outcomes to the existing Todd-not-killed state are inferences, not traced or confirmed links; whether either route leaves Todd alive for Battle for Detroit is unresolved.',
+      nodes: ['s_alive', 's_front_backyard_escape', 's_window_reach_bus'],
+      edges: ['e_stormy_front_backyard_alive', 'e_stormy_window_bus_alive'],
+      sources: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy', 'powerpyxKara']
     }
   ],
 
@@ -401,10 +480,10 @@ const ATLAS = {
     },
     s_alive: {
       status: 'Guide-reported · carried state',
-      summary: 'PowerPyx and Fandom both anchor the later Todd meeting on Todd not being killed in Stormy Night (PowerPyx: Todd can be “spared/avoided” in that chapter).',
-      unknown: 'The internal Stormy Night branch that produces this state is outside the reviewed evidence and is not drawn.',
+      summary: 'PowerPyx and Fandom both anchor the later Todd meeting on Todd not being killed in Stormy Night (PowerPyx: Todd can be “spared/avoided” in that chapter). The corridor and window escape routes now point here only as dashed inferences.',
+      unknown: 'The guides do not state Todd’s later state after either successful non-gun escape. Whether either route leaves him alive for the later meeting is unresolved; the two dashed links are not traced or confirmed.',
       cross: { chapter: 'kara', node: 'k_meet', label: 'Show the gated meeting node' },
-      src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara']
+      src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara', 'powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy']
     },
     s_dead: {
       status: 'Guide-reported · branch closure',
@@ -446,11 +525,67 @@ const ATLAS = {
       src: ['powerpyxStormy']
     },
     s_window_open: {
-      status: 'Guide-reported · route enabled only',
-      summary: 'PowerPyx says the Stormy Night window can be opened if the route was found in Chapter 4, and that opening it can lead to escape choices.',
-      unknown: 'This slice stops at route availability. It does not claim that the escape succeeds or model the later QTEs.',
+      status: 'Guide-reported · route available, successful branch selected',
+      summary: 'PowerPyx, Gamer Guides and GameFAQs say the Stormy Night window can be used only if the window route was opened in A New Home. The selected successful branch then locks Alice’s room, goes out, passes the reported QTE and reaches the bus.',
+      unknown: 'The exact QTE requirements, difficulty and hidden triggers are not stated. The guides also do not state Todd’s later state after this escape; the link to Todd not killed is a dashed inference.',
       cross: { chapter: 'home', node: 'a_window_open', label: 'Show the earlier window opening' },
-      src: ['powerpyxStormy', 'powerpyxHome']
+      src: ['powerpyxStormy', 'powerpyxHome', 'gamerGuidesStormy', 'gamefaqsStormy']
+    },
+    s_reach_alice: {
+      status: 'Guide-reported · non-gun route step',
+      summary: 'PowerPyx and Gamer Guides place the two non-gun routes after Kara goes upstairs and reaches Alice before Todd. This event starts both the corridor and locked-room branches.',
+      unknown: 'Exact movement timing and the full set of upstairs branch alternatives are outside this slice.',
+      src: ['powerpyxStormy', 'gamerGuidesStormy']
+    },
+    s_run_away: {
+      status: 'Guide-reported · non-gun route step',
+      summary: 'PowerPyx and Gamer Guides report a Run Away option that takes Alice out of her room. This is separate from the Fail to Hide outcome.',
+      unknown: 'Exact inputs and the timing window are not modelled.',
+      src: ['powerpyxStormy', 'gamerGuidesStormy']
+    },
+    s_hide_corridor: {
+      status: 'Guide-reported · non-gun route step',
+      summary: 'PowerPyx and Gamer Guides describe hiding in the corridor or a nearby room until Todd passes. This successful hiding branch is separate from Fail to Hide and the Defend Alice branch.',
+      unknown: 'The exact hiding spots, button holds and timing checks are not modelled.',
+      src: ['powerpyxStormy', 'gamerGuidesStormy']
+    },
+    s_todd_passes: {
+      status: 'Guide-reported · non-gun route event',
+      summary: 'PowerPyx says Todd walks past the hiding place; Gamer Guides says to wait until he walks by and then head for the stairs.',
+      unknown: 'How long Todd searches and whether other hidden checks apply is not stated by the reviewed guides.',
+      src: ['powerpyxStormy', 'gamerGuidesStormy']
+    },
+    s_front_backyard_escape: {
+      status: 'Guide-reported · successful non-gun exit',
+      summary: 'After Todd passes, PowerPyx and Gamer Guides report the front-door/backyard route. GameFAQs also reports the front-door alternative when the window route was not opened. Only this successful exit is drawn; failed QTEs are omitted.',
+      unknown: 'The guides do not state Todd’s later state, and the exact front-door/backyard QTE steps are not modelled. The dashed link to Todd not killed is an inference.',
+      cross: { chapter: 'stormy', node: 's_alive', label: 'Show the inferred Todd state' },
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy']
+    },
+    s_lock_room: {
+      status: 'Guide-reported · window-route step',
+      summary: 'All three guides report locking Alice’s room after reaching her, before using the window route. The lock is part of the window branch and does not gate the corridor route.',
+      unknown: 'The exact 10-second window and hidden checks are not modelled.',
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy']
+    },
+    s_window_go_out: {
+      status: 'Guide-reported · window-route step',
+      summary: 'PowerPyx reports opening the window and choosing Go out. Gamer Guides and GameFAQs describe placing Alice outside and following her. The route requires the window opened in A New Home.',
+      unknown: 'The guides do not state every prompt or hidden trigger involved before the climb.',
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy']
+    },
+    s_window_qte: {
+      status: 'Guide-reported · reported success condition',
+      summary: 'PowerPyx reports a QTE while Todd tries to stop Kara climbing out; passing it leads to the successful window escape. Gamer Guides and GameFAQs describe the same successful climb.',
+      unknown: 'Exact prompt sequence, difficulty and hidden triggers are unresolved. The failing branch is deliberately omitted from this batch.',
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy']
+    },
+    s_window_reach_bus: {
+      status: 'Guide-reported · successful non-gun escape',
+      summary: 'PowerPyx, Gamer Guides and GameFAQs describe taking Alice down after the window QTE and reaching the bus. This ends the selected successful window route.',
+      unknown: 'The guides do not state Todd’s later state, and the exact descent animations/inputs are not modelled. The dashed link to Todd not killed is an inference.',
+      cross: { chapter: 'stormy', node: 's_alive', label: 'Show the inferred Todd state' },
+      src: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy']
     },
     k_terminal: {
       status: 'Guide-reported · access gate',

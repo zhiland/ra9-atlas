@@ -455,7 +455,7 @@ function validateAtlas(ATLAS) {
     return errors;
   });
 
-  check('only Kara shooting Todd carries the gun; the window stays a route, not an escape', () => {
+  check('only Kara shooting Todd carries the gun; window availability gates a distinct successful route', () => {
     const errors = [];
     const gunIn = edges.filter(e => e.to === 's_gun_carried');
     if (gunIn.length !== 1 || gunIn[0].from !== 's_kara_shoots_todd') {
@@ -477,13 +477,132 @@ function validateAtlas(ATLAS) {
     if (!edges.some(e => e.from === 'a_window_open' && e.to === 's_window_open' && e.kind === 'prerequisite')) {
       errors.push('the A New Home opened window should stay a prerequisite into s_window_open');
     }
-    if (edges.some(e => e.from === 's_window_open')) {
-      errors.push('s_window_open must not claim a successful escape or downstream outcome in this slice');
+    const windowOut = edges.filter(e => e.from === 's_window_open');
+    if (windowOut.length !== 1 || windowOut[0].to !== 's_window_go_out' || windowOut[0].kind !== 'prerequisite') {
+      errors.push('s_window_open should have exactly one prerequisite edge into the window exit, not a generic escape');
+    }
+    if (edges.some(e => e.from === 's_window_open' && ['k_terminal', 'k_meet'].includes(e.to))) {
+      errors.push('s_window_open must not connect directly to the terminal or meeting');
     }
     const window = uncertainties.find(u => u.id === 'u_window_route_outcome');
     if (!window) errors.push('u_window_route_outcome is missing');
     else if (!window.nodes || !window.nodes.includes('s_window_open')) {
       errors.push('u_window_route_outcome must reference s_window_open');
+    }
+    return errors;
+  });
+
+  check('two successful non-gun escape routes stay distinct and link to Todd only by inference', () => {
+    const errors = [];
+    const corridorNodes = ['s_reach_alice', 's_run_away', 's_hide_corridor', 's_todd_passes', 's_front_backyard_escape'];
+    const windowNodes = ['s_lock_room', 's_window_go_out', 's_window_qte', 's_window_reach_bus'];
+    const corridorChain = [
+      ['e_stormy_reach_run_away', 's_reach_alice', 's_run_away'],
+      ['e_stormy_run_hide', 's_run_away', 's_hide_corridor'],
+      ['e_stormy_hide_todd_passes', 's_hide_corridor', 's_todd_passes'],
+      ['e_stormy_todd_passes_front_backyard', 's_todd_passes', 's_front_backyard_escape']
+    ];
+    const windowChain = [
+      ['e_stormy_reach_lock_room', 's_reach_alice', 's_lock_room'],
+      ['e_stormy_window_go_out_access', 's_window_open', 's_window_go_out'],
+      ['e_stormy_lock_go_out', 's_lock_room', 's_window_go_out'],
+      ['e_stormy_go_out_qte', 's_window_go_out', 's_window_qte'],
+      ['e_stormy_qte_bus', 's_window_qte', 's_window_reach_bus']
+    ];
+    for (const id of corridorNodes.concat(windowNodes)) if (!byId.has(id)) errors.push(`route node "${id}" is missing`);
+    for (const [id, from, to] of corridorChain.concat(windowChain)) {
+      const edge = edgeById.get(id);
+      if (!edge) errors.push(`route edge "${id}" is missing`);
+      else {
+        if (edge.from !== from || edge.to !== to) errors.push(`route edge "${id}" should connect ${from}->${to}`);
+        if (!edge.src || !edge.src.length) errors.push(`route edge "${id}" has no connector-specific sources`);
+      }
+    }
+    const corridorKinds = corridorChain.map(([id]) => edgeById.get(id) && edgeById.get(id).kind);
+    if (corridorKinds.some(kind => kind !== 'traced')) errors.push('corridor route steps should stay directly guide-stated traced links');
+    const windowAccess = edgeById.get('e_stormy_window_go_out_access');
+    if (!windowAccess || windowAccess.kind !== 'prerequisite' || !/prerequisite/i.test(windowAccess.label || '')) {
+      errors.push('the A New Home window availability must stay a labelled prerequisite into the window exit');
+    }
+    const qteEdge = edgeById.get('e_stormy_go_out_qte');
+    if (!qteEdge || qteEdge.kind !== 'conditional' || !/QTE/.test(`${qteEdge.label || ''} ${qteEdge.note || ''}`)) {
+      errors.push('the window QTE success step must stay a sourced conditional edge');
+    }
+    const shared = corridorNodes.filter(id => windowNodes.includes(id));
+    if (shared.length) errors.push(`corridor and window routes must not share step nodes: ${shared.join(',')}`);
+    for (const [endpoint, edgeId] of [
+      ['s_front_backyard_escape', 'e_stormy_front_backyard_alive'],
+      ['s_window_reach_bus', 'e_stormy_window_bus_alive']
+    ]) {
+      const out = edges.filter(e => e.from === endpoint);
+      if (out.length !== 1) errors.push(`${endpoint} must have exactly one outgoing inference edge, found ${out.length}`);
+      const inference = edgeById.get(edgeId);
+      if (!inference) errors.push(`${edgeId} is missing`);
+      else {
+        if (inference.from !== endpoint || inference.to !== 's_alive' || inference.kind !== 'hypothesis') {
+          errors.push(`${edgeId} must be a hypothesis from ${endpoint} to s_alive`);
+        }
+        if (!/UNRESOLVED/.test(inference.label || '') || !/inference/i.test(inference.label || '')) {
+          errors.push(`${edgeId} label must say UNRESOLVED inference`);
+        }
+        if (!/Todd/i.test(inference.note || '') || !/not state|does not state|unstated/i.test(inference.note || '')) {
+          errors.push(`${edgeId} note must explain that the source does not state Todd’s later state`);
+        }
+        if (!inference.src || !inference.src.length) errors.push(`${edgeId} has no source refs`);
+      }
+      if (edges.some(e => e.from === endpoint && ['k_terminal', 'k_meet'].includes(e.to))) {
+        errors.push(`${endpoint} must not connect directly to the terminal or meeting`);
+      }
+    }
+    const routeEdgeIds = corridorChain.concat(windowChain).map(([id]) => id);
+    for (const condition of conditions) {
+      if (condition.id === 'cond_corridor_escape' || condition.id === 'cond_window_escape') {
+        errors.push(`${condition.id} must not attach whole-route requirements to each transition`);
+      }
+      if (condition.appliesTo && condition.appliesTo.some(id => routeEdgeIds.includes(id)) &&
+          condition.appliesTo.some(id => !routeEdgeIds.includes(id))) {
+        errors.push(`condition ${condition.id} must not mix route-transition edges with unrelated edges`);
+      }
+    }
+    const qteCondition = conditions.find(c => c.id === 'cond_window_qte_success');
+    if (!qteCondition || qteCondition.operator !== 'SINGLE' ||
+        JSON.stringify(qteCondition.appliesTo) !== JSON.stringify(['e_stormy_go_out_qte']) ||
+        !/QTE/i.test(`${qteCondition.summary} ${qteCondition.requirements && qteCondition.requirements.join(' ')}`)) {
+      errors.push('the window QTE success condition must apply only to its own transition');
+    }
+    const unknown = uncertainties.find(u => u.id === 'u_stormy_escape_todd_state');
+    if (!unknown) errors.push('u_stormy_escape_todd_state is missing');
+    else {
+      for (const id of ['s_alive', 's_front_backyard_escape', 's_window_reach_bus']) {
+        if (!unknown.nodes || !unknown.nodes.includes(id)) errors.push(`u_stormy_escape_todd_state must reference ${id}`);
+      }
+      for (const id of ['e_stormy_front_backyard_alive', 'e_stormy_window_bus_alive']) {
+        if (!unknown.edges || !unknown.edges.includes(id)) errors.push(`u_stormy_escape_todd_state must reference ${id}`);
+      }
+      if (!/not state|does not state|unstated/i.test(unknown.explanation || '') || !/inference/i.test(unknown.explanation || '')) {
+        errors.push('u_stormy_escape_todd_state must explain that Todd’s state is unstated and the links are inferences');
+      }
+    }
+    return errors;
+  });
+
+  check('fatal or escape states cannot bypass the separate terminal and meeting gates', () => {
+    const errors = [];
+    const terminalIn = edges.filter(e => e.to === 'k_terminal');
+    const terminalSources = terminalIn.map(e => e.from).sort().join(',');
+    if (terminalSources !== 'k_checkpoint,k_detour,k_late_bus') {
+      errors.push(`k_terminal should receive only the three checkpoint routes, found "${terminalSources}"`);
+    }
+    for (const e of edges) {
+      if (!['k_terminal', 'k_meet'].includes(e.to)) continue;
+      const from = byId.get(e.from);
+      if (from && from.chapter === 'stormy' && e.from !== 's_alive') {
+        errors.push(`Stormy Night state ${e.from} must not connect directly to ${e.to}; only s_alive may feed the meeting gate`);
+      }
+    }
+    const dead = reachableFrom('s_dead');
+    for (const kara of ['k_terminal', 'k_meet', 'k_dialogue', 'k_away', 'k_goodbye', 'k_check']) {
+      if (dead.has(kara)) errors.push(`s_dead must not reach ${kara} through drawn edges`);
     }
     return errors;
   });
@@ -558,8 +677,8 @@ function validateAtlas(ATLAS) {
     for (const [key, value] of Object.entries(actual)) {
       if (counts[key] !== value) errors.push(`meta.counts.${key} is ${counts[key]} but the data has ${value}`);
     }
-    if (actual.nodes !== 29) errors.push(`expected 29 boxes, found ${actual.nodes}`);
-    if (actual.edges !== 31) errors.push(`expected 31 connectors, found ${actual.edges}`);
+    if (actual.nodes !== 38) errors.push(`expected 38 boxes, found ${actual.nodes}`);
+    if (actual.edges !== 42) errors.push(`expected 42 connectors, found ${actual.edges}`);
     return errors;
   });
 

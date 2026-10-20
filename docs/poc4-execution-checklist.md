@@ -28,7 +28,7 @@ Status: implementation complete; focused review and checks completed — updated
 
 ## Verification record
 
-Implementation completed 2026-10-18; updated 2026-10-19 with source-license audit, arrow connectors, neutral-gray default, and current test results.
+Historical record: implementation completed 2026-10-18; updated 2026-10-19 with source-license audit, arrow connectors, neutral-gray default, and the test results at that time. Counts below describe the initial slice; the current 38-node/42-edge inventory and test totals are in [PoC4 coverage](notes/poc4-coverage.md) and [STATUS](../STATUS.md).
 
 **Passed**
 
