@@ -369,6 +369,8 @@ async function runVariant(browser, variant) {
       await page.locator('#details').waitFor({ state: 'hidden' });
     }
 
+    await page.locator('[data-chapter="stormy"]').click();
+    await waitFrames(page);
     await page.locator('[data-node="s_window_open"]').click();
     await page.locator('#details').waitFor({ state: 'visible' });
     const windowDetails = await textOf(page, '#details');

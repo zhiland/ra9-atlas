@@ -407,7 +407,7 @@ async function runRealDataset(browser) {
 
   await ok('far, fit, intermediate and close zoom keep the same nodes, edges and labels', async function () {
     const fit = await snapshot(page);
-    await clickZoom(page, '#plus', 4);
+    await clickZoom(page, '#plus', 5);
     const close = await snapshot(page);
 
     await resetAtlas(page);

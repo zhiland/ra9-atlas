@@ -22,10 +22,27 @@ causal relations were added in this renderer change.
 - Spoiler consent, evidence/details, search, deep links, chapter navigation,
   X/Escape close behavior, and the gray default theme remain available.
 
+## Static layout follow-up
+
+Checked: 2026-10-20. This is geometry-only spacing, not a cosmetic restyle or a
+change to graph content. A New Home keeps its compact two-column flow; the key
+and talk boxes move 6px apart in opposite directions to fit their caption
+between them. The canvas grows to 3050×1080, Stormy Night uses five horizontal lanes at x = 620,
+880, 1140, 1400 and 1660 with 190px boxes and a 260px pitch, and Battle for
+Detroit — Kara separates checkpoint and meeting lanes at x = 1980, 2230, 2480
+and 2740. Stormy Night is now 1320×860; Kara is 1060×900. The Home/Stormy gap
+stays 25px and the Stormy/Kara gap grows to 40px.
+
+Connector captions in Stormy Night and the Kara checkpoint area were moved onto
+their real path runs and now clear node boxes and one another. The A New Home
+`TALK WITH ALICE → ALICE GIVES KARA A KEY` caption fits in the opened gap and
+remains within 80 world pixels of its connector.
+
 ## Verification
 
 `npm test` passes the validators, 45 contract checks, 41 unit checks, 4 stable
-map checks, 10 stable-zoom checks, and 52 browser checks. The stable-zoom suite
+map checks, 10 stable-zoom checks, 8 static-layout checks, and 52 browser
+checks. The stable-zoom suite
 compares all 38 sample node IDs, 42 edge paths, original labels, connector
 labels, and world-space geometry at fit, far, intermediate, and close scales. It
 also verifies the full 1,000-node / 1,650-edge synthetic inventory at several
@@ -53,10 +70,9 @@ local QA evidence and are not committed.
 
 The game graph remains a selected, guide-backed sample: 3 chapter regions, 38
 events, and 42 connectors. Coverage is partial and no transition is verified
-in-game. Synthetic benchmark labels and topology are not game content. Fixed
-connector captions overlap in some dense central Stormy Night/checkpoint areas;
-that layout limitation remains. Physical phones, Safari/iOS, and real touch
-input were not tested.
+in-game. Synthetic benchmark labels and topology are not game content. The
+The A New Home relationship-threshold caption now clears its adjacent boxes.
+Physical phones, Safari/iOS, and real touch input were not tested.
 
 The previous LOD screenshots and benchmark discussion are historical. This
 stable-map behavior is now the active PoC4 implementation.
