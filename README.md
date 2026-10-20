@@ -2,12 +2,13 @@
 
 An unofficial, evidence-labeled map prototype for choices and consequences in **Detroit: Become Human**.
 
-**Status:** PoC4 is implemented in `main`, with neutral-gray default styling, orthogonal arrow connectors and a chapter-level whole-story overview that reveals event boxes and labels as you zoom. Validators, 38 unit checks, and 48 Chromium checks pass. This is a guide-based prototype, not a complete or in-game-verified map.
+**Status:** PoC4 is implemented in `main`, with neutral-gray default styling, orthogonal arrow connectors and a chapter-level whole-story overview that reveals event boxes and labels as you zoom. Validators, 29 contract-fixture checks, 40 unit checks, 13 map-first checks, and 48 Chromium checks pass. This is a guide-based prototype, not a complete or in-game-verified map.
 
 - [Current status](docs/STATUS.md)
 - [Source register](docs/SOURCES.md) · [source-license audit](docs/notes/source-license-audit.md)
 - [Intent and scope](docs/intent.md)
 - [Specification](docs/spec.md)
+- [PoC4 data/provenance contract](docs/data-contract.md)
 - [Roadmap and implementation issues](docs/ROADMAP.md)
 - [License and content boundaries](docs/license-boundary.md)
 - [Preparation plan](docs/PREPARATION-PLAN.md)

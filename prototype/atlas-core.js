@@ -9,6 +9,7 @@
      chapter   — 'all' or a chapter id; camera preset only, never hides the map.
      selected  — node id with details open, or null.
      edge      — index into data.edges for a focused cross-chapter connector, or null.
+                 Links may name the edge by array index (?edge=N) or stable id.
      trail     — most-recent-first selection history (ids), max 8, deduped.
      query     — current search text.
 
@@ -60,6 +61,19 @@ var ATLAS_CORE = (function () {
   function validEdgeIndex(data, index) {
     var i = Number(index);
     return isFinite(i) && i % 1 === 0 && i >= 0 && i < data.edges.length ? i : null;
+  }
+
+  /* Links accept either the legacy array index or the stable edge id. State
+     keeps the index so all existing rendering, order and ?edge=N output stay
+     unchanged. */
+  function resolveEdgeIndex(data, value) {
+    var i = validEdgeIndex(data, value);
+    if (i != null) return i;
+    var id = String(value);
+    for (var j = 0; j < data.edges.length; j++) {
+      if (data.edges[j].id === id) return j;
+    }
+    return null;
   }
 
   var api = {
@@ -123,7 +137,7 @@ var ATLAS_CORE = (function () {
        the details panel can show the edge's label, note and evidence sources.
        No aggregate edge is created: callers pass the real edge index. */
     focusEdge: function (state, index, data) {
-      var i = validEdgeIndex(data, index);
+      var i = resolveEdgeIndex(data, index);
       if (i == null) throw new Error('unknown edge: ' + index);
       var edge = data.edges[i];
       var s = api.selectNode(state, edge.to, data);
@@ -162,7 +176,8 @@ var ATLAS_CORE = (function () {
       return h;
     },
 
-    /* Parses '#chapter[/node][?edge=N]'; unknown parts degrade to safe defaults. */
+    /* Parses '#chapter[/node][?edge=N|stable-id]'; wrote hashes keep ?edge=N
+       for compatibility. Unknown parts degrade to safe defaults. */
     applyHash: function (state, hash, data) {
       var s = clone(state);
       var raw = String(hash == null ? '' : hash).replace(/^#/, '');
@@ -171,7 +186,7 @@ var ATLAS_CORE = (function () {
       var edgeIndex = null;
       var edgeAt = raw.indexOf('?edge=');
       if (edgeAt !== -1) {
-        edgeIndex = validEdgeIndex(data, raw.slice(edgeAt + 6));
+        edgeIndex = resolveEdgeIndex(data, raw.slice(edgeAt + 6));
         raw = raw.slice(0, edgeAt);
       }
       var parts = raw.split('/');

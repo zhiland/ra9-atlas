@@ -2,6 +2,7 @@
    Standalone classic script: no modules, no imports, no fetch. Load before
    atlas-core.js / atlas-app.js so prototype/poc4-*.html open directly over file://.
    Validate with:  node prototype/validate-atlas-data.js
+   Contract: docs/data-contract.md (PoC4 sample only; edge order is preserved).
 
    Provenance and evidence limits (see docs/notes/poc4-coverage.md):
    - A New Home structure: selected local sequence transcribed from the Steam
@@ -31,6 +32,7 @@ const ATLAS = {
   meta: {
     project: 'ra9-atlas',
     poc: 'PoC4',
+    contractVersion: '1.0',
     title: 'ra9-atlas',
     subtitle: 'Selected multi-chapter slice · A New Home → Stormy Night → Battle for Detroit (Kara)',
     version: 'unknown',
@@ -67,21 +69,42 @@ const ATLAS = {
       name: 'A New Home',
       code: 'D2 · selected Alice sequence',
       frame: { x: 30, y: 110, w: 520, h: 650 },
-      desc: 'Selected local sequence transcribed from the Steam chapter screenshot (10 boxes, 9 links). Chores and unlinked side labels are omitted; the box-to-Todd relationship stays unresolved.'
+      desc: 'Selected local sequence transcribed from the Steam chapter screenshot (10 boxes, 9 links). Chores and unlinked side labels are omitted; the box-to-Todd relationship stays unresolved.',
+      coverage: {
+        status: 'partial',
+        scope: 'Selected local Alice sequence transcribed from the Steam chapter screenshot.',
+        included: '10 events from WELCOME HOME through OPEN ALICE’S BOX, with 9 internal links.',
+        omitted: 'Remaining chores and unlinked side labels whose arrows the screenshot does not resolve.',
+        sources: ['steam', 'gamefaqs', 'powerpyxHome', 'transcript', 'neoseekerKara']
+      }
     },
     {
       id: 'stormy',
       name: 'Stormy Night',
       code: 'D2 · selected carried state only',
       frame: { x: 580, y: 110, w: 520, h: 300 },
-      desc: 'Selected state only. Internal chapter topology is not transcribed and no in-chapter arrow is claimed; guides differ on how Todd can be spared, avoided, or killed.'
+      desc: 'Selected state only. Internal chapter topology is not transcribed and no in-chapter arrow is claimed; guides differ on how Todd can be spared, avoided, or killed.',
+      coverage: {
+        status: 'partial',
+        scope: 'Selected carried state only; no internal chapter topology.',
+        included: 'Two states: Todd not killed and Todd killed.',
+        omitted: 'All internal Stormy Night branches and how either state is reached.',
+        sources: ['powerpyxKara', 'fandomBattle', 'neoseekerKara']
+      }
     },
     {
       id: 'kara',
       name: 'Battle for Detroit — Kara',
       code: 'D2 · selected Todd meeting branch',
       frame: { x: 1130, y: 110, w: 900, h: 700 },
-      desc: 'Guide-reported Todd meeting branch and its reported access gates. Checkpoint, ticket, border and river branches are omitted; see docs/notes/poc4-coverage.md.'
+      desc: 'Guide-reported Todd meeting branch and its reported access gates. Checkpoint, ticket, border and river branches are omitted; see docs/notes/poc4-coverage.md.',
+      coverage: {
+        status: 'partial',
+        scope: 'Selected Todd meeting branch in Battle for Detroit — Kara.',
+        included: 'Bus-terminal arrival, Todd meeting, dialogue result, and two reported access gates.',
+        omitted: 'Checkpoint, ticket, border and river branches, and downstream responses.',
+        sources: ['powerpyxKara', 'fandomBattle', 'neoseekerKara', 'gamerGuides']
+      }
     }
   ],
 
@@ -123,41 +146,102 @@ const ATLAS = {
       note: 'User-provided sequence; the same wording appears in the inspected PowerPyx, Fandom and Neoseeker pages. No gameplay verification.' }
   ],
 
-  /* from/to reference node ids. fromOption selects a choice row (0 = first).
+  /* id is the stable link id; array index and order stay unchanged for ?edge=N.
+     from/to reference node ids. fromOption selects a choice row (0 = first).
      via = explicit orthogonal mid-x when the automatic channel would cross nodes.
      labelAt = explicit label position when the path midpoint is a poor spot. */
   edges: [
     /* A New Home local sequence — transcribed from the Steam screenshot */
-    { from: 'a_welcome', to: 'a_todd', kind: 'traced' },
-    { from: 'a_todd', to: 'a_clean1', kind: 'traced' },
-    { from: 'a_clean1', to: 'a_ask', kind: 'traced' },
-    { from: 'a_ask', to: 'a_go', kind: 'traced' },
-    { from: 'a_go', to: 'a_clean2', kind: 'traced' },
-    { from: 'a_clean2', to: 'a_room', kind: 'traced' },
-    { from: 'a_room', to: 'a_talk', kind: 'traced' },
-    { from: 'a_talk', to: 'a_key', kind: 'conditional', label: 'reported condition: relationship threshold (single source)', labelAt: { x: 455, y: 405 },
+    { id: 'e_home_welcome_todd', from: 'a_welcome', to: 'a_todd', kind: 'traced', src: ['steam'] },
+    { id: 'e_home_todd_clean1', from: 'a_todd', to: 'a_clean1', kind: 'traced', src: ['steam'] },
+    { id: 'e_home_clean1_ask', from: 'a_clean1', to: 'a_ask', kind: 'traced', src: ['steam'] },
+    { id: 'e_home_ask_go', from: 'a_ask', to: 'a_go', kind: 'traced', src: ['steam'] },
+    { id: 'e_home_go_clean2', from: 'a_go', to: 'a_clean2', kind: 'traced', src: ['steam'] },
+    { id: 'e_home_clean2_room', from: 'a_clean2', to: 'a_room', kind: 'traced', src: ['steam'] },
+    { id: 'e_home_room_talk', from: 'a_room', to: 'a_talk', kind: 'traced', src: ['steam'] },
+    { id: 'e_home_talk_key', from: 'a_talk', to: 'a_key', kind: 'conditional', label: 'reported condition: relationship threshold (single source)', labelAt: { x: 455, y: 405 },
+      src: ['steam', 'gamefaqs', 'powerpyxHome'],
       note: 'The screenshot shows the link itself. GameFAQs alone reports the key is given at Neutral or higher; PowerPyx describes the conversation without a threshold.' },
-    { from: 'a_key', to: 'a_box', kind: 'traced' },
+    { id: 'e_home_key_box', from: 'a_key', to: 'a_box', kind: 'traced', src: ['steam'] },
 
     /* Cross-chapter candidate hypothesis — stays dashed, never causal */
-    { from: 'a_box', to: 'k_dialogue', kind: 'hypothesis', via: 570, label: 'UNRESOLVED hypothesis · reported to affect Todd dialogue', labelAt: { x: 1000, y: 495 },
+    { id: 'e_home_box_kara_dialogue_hypothesis', from: 'a_box', to: 'k_dialogue', kind: 'hypothesis', via: 570, label: 'UNRESOLVED hypothesis · reported to affect Todd dialogue', labelAt: { x: 1000, y: 495 },
       src: ['neoseekerKara'],
       note: 'Neoseeker ties the later “[Your Story]” persuasion option to “unlocked Alice’s box during A New Home”. Whether the game checks opening the box, seeing a photo, or another action is unresolved. Drawn as a hypothesis only: it does not guarantee the meeting or its outcome.' },
 
     /* Cross-chapter prerequisite gate — Todd survival out of Stormy Night */
-    { from: 's_alive', to: 'k_meet', kind: 'prerequisite', via: 1110, label: 'prerequisite: Todd not killed in Stormy Night', labelAt: { x: 1110, y: 320 },
+    { id: 'e_stormy_alive_meet', from: 's_alive', to: 'k_meet', kind: 'prerequisite', via: 1110, label: 'prerequisite: Todd not killed in Stormy Night', labelAt: { x: 1110, y: 320 },
       src: ['powerpyxKara'],
       note: 'PowerPyx: Meet Todd is “only possible, if he wasn’t killed in Stormy Night”. The negative state closes the branch; no arrow inside Stormy Night is claimed.' },
 
     /* Battle for Detroit — Kara meeting branch */
-    { from: 'k_terminal', to: 'k_meet', kind: 'prerequisite', label: 'prerequisite: at the bus terminal', labelAt: { x: 1380, y: 312 },
+    { id: 'e_kara_terminal_meet', from: 'k_terminal', to: 'k_meet', kind: 'prerequisite', label: 'prerequisite: at the bus terminal', labelAt: { x: 1380, y: 312 },
       src: ['powerpyxKara'],
       note: 'PowerPyx lists Meet Todd at the Bus Terminal and says all checkpoint paths lead there; the meeting was not checked in game.' },
-    { from: 'k_meet', to: 'k_dialogue', kind: 'traced' },
-    { from: 'k_dialogue', fromOption: 0, to: 'k_away', kind: 'traced', label: 'Persuade Todd' },
-    { from: 'k_dialogue', fromOption: 1, to: 'k_check', kind: 'traced', label: 'Fail to persuade' },
-    { from: 'k_away', to: 'k_goodbye', kind: 'traced' }
+    { id: 'e_kara_meet_dialogue', from: 'k_meet', to: 'k_dialogue', kind: 'traced', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'] },
+    { id: 'e_kara_dialogue_away', from: 'k_dialogue', fromOption: 0, to: 'k_away', kind: 'traced', label: 'Persuade Todd', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'] },
+    { id: 'e_kara_dialogue_check', from: 'k_dialogue', fromOption: 1, to: 'k_check', kind: 'traced', label: 'Fail to persuade', src: ['powerpyxKara', 'fandomBattle', 'gamerGuides'] },
+    { id: 'e_kara_away_goodbye', from: 'k_away', to: 'k_goodbye', kind: 'traced', src: ['powerpyxKara', 'fandomBattle', 'neoseekerKara'] }
   ],
+
+  /* Conditions are plain-English groups over existing edges. They add no edge
+     or claim. SINGLE means one reported requirement with no AND/OR grouping;
+     AND/OR are used only where the reviewed sample supports the grouping. */
+  conditions: [
+    {
+      id: 'cond_key_relationship',
+      appliesTo: ['e_home_talk_key'],
+      operator: 'SINGLE',
+      summary: 'One reported condition on the key step: GameFAQs says Alice gives Kara the key at a Neutral-or-higher relationship. The screenshot and PowerPyx do not state that threshold.',
+      requirements: [
+        'Reported relationship threshold: Neutral or higher (GameFAQs only).'
+      ],
+      sources: ['gamefaqs', 'steam', 'powerpyxHome']
+    },
+    {
+      id: 'cond_meet_todd_access',
+      appliesTo: ['e_stormy_alive_meet', 'e_kara_terminal_meet'],
+      operator: 'AND',
+      summary: 'Meet Todd requires both reported requirements: Todd was not killed in Stormy Night AND Kara and Alice reached the bus terminal. They remain two separate prerequisite edges; this record only groups them in plain English.',
+      requirements: [
+        'Todd was not killed in Stormy Night.',
+        'Kara and Alice reached the bus terminal.'
+      ],
+      sources: ['powerpyxKara', 'fandomBattle', 'neoseekerKara']
+    }
+  ],
+
+  /* Unknowns are incomplete evidence, not source-vs-source conflicts. The
+     current sample records no conflict; a conflict would use the same shape
+     under conflicts with status "conflict" and at least one source. */
+  uncertainties: [
+    {
+      id: 'u_box_trigger',
+      status: 'unknown',
+      explanation: 'Whether opening the box, seeing a photo, or another related action carries the later Todd dialogue state cannot be distinguished from the reviewed sources.',
+      nodes: ['a_box', 'k_dialogue'],
+      edges: ['e_home_box_kara_dialogue_hypothesis'],
+      sources: ['neoseekerKara', 'transcript']
+    },
+    {
+      id: 'u_key_threshold',
+      status: 'unknown',
+      explanation: 'The exact relationship requirement is a single-source claim and has not been checked in game; PowerPyx describes the conversation without a threshold.',
+      nodes: ['a_key'],
+      edges: ['e_home_talk_key'],
+      sources: ['gamefaqs', 'powerpyxHome', 'steam']
+    },
+    {
+      id: 'u_stormy_internal',
+      status: 'unknown',
+      explanation: 'The internal Stormy Night branches that produce the surviving or killed state are outside the reviewed evidence and are not drawn.',
+      nodes: ['s_alive', 's_dead'],
+      edges: ['e_stormy_alive_meet'],
+      sources: ['powerpyxKara', 'fandomBattle']
+    }
+  ],
+
+  conflicts: [],
 
   /* Detail panel entries. src lists ref keys; unknown carries the unresolved text. */
   detail: {

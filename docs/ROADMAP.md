@@ -4,7 +4,7 @@ The requested end state is a complete, source-audited, interactive guide to the 
 
 ## Work sequence
 
-1. **Define the data contract and provenance** — [#2](https://github.com/zhiland/ra9-atlas/issues/2). Agree graph granularity, state vocabulary, evidence fields, and migration from PoC data.
+1. **Define the data contract and provenance** — [#2](https://github.com/zhiland/ra9-atlas/issues/2). Agree graph granularity, state vocabulary, evidence fields, and migration from PoC data. The bounded [PoC4 sample contract](data-contract.md) now documents the existing 18 nodes and 16 edges; the full-product contract remains open.
 2. **Set the evidence and verification method** — [#4](https://github.com/zhiland/ra9-atlas/issues/4). Define source extraction and cross-checks as the default evidence method, record conflicts and claim status, and use targeted in-game checks when they can resolve specific uncertainties. Keep automated structural validation separate from evidence checks.
 3. **Build full-game chapter and route coverage** — [#1](https://github.com/zhiland/ra9-atlas/issues/1). Reconcile chapter/character-route inventories and account for every branch and gap.
 4. **Model persistent state and delayed consequences** — [#3](https://github.com/zhiland/ra9-atlas/issues/3). Connect choices to later prerequisites and outcomes without implying certainty beyond the evidence.

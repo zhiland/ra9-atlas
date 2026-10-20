@@ -297,4 +297,5 @@ Separate follow-ups surfaced by the spike, outside this bounded task:
   gesture, iOS Safari, latency, or GPU measurement on a phone.
 - At the time of this pre-LOD run, the existing `npm test` suite (validators,
   25 unit checks, 44 PoC4 browser checks including the new 390×844 regression)
-  passed after the fix. The current suite has 38 unit and 48 browser checks.
+  passed after the fix. The current suite also has 29 contract-fixture checks,
+  40 unit checks and 48 browser checks.

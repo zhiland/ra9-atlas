@@ -126,6 +126,19 @@ check('focusEdge rejects an unknown edge', function () {
   threw = false;
   try { C.focusEdge(s0, 'nope', ATLAS); } catch (e) { threw = /unknown edge/.test(e.message); }
   assert(threw, 'non-numeric edge was not rejected');
+  threw = false;
+  try { C.focusEdge(s0, 'e_missing', ATLAS); } catch (e) { threw = /unknown edge/.test(e.message); }
+  assert(threw, 'unknown stable edge id was not rejected');
+});
+
+check('focusEdge accepts a stable edge id as an alias for its index', function () {
+  const index = ATLAS.edges.findIndex(function (e) { return e.kind === 'hypothesis'; });
+  const id = ATLAS.edges[index].id;
+  assert(/^e_[a-z0-9_]+$/.test(id), 'stable edge id missing: ' + id);
+  const byIndex = C.focusEdge(C.createState(), index, ATLAS);
+  const byId = C.focusEdge(C.createState(), id, ATLAS);
+  eq(byId.edge, index);
+  assert(C.sameTarget(byId, byIndex), 'stable id did not resolve to the same focused edge');
 });
 
 check('selectNode clears a previous edge focus', function () {
@@ -212,6 +225,17 @@ check('edge focus survives a hash round-trip', function () {
   assert(C.sameTarget(round, direct), 'edge focus did not round-trip (' + hash + ')');
   eq(round.edge, index);
   eq(round.selected, 'k_dialogue');
+});
+
+check('applyHash accepts a stable edge id and keeps index hashes canonical', function () {
+  const index = ATLAS.edges.findIndex(function (e) { return e.kind === 'hypothesis'; });
+  const id = ATLAS.edges[index].id;
+  const byIndex = C.applyHash(C.createState(), '#kara/k_dialogue?edge=' + index, ATLAS);
+  const byId = C.applyHash(C.createState(), '#kara/k_dialogue?edge=' + id, ATLAS);
+  assert(C.sameTarget(byId, byIndex), 'stable edge id link did not resolve to the index target');
+  eq(byId.edge, index, 'stable edge id should resolve to its array index');
+  eq(C.hashFor(byId), '#kara/k_dialogue?edge=' + index,
+    'wrote hashes should stay ?edge=N so existing links remain canonical');
 });
 
 check('applyHash degrades unknown parts to safe defaults', function () {

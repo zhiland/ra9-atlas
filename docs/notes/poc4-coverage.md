@@ -1,6 +1,6 @@
 # PoC4 — multi-chapter atlas coverage and source note
 
-Date: 2026-10-19. Scope: the static PoC4 prototype showing selected parts of
+Date: 2026-10-19; bounded data/provenance contract added 2026-10-20. Scope: the static PoC4 prototype showing selected parts of
 **A New Home**, **Stormy Night** and **Battle for Detroit — Kara** on one
 surface. The default [poc4-editorial.html](../../prototype/poc4-editorial.html)
 entry now uses the neutral gray PoC3 palette, with orthogonal connectors ending
@@ -55,6 +55,22 @@ verified in game.
 | Connectors (edges) | **16** | 12 traced + 1 reported condition + 2 prerequisite gates + 1 unresolved hypothesis |
 | Cross-chapter connectors | **2** | Both enter the Kara region: the survival gate and the box hypothesis |
 
+## Data/provenance contract
+
+The bounded contract is [data-contract.md](../data-contract.md). It keeps node
+claim/evidence status (`ocr`, `guide`, `user`, `unresolved`, `mixed`) separate
+from chapter coverage status (`not-added`, `partial`, `checked-against-chart`);
+all three chapters are `partial`. Each chapter now carries an explicit
+`coverage` record with scope, included sample, omissions and source references.
+
+The 16 existing edges keep their order and topology and gain stable `e_*` IDs.
+Array-index `?edge=N` links remain canonical; stable IDs are accepted as input
+aliases. Two plain-English condition groups normalise existing claims only:
+`cond_key_relationship` (`SINGLE`, the single-source relationship threshold) and
+`cond_meet_todd_access` (`AND`, the two separate Meet Todd requirements). Three
+`unknown` records cover the box trigger, the key threshold and the unshown Stormy
+Night internals. No source-vs-source conflict is recorded or invented.
+
 ## Included per chapter
 
 - **A New Home — selected local sequence (screenshot transcription).**
@@ -104,23 +120,32 @@ verified in game.
 - **How the Stormy Night survival state is reached** is outside the reviewed
   evidence; the state node says so.
 
-## Checks run (2026-10-18)
+## Checks run (2026-10-18; contract re-run 2026-10-20)
 
-- `node prototype/validate-atlas-data.js` — **all checks pass**: unique ids;
-  kinds/statuses/labels/sources; detail refs; edge endpoints; no self-loops/
-  duplicates; uncertainty styling with notes; exactly two cross-chapter links,
-  both into Kara; `Meet Todd` receiving exactly the two reported gates;
-  single unresolved hypothesis for the box; terminal negative state; confirmed
+- `node prototype/validate-atlas-data.js` — **all checks pass**: unique node,
+  chapter, edge, condition, uncertainty and conflict IDs; claim/coverage
+  vocabularies; chapter coverage records and source refs; node/edge/detail
+  source refs; edge endpoints; no self-loops/duplicates; uncertainty styling
+  with notes; plain-English condition groups (`SINGLE`, `AND`) over existing
+  edge IDs; complete `unknown` records; exactly two cross-chapter links, both
+  into Kara; `Meet Todd` receiving exactly the two reported gates; single
+  unresolved hypothesis for the box; terminal negative state; confirmed
   reachability of the positive outcome without the hypothesis; declared
   counts; canvas/frame containment; no node overlaps; orthogonal routes avoid
   unrelated nodes. Inventory: 3 chapters, 18 boxes, 16 connectors (12 traced +
-  1 reported condition + 2 prerequisite gates + 1 unresolved hypothesis).
+  1 reported condition + 2 prerequisite gates + 1 unresolved hypothesis);
+  2 conditions, 3 uncertainties, 0 conflicts.
 - `node --check` on every prototype script and validator — syntax OK.
-- `node tests/atlas-core.test.js` — **25/25 pass**: consent, chapter jump,
+- `node tests/atlas-data-contract.test.js` — **29/29 pass**: the real sample is
+  accepted; 23 deliberate fixtures reject duplicate IDs, dangling endpoints,
+  missing/unknown sources, invalid claim/coverage statuses, malformed
+  conditions, and incomplete uncertainty/conflict records.
+- `node tests/atlas-core.test.js` — **40/40 pass**: consent, chapter jump,
   selection, trail cap 8 + dedupe, both close paths reducing to one state,
-  reset, hash round-trip for every node, and the data invariants above.
-- `node tests/poc4-browser.test.js` — current run **42/42 pass** (14 checks × 3 variants)
-  in headless Chromium over `file://`: no page errors; consent gate; whole
+  reset, hash round-trip for every node, stable-edge-ID aliases, and the data
+  invariants above.
+- `node tests/poc4-browser.test.js` — current run **48/48 pass** (15 checks × 3 variants + 3 mobile checks)
+  in headless Chromium over localhost HTTP: no page errors; consent gate; whole
   surface with 3 frames/18 nodes/16 connectors; cross-chapter gate and
   hypothesis labels visible before any navigation; chapter jumps as camera
   presets that keep every region mounted; both `Meet Todd` gates; the box
@@ -145,10 +170,12 @@ normal permission-escalated rerun. No workaround was used.
 
 - Gameplay: no transition was checked in game (out of scope by design).
 - Real pointer/touch gesture pan/zoom/fling, keyboard-only traversal beyond
-  Escape, screen-reader testing, and responsive/mobile widths.
+  Escape, screen-reader testing, and physical-device behavior. The 390×844
+  result is Chromium viewport emulation only.
 - Any browser other than headless Chromium (the suite launches only that).
-- Independent review of the topology and attribution (next process step;
-  nothing is pushed before it).
+- A complete independent source audit of every topology and attribution claim.
+  The contract validator checks structure and source references, not source
+  accuracy or gameplay truth.
 
 ## Limits
 
