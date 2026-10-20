@@ -456,6 +456,80 @@ function validateAtlas(ATLAS) {
     return errors;
   });
 
+  check('A New Home first-floor events keep only source-supported local progressions', () => {
+    const errors = [];
+    const requiredSources = {
+      a_read_android_power: ['powerpyxHome'],
+      a_read_connecting_dots: ['powerpyxHome'],
+      a_wash_dishes: ['powerpyxHome', 'gamefaqs'],
+      a_take_laundry_backyard: ['powerpyxHome', 'gamefaqs'],
+      a_rewash_clothes: ['powerpyxHome', 'gamefaqs'],
+      a_find_red_ice: ['powerpyxHome', 'gamefaqs'],
+      a_enrage_todd: ['powerpyxHome', 'gamefaqs'],
+      a_watch_todd_tv: ['gamefaqs'],
+      a_block_todd_view: ['powerpyxHome', 'gamefaqs'],
+      a_activate_vacuum: ['powerpyxHome', 'gamefaqs'],
+      a_take_out_trash: ['powerpyxHome', 'gamefaqs']
+    };
+    const expected = [
+      ['e_home_rewash_red_ice', 'a_rewash_clothes', 'a_find_red_ice'],
+      ['e_home_red_ice_enrage_todd', 'a_find_red_ice', 'a_enrage_todd'],
+      ['e_home_watch_tv_block_view', 'a_watch_todd_tv', 'a_block_todd_view'],
+      ['e_home_backyard_rewash_clothes', 'a_take_laundry_backyard', 'a_rewash_clothes']
+    ];
+    for (const [id, refs] of Object.entries(requiredSources)) {
+      const node = byId.get(id);
+      if (!node || node.chapter !== 'home' || !['action', 'outcome'].includes(node.kind)) {
+        errors.push(`${id} must be an A New Home action or outcome`);
+        continue;
+      }
+      if (!Array.isArray(node.src) || refs.some(ref => !node.src.includes(ref))) {
+        errors.push(`${id} is missing a supporting source`);
+      }
+      if (!/first-floor event|laundry sequence|during laundry|reported reaction/i.test(node.sub || '')) {
+        errors.push(`${id} must identify its first-floor context`);
+      }
+      if (/\b(optional (activity|event|action|branch)|is mandatory|must be completed|are exclusive|mutually exclusive)\b/i.test(node.note || '')) {
+        errors.push(`${id} must not claim unsupported optionality, necessity or exclusivity`);
+      }
+      const detail = ATLAS.detail && ATLAS.detail[id];
+      if (detail && /\b(optional (activity|event|action|branch)|is mandatory|must be completed|are exclusive|mutually exclusive)\b/i.test(`${detail.status || ''} ${detail.summary || ''}`)) {
+        errors.push(`${id} detail must not claim unsupported optionality, necessity or exclusivity`);
+      }
+    }
+    const actual = edges.filter(e => Object.keys(requiredSources).includes(e.from) || Object.keys(requiredSources).includes(e.to));
+    if (actual.length !== expected.length) errors.push('first-floor events must have only four documented local progression edges');
+    for (const [id, from, to] of expected) {
+      const edge = edgeById.get(id);
+      if (!edge || edge.from !== from || edge.to !== to || edge.kind !== 'traced') {
+        errors.push(`${id} must preserve its source-stated local progression`);
+      }
+      if (edge && (!Array.isArray(edge.src) || edge.src.length === 0)) errors.push(`${id} has no source refs`);
+    }
+    if (edges.some(e => e.from === 'a_clean1' && Object.keys(requiredSources).includes(e.to))) {
+      errors.push('unrelated first-floor chores must not use unsupported CLEAN FIRST FLOOR spokes');
+    }
+    const uncertainty = uncertainties.find(u => u.id === 'u_home_first_floor_order');
+    if (!uncertainty || uncertainty.status !== 'unknown') errors.push('u_home_first_floor_order must remain explicit');
+    else {
+      const text = uncertainty.explanation || '';
+      if (!/different orders/i.test(text) || !/mandatory status/i.test(text)) {
+        errors.push('u_home_first_floor_order must scope unknown order and mandatory status');
+      }
+      for (const id of Object.keys(requiredSources)) {
+        if (!uncertainty.nodes || !uncertainty.nodes.includes(id)) errors.push(`u_home_first_floor_order must reference ${id}`);
+      }
+      for (const [id] of expected) {
+        if (!uncertainty.edges || !uncertainty.edges.includes(id)) errors.push(`u_home_first_floor_order must reference ${id}`);
+      }
+    }
+    const mandatory = edgeById.get('e_home_clean1_ask');
+    if (!mandatory || mandatory.from !== 'a_clean1' || mandatory.to !== 'a_ask' || mandatory.kind !== 'traced') {
+      errors.push('the original CLEAN FIRST FLOOR → ASK TO GO UPSTAIRS sequence must remain');
+    }
+    return errors;
+  });
+
   check('only Kara shooting Todd carries the gun; window availability gates a distinct successful route', () => {
     const errors = [];
     const gunIn = edges.filter(e => e.to === 's_gun_carried');
@@ -774,8 +848,8 @@ function validateAtlas(ATLAS) {
     for (const [key, value] of Object.entries(actual)) {
       if (counts[key] !== value) errors.push(`meta.counts.${key} is ${counts[key]} but the data has ${value}`);
     }
-    if (actual.nodes !== 45) errors.push(`expected 45 boxes, found ${actual.nodes}`);
-    if (actual.edges !== 49) errors.push(`expected 49 connectors, found ${actual.edges}`);
+    if (actual.nodes !== 56) errors.push(`expected 56 boxes, found ${actual.nodes}`);
+    if (actual.edges !== 53) errors.push(`expected 53 connectors, found ${actual.edges}`);
     return errors;
   });
 

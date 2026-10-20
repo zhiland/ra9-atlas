@@ -8,10 +8,12 @@
    docs/notes/content-expansion-slice.md):
    - A New Home structure: selected local sequence transcribed from the Steam
      "100% Chapter Flowcharts" screenshot for A New Home; see
-     docs/notes/map-reference-analysis.md. Chore and side labels with unresolved
-     arrows are omitted rather than invented. The nightstand gun clue and the
-     opened Alice's-room window are separate guide-reported events, not claims
-     of possession or a successful escape.
+     docs/notes/map-reference-analysis.md. Screenshot-side chore labels with
+     unresolved arrows are omitted rather than inferred. Selected guide-reported
+     first-floor events are included without asserting a general order,
+     exclusivity, or mandatory status. The nightstand gun clue and the opened Alice's-room
+     window are separate guide-reported events, not claims of possession or a
+     successful escape.
    - Stormy Night: selected entry events, gun/window events plus two
      source-supported successful non-gun escape routes: the corridor/hiding
      route to the front-door/backyard exit, and the locked-room window route.
@@ -54,9 +56,9 @@ const ATLAS = {
     disclaimer: 'Guide-based and screenshot-transcribed only. No transition is verified in game; game version and platform are unknown.',
     counts: {
       chapters: 3,
-      nodes: 45,
-      edges: 49,
-      tracedEdges: 33,
+      nodes: 56,
+      edges: 53,
+      tracedEdges: 37,
       conditionalEdges: 8,
       prerequisiteEdges: 5,
       hypothesisEdges: 3,
@@ -85,13 +87,13 @@ const ATLAS = {
       id: 'home',
       name: 'A New Home',
       code: 'D2 · selected Alice sequence + carried clues',
-      frame: { x: 30, y: 120, w: 1930, h: 500 },
-      desc: 'Selected local sequence transcribed from the Steam chapter screenshot (10 boxes, 9 links), plus two guide-reported carried-state clues: the nightstand gun was seen and Alice’s room window was opened. Chores and unlinked side labels are omitted; the box-to-Todd relationship stays unresolved.',
+      frame: { x: 30, y: 120, w: 1930, h: 530 },
+      desc: 'Selected local sequence transcribed from the Steam chapter screenshot, two guide-reported carried-state clues and selected first-floor events. Other chores and unresolved side links remain omitted.',
       coverage: {
         status: 'partial',
-        scope: 'Selected local Alice sequence plus two separate guide-reported gun/window clue events.',
-        included: '12 events: 10 screenshot-transcribed events from WELCOME HOME through OPEN ALICE’S BOX, plus SEE GUN IN TODD’S NIGHTSTAND and OPEN ALICE’S ROOM WINDOW. 11 internal links.',
-        omitted: 'Remaining chores, unlinked side labels whose arrows the screenshot does not resolve, how the gun clue is checked by the game, and window-escape outcomes.',
+        scope: 'Selected local Alice sequence, two separate guide-reported gun/window clues, and selected guide-reported first-floor events.',
+        included: '23 events: 10 screenshot-transcribed events from WELCOME HOME through OPEN ALICE’S BOX; two gun/window clues; and 11 first-floor events. The selected progressions are laundry to backyard to washer to Red Ice to Todd’s reported reaction, and watch TV to blocking Todd’s view.',
+        omitted: 'Other first- and second-floor chores, unresolved screenshot side links, the order and requirements among separate first-floor tasks, Alice’s conversation choices, how the gun clue is checked by the game, and window-escape outcomes.',
         sources: ['steam', 'gamefaqs', 'powerpyxHome', 'transcript', 'neoseekerKara']
       }
     },
@@ -221,7 +223,31 @@ const ATLAS = {
     { id: 's_reason_todd', chapter: 'stormy', label: 'Reason with Todd', short: 'Reason with Todd', kind: 'action', x: 3085, y: 690, w: 190, h: 84, status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
       note: 'Both guides report talking to Todd instead of going upstairs; Todd knocks Kara down. Only the reported endpoint is drawn from here.' },
     { id: 's_todd_upstairs_first', chapter: 'stormy', label: 'Todd reaches Alice before Kara', short: 'Todd reaches Alice first', kind: 'outcome', x: 3085, y: 864, w: 190, h: 84, status: 'guide', src: ['powerpyxStormy', 'gamerGuidesStormy'],
-      note: 'Source-supported endpoint for the Reason with Todd alternative: Todd knocks Kara down and reaches Alice before Kara. No later gun, fight, survival or fatal outcome is claimed from this endpoint.' }
+      note: 'Source-supported endpoint for the Reason with Todd alternative: Todd knocks Kara down and reaches Alice before Kara. No later gun, fight, survival or fatal outcome is claimed from this endpoint.' },
+
+    /* ---- A New Home: selected first-floor activity records ---- */
+    { id: 'a_read_android_power', chapter: 'home', label: 'Read “Android Power!”', short: 'Read Android Power!', kind: 'action', x: 620, y: 132, w: 170, h: 54, sub: 'first-floor event', status: 'guide', src: ['powerpyxHome'],
+      note: 'PowerPyx names this magazine on the kitchen table. GameFAQs reports a magazine on the dining table but does not name it. The title is supported by PowerPyx only.' },
+    { id: 'a_read_connecting_dots', chapter: 'home', label: 'Read “Connecting the Dots”', short: 'Read Connecting the Dots', kind: 'action', x: 810, y: 192, w: 170, h: 54, sub: 'first-floor event', status: 'guide', src: ['powerpyxHome'],
+      note: 'PowerPyx names this second magazine on the kitchen table. GameFAQs reports a magazine on the dining table but does not name it. The title is supported by PowerPyx only.' },
+    { id: 'a_wash_dishes', chapter: 'home', label: 'Wash dishes', short: 'Wash dishes', kind: 'action', x: 620, y: 338, w: 170, h: 54, sub: 'first-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report washing dishes during first-floor cleaning and describe the dishwasher as broken.' },
+    { id: 'a_take_laundry_backyard', chapter: 'home', label: 'Take laundry to backyard', short: 'Laundry to backyard', kind: 'action', x: 620, y: 416, w: 170, h: 54, sub: 'first-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report taking the laundry to the backyard and meeting Alice there. It is a specific laundry step, not a general backyard inspection. The Alice conversation choices are outside this slice.' },
+    { id: 'a_rewash_clothes', chapter: 'home', label: 'Rewash clothes', short: 'Rewash clothes', kind: 'action', x: 620, y: 490, w: 170, h: 54, sub: 'laundry sequence', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'PowerPyx calls this step Rewash Clothes; GameFAQs says to take the laundry back inside to the washing machine.' },
+    { id: 'a_find_red_ice', chapter: 'home', label: 'Find Red Ice', short: 'Find Red Ice', kind: 'action', x: 810, y: 384, w: 170, h: 54, sub: 'during laundry', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report finding Red Ice while handling laundry supplies: near the washing powder in PowerPyx and on the detergent shelf in GameFAQs.' },
+    { id: 'a_enrage_todd', chapter: 'home', label: 'Todd reacts to Red Ice', short: 'Todd reacts to Red Ice', kind: 'outcome', x: 1000, y: 500, w: 170, h: 54, sub: 'reported reaction', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report Todd reacting angrily after Kara finds the Red Ice. No later Stormy Night state is inferred.' },
+    { id: 'a_watch_todd_tv', chapter: 'home', label: 'Watch Todd’s TV', short: 'Watch TV', kind: 'action', x: 810, y: 448, w: 170, h: 54, sub: 'first-floor event', status: 'guide', src: ['gamefaqs'],
+      note: 'GameFAQs reports that Kara stares at the TV before she blocks Todd’s view. It reports an entry for each event.' },
+    { id: 'a_block_todd_view', chapter: 'home', label: 'Block Todd’s view', short: 'Block TV view', kind: 'action', x: 1000, y: 580, w: 170, h: 54, sub: 'first-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'PowerPyx reports standing in front of the TV to annoy Todd. GameFAQs reports blocking Todd’s view after staring at the TV.' },
+    { id: 'a_activate_vacuum', chapter: 'home', label: 'Activate vacuum', short: 'Activate vacuum', kind: 'action', x: 810, y: 523, w: 170, h: 54, sub: 'first-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report activating the vacuum robot during first-floor cleaning.' },
+    { id: 'a_take_out_trash', chapter: 'home', label: 'Take out trash', short: 'Take out trash', kind: 'action', x: 620, y: 562, w: 170, h: 54, sub: 'first-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report collecting first-floor trash and taking it out. PowerPyx lists this after other first-floor steps; GameFAQs describes it first.' }
   ],
 
   /* id is the stable link id; array index and order stay unchanged for ?edge=N.
@@ -372,7 +398,21 @@ const ATLAS = {
       note: 'Both guides place Reason with Todd under the deviant entry as the alternative to going upstairs. The edge carries no later gun, fight, escape or Todd-state claim.' },
     { id: 'e_stormy_reason_knocked', from: 's_reason_todd', to: 's_todd_upstairs_first', kind: 'traced',
       src: ['powerpyxStormy', 'gamerGuidesStormy'],
-      note: 'PowerPyx says Todd smacks Kara to the ground and is upstairs before she can get there. Gamer Guides says Todd always pushes Kara down and marches upstairs himself. The endpoint claims only this reported point; no s_dead or s_alive consequence is added.' }
+      note: 'PowerPyx says Todd smacks Kara to the ground and is upstairs before she can get there. Gamer Guides says Todd always pushes Kara down and marches upstairs himself. The endpoint claims only this reported point; no s_dead or s_alive consequence is added.' },
+
+    /* A New Home first-floor relationships stated by the guides */
+    { id: 'e_home_rewash_red_ice', from: 'a_rewash_clothes', to: 'a_find_red_ice', kind: 'traced',
+      src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides place finding Red Ice within the laundry task after Kara takes the clothes to the washing machine and handles detergent.' },
+    { id: 'e_home_red_ice_enrage_todd', from: 'a_find_red_ice', to: 'a_enrage_todd', kind: 'traced',
+      src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report Todd reacting angrily after Kara finds the Red Ice.' },
+    { id: 'e_home_watch_tv_block_view', from: 'a_watch_todd_tv', to: 'a_block_todd_view', kind: 'traced',
+      src: ['gamefaqs'],
+      note: 'GameFAQs reports the TV stare before Kara blocks Todd’s view and says that both actions add flowchart entries.' },
+    { id: 'e_home_backyard_rewash_clothes', from: 'a_take_laundry_backyard', to: 'a_rewash_clothes', kind: 'traced',
+      src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report taking the laundry to the backyard, meeting Alice there, then bringing the laundry back to the washing machine.' }
   ],
 
   /* Conditions are plain-English groups over existing edges. They add no edge
@@ -453,6 +493,14 @@ const ATLAS = {
       sources: ['gamefaqs', 'powerpyxHome', 'steam']
     },
     {
+      id: 'u_home_first_floor_order',
+      status: 'unknown',
+      explanation: 'PowerPyx and GameFAQs list the unrelated first-floor chores in different orders. The map records only the source-stated laundry and TV progressions; it does not claim an order, exclusivity, or mandatory status among the other chores.',
+      nodes: ['a_clean1', 'a_read_android_power', 'a_read_connecting_dots', 'a_wash_dishes', 'a_take_laundry_backyard', 'a_rewash_clothes', 'a_find_red_ice', 'a_enrage_todd', 'a_watch_todd_tv', 'a_block_todd_view', 'a_activate_vacuum', 'a_take_out_trash'],
+      edges: ['e_home_backyard_rewash_clothes', 'e_home_rewash_red_ice', 'e_home_red_ice_enrage_todd', 'e_home_watch_tv_block_view'],
+      sources: ['powerpyxHome', 'gamefaqs']
+    },
+    {
       id: 'u_stormy_internal',
       status: 'unknown',
       explanation: 'The selected entry slice draws Todd ordering Kara to stay still, Alice running upstairs, then the obey/stay-still fatal route or deviant alternatives. The shared scene details beyond these selected events, the too-slow path, hidden timers, exact QTE/difficulty, other fatal or survival routes, and any later consequence of the Reason with Todd endpoint remain outside this slice. The fatal entry outcome does not connect to Todd survives or the later meeting. The two successful non-gun routes are still not evidence of Todd’s later state.',
@@ -524,6 +572,72 @@ const ATLAS = {
       unknown: 'The window is opened here; whether the later route succeeds depends on events and QTEs outside this slice.',
       cross: { chapter: 'stormy', node: 's_window_open', label: 'Show the Stormy Night route node' },
       src: ['powerpyxHome', 'powerpyxStormy']
+    },
+    a_read_android_power: {
+      status: 'Guide-reported · single-source title',
+      summary: 'PowerPyx names “Android Power!” on the kitchen table. GameFAQs reports a magazine on the dining table but does not name it.',
+      unknown: 'The title is a single-source label. The guides do not establish this event’s order, requirements, or consequences.',
+      src: ['powerpyxHome']
+    },
+    a_read_connecting_dots: {
+      status: 'Guide-reported · single-source title',
+      summary: 'PowerPyx names “Connecting the Dots” on the kitchen table. GameFAQs reports a magazine but does not name it.',
+      unknown: 'The title is a single-source label. The guides do not establish this event’s order, requirements, or consequences.',
+      src: ['powerpyxHome']
+    },
+    a_wash_dishes: {
+      status: 'Guide-reported · first-floor event',
+      summary: 'PowerPyx and GameFAQs both report washing dishes during the first floor; both describe the dishwasher as broken.',
+      unknown: 'The reviewed guides do not establish this event’s order, requirements, or exclusivity.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_take_laundry_backyard: {
+      status: 'Guide-reported · first-floor event',
+      summary: 'PowerPyx and GameFAQs both report taking laundry to the backyard during the first floor and meeting Alice there. The conversation choices are outside this slice.',
+      unknown: 'The reviewed guides do not establish this event’s order, requirements, or exclusivity.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_rewash_clothes: {
+      status: 'Guide-reported · first-floor event',
+      summary: 'PowerPyx calls this step Rewash Clothes; GameFAQs says to take the laundry back inside to the washing machine.',
+      unknown: 'The reviewed guides do not establish this event’s order, requirements, or exclusivity.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_find_red_ice: {
+      status: 'Guide-reported · first-floor event',
+      summary: 'PowerPyx and GameFAQs both report finding Red Ice while handling laundry supplies. PowerPyx places it near the washing powder; GameFAQs places it on the detergent shelf. PowerPyx separately reports Todd becoming angry after the discovery.',
+      unknown: 'The guides do not establish the order or requirements for other first-floor events. The reported reaction is not verified in game.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_watch_todd_tv: {
+      status: 'Guide-reported · single-source event',
+      summary: 'GameFAQs reports that Kara stares at Todd’s TV before she blocks his view, and that the two actions add separate flowchart entries.',
+      unknown: 'PowerPyx reports standing in front of the TV to annoy Todd but does not describe the separate TV-staring event. This event is not linked to any other first-floor task.',
+      src: ['gamefaqs']
+    },
+    a_block_todd_view: {
+      status: 'Guide-reported · reported local progression',
+      summary: 'PowerPyx reports standing in front of the TV to annoy Todd. GameFAQs reports blocking Todd’s view after staring at the TV.',
+      unknown: 'The guides report this event in different wording. No order relative to other first-floor tasks is claimed.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_enrage_todd: {
+      status: 'Guide-reported · reported local progression',
+      summary: 'Both guides report Todd reacting angrily after Kara finds the Red Ice during the laundry sequence.',
+      unknown: 'The guide-reported reaction is not verified in game and is not linked to later chapter states.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_activate_vacuum: {
+      status: 'Guide-reported · first-floor event',
+      summary: 'PowerPyx and GameFAQs both report activating the vacuum robot during the first floor.',
+      unknown: 'The reviewed guides do not establish this event’s order, requirements, or exclusivity.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_take_out_trash: {
+      status: 'Guide-reported · first-floor event',
+      summary: 'PowerPyx and GameFAQs both report collecting first-floor trash and taking it out. PowerPyx lists it late; GameFAQs starts with it.',
+      unknown: 'The different guide order does not establish a fixed sequence. Exclusivity and mandatory completion are also unstated.',
+      src: ['powerpyxHome', 'gamefaqs']
     },
     s_alive: {
       status: 'Guide-reported · carried state',

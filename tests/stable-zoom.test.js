@@ -396,7 +396,7 @@ async function findDragPoint(page) {
 }
 
 async function runRealDataset(browser) {
-  console.log('scenario real-45 stable zoom');
+  console.log('scenario real-56 stable zoom');
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const errors = [];
   page.on('pageerror', function (e) { errors.push('pageerror: ' + e.message); });
@@ -434,7 +434,7 @@ async function runRealDataset(browser) {
     assertInventoryStable(snapshots, fit.expected);
     assertInventoryStable([fit], fit.expected);
 
-    assert(fit.expected.nodeLabels.length === 45, 'fixture should keep 45 node labels');
+    assert(fit.expected.nodeLabels.length === 56, 'fixture should keep 56 node labels');
     assert(fit.expected.edgeLabels.length > 0, 'fixture should contain real edge labels');
     assert(fit.expected.frames.length === 3, 'fixture should keep three chapter frames');
   });
@@ -444,7 +444,7 @@ async function runRealDataset(browser) {
     const scales = snapshots.map(function (s) { return s.scale; });
     assert(new Set(scales).size === scales.length, 'sampled scales should all differ: ' + scales.join(', '));
     snapshots.forEach(function (s) {
-      assert(s.nodes.length === 45 && s.edges.length === 49,
+      assert(s.nodes.length === 56 && s.edges.length === 53,
         'scale ' + s.scale + ' changed mounted graph inventory');
       assert(s.nodes.every(function (n) { return n.labelInsideNode; }),
         'scale ' + s.scale + ' has a node label outside its box');
