@@ -124,6 +124,7 @@ a:hover { text-decoration: underline; }
 /* The Hostage type trial is chapter-specific. Text stays in world space and
    follows the same camera transform as every other chart element. */
 .node.hostage .node-label { font-size: 13.5px; }
+.node.hostage.stage { padding-top: 4px; padding-bottom: 4px; }
 .node.hostage.choice.compact .node-label { font-size: 12px; }
 .node.hostage.choice .opt { font-size: 13.5px; }
 .node.hostage.choice.compact .opt { font-size: 12.5px; }
