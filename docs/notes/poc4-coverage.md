@@ -1,7 +1,8 @@
 # PoC4 — multi-chapter atlas coverage and source note
 
-Date: 2026-10-19; bounded data/provenance contract, Stormy Night escape routes, the Stormy Night entry slice, eleven selected A New Home first-floor events and twelve second-floor events added 2026-10-20. Scope: the static PoC4 prototype showing selected parts of
-**A New Home**, **Stormy Night** and **Battle for Detroit — Kara** on one
+Date: 2026-10-19; bounded data/provenance contract, Stormy Night escape routes, the Stormy Night entry slice, eleven selected A New Home first-floor events and twelve second-floor events added 2026-10-20; the Stage 1 Hostage pilot and one bounded Public Enemy node added 2026-10-21. Scope: the static PoC4 prototype showing selected parts of
+**A New Home**, **Stormy Night**, **Battle for Detroit — Kara**, the complete
+visible **The Hostage** chart, and one **Public Enemy** meeting node on one
 surface. The default [poc4-editorial.html](../../prototype/poc4-editorial.html)
 entry now uses the neutral gray PoC3 palette, with orthogonal connectors ending
 in arrowheads. Condition and prerequisite labels remain attached to their
@@ -31,6 +32,14 @@ four first-floor and two second-floor. Other order and requirements remain
 unknown, including the differing second-floor guide orders. See [the A New Home
 first-floor slice](anewhome-firstfloor-slice.md) and [the second-floor
 slice](anewhome-secondfloor-slice.md).
+The Stage 1 pilot appends the 33-box *The Hostage* chart already transcribed for
+PoC3, preserving its 40 visible labels and 36 connectors. Five connector routes
+remain chart-transcription uncertainties and are drawn dashed with `?` badges.
+One separate, guide-supported prerequisite links `SAVE WOUNDED COP` to the
+bounded *Public Enemy* “Meet Cop From Hostage Situation” node. That carry is
+guide-reported, not gameplay-verified; `LEAVE WOUNDED COP` has no drawn
+consequence and later cop outcomes are omitted. See [the Hostage ledger](hostage-poc3-coverage.md).
+
 No reuse license for the guide image or transcribed chart structure was
 identified in the [source-license audit](source-license-audit.md).
 That audit records evidence and recommendations, not a legal determination.
@@ -44,8 +53,8 @@ PoC3 files were published previously and remain unchanged by this PoC4 work.
 
 | Type | Meaning in the prototype | Where it appears |
 |---|---|---|
-| Screenshot transcription | Steam "100% Chapter Flowcharts" reference image, read 2026-10-18; structure only | The **A New Home** local sequence (see [map-reference-analysis.md](map-reference-analysis.md)) |
-| Guide-reported (secondary) | PowerPyx *A New Home*, *Stormy Night* and *Battle for Detroit — Kara*; Gamer Guides *Stormy Night* and *Battle for Detroit — Kara*; GameFAQs *A New Home* and *Stormy Night* | selected A New Home first- and second-floor events, Kara branch nodes/edges, the unnamed Alice-key relationship condition, ordered Stormy Night entry events and response branches, gun states and two successful non-gun routes |
+| Screenshot transcription | Steam "100% Chapter Flowcharts" reference image, read 2026-10-18; structure only | The **A New Home** local sequence and the complete visible **The Hostage** chart (see [map-reference-analysis.md](map-reference-analysis.md) and [the Hostage ledger](hostage-poc3-coverage.md)) |
+| Guide-reported (secondary) | PowerPyx *A New Home*, *Stormy Night*, *The Hostage*, *Public Enemy* and *Battle for Detroit — Kara*; Gamer Guides *Stormy Night* and *Battle for Detroit — Kara*; GameFAQs *A New Home*, *Stormy Night* and *Public Enemy* (section reference only) | selected A New Home first- and second-floor events, Kara branch nodes/edges, the unnamed Alice-key relationship condition, ordered Stormy Night entry events and response branches, gun states, two successful non-gun routes, and the saved-cop meeting carry |
 | User-provided claim | The user-supplied Fandom node sequence; the same wording appears in the inspected PowerPyx, Fandom and Neoseeker pages | `Alice says goodbye to Todd` chip and its details entry |
 | Transcript | Fandom *A New Home* transcript lines 1947–1964 | Box-contents summary in the details panel |
 | Unresolved | Candidate links that the reviewed sources cannot distinguish | The dashed box → dialogue hypothesis |
@@ -57,37 +66,41 @@ verified in game.
 
 | Measure | Count | Note |
 |---|---:|---|
-| Chapter regions | **3** | A New Home, Stormy Night, Battle for Detroit — Kara |
-| Boxes (nodes) | **68** | 35 A New Home events/clues + 24 Stormy Night events/states + 9 Kara events/outcomes |
-| Connectors (edges) | **55** | 39 traced + 8 conditional + 5 prerequisite gates + 3 unresolved hypotheses |
-| Cross-chapter connectors | **4** | Two A New Home → Stormy Night prerequisites and two existing Stormy Night/A New Home → Kara links |
+| Chapter regions | **5** | A New Home, Stormy Night, Battle for Detroit — Kara, The Hostage, Public Enemy (one node) |
+| Boxes (nodes) | **102** | 35 A New Home + 24 Stormy Night + 9 Kara + 33 Hostage + 1 Public Enemy |
+| Connectors (edges) | **92** | 70 traced + 8 conditional + 6 prerequisite gates + 3 unresolved hypotheses + 5 uncertain chart connectors |
+| Cross-chapter connectors | **5** | Two A New Home → Stormy Night prerequisites, two Stormy Night/A New Home → Kara links, one saved-cop Hostage → Public Enemy prerequisite |
 
 ## Data/provenance contract
 
 The bounded contract is [data-contract.md](../data-contract.md). It keeps node
 claim/evidence status (`ocr`, `guide`, `user`, `unresolved`, `mixed`) separate
-from chapter coverage status (`not-added`, `partial`, `checked-against-chart`);
-all three chapters are `partial`. Each chapter now carries an explicit
-`coverage` record with scope, included sample, omissions and source references.
+from chapter coverage status (`not-added`, `partial`, `checked-against-chart`).
+*The Hostage* is `checked-against-chart`; the other four regions are `partial`.
+Each chapter carries an explicit `coverage` record with scope, included sample,
+omissions and source references.
 
 Every previously published node and edge keeps its array order; new content is
 appended and every edge has a stable `e_*` ID. Array-index `?edge=N` links
 remain canonical; stable IDs are accepted as input aliases. Five plain-English
 condition groups cover the unnamed Alice-key trust condition (`SINGLE`), the two
 separate Meet Todd gates (`AND`), the separate below-11 late-bus and above-11
-on-time detour outcomes (`AND` per edge), and the window QTE success step
+on-time detour outcomes (`AND` per edge), the window QTE success step
+(`SINGLE`), and the saved-cop prerequisite into the Public Enemy meeting
 (`SINGLE`). Route transitions do not inherit requirements from later steps; the
 window-opening prerequisite remains a separate edge. Six local progressions are
 directly guide-reported: four first-floor and two second-floor. Other selected
 events have no inferred spokes, fixed order, or universal room-cleaning
 predicate. The entry slice adds no condition groups: its seven links are
-directly guide-stated `traced` transitions. Nine `unknown` records cover the box
+directly guide-stated `traced` transitions. Ten `unknown` records cover the box
 trigger, the unnamed key relationship level, first-floor event
 order/requirements/exclusivity, the differing second-floor order and
 guide-specific Talk comments, Stormy Night internals, the exact 11:00 boundary,
-the exact gun-state check, window-route outcomes, and the missing Todd state
-after either successful non-gun escape. No source-vs-source conflict is
-recorded or invented.
+the exact gun-state check, window-route outcomes, the missing Todd state after
+either successful non-gun escape, and the five ambiguous Hostage chart
+connectors. The Hostage record explicitly excludes the saved-cop prerequisite,
+which rests on guide statements rather than a confident chart trace. No
+source-vs-source conflict is recorded or invented.
 
 ## Included per chapter
 
@@ -135,6 +148,19 @@ recorded or invented.
   the `Todd dialogue` choice (reported options `Persuade Todd` / `Fail to
   persuade Todd`), then to `Todd sends soldiers away → Alice says goodbye to
   Todd` or `Security check follows`.
+- **The Hostage — complete visible chart.** All 33 boxes and 40 visible labels
+  are represented, including three stage containers, seven two-row choice
+  groups, the `GET CLOSE ENOUGH` dead end, and six outcomes. Thirty-one
+  connectors are traced; five are dashed `uncertain` chart connectors with
+  `?` badges and one scoped unknown record. Chart uncertainty is kept separate
+  from guide-supported cross-chapter evidence. See [the Hostage
+  ledger](hostage-poc3-coverage.md).
+- **Public Enemy — one bounded meeting node.** `Meet Cop From Hostage
+  Situation` records the guide-reported meeting and its incoming `SAVE WOUNDED
+  COP` prerequisite. No consequence for `LEAVE WOUNDED COP` is modelled in this
+  slice. Later cop rescue, death, and post-meeting content are omitted. The
+  node and prerequisite state that matching guides are not independent
+  verification.
 
 ## Deliberately omitted
 
@@ -152,6 +178,8 @@ recorded or invented.
   avoided or killed.
 - Most of **Battle for Detroit — Kara**: guarded checkpoint interactions,
   ticket, border and river branches, and downstream responses.
+- Most of **Public Enemy**: every other event, and all cop rescue/death or
+  post-meeting outcomes. The saved-cop carry stops at one reported meeting.
 - Exact non-gun route inputs, QTE requirements/difficulty, hidden triggers, and
   the later Todd state after either successful non-gun escape.
 - Other chapters and any full-game coverage.
@@ -196,24 +224,36 @@ recorded or invented.
 - **The non-deviant fatal outcome is not Todd killed.** “Todd kills Alice and
   Kara” is a terminal outcome for Kara and Alice and has no connector to
   `s_dead`, `s_alive` or the later meeting.
+- **Five Hostage chart connectors are not confidently traceable.** The fish,
+  SWAT, negotiation-bus and FAIL TO NEGOTIATE routes are visible in the chart
+  but their exact junctions or crossings are ambiguous. They stay dashed and
+  `?`-badged under `u_hostage_chart_uncertain`; they are not merged with the
+  saved-cop guide evidence. `GET CLOSE ENOUGH` remains a visible dead end.
+- **The saved-cop meeting is guide-reported, not a verified transition.** The
+  exact state check, the meeting scene, and every later cop outcome are outside
+  the evidence. Only the SAVE option carries a prerequisite; LEAVE has no drawn
+  consequence, and no rescue or death outcome is claimed.
 
-## Checks run (2026-10-20)
+## Checks run (2026-10-21)
 
-- `npm test` passes. The data validators report 3 chapters, 68 nodes, 55 edges,
-  five condition groups, nine unknowns, and no conflicts.
-- Contract tests: **70/70**. They reject unsupported generic first-floor and
+- `npm test` passes. The data validators report 5 chapters, 102 nodes, 92 edges,
+  six condition groups, ten unknowns, and no conflicts.
+- Contract tests: **83/83**. They reject unsupported generic first-floor and
   second-floor spokes, unsupported optionality claims, removal of any of the six
-  local progressions, a universal Talk with Alice AND gate, and restoration of a
-  named key relationship level.
+  local progressions, a universal Talk with Alice AND gate, restoration of a
+  named key relationship level, a Hostage outgoing edge from `GET CLOSE ENOUGH`,
+  removal or weakening of the saved-cop prerequisite, a consequence for
+  `LEAVE WOUNDED COP`, and relabelling the five uncertain chart connectors.
 - Core unit tests: **43/43**. Map inventory tests: **4/4**. Stable-zoom tests:
-  **10/10**. Layout tests: **11/11**. Chromium browser checks: **55/55** across
+  **10/10**. Layout tests: **12/12**. Chromium browser checks: **58/58** across
   three palette variants and mobile viewport emulation.
-- The layout checks include all 68 real node boxes, label containment, the
-  horizontal A New Home main sequence, first- and second-floor event spacing,
-  and the six source-backed local progressions. Browser tests ran over localhost
-  HTTP.
-- Fresh screenshots of whole-map fit and A New Home chapter focus were
-  inspected. They are temporary review artifacts and are not committed.
+- The layout checks include all 102 real node boxes, five chapter frames, label
+  containment, the horizontal A New Home main sequence, first- and second-floor
+  event spacing, and the Hostage frame fit. Browser tests ran over localhost
+  HTTP and check five dashed `uncertain` paths, five `?` badges, the `GET CLOSE
+  ENOUGH` dead end, and saved-cop navigation/evidence.
+- Fresh whole-atlas and Hostage-fit screenshots were inspected. They are
+  temporary review artifacts in `/private/tmp/` and are not committed.
 
 ### Not run
 

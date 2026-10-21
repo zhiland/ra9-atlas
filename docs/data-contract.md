@@ -1,9 +1,12 @@
 # PoC4 data and provenance contract
 
-Status: implemented 2026-10-20 for the existing PoC4 sample only. This is not a
+Status: implemented 2026-10-21 for the existing PoC4 sample only. This is not a
 full-product data contract, a production schema decision, or game verification.
-See [PoC4 coverage](notes/poc4-coverage.md), [overview/LOD slice](notes/overview-lod-slice.md)
-and the [specification](spec.md).
+The Stage 1 pilot appends the complete visible *The Hostage* chart and one
+bounded *Public Enemy* meeting node. See [PoC4 coverage](notes/poc4-coverage.md),
+[Hostage coverage](notes/hostage-poc3-coverage.md),
+[overview/LOD slice](notes/overview-lod-slice.md) and the
+[specification](spec.md).
 
 ## Acceptance checklist
 
@@ -14,7 +17,10 @@ and the [specification](spec.md).
       timing predicates stay attached to their own outcome edges.
 - [x] Every previously published node and edge ID and its array order remain;
       each bounded expansion appends only source-attributed content without
-      changing the renderer.
+      changing published geometry.
+- [x] The Stage 1 pilot keeps all 33 Hostage chart boxes, 40 visible labels and
+      36 connectors, and adds only one saved-cop prerequisite into one bounded
+      Public Enemy meeting node.
 - [x] Existing `?edge=N` links keep working; stable edge IDs are accepted as
       aliases.
 - [x] The validator rejects deliberate fixtures for duplicate IDs, dangling
@@ -26,15 +32,15 @@ and the [specification](spec.md).
 
 ## Scope and record shape
 
-The contract covers the three existing chapter regions, 68 nodes, 55 edges, five
-condition groups, nine uncertainty records and no conflict records in
+The contract covers five chapter regions, 102 nodes, 92 edges, six condition
+groups, ten uncertainty records and no conflict records in
 `prototype/atlas-data.js`. The sample declares `meta.contractVersion: '1.0'`.
 
 | Record | Required fields |
 |---|---|
 | Chapter | `id`, `name`, `code`, `frame`, `desc`, `coverage` |
 | Chapter coverage | `status`, `scope`, `included`, `omitted`, `sources` |
-| Node | `id`, `chapter`, `label`, `kind`, `status`, `src` (plus layout fields and optional `short`, `sub`, `options`, `note`) |
+| Node | `id`, `chapter`, `label`, `kind`, `status`, `src` (plus layout fields and optional `short`, `sub`, `heading`, `options`, `children`, `note`) |
 | Edge | `id`, `from`, `to`, `kind`, `src` (plus optional `label`, `note`, `via`, `labelAt`, `fromOption`) |
 | Condition | `id`, `appliesTo`, `operator`, `summary`, `requirements`, `sources` |
 | Uncertainty / conflict | `id`, `status`, `explanation`, `nodes` or `edges`, `sources` |
@@ -67,9 +73,9 @@ Chapter `coverage.status` values:
 |---|---|
 | `not-added` | No sample from this chapter is present |
 | `partial` | Only the listed selected sample is present |
-| `checked-against-chart` | The whole chapter was checked against a chart; not used by PoC4 |
+| `checked-against-chart` | Every visible box, label and connector was checked against a chart; still not gameplay verification |
 
-All three sample chapters are `partial`: A New Home has a selected screenshot
+Four sample chapters are `partial`. A New Home has a selected screenshot
 sequence plus two guide-reported clue actions, eleven selected first-floor
 events and twelve selected second-floor events. Six local progressions are
 drawn: four first-floor and two second-floor. The two guides list the
@@ -77,8 +83,14 @@ second-floor chores in different orders, so that difference stays an explicit
 unknown rather than a universal room-cleaning gate. Stormy Night has a selected ordered entry sequence with response
 branches, a non-deviant fatal outcome, a selected gun confrontation, two
 successful non-gun escape routes and inferred Todd states. Battle for Detroit —
-Kara has selected checkpoint and meeting branches. The omitted parts are
-recorded per chapter. Version and platform remain `unknown`; no transition is
+Kara has selected checkpoint and meeting branches. The *Public Enemy* region is
+a single guide-reported meeting node, not a chapter transcription.
+
+*The Hostage* is `checked-against-chart`: all 33 visible boxes, 40 labels and 36
+connectors from the Steam chart are represented. Thirty-one connectors are
+`traced`; five are `uncertain` and drawn dashed with `?` badges. `GET CLOSE
+ENOUGH` remains a chart-visible dead end. The omitted parts are recorded per
+chapter. Version and platform remain `unknown`; no transition is
 gameplay-verified.
 
 Edge `kind` is a relation vocabulary, not a coverage or verification claim:
@@ -89,6 +101,7 @@ Edge `kind` is a relation vocabulary, not a coverage or verification claim:
 | `conditional` | Guide-stated link with a reported condition; the note explains the source and condition |
 | `prerequisite` | Reported access gate into a later node |
 | `hypothesis` | Unresolved candidate link; never presented as causal |
+| `uncertain` | Connector visible in the chart but not confidently traceable; dashed, `?`-badged and explained |
 
 Edges also carry `src` references and evidence notes where uncertainty applies.
 The first-floor event sample uses only directly reported local progressions. It
@@ -106,7 +119,7 @@ topology or game claims. `operator` is one of:
 | `AND` | At least two requirements that are reported together |
 | `OR` | At least two alternatives; reserved and unused by the current sample |
 
-The current sample has five records:
+The current sample has six records:
 
 - `cond_key_relationship` (`SINGLE`) applies to `e_home_talk_key`: GameFAQs
   reports that Alice trusts Kara enough to give the key but does not name a
@@ -129,6 +142,10 @@ The current sample has five records:
 - `cond_window_qte_success` (`SINGLE`) applies only to
   `e_stormy_go_out_qte`: pass the reported window-climb QTE. Exact prompts and
   difficulty are not stated.
+- `cond_hostage_save_cop_meet` (`SINGLE`) applies only to
+  `e_hostage_save_cop_public_enemy`: `SAVE WOUNDED COP` was chosen in *The
+  Hostage*. The guides report the later meeting but do not verify the state
+  check in game.
 
 The escape routes are represented as source-attributed transitions. Do not
 attach an entire route's requirements to every edge in that route: a later
@@ -161,14 +178,16 @@ edge is more verified than its source and status state.
   settle a value, trigger or mechanism. Current records:
   `u_box_trigger`, `u_key_threshold`, `u_home_first_floor_order`,
   `u_home_second_floor_order`, `u_stormy_internal`, `u_checkpoint_timer_11`,
-  `u_gun_state_check`, `u_window_route_outcome` and
-  `u_stormy_escape_todd_state`. The first-floor record holds unresolved ordering,
-  requirements, and exclusivity among eleven selected events. The second-floor
-  record holds the differing guide orders and the guide-specific Talk with Alice
-  comments; it does not encode universal room-cleaning prerequisites or an AND
-  gate. The last record specifically holds the missing Todd state after either
-  successful non-gun escape; the dashed links to `s_alive` are inferences, not
-  confirmed outcomes.
+  `u_gun_state_check`, `u_window_route_outcome`,
+  `u_stormy_escape_todd_state` and `u_hostage_chart_uncertain`. The first-floor
+  record holds unresolved ordering, requirements, and exclusivity among eleven
+  selected events. The second-floor record holds the differing guide orders and
+  the guide-specific Talk with Alice comments; it does not encode universal
+  room-cleaning prerequisites or an AND gate. The Todd-state record specifically
+  holds the missing state after either successful non-gun escape; the dashed
+  links to `s_alive` are inferences, not confirmed outcomes. The Hostage record
+  covers only the five ambiguous chart connectors and explicitly does not absorb
+  the guide-supported saved-cop prerequisite.
 - A `conflict` record would describe sources that disagree with each other. The
   current sample has no normalised source-vs-source conflict, so `conflicts` is
   empty. The schema is still validated and malformed conflict fixtures are
@@ -211,6 +230,15 @@ structural error, not a silent caveat.
   condition is `SINGLE` on `e_home_talk_key`, and the named relationship levels
   `Neutral`, `Warm` and `Distant` are rejected because the guides do not state
   an exact level;
+- Hostage chart fences: all 33 PoC3 boxes retain their IDs/order, all 40 visible
+  labels survive, exactly 36 chart connectors remain (31 traced and 5
+  `uncertain`), the five uncertain links stay dashed and share one scoped unknown
+  record, and `GET CLOSE ENOUGH` gains no outgoing edge;
+- saved-cop fence: `wounded_cop` has one outgoing connector from option index 1
+  only, targets `pe_meet_cop`, stays `prerequisite`, cites both PowerPyx pages,
+  keeps its guide-reported/not-gameplay-verified note, and has exactly one
+  `SINGLE` condition. `LEAVE WOUNDED COP` and later cop outcomes stay
+  unconnected; `pe_meet_cop` has no outgoing edge;
 - the previous graph invariants, inventory counts, layout and routing checks.
 
 `tests/atlas-data-contract.test.js` accepts the real sample and rejects

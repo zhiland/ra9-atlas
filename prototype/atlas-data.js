@@ -42,6 +42,8 @@
                      single-source claim (no style change without the matching note).
      prerequisite  solid+gate — reported access gate into a later node.
      hypothesis    dashed+? — unresolved candidate link; never presented as causal.
+     uncertain     dashed+? — visible chart connector whose route/source/branch
+                     row could not be traced confidently; structure only.
  */
 
 const ATLAS = {
@@ -50,19 +52,20 @@ const ATLAS = {
     poc: 'PoC4',
     contractVersion: '1.0',
     title: 'ra9-atlas',
-    subtitle: 'Selected slices · A New Home → Stormy Night → Battle for Detroit (Kara)',
+    subtitle: 'Selected slices · A New Home → Stormy Night → Battle for Detroit (Kara) · The Hostage → Public Enemy',
     version: 'unknown',
     platform: 'unknown',
     disclaimer: 'Guide-based and screenshot-transcribed only. No transition is verified in game; game version and platform are unknown.',
     counts: {
-      chapters: 3,
-      nodes: 68,
-      edges: 55,
-      tracedEdges: 39,
+      chapters: 5,
+      nodes: 102,
+      edges: 92,
+      tracedEdges: 70,
       conditionalEdges: 8,
-      prerequisiteEdges: 5,
+      prerequisiteEdges: 6,
       hypothesisEdges: 3,
-      crossChapterEdges: 4
+      uncertainEdges: 5,
+      crossChapterEdges: 5
     }
   },
 
@@ -77,10 +80,13 @@ const ATLAS = {
     powerpyxKara: 'https://www.powerpyx.com/detroit-become-human-battle-for-detroit-kara-walkthrough-100/',
     fandomBattle: 'https://detroit-become-human.fandom.com/wiki/Battle_for_Detroit',
     neoseekerKara: 'https://www.neoseeker.com/detroit-become-human/walkthrough/Battle_for_Detroit_Kara',
-    gamerGuides: 'https://www.gamerguides.com/detroit-become-human/guide/walkthrough/chapter-1/chapter-31-battle-for-detroit-kara'
+    gamerGuides: 'https://www.gamerguides.com/detroit-become-human/guide/walkthrough/chapter-1/chapter-31-battle-for-detroit-kara',
+    powerpyxHostage: 'https://www.powerpyx.com/detroit-become-human-the-hostage-opening-walkthrough-100/',
+    powerpyxPublicEnemy: 'https://www.powerpyx.com/detroit-become-human-public-enemy-walkthrough-100/',
+    gamefaqsPublicEnemy: 'https://gamefaqs.gamespot.com/ps4/182637-detroit-become-human/faqs/76123/public-enemy'
   },
 
-  canvas: { width: 4450, height: 1080 },
+  canvas: { width: 4950, height: 2500 },
 
   chapters: [
     {
@@ -123,6 +129,34 @@ const ATLAS = {
         included: 'Nine events: the checkpoint route choice, detour, delayed/last-bus outcome, bus-terminal arrival, Todd meeting, dialogue result, and two reported access gates.',
         omitted: 'Guarded-checkpoint interactions, ticket, border and river branches, downstream responses, and other checkpoint/timing cases.',
         sources: ['powerpyxKara', 'fandomBattle', 'neoseekerKara', 'gamerGuides']
+      }
+    },
+    {
+      id: 'hostage',
+      name: 'The Hostage',
+      code: 'D1 · complete visible chart · saved-cop carry',
+      frame: { x: 0, y: 1120, w: 4450, h: 1340 },
+      desc: 'The complete visible Hostage chart transcribed from one Steam “100% Chapter Flowcharts” screenshot: 33 boxes, 40 visible labels and 36 connectors. Five connectors are dashed and question-marked because their routes, sources or branch rows could not be traced confidently. GET CLOSE ENOUGH is kept as an unresolved no-outgoing-edge endpoint. The saved-cop option also carries one guide-supported prerequisite into Public Enemy; that evidence is separate from the chart uncertainty.',
+      coverage: {
+        status: 'checked-against-chart',
+        scope: 'Every box, visible label and connector in the single full Hostage chart screenshot, plus one guide-supported saved-cop prerequisite into Public Enemy.',
+        included: '33 boxes: 3 stage containers, 7 two-row choice groups (14 option labels), 16 action/flag boxes, 1 start and 6 endings. All 40 visible labels are present. 36 chart connectors are drawn: 31 traced and 5 uncertain (dashed with a ? badge). GET CLOSE ENOUGH has no outgoing connector. One cross-chapter prerequisite leaves the SAVE WOUNDED COP option; LEAVE WOUNDED COP has no drawn consequence.',
+        omitted: 'In-game verification; any branch set beyond this one screenshot; later Public Enemy cop rescue, death or other outcomes; consequences of meeting the saved cop; any outcome for LEAVE WOUNDED COP.',
+        sources: ['steam', 'powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy']
+      }
+    },
+    {
+      id: 'public-enemy',
+      name: 'Public Enemy',
+      code: 'D5 · one saved-cop meeting node',
+      frame: { x: 4490, y: 2200, w: 380, h: 250 },
+      desc: 'One bounded, guide-reported Public Enemy node: the cop saved during The Hostage can be met. The node records the meeting only. Later cop rescue or death outcomes and all other Public Enemy content are outside this slice.',
+      coverage: {
+        status: 'partial',
+        scope: 'One saved-cop meeting node reached from the SAVE WOUNDED COP option in The Hostage.',
+        included: 'One node, “Meet Cop From Hostage Situation”, and one incoming prerequisite gate. No outgoing consequence is drawn.',
+        omitted: 'All other Public Enemy events and branches, every later cop rescue or death outcome, and anything that follows the meeting.',
+        sources: ['powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy']
       }
     }
   ],
@@ -273,7 +307,64 @@ const ATLAS = {
     { id: 'a_read_alice_floor_book', chapter: 'home', label: 'Read Alice’s floor book', short: 'Read floor book', kind: 'action', x: 1570, y: 596, w: 170, h: 54, sub: 'second-floor reading', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
       note: 'Both guides report the book on Alice’s floor. PowerPyx names it “Alice in Wonderland”; GameFAQs only says Kara comments on the book Alice has been reading.' },
     { id: 'a_read_alice_shelf_books', chapter: 'home', label: 'Read Alice’s shelf books', short: 'Read shelf books', kind: 'action', x: 1760, y: 596, w: 170, h: 54, sub: 'second-floor reading', status: 'guide', src: ['powerpyxHome'],
-      note: 'PowerPyx reports reading the books on Alice’s shelf between the bed and the door. GameFAQs does not describe shelf books in this section.' }
+      note: 'PowerPyx reports reading the books on Alice’s shelf between the bed and the door. GameFAQs does not describe shelf books in this section.' },
+
+    /* ---- The Hostage: full visible chart transcribed from the Steam screenshot.
+       Geometry follows the PoC3 chart with x +5 / y +1150. Choice boxes keep the
+       PoC3 combined label for identity/search; `heading` is the compact in-box
+       title, while the two option rows carry the screenshot's visible labels. ---- */
+    { id: 'mission_start', chapter: 'hostage', label: 'MISSION START', short: 'Mission start', kind: 'action', x: 65, y: 1870, w: 200, h: 44, sub: 'chapter start · start checkpoint', status: 'ocr', src: ['steam'],
+      note: 'Start checkpoint box in the Hostage chart. Mapped to the atlas action kind with a start sublabel.' },
+    { id: 'fish', chapter: 'hostage', label: 'SAVE FISH / LEAVE FISH', heading: 'Fish choice', short: 'Fish choice', kind: 'choice', x: 65, y: 1670, w: 220, h: 64, options: ['SAVE FISH', 'LEAVE FISH'], status: 'ocr', src: ['steam'],
+      note: 'Two-row choice box. It hangs off the MISSION START → TALK TO CAPT. ALLEN segment; the exact tap point is uncertain.' },
+    { id: 'talk_allen', chapter: 'hostage', label: 'TALK TO CAPT. ALLEN', short: 'Talk to Capt. Allen', kind: 'action', x: 365, y: 1876, w: 220, h: 36, status: 'ocr', src: ['steam'] },
+
+    { id: 'stage-search', chapter: 'hostage', label: 'SEARCH FOR CLUES', short: 'Search for clues', kind: 'stage', x: 685, y: 1850, w: 180, h: 70, sub: 'stage container', status: 'ocr', src: ['steam'],
+      children: ['inv_father', 'learn_cause', 'learn_name', 'inv_gun_case', 'inv_cop_body', 'cops_gun'] },
+    { id: 'inv_father', chapter: 'hostage', label: "INVESTIGATE FATHER'S BODY", short: "Investigate father's body", kind: 'action', x: 925, y: 1590, w: 210, h: 36, status: 'ocr', src: ['steam'] },
+    { id: 'learn_cause', chapter: 'hostage', label: 'LEARN CAUSE OF INCIDENT', short: 'Learn cause', kind: 'action', x: 1245, y: 1590, w: 210, h: 36, status: 'ocr', src: ['steam'] },
+    { id: 'learn_name', chapter: 'hostage', label: "LEARN DEVIANT'S NAME", short: 'Learn name', kind: 'action', x: 1245, y: 1750, w: 210, h: 36, status: 'ocr', src: ['steam'] },
+    { id: 'inv_gun_case', chapter: 'hostage', label: 'INVESTIGATE GUN CASE', short: 'Investigate gun case', kind: 'action', x: 1245, y: 2030, w: 210, h: 36, status: 'ocr', src: ['steam'] },
+    { id: 'inv_cop_body', chapter: 'hostage', label: "INVESTIGATE COP'S BODY", short: "Investigate cop's body", kind: 'action', x: 925, y: 2170, w: 210, h: 36, status: 'ocr', src: ['steam'] },
+    { id: 'cops_gun', chapter: 'hostage', label: "TAKE COP'S GUN / LEAVE COP'S GUN", heading: "Cop's gun choice", short: "Cop's gun choice", kind: 'choice', x: 1245, y: 2150, w: 220, h: 64, options: ["TAKE COP'S GUN", "LEAVE COP'S GUN"], status: 'ocr', src: ['steam'] },
+    { id: 'wasted_time', chapter: 'hostage', label: 'WASTED TOO MUCH TIME', short: 'Wasted too much time', kind: 'flag', x: 1705, y: 1570, w: 230, h: 44, sub: 'warning flag', status: 'ocr', src: ['steam'],
+      note: 'Warning-flag box (triangle icon in the screenshot). Reached from SEARCH FOR CLUES.' },
+    { id: 'go_outside', chapter: 'hostage', label: 'GO OUTSIDE', short: 'Go outside', kind: 'action', x: 1705, y: 1790, w: 230, h: 36, status: 'ocr', src: ['steam'] },
+    { id: 'swat_injured', chapter: 'hostage', label: 'SWAT INJURED', short: 'SWAT injured', kind: 'flag', x: 1705, y: 2170, w: 230, h: 44, sub: 'warning flag', status: 'ocr', src: ['steam'],
+      note: 'Warning-flag box. Its incoming connector rises into the search area but the tap point is not clear.' },
+
+    { id: 'stage-confront', chapter: 'hostage', label: 'CONFRONT DEVIANT OUTSIDE', short: 'Confront deviant outside', kind: 'stage', x: 2025, y: 1850, w: 230, h: 60, sub: 'stage container', status: 'ocr', src: ['steam'] },
+    { id: 'stage-negotiate', chapter: 'hostage', label: 'NEGOTIATE WITH DEVIANT', short: 'Negotiate with deviant', kind: 'stage', x: 2405, y: 1850, w: 230, h: 60, sub: 'stage container', status: 'ocr', src: ['steam'],
+      children: ['approach', 'helicopter', 'gun_talk', 'wounded_cop', 'fail_negotiate'] },
+    { id: 'approach', chapter: 'hostage', label: 'FRIENDLY APPROACH / COLD APPROACH', heading: 'Approach choice', short: 'Approach choice', kind: 'choice', x: 2685, y: 1510, w: 230, h: 64, options: ['FRIENDLY APPROACH', 'COLD APPROACH'], status: 'ocr', src: ['steam'] },
+    { id: 'helicopter', chapter: 'hostage', label: 'REFUSE TO DISMISS HELICOPTER / DISMISS HELICOPTER', heading: 'Helicopter choice', short: 'Helicopter choice', kind: 'choice', x: 2685, y: 1690, w: 240, h: 64, options: ['REFUSE TO DISMISS HELICOPTER', 'DISMISS HELICOPTER'], status: 'ocr', src: ['steam'] },
+    { id: 'gun_talk', chapter: 'hostage', label: 'BE HONEST ABOUT GUN / LIE ABOUT GUN', heading: 'Gun honesty choice', short: 'Gun honesty choice', kind: 'choice', x: 2685, y: 2110, w: 230, h: 64, options: ['BE HONEST ABOUT GUN', 'LIE ABOUT GUN'], status: 'ocr', src: ['steam'] },
+    { id: 'wounded_cop', chapter: 'hostage', label: 'LEAVE WOUNDED COP / SAVE WOUNDED COP', heading: 'Wounded cop choice', short: 'Wounded cop choice', kind: 'choice', x: 2685, y: 2270, w: 230, h: 64, options: ['LEAVE WOUNDED COP', 'SAVE WOUNDED COP'], status: 'mixed', src: ['steam', 'powerpyxHostage', 'powerpyxPublicEnemy'],
+      note: 'Two-row choice box; the screenshot marks SAVE WOUNDED COP with a yellow highlight icon. PowerPyx reports that saving the wounded cop makes him appear later in Public Enemy. Only that saved-cop carry is drawn; the leave option has no consequence in this slice.' },
+    { id: 'fail_negotiate', chapter: 'hostage', label: 'FAIL TO NEGOTIATE', short: 'Fail to negotiate', kind: 'action', x: 3065, y: 1490, w: 230, h: 36, status: 'ocr', src: ['steam'],
+      note: 'Sits on the negotiation output bus. Its true source (the approach choice, or the negotiation stage) is ambiguous.' },
+
+    { id: 'honest_deviant', chapter: 'hostage', label: 'BE HONEST WITH DEVIANT', short: 'Be honest with deviant', kind: 'action', x: 3445, y: 1510, w: 230, h: 36, status: 'ocr', src: ['steam'] },
+    { id: 'lie_deviant', chapter: 'hostage', label: 'LIE TO DEVIANT', short: 'Lie to deviant', kind: 'action', x: 3445, y: 1690, w: 210, h: 36, status: 'ocr', src: ['steam'] },
+    { id: 'trust', chapter: 'hostage', label: 'FAIL TO BUILD TRUST / BUILD TRUST', heading: 'Trust choice', short: 'Trust choice', kind: 'choice', x: 3725, y: 1670, w: 210, h: 64, options: ['FAIL TO BUILD TRUST', 'BUILD TRUST'], status: 'ocr', src: ['steam'],
+      note: 'The screenshot marks FAIL TO BUILD TRUST with an ✕ and BUILD TRUST with a ✓.' },
+    { id: 'sacrifice_self', chapter: 'hostage', label: 'SACRIFICE SELF', short: 'Sacrifice self', kind: 'action', x: 3445, y: 1890, w: 210, h: 36, status: 'ocr', src: ['steam'] },
+    { id: 'use_gun', chapter: 'hostage', label: 'USE GUN', short: 'Use gun', kind: 'action', x: 3445, y: 2070, w: 210, h: 36, status: 'ocr', src: ['steam'] },
+    { id: 'get_close', chapter: 'hostage', label: 'GET CLOSE ENOUGH', short: 'Get close enough', kind: 'action', x: 3445, y: 2250, w: 230, h: 36, status: 'ocr', src: ['steam'],
+      note: 'No outgoing connector is visible in the screenshot; its follow-up outcome is unresolved and no link is invented.' },
+    { id: 'deviant_jumps', chapter: 'hostage', label: 'DEVIANT JUMPS WITH EMMA', short: 'Deviant jumps with Emma', kind: 'flag', x: 3445, y: 1330, w: 230, h: 44, sub: 'event flag', status: 'ocr', src: ['steam'],
+      note: 'Flag box (triangle icon) that funnels into the two rooftop-fall endings.' },
+
+    { id: 'end_failed', chapter: 'hostage', label: 'CONNOR FAILED TO REACH DEVIANT IN TIME', short: 'Connor failed to reach deviant', kind: 'outcome', x: 4045, y: 1270, w: 320, h: 56, sub: 'terminal ending', status: 'ocr', src: ['steam'] },
+    { id: 'end_leapt', chapter: 'hostage', label: 'CONNOR LEAPT FOR EMMA AND FELL', short: 'Connor leapt and fell', kind: 'outcome', x: 4045, y: 1450, w: 320, h: 56, sub: 'terminal ending', status: 'ocr', src: ['steam'] },
+    { id: 'end_snipers', chapter: 'hostage', label: 'SNIPERS SHOT DEVIANT', short: 'Snipers shot deviant', kind: 'outcome', x: 4045, y: 1710, w: 320, h: 56, sub: 'terminal ending', status: 'ocr', src: ['steam'] },
+    { id: 'end_died', chapter: 'hostage', label: 'CONNOR DIED PROTECTING EMMA', short: 'Connor died protecting Emma', kind: 'outcome', x: 4045, y: 1890, w: 320, h: 56, sub: 'terminal ending', status: 'ocr', src: ['steam'] },
+    { id: 'end_deviant_shot', chapter: 'hostage', label: 'DEVIANT SHOT CONNOR', short: 'Deviant shot Connor', kind: 'outcome', x: 4045, y: 2090, w: 320, h: 56, sub: 'terminal ending', status: 'ocr', src: ['steam'] },
+    { id: 'end_connor_shot', chapter: 'hostage', label: 'CONNOR SHOT DEVIANT', short: 'Connor shot deviant', kind: 'outcome', x: 4045, y: 2290, w: 320, h: 56, sub: 'terminal ending', status: 'ocr', src: ['steam'] },
+
+    /* ---- Public Enemy: one bounded cross-chapter meeting node ---- */
+    { id: 'pe_meet_cop', chapter: 'public-enemy', label: 'Meet Cop From Hostage Situation', short: 'Meet saved cop', kind: 'action', x: 4520, y: 2320, w: 320, h: 84, sub: 'Public Enemy · guide-reported meeting', status: 'guide', src: ['powerpyxPublicEnemy', 'gamefaqsPublicEnemy'],
+      note: 'PowerPyx Public Enemy lists “Saved During ‘The Hostage’” and “Meet Cop From Hostage Situation”. This node records the meeting only; no rescue, death or later branch is drawn.' }
   ],
 
   /* id is the stable link id; array index and order stay unchanged for ?edge=N.
@@ -446,7 +537,66 @@ const ATLAS = {
       note: 'GameFAQs/Mogg reports opening the pill bottle and then finding the handgun in the bedside-table drawer. This is a reported sequence, not an eligibility requirement. PowerPyx reports checking the nightstand without stating the pill-bottle order.' },
     { id: 'e_home_todd_bed_alice_room', from: 'a_make_todd_bed', to: 'a_alice_goes_room', kind: 'traced',
       src: ['powerpyxHome', 'gamefaqs'],
-      note: 'Both guides report Alice going to her room after Todd’s bed is made. This is a reported sequence, not an eligibility requirement or a general room-cleaning prerequisite.' }
+      note: 'Both guides report Alice going to her room after Todd’s bed is made. This is a reported sequence, not an eligibility requirement or a general room-cleaning prerequisite.' },
+
+    /* The Hostage — 36 visible chart connectors, then the one guide-supported
+       saved-cop prerequisite into Public Enemy. All prior edge indexes stay put. */
+    { id: 'e_hostage_start_allen', from: 'mission_start', to: 'talk_allen', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_allen_search', from: 'talk_allen', to: 'stage-search', kind: 'traced', src: ['steam'] },
+
+    { id: 'e_hostage_search_father', from: 'stage-search', to: 'inv_father', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_father_cause', from: 'inv_father', to: 'learn_cause', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_search_name', from: 'stage-search', to: 'learn_name', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_search_gun_case', from: 'stage-search', to: 'inv_gun_case', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_search_cop_body', from: 'stage-search', to: 'inv_cop_body', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_cop_body_gun', from: 'inv_cop_body', to: 'cops_gun', kind: 'traced', src: ['steam'] },
+
+    { id: 'e_hostage_search_wasted', from: 'stage-search', to: 'wasted_time', kind: 'traced', via: 1655, src: ['steam'] },
+    { id: 'e_hostage_search_outside', from: 'stage-search', to: 'go_outside', kind: 'traced', via: 1673, src: ['steam'] },
+    { id: 'e_hostage_wasted_confront', from: 'wasted_time', to: 'stage-confront', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_outside_confront', from: 'go_outside', to: 'stage-confront', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_confront_negotiate', from: 'stage-confront', to: 'stage-negotiate', kind: 'traced', src: ['steam'] },
+
+    { id: 'e_hostage_negotiate_approach', from: 'stage-negotiate', to: 'approach', kind: 'traced', via: 2645, src: ['steam'] },
+    { id: 'e_hostage_negotiate_helicopter', from: 'stage-negotiate', to: 'helicopter', kind: 'traced', via: 2653, src: ['steam'] },
+    { id: 'e_hostage_negotiate_gun_talk', from: 'stage-negotiate', to: 'gun_talk', kind: 'traced', via: 2661, src: ['steam'] },
+    { id: 'e_hostage_negotiate_wounded_cop', from: 'stage-negotiate', to: 'wounded_cop', kind: 'traced', via: 2669, src: ['steam'] },
+
+    { id: 'e_hostage_negotiate_honest', from: 'stage-negotiate', to: 'honest_deviant', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_negotiate_lie', from: 'stage-negotiate', to: 'lie_deviant', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_negotiate_sacrifice', from: 'stage-negotiate', to: 'sacrifice_self', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_negotiate_use_gun', from: 'stage-negotiate', to: 'use_gun', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_negotiate_get_close', from: 'stage-negotiate', to: 'get_close', kind: 'traced', src: ['steam'] },
+
+    { id: 'e_hostage_lie_trust', from: 'lie_deviant', to: 'trust', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_honest_jumps', from: 'honest_deviant', to: 'deviant_jumps', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_trust_fail_jumps', from: 'trust', fromOption: 0, to: 'deviant_jumps', kind: 'traced', src: ['steam'],
+      note: 'Upper FAIL TO BUILD TRUST row routes upward to DEVIANT JUMPS WITH EMMA.' },
+    { id: 'e_hostage_trust_build_snipers', from: 'trust', fromOption: 1, to: 'end_snipers', kind: 'traced', src: ['steam'],
+      note: 'Lower BUILD TRUST row routes to SNIPERS SHOT DEVIANT.' },
+    { id: 'e_hostage_jumps_failed', from: 'deviant_jumps', to: 'end_failed', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_jumps_leapt', from: 'deviant_jumps', to: 'end_leapt', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_sacrifice_died', from: 'sacrifice_self', to: 'end_died', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_gun_deviant_shot', from: 'use_gun', to: 'end_deviant_shot', kind: 'traced', src: ['steam'] },
+    { id: 'e_hostage_gun_connor_shot', from: 'use_gun', to: 'end_connor_shot', kind: 'traced', src: ['steam'] },
+
+    /* Five connectors that cannot be confidently traced from the screenshot. */
+    { id: 'e_hostage_start_fish', from: 'mission_start', to: 'fish', kind: 'uncertain', src: ['steam'],
+      note: 'The fish choice hangs off the MISSION START → TALK TO CAPT. ALLEN segment; the exact tap junction is ambiguous.' },
+    { id: 'e_hostage_search_swat', from: 'stage-search', to: 'swat_injured', kind: 'uncertain', via: 1639, src: ['steam'],
+      note: 'SWAT INJURED is fed from the search area but the tap point of its rising connector is not clear.' },
+    { id: 'e_hostage_negotiate_fail', from: 'stage-negotiate', to: 'fail_negotiate', kind: 'uncertain', via: 2990, src: ['steam'],
+      note: 'FAIL TO NEGOTIATE sits on a shared negotiation bus; the source line is not separable by eye.' },
+    { id: 'e_hostage_approach_fail', from: 'approach', to: 'fail_negotiate', kind: 'uncertain', src: ['steam'],
+      note: 'A connector from the approach choice reaches FAIL TO NEGOTIATE, but the crossing bus prevents a confident trace.' },
+    { id: 'e_hostage_fail_jumps', from: 'fail_negotiate', to: 'deviant_jumps', kind: 'uncertain', src: ['steam'],
+      note: 'A long connector links FAIL TO NEGOTIATE to DEVIANT JUMPS WITH EMMA across the outcome crossings; the route is not confidently traced.' },
+
+    /* One source-backed cross-chapter prerequisite; not a chart connector. */
+    { id: 'e_hostage_save_cop_public_enemy', from: 'wounded_cop', fromOption: 1, to: 'pe_meet_cop', kind: 'prerequisite', via: 3420,
+      label: 'prerequisite: saved wounded cop in The Hostage', labelAt: { x: 3800, y: 2362 },
+      src: ['powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy'],
+      note: 'PowerPyx Hostage says saving the wounded cop makes him appear later in Public Enemy; PowerPyx Public Enemy lists “Saved During ‘The Hostage’” and “Meet Cop From Hostage Situation”. It is separate from the Hostage chart’s five uncertain connectors. The same guide also lists later cop outcomes, which are outside this slice. Guide-reported, not gameplay-verified; matching guides are not independent verification.' }
   ],
 
   /* Conditions are plain-English groups over existing edges. They add no edge
@@ -503,6 +653,14 @@ const ATLAS = {
       summary: 'The successful window route requires passing the reported climb QTE; exact prompts and difficulty are not stated.',
       requirements: ['Pass the reported window-climb QTE.'],
       sources: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy']
+    },
+    {
+      id: 'cond_hostage_save_cop_meet',
+      appliesTo: ['e_hostage_save_cop_public_enemy'],
+      operator: 'SINGLE',
+      summary: 'The one Public Enemy meeting connector is reported only when the SAVE WOUNDED COP option was chosen in The Hostage. The leave option has no modelled consequence, and the meeting itself is not gameplay-verified.',
+      requirements: ['SAVE WOUNDED COP was chosen in The Hostage.'],
+      sources: ['powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy']
     }
   ],
 
@@ -581,6 +739,14 @@ const ATLAS = {
       nodes: ['s_alive', 's_front_backyard_escape', 's_window_reach_bus'],
       edges: ['e_stormy_front_backyard_alive', 'e_stormy_window_bus_alive'],
       sources: ['powerpyxStormy', 'gamerGuidesStormy', 'gamefaqsStormy', 'powerpyxKara']
+    },
+    {
+      id: 'u_hostage_chart_uncertain',
+      status: 'unknown',
+      explanation: 'Five connectors in the single Hostage chart screenshot could not be traced confidently: the fish branch off the start segment, the rising SWAT INJURED tap, the two possible sources into FAIL TO NEGOTIATE, and the long FAIL TO NEGOTIATE → DEVIANT JUMPS route. They are drawn as dashed uncertain connectors with a ? badge. This is chart-transcription uncertainty only. The SAVE WOUNDED COP → Meet Cop prerequisite is separately guide-supported and is not one of these uncertain connectors.',
+      nodes: ['mission_start', 'fish', 'stage-search', 'swat_injured', 'stage-negotiate', 'fail_negotiate', 'approach', 'deviant_jumps'],
+      edges: ['e_hostage_start_fish', 'e_hostage_search_swat', 'e_hostage_negotiate_fail', 'e_hostage_approach_fail', 'e_hostage_fail_jumps'],
+      sources: ['steam']
     }
   ],
 
@@ -963,6 +1129,56 @@ const ATLAS = {
       unknown: 'Exactly what happens at an 11-minute boundary is unresolved. This node does not block the terminal or Todd meeting; it remains a separate late-bus outcome.',
       cross: { chapter: 'kara', node: 'k_terminal', label: 'Show the terminal node' },
       src: ['powerpyxKara', 'gamerGuides']
+    },
+    mission_start: {
+      status: 'Screenshot transcription · structure only',
+      summary: 'Start checkpoint in the visible Hostage chart, followed by TALK TO CAPT. ALLEN. The fish choice hangs off that start segment with an uncertain tap point.',
+      unknown: 'No transition is verified in game. The fish branch is chart-uncertain and is shown dashed.',
+      src: ['steam']
+    },
+    'stage-search': {
+      status: 'Screenshot transcription · stage container',
+      summary: 'SEARCH FOR CLUES is one of the three stage containers in the Hostage chart. It feeds the investigation boxes and the WASTED TOO MUCH TIME, GO OUTSIDE and uncertain SWAT INJURED connectors.',
+      unknown: 'The stage box groups visible chart content; the screenshot does not state an in-game timer, order or completion rule for its children.',
+      src: ['steam']
+    },
+    'stage-confront': {
+      status: 'Screenshot transcription · stage container',
+      summary: 'CONFRONT DEVIANT OUTSIDE is the second Hostage stage container. Both WASTED TOO MUCH TIME and GO OUTSIDE feed it, and it continues into NEGOTIATE WITH DEVIANT.',
+      unknown: 'The chart shows structure only; no in-game transition or timing check is verified.',
+      src: ['steam']
+    },
+    'stage-negotiate': {
+      status: 'Screenshot transcription · stage container',
+      summary: 'NEGOTIATE WITH DEVIANT is the third Hostage stage container. It fans out to the four two-row choices and the honest, lie, sacrifice, gun and get-close actions. FAIL TO NEGOTIATE is also attached on an uncertain shared bus.',
+      unknown: 'The stage groups visible chart content. The two possible sources into FAIL TO NEGOTIATE cannot be separated by eye and remain dashed.',
+      src: ['steam']
+    },
+    fail_negotiate: {
+      status: 'Screenshot transcription · uncertain chart node',
+      summary: 'FAIL TO NEGOTIATE sits on the negotiation output bus. Two incoming connectors are visible as candidates, from NEGOTIATE WITH DEVIANT and from the approach choice, but neither source is confidently traceable.',
+      unknown: 'The true source and the outgoing route to DEVIANT JUMPS WITH EMMA are uncertain. Both are drawn dashed with a ? badge rather than asserted.',
+      src: ['steam']
+    },
+    get_close: {
+      status: 'Screenshot transcription · unresolved endpoint',
+      summary: 'GET CLOSE ENOUGH is reached from NEGOTIATE WITH DEVIANT, but the screenshot shows no outgoing connector from this box.',
+      unknown: 'The follow-up outcome is unresolved. No edge is invented; the node stays a dead end in this chart transcription.',
+      src: ['steam']
+    },
+    wounded_cop: {
+      status: 'Screenshot transcription + guide-reported carry',
+      summary: 'The chart shows LEAVE WOUNDED COP and SAVE WOUNDED COP as a two-row choice, with SAVE WOUNDED COP highlighted. PowerPyx Hostage says saving the wounded cop makes him appear later in Public Enemy, and PowerPyx Public Enemy names “Meet Cop From Hostage Situation”. One prerequisite edge records that carry.',
+      unknown: 'The exact state check, the meeting scene and every later cop outcome are not gameplay-verified. Only the saved-cop meeting is drawn; no consequence for LEAVE WOUNDED COP is modelled in this slice, and later cop rescue or death outcomes are omitted.',
+      cross: { chapter: 'public-enemy', node: 'pe_meet_cop', label: 'Show the saved-cop meeting node' },
+      src: ['steam', 'powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy']
+    },
+    pe_meet_cop: {
+      status: 'Guide-reported · bounded Public Enemy node',
+      summary: 'PowerPyx Public Enemy lists a “Saved During ‘The Hostage’” state and “Meet Cop From Hostage Situation”. This atlas records only that reported meeting and its incoming saved-cop prerequisite.',
+      unknown: 'No gameplay transition is verified. Matching guides are not independent verification. Later cop rescue or death outcomes, and anything that follows the meeting, are deliberately outside this slice.',
+      cross: { chapter: 'hostage', node: 'wounded_cop', label: 'Show the SAVE WOUNDED COP choice' },
+      src: ['powerpyxPublicEnemy', 'gamefaqsPublicEnemy', 'powerpyxHostage']
     }
   }
 };

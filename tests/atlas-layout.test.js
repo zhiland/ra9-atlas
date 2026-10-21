@@ -40,11 +40,13 @@ const MIME = {
 };
 
 const EXPECTED = {
-  canvas: { width: 4450, height: 1080 },
+  canvas: { width: 4950, height: 2500 },
   frames: {
     home: { x: 30, y: 120, w: 1930, h: 530 },
     stormy: { x: 2000, y: 120, w: 1320, h: 860 },
-    kara: { x: 3360, y: 120, w: 1060, h: 900 }
+    kara: { x: 3360, y: 120, w: 1060, h: 900 },
+    hostage: { x: 0, y: 1120, w: 4450, h: 1340 },
+    'public-enemy': { x: 4490, y: 2200, w: 380, h: 250 }
   },
   nodes: {
     a_welcome: { x: 50, y: 250, w: 170, h: 84 },
@@ -114,7 +116,41 @@ const EXPECTED = {
     k_late_bus: { x: 3655, y: 780, w: 190, h: 84 },
     k_dialogue: { x: 4165, y: 410, w: 210, h: 110 },
     k_away: { x: 4165, y: 250, w: 210, h: 84 },
-    k_check: { x: 4165, y: 650, w: 210, h: 84 }
+    k_check: { x: 4165, y: 650, w: 210, h: 84 },
+    mission_start: { x: 65, y: 1870, w: 200, h: 44 },
+    fish: { x: 65, y: 1670, w: 220, h: 64 },
+    talk_allen: { x: 365, y: 1876, w: 220, h: 36 },
+    'stage-search': { x: 685, y: 1850, w: 180, h: 70 },
+    inv_father: { x: 925, y: 1590, w: 210, h: 36 },
+    learn_cause: { x: 1245, y: 1590, w: 210, h: 36 },
+    learn_name: { x: 1245, y: 1750, w: 210, h: 36 },
+    inv_gun_case: { x: 1245, y: 2030, w: 210, h: 36 },
+    inv_cop_body: { x: 925, y: 2170, w: 210, h: 36 },
+    cops_gun: { x: 1245, y: 2150, w: 220, h: 64 },
+    wasted_time: { x: 1705, y: 1570, w: 230, h: 44 },
+    go_outside: { x: 1705, y: 1790, w: 230, h: 36 },
+    swat_injured: { x: 1705, y: 2170, w: 230, h: 44 },
+    'stage-confront': { x: 2025, y: 1850, w: 230, h: 60 },
+    'stage-negotiate': { x: 2405, y: 1850, w: 230, h: 60 },
+    approach: { x: 2685, y: 1510, w: 230, h: 64 },
+    helicopter: { x: 2685, y: 1690, w: 240, h: 64 },
+    gun_talk: { x: 2685, y: 2110, w: 230, h: 64 },
+    wounded_cop: { x: 2685, y: 2270, w: 230, h: 64 },
+    fail_negotiate: { x: 3065, y: 1490, w: 230, h: 36 },
+    honest_deviant: { x: 3445, y: 1510, w: 230, h: 36 },
+    lie_deviant: { x: 3445, y: 1690, w: 210, h: 36 },
+    trust: { x: 3725, y: 1670, w: 210, h: 64 },
+    sacrifice_self: { x: 3445, y: 1890, w: 210, h: 36 },
+    use_gun: { x: 3445, y: 2070, w: 210, h: 36 },
+    get_close: { x: 3445, y: 2250, w: 230, h: 36 },
+    deviant_jumps: { x: 3445, y: 1330, w: 230, h: 44 },
+    end_failed: { x: 4045, y: 1270, w: 320, h: 56 },
+    end_leapt: { x: 4045, y: 1450, w: 320, h: 56 },
+    end_snipers: { x: 4045, y: 1710, w: 320, h: 56 },
+    end_died: { x: 4045, y: 1890, w: 320, h: 56 },
+    end_deviant_shot: { x: 4045, y: 2090, w: 320, h: 56 },
+    end_connor_shot: { x: 4045, y: 2290, w: 320, h: 56 },
+    pe_meet_cop: { x: 4520, y: 2320, w: 320, h: 84 }
   }
 };
 
@@ -220,6 +256,7 @@ async function layoutSnapshot(page) {
       return {
         id: el.getAttribute('data-node'),
         chapter: source.chapter,
+        kind: source.kind,
         layout: { x: source.x, y: source.y, w: source.w, h: source.h },
         rect: rect(el),
         overflow: el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1
@@ -273,7 +310,7 @@ async function run(browser) {
   await openAtlas(page);
   const snapshot = await layoutSnapshot(page);
 
-  await ok('canvas and chapter frames keep the widened Stormy/checkpoint bounds', async function () {
+  await ok('canvas and five chapter frames keep the Stage 1 bounds', async function () {
     assert(snapshot.canvas.width === EXPECTED.canvas.width && snapshot.canvas.height === EXPECTED.canvas.height,
       'canvas changed to ' + snapshot.canvas.width + '×' + snapshot.canvas.height);
     Object.keys(EXPECTED.frames).forEach(function (id) {
@@ -284,20 +321,50 @@ async function run(browser) {
     const home = EXPECTED.frames.home;
     const stormy = EXPECTED.frames.stormy;
     const kara = EXPECTED.frames.kara;
+    const hostage = EXPECTED.frames.hostage;
+    const enemy = EXPECTED.frames['public-enemy'];
     assert(stormy.x - (home.x + home.w) >= 24, 'A New Home / Stormy Night gap shrank below 24px');
     assert(kara.x - (stormy.x + stormy.w) >= 40, 'Stormy Night / Kara gap shrank below 40px');
+    assert(hostage.y - (home.y + home.h) >= 24, 'A New Home / The Hostage row gap shrank below 24px');
+    assert(enemy.x - (hostage.x + hostage.w) >= 24, 'The Hostage / Public Enemy gap shrank below 24px');
     assert(stormy.w >= 1200, 'Stormy Night lost its multi-lane width: ' + stormy.w);
     assert(kara.w >= 1000, 'Kara checkpoint region lost its widened bounds: ' + kara.w);
+    assert(hostage.w >= 4400 && hostage.h >= 1300, 'The Hostage chart lost its Stage 1 fit bounds');
   });
 
-  await ok('all 68 node boxes keep the expected static world geometry', async function () {
+  await ok('all 102 node boxes keep the expected static world geometry', async function () {
     const actual = {};
     snapshot.nodes.forEach(function (node) { actual[node.id] = node.layout; });
-    assert(snapshot.nodes.length === 68, 'expected 68 node boxes, got ' + snapshot.nodes.length);
+    assert(snapshot.nodes.length === 102, 'expected 102 node boxes, got ' + snapshot.nodes.length);
     Object.keys(EXPECTED.nodes).forEach(function (id) {
       assert(actual[id], 'missing node ' + id);
       sameBox(actual[id], EXPECTED.nodes[id], 'node ' + id);
     });
+  });
+
+  await ok('The Hostage chart and Public Enemy node stay inside their frames', async function () {
+    const byId = Object.fromEntries(snapshot.nodes.map(function (node) { return [node.id, node.layout]; }));
+    const hostageFrame = EXPECTED.frames.hostage;
+    const hostage = snapshot.nodes.filter(function (node) { return node.chapter === 'hostage'; });
+    assert(hostage.length === 33, 'expected 33 Hostage boxes, got ' + hostage.length);
+    hostage.forEach(function (node) {
+      const box = node.layout;
+      assert(box.x >= hostageFrame.x && box.x + box.w <= hostageFrame.x + hostageFrame.w,
+        node.id + ' leaves The Hostage frame horizontally');
+      assert(box.y >= hostageFrame.y && box.y + box.h <= hostageFrame.y + hostageFrame.h,
+        node.id + ' leaves The Hostage frame vertically');
+    });
+    const enemy = byId.pe_meet_cop;
+    const enemyFrame = EXPECTED.frames['public-enemy'];
+    assert(enemy, 'Public Enemy node missing');
+    assert(enemy.x >= enemyFrame.x && enemy.x + enemy.w <= enemyFrame.x + enemyFrame.w &&
+      enemy.y >= enemyFrame.y && enemy.y + enemy.h <= enemyFrame.y + enemyFrame.h,
+      'Public Enemy node leaves its frame');
+    ['stage-search', 'stage-confront', 'stage-negotiate'].forEach(function (id) {
+      const node = snapshot.nodes.filter(function (item) { return item.id === id; })[0];
+      assert(node && node.kind === 'stage', id + ' should remain a Hostage stage container');
+    });
+    assert(byId.get_close.y > byId.deviant_jumps.y, 'GET CLOSE ENOUGH should stay in the negotiation lane');
   });
 
   await ok('A New Home main sequence runs left to right with side clues below', async function () {
@@ -438,14 +505,15 @@ async function run(browser) {
 
   await ok('chapter focus keeps each region readable at the 1440x900 viewport', async function () {
     const scales = {};
-    for (const id of ['home', 'stormy', 'kara']) {
+    const minimum = { home: 0.62, stormy: 0.62, kara: 0.62, hostage: 0.28, 'public-enemy': 0.62 };
+    for (const id of Object.keys(minimum)) {
       await page.locator('[data-chapter="' + id + '"]').click();
       await waitFrames(page);
       scales[id] = await page.evaluate(function () {
         const world = document.getElementById('world');
         return new DOMMatrixReadOnly(getComputedStyle(world).transform).a;
       });
-      assert(scales[id] >= 0.65,
+      assert(scales[id] >= minimum[id],
         id + ' chapter focus fell to ' + Math.round(scales[id] * 100) + '%');
     }
     await page.locator('[data-chapter="all"]').click();

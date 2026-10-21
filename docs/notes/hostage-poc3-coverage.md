@@ -1,9 +1,12 @@
 # The Hostage — PoC3 coverage and inventory
 
-Date: 2026-10-18. Scope: the standalone PoC3 prototype for one full chapter,
-*The Hostage*. Files: [hostage-poc3.html](../../prototype/hostage-poc3.html),
+Date: 2026-10-18; PoC4 Stage 1 integration added 2026-10-21. Scope: the
+standalone PoC3 prototype for one full chapter, *The Hostage*, and its
+append-only integration into the PoC4 atlas. Files:
+[hostage-poc3.html](../../prototype/hostage-poc3.html),
 [hostage-data.js](../../prototype/hostage-data.js),
-[validate-hostage-data.js](../../prototype/validate-hostage-data.js).
+[validate-hostage-data.js](../../prototype/validate-hostage-data.js); PoC4 data
+in [atlas-data.js](../../prototype/atlas-data.js).
 
 This note reconciles the graph against the source screenshot and states what is
 certain versus uncertain. It is a structure/UI record, **not** in-game verification.
@@ -134,6 +137,44 @@ NEGOTIATE WITH DEVIANT → GET CLOSE ENOUGH   (dead end — see below)
 in the screenshot. No link was invented; the node carries a note and the validator
 fails if an outgoing edge is later added without evidence.
 
+## PoC4 Stage 1 integration (2026-10-21)
+
+The PoC4 atlas now includes all 33 PoC3 boxes in a separate `hostage` chapter
+region, preserving the PoC3 IDs and relative placement with the published
+atlas geometry unchanged (`x + 5`, `y + 1150`). All 40 visible labels remain
+searchable: the seven two-row choices keep their exact combined PoC3 label in
+data and details, with a compact in-box heading plus both option rows to fit the
+original 64px box heights. The three stage containers use a distinct `stage`
+node kind; `MISSION START` maps to an action with a start sublabel and the six
+endings map to outcomes.
+
+The 36 chart connectors are appended in their PoC3 order. Thirty-one are
+`traced`; the same five routes listed above are `uncertain`, rendered dashed
+with `?` badges. `u_hostage_chart_uncertain` names exactly those five edges and
+keeps chart-transcription uncertainty separate from guide evidence. `GET CLOSE
+ENOUGH` remains a no-outgoing-edge point with no invented outcome.
+
+One cross-chapter prerequisite is added:
+`wounded_cop` option index 1 (`SAVE WOUNDED COP`) → `pe_meet_cop` (`Meet Cop
+From Hostage Situation`) in a one-node `public-enemy` region. It is labelled
+`prerequisite: saved wounded cop in The Hostage`, cites PowerPyx *The Hostage*
+and *Public Enemy*, and is governed by the `SINGLE` condition
+`cond_hostage_save_cop_meet`. The executor’s GameFAQs/Mogg Public Enemy request
+returned HTTP 403. A separate reviewer accessed the page on 2026-10-21 and
+confirmed §192 reports that the officer Connor saved in the first chapter later
+stops him and thanks him. The access outcomes are recorded separately; matching
+guide reports are not gameplay verification or proof of independent research.
+No consequence for `LEAVE WOUNDED COP` is modelled in this slice; later cop
+rescue/kill outcomes are omitted. The carry is guide-reported, not
+gameplay-verified; matching guides
+are not independent verification.
+
+The atlas therefore reports 5 chapter regions, 102 nodes and 92 edges, with
+*The Hostage* as `checked-against-chart` and *Public Enemy* as `partial`. The
+existing 68 nodes and 55 edges keep their IDs, order and world geometry. See the
+[PoC4 coverage ledger](poc4-coverage.md), [data contract](../data-contract.md),
+and [source register](../SOURCES.md).
+
 ## What is deliberately not claimed
 
 - No label or connector is marked "in-game verified"; version/platform stay `unknown`.
@@ -154,6 +195,19 @@ fails if an outgoing edge is later added without evidence.
 - `node --check prototype/hostage-data.js` — syntax OK.
 - `node --check prototype/validate-hostage-data.js` — syntax OK.
 - Inline renderer script extracted from `hostage-poc3.html` and passed `node --check`.
+- `node prototype/validate-atlas-data.js` — Stage 1 checks: 33 Hostage boxes in
+  PoC3 order, 40 unique labels, 7 two-row choices, 3 stage containers, 6
+  outcomes, 36 chart connectors (31 traced + 5 uncertain), dead-end
+  `GET CLOSE ENOUGH`, layout containment, and the exact saved-cop
+  option/target/kind/condition/source fence. All checks pass.
+- `node tests/atlas-data-contract.test.js` — 83/83, including malformed fixtures
+  for an outgoing `GET CLOSE ENOUGH`, moved saved-cop option, retargeted or
+  weakened prerequisite, outgoing Public Enemy content, removed condition, and
+  a LEAVE consequence.
+- Browser suite — 58/58 across three palettes and mobile emulation, including
+  five dashed uncertain paths and `?` badges, the dead end, and saved-cop
+  navigation/evidence over localhost. Temporary whole-atlas and Hostage-fit
+  screenshots were captured under `/private/tmp/`.
 
 ## Limitations
 

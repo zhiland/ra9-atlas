@@ -34,8 +34,8 @@
     mixed: 'Mixed secondary evidence · see details',
     synthetic: 'Synthetic fixture · not evidence'
   };
-  var KIND_LABEL = { action: 'Action', flag: 'State flag', choice: 'Choice', outcome: 'Outcome' };
-  var EDGE_LABEL = { traced: 'traced', conditional: 'reported condition', prerequisite: 'prerequisite gate', hypothesis: 'unresolved hypothesis' };
+  var KIND_LABEL = { action: 'Action', flag: 'State flag', choice: 'Choice', outcome: 'Outcome', stage: 'Stage container' };
+  var EDGE_LABEL = { traced: 'traced', conditional: 'reported condition', prerequisite: 'prerequisite gate', hypothesis: 'unresolved hypothesis', uncertain: 'uncertain chart connector' };
   var SOURCE_LABEL = {
     steam: 'Steam chapter flowcharts (screenshot reference)',
     powerpyxHome: 'PowerPyx · A New Home',
@@ -47,7 +47,10 @@
     powerpyxKara: 'PowerPyx · Battle for Detroit — Kara',
     fandomBattle: 'Fandom · Battle for Detroit',
     neoseekerKara: 'Neoseeker · Battle for Detroit — Kara',
-    gamerGuides: 'Gamer Guides · Battle for Detroit — Kara'
+    gamerGuides: 'Gamer Guides · Battle for Detroit — Kara',
+    powerpyxHostage: 'PowerPyx · The Hostage / Opening',
+    powerpyxPublicEnemy: 'PowerPyx · Public Enemy',
+    gamefaqsPublicEnemy: 'GameFAQs/Mogg · Public Enemy'
   };
 
   var nodeChapter = {};
@@ -88,6 +91,14 @@
         cls: 'conditional',
         status: 'Reported condition · single-source or disputed',
         unknown: 'The condition is not verified in game and may be incomplete.',
+        sources: sources
+      };
+    }
+    if (e.kind === 'uncertain') {
+      return {
+        cls: 'uncertain',
+        status: 'Uncertain chart connector · route or source not confidently traced',
+        unknown: 'This connector is visible in the screenshot but its route, source or branch row is ambiguous. Structure only; no in-game verification.',
         sources: sources
       };
     }
@@ -139,8 +150,8 @@
       '<div class="cover-box">' +
       '<div class="eyebrow">ra9-atlas · PoC4 · selected multi-chapter slice</div>' +
       '<h1 id="spoiler-title">Full spoilers ahead</h1>' +
-      '<p>This map reveals choices and outcomes from <em>Detroit: Become Human</em>, including a late-game Todd and Kara branch.</p>' +
-      '<p>Three selected chapter regions are shown: <strong>A New Home</strong>, <strong>Stormy Night</strong> and <strong>Battle for Detroit — Kara</strong>. They are guide-based and screenshot-transcribed only; no transition is verified in game. Game version and platform are unknown.</p>' +
+      '<p>This map reveals choices and outcomes from <em>Detroit: Become Human</em>, including late-game Todd and Kara branches and a saved-cop meeting in Public Enemy.</p>' +
+      '<p>Five selected chapter regions are shown: <strong>A New Home</strong>, <strong>Stormy Night</strong>, <strong>Battle for Detroit — Kara</strong>, <strong>The Hostage</strong> and one bounded <strong>Public Enemy</strong> meeting node. They are guide-based and screenshot-transcribed only; no transition is verified in game. Game version and platform are unknown.</p>' +
       '<button class="primary" id="consent">Reveal atlas map</button>' +
       '</div></div>';
   }
@@ -244,8 +255,9 @@
               '<div class="row"><i></i>traced connector</div>' +
               '<div class="row"><i class="dashdot"></i>reported condition</div>' +
               '<div class="row"><i class="dashed"></i>unresolved hypothesis</div>' +
+              '<div class="row"><i class="uncertain"></i>uncertain chart connector</div>' +
               '<div class="row"><i class="gate-line"></i>prerequisite gate</div>' +
-              '<div class="row"><span class="glyph">?</span>unresolved hypothesis marker</div>' +
+              '<div class="row"><span class="glyph">?</span>uncertain or unresolved marker</div>' +
             '</div>' +
             '<div class="status" id="status"></div>' +
             '<div class="zoom"><button class="tool" id="minus" aria-label="Zoom out">−</button><span id="zoomLabel"></span><button class="tool" id="plus" aria-label="Zoom in">+</button></div>' +
@@ -355,7 +367,7 @@
         '" id="edge-' + i + '" data-edge="' + i + '"' + (e.id ? ' data-edge-id="' + esc(e.id) + '"' : '') +
         ' marker-end="url(#arrowhead)" d="' + d + '"></path>');
       if (e.label) labelQueue.push({ e: e, i: i, dim: dim });
-      if (e.kind === 'hypothesis') badgeQueue.push({ e: e, i: i, dim: dim });
+      if (e.kind === 'hypothesis' || e.kind === 'uncertain') badgeQueue.push({ e: e, i: i, dim: dim });
     });
     svg.innerHTML = '<defs><marker id="arrowhead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 8 4 L 0 8 z" fill="context-stroke"></path></marker></defs>' + paths.join('');
 
@@ -380,7 +392,7 @@
     mk.setAttribute('height', D.canvas.height);
     mk.innerHTML = badgeQueue.map(function (B) {
       var shape = '<circle class="badge-ring" r="8"></circle><text class="badge-text" text-anchor="middle" dy="3.5">?</text>';
-      return '<g class="' + (B.dim ? 'dimmed' : '') + '">' + shape + '</g>';
+      return '<g class="badge ' + B.e.kind + (B.dim ? ' dimmed' : '') + '" data-badge-edge="' + esc(B.e.id) + '">' + shape + '</g>';
     }).join('');
     var badgeNodes = mk.querySelectorAll('g');
     badgeQueue.forEach(function (B, idx) {
@@ -391,8 +403,10 @@
 
     document.getElementById('nodes').innerHTML = D.nodes.map(function (n) {
       var classes = ['node', n.kind];
+      if (n.kind === 'choice' && n.h <= 70) classes.push('compact');
       if (state.selected === n.id) classes.push('selected');
-      var inner = '<span class="node-label" data-node-label="' + esc(n.id) + '">' + esc(n.label) + '</span>';
+      var shownLabel = n.heading || n.label;
+      var inner = '<span class="node-label" data-node-label="' + esc(n.id) + '">' + esc(shownLabel) + '</span>';
       if (n.kind === 'choice') {
         inner += n.options.map(function (o, i) {
           return '<span class="opt"><span class="from-option">option ' + (i + 1) + '</span>' + esc(o) + '</span>';
@@ -415,7 +429,7 @@
 
     var c = D.meta.counts;
     document.getElementById('status').innerHTML =
-      'Selected slice · ' + c.chapters + ' chapters · ' + c.nodes + ' events · ' + c.edges +
+      'Selected slice · ' + c.chapters + ' chapters · ' + c.nodes + ' nodes · ' + c.edges +
       ' connectors · ' + c.crossChapterEdges + ' cross-chapter · not in-game verified';
 
     document.querySelectorAll('[data-chapter]').forEach(function (b) {

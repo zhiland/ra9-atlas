@@ -18,7 +18,7 @@ const path = require('path');
 const dataFile = path.join(__dirname, 'atlas-data.js');
 const CLAIM_STATUSES = new Set(['ocr', 'guide', 'user', 'unresolved', 'mixed']);
 const COVERAGE_STATUSES = new Set(['not-added', 'partial', 'checked-against-chart']);
-const EDGE_KINDS = new Set(['traced', 'conditional', 'prerequisite', 'hypothesis']);
+const EDGE_KINDS = new Set(['traced', 'conditional', 'prerequisite', 'hypothesis', 'uncertain']);
 const CONDITION_OPERATORS = new Set(['SINGLE', 'AND', 'OR']);
 
 function readAtlasData(file) {
@@ -105,7 +105,7 @@ function validateAtlas(ATLAS) {
 
   check('node kinds, claim statuses, labels and sources are valid', () => {
     const errors = [];
-    const kinds = new Set(['action', 'flag', 'choice', 'outcome']);
+    const kinds = new Set(['action', 'flag', 'choice', 'outcome', 'stage']);
     for (const n of nodes) {
       if (!kinds.has(n.kind)) errors.push(`node "${n.id}" has unknown kind "${n.kind}"`);
       if (!CLAIM_STATUSES.has(n.status)) errors.push(`node "${n.id}" has unknown status "${n.status}"`);
@@ -187,7 +187,7 @@ function validateAtlas(ATLAS) {
   check('uncertainty styles carry notes and explicit label text', () => {
     const errors = [];
     for (const e of edges) {
-      if ((e.kind === 'hypothesis' || e.kind === 'conditional' || e.kind === 'prerequisite') && !(e.note && e.note.trim())) {
+      if ((e.kind === 'hypothesis' || e.kind === 'conditional' || e.kind === 'prerequisite' || e.kind === 'uncertain') && !(e.note && e.note.trim())) {
         errors.push(`edge ${e.from}->${e.to} (${e.kind}) has no note explaining the evidence`);
       }
       if (e.kind === 'hypothesis') {
@@ -294,16 +294,17 @@ function validateAtlas(ATLAS) {
   });
 
   /* ---------- 4. Cross-chapter structure ---------- */
-  check('exactly four documented cross-chapter links keep their chapter directions', () => {
+  check('exactly five documented cross-chapter links keep their chapter directions', () => {
     const errors = [];
     const cross = edges.filter(e => byId.has(e.from) && byId.has(e.to) && byId.get(e.from).chapter !== byId.get(e.to).chapter);
     const expected = [
       { from: 'a_box', to: 'k_dialogue', kind: 'hypothesis' },
       { from: 's_alive', to: 'k_meet', kind: 'prerequisite' },
       { from: 'a_gun_seen', to: 's_take_gun', kind: 'prerequisite' },
-      { from: 'a_window_open', to: 's_window_open', kind: 'prerequisite' }
+      { from: 'a_window_open', to: 's_window_open', kind: 'prerequisite' },
+      { from: 'wounded_cop', to: 'pe_meet_cop', kind: 'prerequisite' }
     ];
-    if (cross.length !== expected.length) errors.push(`expected 4 cross-chapter edges, found ${cross.length}`);
+    if (cross.length !== expected.length) errors.push(`expected 5 cross-chapter edges, found ${cross.length}`);
     const actual = new Set(cross.map(e => `${e.from}->${e.to}:${e.kind}`));
     for (const want of expected) {
       if (!actual.has(`${want.from}->${want.to}:${want.kind}`)) {
@@ -374,6 +375,179 @@ function validateAtlas(ATLAS) {
     const goodbye = (ATLAS.detail || {}).k_goodbye;
     if (!goodbye || !/user-provided/i.test(goodbye.status || '')) {
       errors.push('k_goodbye detail no longer marks the sequence as user-provided');
+    }
+    return errors;
+  });
+
+  check('The Hostage chart keeps all 33 boxes, 40 labels and 36 connectors', () => {
+    const errors = [];
+    const hostageChapter = chapterById.get('hostage');
+    if (!hostageChapter) {
+      errors.push('hostage chapter is missing');
+      return errors;
+    }
+    if (hostageChapter.coverage.status !== 'checked-against-chart') {
+      errors.push(`hostage coverage should be checked-against-chart, found "${hostageChapter.coverage.status}"`);
+    }
+    for (const source of ['steam', 'powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy']) {
+      if (!hostageChapter.coverage.sources.includes(source)) {
+        errors.push('hostage coverage must include the chart/carry source "' + source + '"');
+      }
+    }
+
+    const hostageNodes = nodes.filter(n => n.chapter === 'hostage');
+    if (hostageNodes.length !== 33) errors.push(`hostage should have 33 boxes, found ${hostageNodes.length}`);
+    const expectedIds = [
+      'mission_start', 'fish', 'talk_allen', 'stage-search', 'inv_father', 'learn_cause', 'learn_name',
+      'inv_gun_case', 'inv_cop_body', 'cops_gun', 'wasted_time', 'go_outside', 'swat_injured',
+      'stage-confront', 'stage-negotiate', 'approach', 'helicopter', 'gun_talk', 'wounded_cop',
+      'fail_negotiate', 'honest_deviant', 'lie_deviant', 'trust', 'sacrifice_self', 'use_gun',
+      'get_close', 'deviant_jumps', 'end_failed', 'end_leapt', 'end_snipers', 'end_died',
+      'end_deviant_shot', 'end_connor_shot'
+    ];
+    if (JSON.stringify(hostageNodes.map(n => n.id)) !== JSON.stringify(expectedIds)) {
+      errors.push('hostage boxes must keep the PoC3 order and IDs');
+    }
+
+    const stageNodes = hostageNodes.filter(n => n.kind === 'stage');
+    const stageLabels = stageNodes.map(n => n.label);
+    if (stageNodes.length !== 3) errors.push(`hostage should have 3 stage containers, found ${stageNodes.length}`);
+    for (const label of ['SEARCH FOR CLUES', 'CONFRONT DEVIANT OUTSIDE', 'NEGOTIATE WITH DEVIANT']) {
+      if (!stageLabels.includes(label)) errors.push(`stage container "${label}" is missing`);
+    }
+    for (const stage of stageNodes) {
+      if (!Array.isArray(stage.children)) continue;
+      for (const child of stage.children) {
+        if (!byId.has(child) || byId.get(child).chapter !== 'hostage') {
+          errors.push(`stage "${stage.id}" child "${child}" is not a Hostage box`);
+        }
+      }
+    }
+
+    const choices = hostageNodes.filter(n => n.kind === 'choice');
+    if (choices.length !== 7) errors.push(`hostage should have 7 two-row choice groups, found ${choices.length}`);
+    if (choices.some(n => !Array.isArray(n.options) || n.options.length !== 2)) {
+      errors.push('every Hostage choice group must keep exactly two option rows');
+    }
+    if (hostageNodes.filter(n => n.kind === 'outcome').length !== 6) {
+      errors.push('hostage should have 6 terminal endings');
+    }
+    const start = byId.get('mission_start');
+    if (!start || start.kind !== 'action' || !/start/i.test(start.sub || '')) {
+      errors.push('MISSION START must map to an action with a start sublabel');
+    }
+
+    const labelList = [];
+    hostageNodes.forEach(n => {
+      if (n.kind === 'choice') labelList.push(...(n.options || []));
+      else labelList.push(n.label);
+    });
+    const expectedLabels = [
+      'MISSION START', 'TALK TO CAPT. ALLEN', 'SEARCH FOR CLUES', "INVESTIGATE FATHER'S BODY",
+      'LEARN CAUSE OF INCIDENT', "LEARN DEVIANT'S NAME", 'INVESTIGATE GUN CASE', "INVESTIGATE COP'S BODY",
+      'WASTED TOO MUCH TIME', 'GO OUTSIDE', 'SWAT INJURED', 'CONFRONT DEVIANT OUTSIDE',
+      'NEGOTIATE WITH DEVIANT', 'FAIL TO NEGOTIATE', 'BE HONEST WITH DEVIANT', 'LIE TO DEVIANT',
+      'SACRIFICE SELF', 'USE GUN', 'GET CLOSE ENOUGH', 'DEVIANT JUMPS WITH EMMA',
+      'SAVE FISH', 'LEAVE FISH', "TAKE COP'S GUN", "LEAVE COP'S GUN", 'FRIENDLY APPROACH',
+      'COLD APPROACH', 'REFUSE TO DISMISS HELICOPTER', 'DISMISS HELICOPTER', 'BE HONEST ABOUT GUN',
+      'LIE ABOUT GUN', 'LEAVE WOUNDED COP', 'SAVE WOUNDED COP', 'FAIL TO BUILD TRUST', 'BUILD TRUST',
+      'CONNOR FAILED TO REACH DEVIANT IN TIME', 'CONNOR LEAPT FOR EMMA AND FELL',
+      'SNIPERS SHOT DEVIANT', 'CONNOR DIED PROTECTING EMMA', 'DEVIANT SHOT CONNOR', 'CONNOR SHOT DEVIANT'
+    ];
+    if (labelList.length !== 40 || new Set(labelList).size !== 40) {
+      errors.push(`hostage should have 40 unique visible labels, found ${labelList.length} (${new Set(labelList).size} unique)`);
+    }
+    for (const label of expectedLabels) {
+      if (!labelList.includes(label)) errors.push(`hostage visible label "${label}" is missing`);
+    }
+
+    const chartEdges = edges.filter(e => byId.has(e.from) && byId.has(e.to) &&
+      byId.get(e.from).chapter === 'hostage' && byId.get(e.to).chapter === 'hostage');
+    if (chartEdges.length !== 36) errors.push(`hostage chart should have 36 connectors, found ${chartEdges.length}`);
+    const uncertainEdges = chartEdges.filter(e => e.kind === 'uncertain');
+    if (uncertainEdges.length !== 5) errors.push(`hostage chart should have 5 uncertain connectors, found ${uncertainEdges.length}`);
+    if (chartEdges.filter(e => e.kind === 'traced').length !== 31) errors.push('hostage chart should keep 31 traced connectors');
+    if (chartEdges.some(e => !e.src || !e.src.includes('steam'))) errors.push('every Hostage chart connector must cite the Steam chart');
+    if (uncertainEdges.some(e => !/uncertain|ambig|not.*(clear|confiden|separab)|prevents a confident/i.test(e.note || ''))) {
+      errors.push('each uncertain Hostage connector needs its own uncertainty note');
+    }
+    const getCloseOut = edges.filter(e => e.from === 'get_close');
+    if (getCloseOut.length) errors.push('GET CLOSE ENOUGH must stay a no-outgoing-edge endpoint');
+
+    const unknown = uncertainties.find(u => u.id === 'u_hostage_chart_uncertain');
+    if (!unknown) errors.push('u_hostage_chart_uncertain is missing');
+    else {
+      if (unknown.status !== 'unknown') errors.push('u_hostage_chart_uncertain must stay unknown');
+      if (!Array.isArray(unknown.edges) || unknown.edges.length !== 5) {
+        errors.push('u_hostage_chart_uncertain must reference exactly the 5 uncertain connectors');
+      } else {
+        for (const id of uncertainEdges.map(e => e.id)) {
+          if (!unknown.edges.includes(id)) errors.push(`u_hostage_chart_uncertain must reference ${id}`);
+        }
+      }
+      if (unknown.edges && unknown.edges.includes('e_hostage_save_cop_public_enemy')) {
+        errors.push('chart uncertainty must not absorb the guide-supported saved-cop prerequisite');
+      }
+      if (!/chart uncertainty|chart-transcription uncertainty/i.test(unknown.explanation || '') ||
+          !/separate|not one of these uncertain/i.test(unknown.explanation || '')) {
+        errors.push('u_hostage_chart_uncertain must keep chart uncertainty separate from the saved-cop evidence');
+      }
+      if (!unknown.sources || !unknown.sources.includes('steam')) errors.push('u_hostage_chart_uncertain must cite the chart source');
+    }
+    return errors;
+  });
+
+  check('the saved-cop prerequisite is the only Public Enemy content and has no leave-option consequence', () => {
+    const errors = [];
+    const enemyChapter = chapterById.get('public-enemy');
+    if (!enemyChapter) {
+      errors.push('public-enemy chapter is missing');
+      return errors;
+    }
+    if (enemyChapter.coverage.status !== 'partial') errors.push('Public Enemy coverage must stay partial');
+    const enemyNodes = nodes.filter(n => n.chapter === 'public-enemy');
+    if (enemyNodes.length !== 1 || enemyNodes[0].id !== 'pe_meet_cop') {
+      errors.push('Public Enemy must contain only the pe_meet_cop node');
+    }
+    const meet = byId.get('pe_meet_cop');
+    if (!meet) {
+      errors.push('pe_meet_cop is missing');
+      return errors;
+    }
+    if (meet.label !== 'Meet Cop From Hostage Situation') errors.push('pe_meet_cop label changed');
+    if (meet.kind === 'outcome') errors.push('pe_meet_cop must not claim a terminal outcome');
+    if (edges.some(e => e.from === 'pe_meet_cop')) errors.push('pe_meet_cop must not gain an outgoing consequence');
+
+    const out = edges.filter(e => e.from === 'wounded_cop');
+    if (out.length !== 1) errors.push(`wounded_cop should have exactly one outgoing connector, found ${out.length}`);
+    const gate = out[0];
+    if (!gate || gate.id !== 'e_hostage_save_cop_public_enemy') {
+      errors.push('wounded_cop must feed only e_hostage_save_cop_public_enemy');
+    } else {
+      if (gate.fromOption !== 1) errors.push('the saved-cop edge must leave the SAVE WOUNDED COP option (index 1)');
+      if (gate.to !== 'pe_meet_cop') errors.push('the saved-cop edge must target pe_meet_cop');
+      if (gate.kind !== 'prerequisite') errors.push('the saved-cop edge must stay a prerequisite');
+      if (!/prerequisite/i.test(gate.label || '')) errors.push('the saved-cop edge must label itself as a prerequisite');
+      if (!/guide-reported|not gameplay-verified/i.test(gate.note || '')) {
+        errors.push('the saved-cop edge must keep its guide-reported limit');
+      }
+      for (const ref of ['powerpyxHostage', 'powerpyxPublicEnemy']) {
+        if (!gate.src || !gate.src.includes(ref)) errors.push(`the saved-cop edge must cite ${ref}`);
+      }
+      if (/leave wounded cop/i.test(gate.label || '')) errors.push('the saved-cop edge must not name the leave option as a source');
+      if (/rescue|kill|death/i.test(gate.label || '')) errors.push('the saved-cop edge must not claim a later rescue or death outcome');
+    }
+    const leaveConsequence = edges.some(e => e.from === 'wounded_cop' && e.fromOption === 0);
+    if (leaveConsequence) errors.push('LEAVE WOUNDED COP must have no drawn consequence');
+
+    const conditionsForGate = conditions.filter(c => c.appliesTo && c.appliesTo.includes('e_hostage_save_cop_public_enemy'));
+    if (conditionsForGate.length !== 1 || conditionsForGate[0].id !== 'cond_hostage_save_cop_meet') {
+      errors.push('the saved-cop edge must have exactly one condition, cond_hostage_save_cop_meet');
+    }
+    const condition = conditionsForGate[0];
+    if (condition && (condition.operator !== 'SINGLE' || !Array.isArray(condition.requirements) || condition.requirements.length !== 1 ||
+        !/SAVE WOUNDED COP/.test(condition.requirements[0] || ''))) {
+      errors.push('cond_hostage_save_cop_meet must be a SINGLE SAVE WOUNDED COP requirement');
     }
     return errors;
   });
@@ -633,8 +807,10 @@ function validateAtlas(ATLAS) {
         errors.push(`${id} note must call the relation a reported sequence, not an eligibility requirement`);
       }
     }
-    if (edges.slice(-2).map(e => e.id).join(',') !== expected.map(item => item[0]).join(',')) {
-      errors.push('the two second-floor relation edges must stay appended after all prior edges');
+    const edgeIds = edges.map(e => e.id);
+    const pillAt = edgeIds.indexOf('e_home_pills_gun');
+    if (pillAt === -1 || edgeIds[pillAt + 1] !== 'e_home_todd_bed_alice_room') {
+      errors.push('the two second-floor relation edges must stay consecutive after the prior edges');
     }
     if (edges.some(e => newIds.includes(e.from) && e.to === 'a_talk')) {
       errors.push('second-floor events must not become universal prerequisites for Talk with Alice');
@@ -994,13 +1170,14 @@ function validateAtlas(ATLAS) {
       conditionalEdges: kindCount('conditional'),
       prerequisiteEdges: kindCount('prerequisite'),
       hypothesisEdges: kindCount('hypothesis'),
+      uncertainEdges: kindCount('uncertain'),
       crossChapterEdges: edges.filter(e => byId.has(e.from) && byId.has(e.to) && byId.get(e.from).chapter !== byId.get(e.to).chapter).length
     };
     for (const [key, value] of Object.entries(actual)) {
       if (counts[key] !== value) errors.push(`meta.counts.${key} is ${counts[key]} but the data has ${value}`);
     }
-    if (actual.nodes !== 68) errors.push(`expected 68 boxes, found ${actual.nodes}`);
-    if (actual.edges !== 55) errors.push(`expected 55 connectors, found ${actual.edges}`);
+    if (actual.nodes !== 102) errors.push(`expected 102 boxes, found ${actual.nodes}`);
+    if (actual.edges !== 92) errors.push(`expected 92 connectors, found ${actual.edges}`);
     return errors;
   });
 
@@ -1132,7 +1309,7 @@ function main() {
 
   const c = ATLAS.meta.counts;
   console.log(`\nInventory: ${c.chapters} chapters, ${c.nodes} boxes, ${c.edges} connectors ` +
-    `(${c.tracedEdges} traced + ${c.conditionalEdges} conditional + ${c.prerequisiteEdges} prerequisite gates + ${c.hypothesisEdges} unresolved hypothesis; ${c.crossChapterEdges} cross-chapter).`);
+    `(${c.tracedEdges} traced + ${c.conditionalEdges} conditional + ${c.prerequisiteEdges} prerequisite gates + ${c.hypothesisEdges} unresolved hypothesis + ${c.uncertainEdges} uncertain chart; ${c.crossChapterEdges} cross-chapter).`);
   console.log(`Contract: ${result.counts.conditions} conditions, ${result.counts.uncertainties} uncertainties, ${result.counts.conflicts} conflicts.`);
 
   if (result.failed) {
