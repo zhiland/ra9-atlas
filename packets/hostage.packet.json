@@ -1,0 +1,682 @@
+{
+  "kind": "ra9-atlas.chapter-preparation.packet",
+  "packetVersion": "1.0",
+  "packetStatus": "prepared",
+  "packetId": "hostage-chart-and-saved-cop",
+  "chapter": {
+    "id": "hostage",
+    "title": "The Hostage"
+  },
+  "coverage": {
+    "status": "checked-against-chart",
+    "scope": "The complete visible The Hostage chart from one Steam guide screenshot, plus the separate guide-reported saved-cop prerequisite into the bounded Public Enemy meeting node.",
+    "included": [
+      "33 chart boxes, 40 visible labels and 36 chart connectors: 31 traced and 5 uncertain.",
+      "One supplementary saved-cop prerequisite from the SAVE WOUNDED COP option (index 1) to the existing Public Enemy meeting node, with one edge-local condition.",
+      "One explicit chart-transcription unknown record and no source-vs-source conflict record."
+    ],
+    "omitted": [
+      "In-game verification, game version/platform, and any branch set beyond the single screenshot.",
+      "LEAVE WOUNDED COP consequences, later cop rescue or death outcomes, everything after the Public Enemy meeting, and all other Public Enemy content.",
+      "Independent source review approval and legal clearance or permission to reuse source text, images, or chart-derived expression."
+    ],
+    "sources": [
+      "steamHostageChart",
+      "powerpyxHostage",
+      "powerpyxPublicEnemy",
+      "gamefaqsPublicEnemy"
+    ]
+  },
+  "atlas": {
+    "source": "prototype/atlas-data.js",
+    "chapterId": "hostage",
+    "exactChapterNodes": true,
+    "exactChapterEdges": true
+  },
+  "legacy": {
+    "canonical": "?edge=N",
+    "edgeIndexBase": "prototype/atlas-data.js edges[]",
+    "note": "Every claimed legacyEdgeIndex equals the current array position. Stable e_* IDs remain input aliases; this packet does not migrate the canonical ?edge=N form."
+  },
+  "sources": [
+    {
+      "id": "steamHostageChart",
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
+      "class": "chart-image",
+      "role": "Primary chart transcription for visible Hostage nodes, labels and connectors.",
+      "locator": "The Hostage region of the “100% Chapter Flowcharts” guide image (7288×2648); manually read region by region.",
+      "access": [
+        {
+          "date": "2026-10-18",
+          "actor": "project transcription",
+          "outcome": "inspected",
+          "note": "The visible Hostage region was transcribed from the guide image."
+        }
+      ],
+      "attribution": "Steam Community guide “Detroit: Become Human | 100% Chapter Flowcharts”. The guide credits Reddit user throwawaydeviant9 for paths/screenshots and Neoseeker’s Krystal109 for high-resolution images.",
+      "rights": {
+        "state": "reference-only",
+        "note": "The source-license audit found no reuse license. Steam marks the item removed although embedded images remain visible. Reference only; no image or chart expression is cleared for reuse."
+      }
+    },
+    {
+      "id": "powerpyxHostage",
+      "url": "https://www.powerpyx.com/detroit-become-human-the-hostage-opening-walkthrough-100/",
+      "class": "supplementary-guide",
+      "role": "Supports the saved wounded-cop later-appearance claim.",
+      "locator": "The Hostage / Opening guide, closing wounded-cop choice section, around §§40–42 as supplied for the Stage 1 pilot.",
+      "access": [
+        {
+          "date": "2026-10-21",
+          "actor": "project source review",
+          "outcome": "inspected-excerpt",
+          "note": "The closing choice section was consulted for the reported later appearance."
+        }
+      ],
+      "attribution": "PowerPyx, Detroit: Become Human — The Hostage / Opening walkthrough.",
+      "rights": {
+        "state": "reference-only",
+        "note": "All rights reserved per the source-license audit. Cite independently worded facts only; no reuse permission was identified."
+      }
+    },
+    {
+      "id": "powerpyxPublicEnemy",
+      "url": "https://www.powerpyx.com/detroit-become-human-public-enemy-walkthrough-100/",
+      "class": "supplementary-guide",
+      "role": "Names the saved-cop state and the bounded Public Enemy meeting node.",
+      "locator": "Public Enemy guide sections around §§64–66: “Saved During ‘The Hostage’” and “Meet Cop From Hostage Situation”.",
+      "access": [
+        {
+          "date": "2026-10-21",
+          "actor": "project source review",
+          "outcome": "inspected-excerpt",
+          "note": "Only the saved-cop state and meeting interaction were consulted."
+        }
+      ],
+      "attribution": "PowerPyx, Detroit: Become Human — Public Enemy walkthrough.",
+      "rights": {
+        "state": "reference-only",
+        "note": "All rights reserved per the source-license audit. Cite independently worded facts only; no reuse permission was identified."
+      }
+    },
+    {
+      "id": "gamefaqsPublicEnemy",
+      "url": "https://gamefaqs.gamespot.com/ps4/182637-detroit-become-human/faqs/76123/public-enemy",
+      "class": "supplementary-guide",
+      "role": "Separately rechecked cross-reference for the saved-cop carry.",
+      "locator": "Public Enemy guide §192: the officer saved in the first chapter later stops Connor and thanks him.",
+      "access": [
+        {
+          "date": "2026-10-21",
+          "actor": "executor",
+          "outcome": "http-error",
+          "httpStatus": 403,
+          "note": "The executor’s request returned HTTP 403."
+        },
+        {
+          "date": "2026-10-21",
+          "actor": "separate reviewer",
+          "outcome": "inspected",
+          "note": "A separate reviewer accessed the page and confirmed §192. This access outcome is not approval of the full packet or proof of independent guide research."
+        }
+      ],
+      "attribution": "GameFAQs/Mogg, Detroit: Become Human — Public Enemy guide.",
+      "rights": {
+        "state": "reference-only",
+        "note": "No reuse license identified; site terms are Fandom’s per the source-license audit. Cite the fact only; no guide text is reproduced."
+      }
+    }
+  ],
+  "chart": {
+    "basis": "chart-transcribed",
+    "sources": [
+      "steamHostageChart"
+    ],
+    "nodes": [
+      {
+        "id": "mission_start",
+        "label": "MISSION START",
+        "kind": "action"
+      },
+      {
+        "id": "fish",
+        "label": "SAVE FISH / LEAVE FISH",
+        "kind": "choice",
+        "options": [
+          "SAVE FISH",
+          "LEAVE FISH"
+        ]
+      },
+      {
+        "id": "talk_allen",
+        "label": "TALK TO CAPT. ALLEN",
+        "kind": "action"
+      },
+      {
+        "id": "stage-search",
+        "label": "SEARCH FOR CLUES",
+        "kind": "stage"
+      },
+      {
+        "id": "inv_father",
+        "label": "INVESTIGATE FATHER'S BODY",
+        "kind": "action"
+      },
+      {
+        "id": "learn_cause",
+        "label": "LEARN CAUSE OF INCIDENT",
+        "kind": "action"
+      },
+      {
+        "id": "learn_name",
+        "label": "LEARN DEVIANT'S NAME",
+        "kind": "action"
+      },
+      {
+        "id": "inv_gun_case",
+        "label": "INVESTIGATE GUN CASE",
+        "kind": "action"
+      },
+      {
+        "id": "inv_cop_body",
+        "label": "INVESTIGATE COP'S BODY",
+        "kind": "action"
+      },
+      {
+        "id": "cops_gun",
+        "label": "TAKE COP'S GUN / LEAVE COP'S GUN",
+        "kind": "choice",
+        "options": [
+          "TAKE COP'S GUN",
+          "LEAVE COP'S GUN"
+        ]
+      },
+      {
+        "id": "wasted_time",
+        "label": "WASTED TOO MUCH TIME",
+        "kind": "flag"
+      },
+      {
+        "id": "go_outside",
+        "label": "GO OUTSIDE",
+        "kind": "action"
+      },
+      {
+        "id": "swat_injured",
+        "label": "SWAT INJURED",
+        "kind": "flag"
+      },
+      {
+        "id": "stage-confront",
+        "label": "CONFRONT DEVIANT OUTSIDE",
+        "kind": "stage"
+      },
+      {
+        "id": "stage-negotiate",
+        "label": "NEGOTIATE WITH DEVIANT",
+        "kind": "stage"
+      },
+      {
+        "id": "approach",
+        "label": "FRIENDLY APPROACH / COLD APPROACH",
+        "kind": "choice",
+        "options": [
+          "FRIENDLY APPROACH",
+          "COLD APPROACH"
+        ]
+      },
+      {
+        "id": "helicopter",
+        "label": "REFUSE TO DISMISS HELICOPTER / DISMISS HELICOPTER",
+        "kind": "choice",
+        "options": [
+          "REFUSE TO DISMISS HELICOPTER",
+          "DISMISS HELICOPTER"
+        ]
+      },
+      {
+        "id": "gun_talk",
+        "label": "BE HONEST ABOUT GUN / LIE ABOUT GUN",
+        "kind": "choice",
+        "options": [
+          "BE HONEST ABOUT GUN",
+          "LIE ABOUT GUN"
+        ]
+      },
+      {
+        "id": "wounded_cop",
+        "label": "LEAVE WOUNDED COP / SAVE WOUNDED COP",
+        "kind": "choice",
+        "options": [
+          "LEAVE WOUNDED COP",
+          "SAVE WOUNDED COP"
+        ]
+      },
+      {
+        "id": "fail_negotiate",
+        "label": "FAIL TO NEGOTIATE",
+        "kind": "action"
+      },
+      {
+        "id": "honest_deviant",
+        "label": "BE HONEST WITH DEVIANT",
+        "kind": "action"
+      },
+      {
+        "id": "lie_deviant",
+        "label": "LIE TO DEVIANT",
+        "kind": "action"
+      },
+      {
+        "id": "trust",
+        "label": "FAIL TO BUILD TRUST / BUILD TRUST",
+        "kind": "choice",
+        "options": [
+          "FAIL TO BUILD TRUST",
+          "BUILD TRUST"
+        ]
+      },
+      {
+        "id": "sacrifice_self",
+        "label": "SACRIFICE SELF",
+        "kind": "action"
+      },
+      {
+        "id": "use_gun",
+        "label": "USE GUN",
+        "kind": "action"
+      },
+      {
+        "id": "get_close",
+        "label": "GET CLOSE ENOUGH",
+        "kind": "action"
+      },
+      {
+        "id": "deviant_jumps",
+        "label": "DEVIANT JUMPS WITH EMMA",
+        "kind": "flag"
+      },
+      {
+        "id": "end_failed",
+        "label": "CONNOR FAILED TO REACH DEVIANT IN TIME",
+        "kind": "outcome"
+      },
+      {
+        "id": "end_leapt",
+        "label": "CONNOR LEAPT FOR EMMA AND FELL",
+        "kind": "outcome"
+      },
+      {
+        "id": "end_snipers",
+        "label": "SNIPERS SHOT DEVIANT",
+        "kind": "outcome"
+      },
+      {
+        "id": "end_died",
+        "label": "CONNOR DIED PROTECTING EMMA",
+        "kind": "outcome"
+      },
+      {
+        "id": "end_deviant_shot",
+        "label": "DEVIANT SHOT CONNOR",
+        "kind": "outcome"
+      },
+      {
+        "id": "end_connor_shot",
+        "label": "CONNOR SHOT DEVIANT",
+        "kind": "outcome"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e_hostage_start_allen",
+        "from": "mission_start",
+        "to": "talk_allen",
+        "kind": "traced",
+        "legacyEdgeIndex": 55
+      },
+      {
+        "id": "e_hostage_allen_search",
+        "from": "talk_allen",
+        "to": "stage-search",
+        "kind": "traced",
+        "legacyEdgeIndex": 56
+      },
+      {
+        "id": "e_hostage_search_father",
+        "from": "stage-search",
+        "to": "inv_father",
+        "kind": "traced",
+        "legacyEdgeIndex": 57
+      },
+      {
+        "id": "e_hostage_father_cause",
+        "from": "inv_father",
+        "to": "learn_cause",
+        "kind": "traced",
+        "legacyEdgeIndex": 58
+      },
+      {
+        "id": "e_hostage_search_name",
+        "from": "stage-search",
+        "to": "learn_name",
+        "kind": "traced",
+        "legacyEdgeIndex": 59
+      },
+      {
+        "id": "e_hostage_search_gun_case",
+        "from": "stage-search",
+        "to": "inv_gun_case",
+        "kind": "traced",
+        "legacyEdgeIndex": 60
+      },
+      {
+        "id": "e_hostage_search_cop_body",
+        "from": "stage-search",
+        "to": "inv_cop_body",
+        "kind": "traced",
+        "legacyEdgeIndex": 61
+      },
+      {
+        "id": "e_hostage_cop_body_gun",
+        "from": "inv_cop_body",
+        "to": "cops_gun",
+        "kind": "traced",
+        "legacyEdgeIndex": 62
+      },
+      {
+        "id": "e_hostage_search_wasted",
+        "from": "stage-search",
+        "to": "wasted_time",
+        "kind": "traced",
+        "legacyEdgeIndex": 63
+      },
+      {
+        "id": "e_hostage_search_outside",
+        "from": "stage-search",
+        "to": "go_outside",
+        "kind": "traced",
+        "legacyEdgeIndex": 64
+      },
+      {
+        "id": "e_hostage_wasted_confront",
+        "from": "wasted_time",
+        "to": "stage-confront",
+        "kind": "traced",
+        "legacyEdgeIndex": 65
+      },
+      {
+        "id": "e_hostage_outside_confront",
+        "from": "go_outside",
+        "to": "stage-confront",
+        "kind": "traced",
+        "legacyEdgeIndex": 66
+      },
+      {
+        "id": "e_hostage_confront_negotiate",
+        "from": "stage-confront",
+        "to": "stage-negotiate",
+        "kind": "traced",
+        "legacyEdgeIndex": 67
+      },
+      {
+        "id": "e_hostage_negotiate_approach",
+        "from": "stage-negotiate",
+        "to": "approach",
+        "kind": "traced",
+        "legacyEdgeIndex": 68
+      },
+      {
+        "id": "e_hostage_negotiate_helicopter",
+        "from": "stage-negotiate",
+        "to": "helicopter",
+        "kind": "traced",
+        "legacyEdgeIndex": 69
+      },
+      {
+        "id": "e_hostage_negotiate_gun_talk",
+        "from": "stage-negotiate",
+        "to": "gun_talk",
+        "kind": "traced",
+        "legacyEdgeIndex": 70
+      },
+      {
+        "id": "e_hostage_negotiate_wounded_cop",
+        "from": "stage-negotiate",
+        "to": "wounded_cop",
+        "kind": "traced",
+        "legacyEdgeIndex": 71
+      },
+      {
+        "id": "e_hostage_negotiate_honest",
+        "from": "stage-negotiate",
+        "to": "honest_deviant",
+        "kind": "traced",
+        "legacyEdgeIndex": 72
+      },
+      {
+        "id": "e_hostage_negotiate_lie",
+        "from": "stage-negotiate",
+        "to": "lie_deviant",
+        "kind": "traced",
+        "legacyEdgeIndex": 73
+      },
+      {
+        "id": "e_hostage_negotiate_sacrifice",
+        "from": "stage-negotiate",
+        "to": "sacrifice_self",
+        "kind": "traced",
+        "legacyEdgeIndex": 74
+      },
+      {
+        "id": "e_hostage_negotiate_use_gun",
+        "from": "stage-negotiate",
+        "to": "use_gun",
+        "kind": "traced",
+        "legacyEdgeIndex": 75
+      },
+      {
+        "id": "e_hostage_negotiate_get_close",
+        "from": "stage-negotiate",
+        "to": "get_close",
+        "kind": "traced",
+        "legacyEdgeIndex": 76
+      },
+      {
+        "id": "e_hostage_lie_trust",
+        "from": "lie_deviant",
+        "to": "trust",
+        "kind": "traced",
+        "legacyEdgeIndex": 77
+      },
+      {
+        "id": "e_hostage_honest_jumps",
+        "from": "honest_deviant",
+        "to": "deviant_jumps",
+        "kind": "traced",
+        "legacyEdgeIndex": 78
+      },
+      {
+        "id": "e_hostage_trust_fail_jumps",
+        "from": "trust",
+        "to": "deviant_jumps",
+        "kind": "traced",
+        "legacyEdgeIndex": 79,
+        "fromOption": 0
+      },
+      {
+        "id": "e_hostage_trust_build_snipers",
+        "from": "trust",
+        "to": "end_snipers",
+        "kind": "traced",
+        "legacyEdgeIndex": 80,
+        "fromOption": 1
+      },
+      {
+        "id": "e_hostage_jumps_failed",
+        "from": "deviant_jumps",
+        "to": "end_failed",
+        "kind": "traced",
+        "legacyEdgeIndex": 81
+      },
+      {
+        "id": "e_hostage_jumps_leapt",
+        "from": "deviant_jumps",
+        "to": "end_leapt",
+        "kind": "traced",
+        "legacyEdgeIndex": 82
+      },
+      {
+        "id": "e_hostage_sacrifice_died",
+        "from": "sacrifice_self",
+        "to": "end_died",
+        "kind": "traced",
+        "legacyEdgeIndex": 83
+      },
+      {
+        "id": "e_hostage_gun_deviant_shot",
+        "from": "use_gun",
+        "to": "end_deviant_shot",
+        "kind": "traced",
+        "legacyEdgeIndex": 84
+      },
+      {
+        "id": "e_hostage_gun_connor_shot",
+        "from": "use_gun",
+        "to": "end_connor_shot",
+        "kind": "traced",
+        "legacyEdgeIndex": 85
+      },
+      {
+        "id": "e_hostage_start_fish",
+        "from": "mission_start",
+        "to": "fish",
+        "kind": "uncertain",
+        "legacyEdgeIndex": 86,
+        "note": "The fish choice hangs off the MISSION START → TALK TO CAPT. ALLEN segment; the exact tap junction is ambiguous."
+      },
+      {
+        "id": "e_hostage_search_swat",
+        "from": "stage-search",
+        "to": "swat_injured",
+        "kind": "uncertain",
+        "legacyEdgeIndex": 87,
+        "note": "SWAT INJURED is fed from the search area but the tap point of its rising connector is not clear."
+      },
+      {
+        "id": "e_hostage_negotiate_fail",
+        "from": "stage-negotiate",
+        "to": "fail_negotiate",
+        "kind": "uncertain",
+        "legacyEdgeIndex": 88,
+        "note": "FAIL TO NEGOTIATE sits on a shared negotiation bus; the source line is not separable by eye."
+      },
+      {
+        "id": "e_hostage_approach_fail",
+        "from": "approach",
+        "to": "fail_negotiate",
+        "kind": "uncertain",
+        "legacyEdgeIndex": 89,
+        "note": "A connector from the approach choice reaches FAIL TO NEGOTIATE, but the crossing bus prevents a confident trace."
+      },
+      {
+        "id": "e_hostage_fail_jumps",
+        "from": "fail_negotiate",
+        "to": "deviant_jumps",
+        "kind": "uncertain",
+        "legacyEdgeIndex": 90,
+        "note": "A long connector links FAIL TO NEGOTIATE to DEVIANT JUMPS WITH EMMA across the outcome crossings; the route is not confidently traced."
+      }
+    ]
+  },
+  "supplementary": [
+    {
+      "id": "saved-cop-carry",
+      "basis": "guide-reported",
+      "summary": "PowerPyx reports that saving the wounded cop makes him appear later, and PowerPyx Public Enemy lists the saved-during-The-Hostage state and the meeting. GameFAQs §192 was rechecked separately. This is a guide-reported carry, not gameplay verification or proof of independent research.",
+      "sources": [
+        "powerpyxHostage",
+        "powerpyxPublicEnemy",
+        "gamefaqsPublicEnemy"
+      ],
+      "externalNodes": [
+        {
+          "id": "pe_meet_cop",
+          "chapter": "public-enemy",
+          "label": "Meet Cop From Hostage Situation",
+          "kind": "action"
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_hostage_save_cop_public_enemy",
+          "from": "wounded_cop",
+          "fromOption": 1,
+          "to": "pe_meet_cop",
+          "kind": "prerequisite",
+          "legacyEdgeIndex": 91,
+          "label": "prerequisite: saved wounded cop in The Hostage",
+          "note": "PowerPyx Hostage says saving the wounded cop makes him appear later in Public Enemy; PowerPyx Public Enemy lists “Saved During ‘The Hostage’” and “Meet Cop From Hostage Situation”. It is separate from the Hostage chart’s five uncertain connectors. Guide-reported, not gameplay-verified; matching guides are not independent verification."
+        }
+      ]
+    }
+  ],
+  "conditions": [
+    {
+      "id": "cond_hostage_save_cop_meet",
+      "appliesTo": "e_hostage_save_cop_public_enemy",
+      "operator": "SINGLE",
+      "summary": "The one Public Enemy meeting connector is reported only when the SAVE WOUNDED COP option was chosen in The Hostage. The leave option has no modelled consequence, and the meeting itself is not gameplay-verified.",
+      "requirements": [
+        "SAVE WOUNDED COP was chosen in The Hostage."
+      ],
+      "sources": [
+        "powerpyxHostage",
+        "powerpyxPublicEnemy",
+        "gamefaqsPublicEnemy"
+      ]
+    }
+  ],
+  "unknowns": [
+    {
+      "id": "u_hostage_chart_uncertain",
+      "status": "unknown",
+      "explanation": "Five connectors in the single Hostage chart screenshot could not be traced confidently: the fish branch off the start segment, the rising SWAT INJURED tap, the two possible sources into FAIL TO NEGOTIATE, and the long FAIL TO NEGOTIATE → DEVIANT JUMPS route. They are drawn as dashed uncertain connectors with a ? badge. This is chart-transcription uncertainty only. The SAVE WOUNDED COP → Meet Cop prerequisite is separately guide-supported and is not one of these uncertain connectors.",
+      "nodes": [
+        "mission_start",
+        "fish",
+        "stage-search",
+        "swat_injured",
+        "stage-negotiate",
+        "fail_negotiate",
+        "approach",
+        "deviant_jumps"
+      ],
+      "edges": [
+        "e_hostage_start_fish",
+        "e_hostage_search_swat",
+        "e_hostage_negotiate_fail",
+        "e_hostage_approach_fail",
+        "e_hostage_fail_jumps"
+      ],
+      "sources": [
+        "steamHostageChart"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "review": {
+    "independent": {
+      "required": true,
+      "state": "pending",
+      "reviewer": null,
+      "date": null,
+      "scope": "Full independent source review of the Hostage chart transcription and the saved-cop carry, separate from automated structural validation.",
+      "notes": "The Hostage ledger records independent guide/transcript review of the full branch set as outstanding. The separate GameFAQs §192 access is a source access outcome, not approval of this packet."
+    },
+    "mergeGate": {
+      "state": "blocked",
+      "reason": "Independent source review is pending. Structural validation does not establish source truth, rights clearance, or gameplay verification."
+    }
+  }
+}

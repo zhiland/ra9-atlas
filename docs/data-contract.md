@@ -256,3 +256,6 @@ transition occurs in game.
 - The conflict record shape is documented and fixture-tested but has no real
   sample instance.
 - Stored evidence status describes source basis, not gameplay verification.
+- The Stage 2 [chapter preparation packet](chapter-preparation.md) is a separate
+  preparation gate. It does not change this runtime contract or migrate the
+  runtime source of truth.

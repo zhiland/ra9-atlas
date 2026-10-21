@@ -2,13 +2,13 @@
 
 An unofficial, evidence-labeled map prototype for choices and consequences in **Detroit: Become Human**.
 
-**Status:** PoC4 is a partial, guide-backed prototype with neutral-gray default styling and orthogonal arrow connectors. The stable-zoom renderer keeps the same real nodes, labels, chapter regions, and connectors at every camera scale; zoom changes only the camera transform. The Stage 1 pilot adds the complete visible *The Hostage* chart (33 boxes, 40 labels, 36 connectors, including 5 dashed uncertain links) and one bounded *Public Enemy* saved-cop meeting node. The atlas now shows 5 chapter regions, 102 nodes, and 92 connectors; *The Hostage* is checked against its chart, the other regions remain partial. Validators, 83 contract-fixture checks, 43 unit checks, 4 map checks, 10 stable-zoom checks, 12 layout checks, and 58 Chromium checks pass. This is not a complete or in-game-verified map.
+**Status:** PoC4 is a partial, guide-backed prototype with neutral-gray default styling and orthogonal arrow connectors. The stable-zoom renderer keeps the same real nodes, labels, chapter regions, and connectors at every camera scale; zoom changes only the camera transform. The Stage 1 pilot adds the complete visible *The Hostage* chart (33 boxes, 40 labels, 36 connectors, including 5 dashed uncertain links) and one bounded *Public Enemy* saved-cop meeting node. The atlas now shows 5 chapter regions, 102 nodes, and 92 connectors; *The Hostage* is checked against its chart, the other regions remain partial. Validators, 83 contract-fixture checks, 43 unit checks, 4 map checks, 10 stable-zoom checks, 12 layout checks, 54 chapter-packet checks, and 58 Chromium checks pass. This is not a complete or in-game-verified map.
 
 - [Current status](docs/STATUS.md)
 - [Source register](docs/SOURCES.md) · [source-license audit](docs/notes/source-license-audit.md)
 - [Intent and scope](docs/intent.md)
 - [Specification](docs/spec.md)
-- [PoC4 data/provenance contract](docs/data-contract.md)
+- [PoC4 data/provenance contract](docs/data-contract.md) · [chapter preparation packet](docs/chapter-preparation.md)
 - [Roadmap and implementation issues](docs/ROADMAP.md)
 - [License and content boundaries](docs/license-boundary.md)
 - [Preparation plan](docs/PREPARATION-PLAN.md)
