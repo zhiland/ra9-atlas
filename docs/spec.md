@@ -1,6 +1,6 @@
 # ra9-atlas — specification 0.3
 
-Date: 2026-10-19. Status: draft, not ready for implementation.
+Date: 2026-10-21. Status: approved product requirements; production architecture and data contract remain open.
 Basis: [intent.md](intent.md), project owner decisions, [Gate 01](notes/decision-gate-01.md), and [grill round one](notes/grill-round-01.md).
 
 ## Requirements and acceptance
@@ -46,7 +46,7 @@ Error reports may open a prefilled GitHub issue; no project account system, comm
 
 - D1–D3 have been compared against guides. Some conditions and exact triggers remain unconfirmed; targeted gameplay checks may resolve specific questions.
 - PoC4 exercises the map-first selection and navigation journey in a limited sample; this does not establish full-release usability or accessibility.
-- The full-product stack and data contract are not selected. The bounded [PoC4 sample contract](data-contract.md) records the existing sample's coverage, claim/evidence status, conditions, source references, unknowns and stable edge IDs; it does not settle the full-product schema.
+- The full-product stack and data contract are not selected. The bounded [PoC4 sample contract](data-contract.md) records the current 68-node/55-edge sample's coverage, claim/evidence status, conditions, source references, unknowns and stable edge IDs; it does not settle the full-product schema. The next step is a source-backed, complete pilot chapter and coherent cross-chapter chain, as set out in [ROADMAP.md](ROADMAP.md).
 - The agreed direction is a static site on free hosting, with no server maintenance; buying a custom domain is acceptable. Hosting/provider research remains open under [issue #6](https://github.com/zhiland/ra9-atlas/issues/6).
 - Chapter-level overview cross-links with stronger emphasis for the selected chapter are provisional pending a dense-map review. Replay-state help requires fact-checking before it makes claims. Agent-assisted extraction and separate source review are accepted in principle; the review procedure is still open.
 - Dedicated graph keyboard navigation and personal playthrough marking are deferred. Standard control support, visible focus, search focus, Escape behavior, contrast, and non-color distinctions remain required. Player-choice percentages are also deferred with usefulness undecided.

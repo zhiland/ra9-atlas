@@ -1,6 +1,6 @@
 # ra9-atlas — resume point
 
-Updated: 2026-10-20. Status: PoC4 closure — the prototype has a stable-zoom map renderer, bounded data/provenance contract, and selected content expansions. The graph remains partial across 3 chapter regions, with 68 events and 55 connectors. No gameplay transition is verified. The A New Home first- and second-floor content slices pass all checks: 70 contract tests, 43 unit tests, 4 map tests, 10 stable-zoom tests, 11 layout tests, and 55 Chromium checks.
+Updated: 2026-10-21. Status: PoC4 content baseline — the prototype has a stable-zoom map renderer, bounded data/provenance contract, and selected content expansions. The graph remains partial across 3 chapter regions, with 68 events and 55 connectors. No gameplay transition is verified. The A New Home first- and second-floor content slices pass all checks: 70 contract tests, 43 unit tests, 4 map tests, 10 stable-zoom tests, 11 layout tests, and 55 Chromium checks.
 
 The owner has now answered the follow-up grill questions in [grill-round-01.md](notes/grill-round-01.md). The decisions are consolidated in [spec.md](spec.md) and the open work in [ROADMAP.md](ROADMAP.md). Direction: static site, free hosting, no server maintenance; custom domain purchase is acceptable. No hosting provider or full-product data contract is selected. The first release may be an explicitly incomplete public preview; full-game coverage remains the end goal. A robust cross-chapter vertical slice is the first implementation milestone. No images, analytics, or advertising trackers in the first release. Q7's selected-chapter cross-link emphasis is provisional, Q17 replay-state help needs fact-checking, and the source-review procedure remains open.
 
@@ -32,14 +32,14 @@ The map-first concept is accepted for a small prototype. PoC 2.0 applies the lig
 - The first navigation mockup was rejected as card-based. Its [old check record](notes/navigation-mockup-check.md) is historical.
 - The [map-first replacement](../prototype/navigation-mockup.html) shows an overall sample canvas and three detailed chapter maps. Nodes and branches remain visible together. The overall canvas has a dashed, unresolved Alice's box → Todd link; D1 and D3 remain separate. [OCR and structure note](notes/map-reference-analysis.md) records representative Steam image transcription. [Map check record](notes/map-prototype-check.md) records static checks and limits.
 - The map data (refs, N/E helpers, maps, detail) moved out of [navigation-mockup.html](../prototype/navigation-mockup.html) into [map-data.js](../prototype/map-data.js), a classic script loaded before the UI script so the file still opens directly over file://. Every node, edge, status, source URL, label, and the unresolved cross-chapter example is unchanged. [validate-map-data.js](../prototype/validate-map-data.js) checks unique map node IDs, edge endpoints, and that the cross-chapter example stays unresolved; run `node prototype/validate-map-data.js`. All checks pass.
-- [spec.md](spec.md) remains a draft. [CONTEXT.md](CONTEXT.md) defines the main terms.
+- [spec.md](spec.md) records the approved product requirements; production data and hosting decisions remain open. [CONTEXT.md](CONTEXT.md) defines the main terms.
 - Project documents are in English. The project owner approved the public `zhiland/ra9-atlas` repository. Project documents are organized under [docs/](./).
 
 ## Next
 
-- Continue source-backed chapter coverage and keep gaps visible. The current map has three selected chapter regions, not full chapter coverage.
-- Use the [roadmap](ROADMAP.md) to settle the full-product data contract, evidence-review procedure, and hosting choice before a production build. The [PoC4 contract](data-contract.md) is bounded to the existing sample.
-- Keep gameplay checks targeted to material source conflicts or unresolved conditions. This slice does not require full-game verification.
+- Follow [ROADMAP Stage 1](ROADMAP.md): reconcile the chart inventory, choose a sourceable pilot chapter, account for its complete visible topology in a coverage ledger, and complete one coherent evidence-backed cross-chapter chain. Do not continue adding isolated sample events.
+- Use the pilot to decide the production data/evidence pipeline and stable permalink migration before scaling to full-game chapter batches. Keep the current 68/55 PoC contract explicitly bounded to its sample.
+- Continue data, source-review, desktop, and mobile checks throughout. Use gameplay checks only for material conflicts or specific uncertainties; whole-game gameplay verification is not a gate.
 
 ## Budget
 
