@@ -26,8 +26,8 @@ and the [specification](spec.md).
 
 ## Scope and record shape
 
-The contract covers the three existing chapter regions, 56 nodes, 53 edges, five
-condition groups, eight uncertainty records and no conflict records in
+The contract covers the three existing chapter regions, 68 nodes, 55 edges, five
+condition groups, nine uncertainty records and no conflict records in
 `prototype/atlas-data.js`. The sample declares `meta.contractVersion: '1.0'`.
 
 | Record | Required fields |
@@ -70,9 +70,11 @@ Chapter `coverage.status` values:
 | `checked-against-chart` | The whole chapter was checked against a chart; not used by PoC4 |
 
 All three sample chapters are `partial`: A New Home has a selected screenshot
-sequence plus two guide-reported clue actions and eleven selected first-floor
-events. Four local progressions are drawn. Other order and requirements remain
-unknown. Stormy Night has a selected ordered entry sequence with response
+sequence plus two guide-reported clue actions, eleven selected first-floor
+events and twelve selected second-floor events. Six local progressions are
+drawn: four first-floor and two second-floor. The two guides list the
+second-floor chores in different orders, so that difference stays an explicit
+unknown rather than a universal room-cleaning gate. Stormy Night has a selected ordered entry sequence with response
 branches, a non-deviant fatal outcome, a selected gun confrontation, two
 successful non-gun escape routes and inferred Todd states. Battle for Detroit —
 Kara has selected checkpoint and meeting branches. The omitted parts are
@@ -107,8 +109,9 @@ topology or game claims. `operator` is one of:
 The current sample has five records:
 
 - `cond_key_relationship` (`SINGLE`) applies to `e_home_talk_key`: GameFAQs
-  alone reports the Neutral-or-higher relationship threshold. The screenshot and
-  PowerPyx do not state that threshold.
+  reports that Alice trusts Kara enough to give the key but does not name a
+  relationship level. PowerPyx lists favorable conversation choices without a
+  threshold. The exact level stays unknown; the screenshot shows the key link.
 - `cond_meet_todd_access` (`AND`) applies to the two existing prerequisite edges
   `e_stormy_alive_meet` and `e_kara_terminal_meet`. The two requirements stay
   two separate edges and two separate requirements:
@@ -157,11 +160,15 @@ edge is more verified than its source and status state.
 - An `unknown` record describes incomplete evidence: the reviewed sources cannot
   settle a value, trigger or mechanism. Current records:
   `u_box_trigger`, `u_key_threshold`, `u_home_first_floor_order`,
-  `u_stormy_internal`, `u_checkpoint_timer_11`, `u_gun_state_check`,
-  `u_window_route_outcome` and `u_stormy_escape_todd_state`. The first-floor record holds unresolved ordering, requirements, and
-  exclusivity among eleven selected events. The last record specifically holds the missing
-  Todd state after either successful non-gun escape; the dashed links to
-  `s_alive` are inferences, not confirmed outcomes.
+  `u_home_second_floor_order`, `u_stormy_internal`, `u_checkpoint_timer_11`,
+  `u_gun_state_check`, `u_window_route_outcome` and
+  `u_stormy_escape_todd_state`. The first-floor record holds unresolved ordering,
+  requirements, and exclusivity among eleven selected events. The second-floor
+  record holds the differing guide orders and the guide-specific Talk with Alice
+  comments; it does not encode universal room-cleaning prerequisites or an AND
+  gate. The last record specifically holds the missing Todd state after either
+  successful non-gun escape; the dashed links to `s_alive` are inferences, not
+  confirmed outcomes.
 - A `conflict` record would describe sources that disagree with each other. The
   current sample has no normalised source-vs-source conflict, so `conflicts` is
   empty. The schema is still validated and malformed conflict fixtures are
@@ -195,6 +202,15 @@ structural error, not a silent caveat.
   to Red Ice to Todd reaction, and TV stare to blocking Todd’s view);
   unrelated tasks have no invented spokes, the existing `a_clean1 → a_ask`
   sequence remains, and the unknown record covers order and requirements;
+- second-floor event fences: twelve selected events carry scoped source refs;
+  exactly two reported sequences are drawn (pills to gun sighting, and Todd’s
+  bed to Alice going to her room). The pills sequence cites GameFAQs/Mogg only;
+  the bed sequence cites both guides. Neither is a prerequisite, and no
+  second-floor event becomes a Talk with Alice gate or generic spoke;
+- Alice-key fence: the key-to-box relation remains `a_key → a_box`; the key
+  condition is `SINGLE` on `e_home_talk_key`, and the named relationship levels
+  `Neutral`, `Warm` and `Distant` are rejected because the guides do not state
+  an exact level;
 - the previous graph invariants, inventory counts, layout and routing checks.
 
 `tests/atlas-data-contract.test.js` accepts the real sample and rejects

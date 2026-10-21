@@ -81,9 +81,12 @@ check('published node IDs keep their order and later slices are appended', () =>
     's_lock_room', 's_window_go_out', 's_window_qte', 's_window_reach_bus',
     's_todd_orders_stay', 's_alice_runs_upstairs', 's_deviant', 's_fatal_todd_kills', 's_go_upstairs', 's_reason_todd', 's_todd_upstairs_first',
     'a_read_android_power', 'a_read_connecting_dots', 'a_wash_dishes', 'a_take_laundry_backyard',
-    'a_rewash_clothes', 'a_find_red_ice', 'a_enrage_todd', 'a_watch_todd_tv', 'a_block_todd_view', 'a_activate_vacuum', 'a_take_out_trash'
+    'a_rewash_clothes', 'a_find_red_ice', 'a_enrage_todd', 'a_watch_todd_tv', 'a_block_todd_view', 'a_activate_vacuum', 'a_take_out_trash',
+    'a_clean_todd_room', 'a_tidy_pills', 'a_make_todd_bed', 'a_alice_goes_room', 'a_clean_toilet',
+    'a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom', 'a_read_android_qb',
+    'a_read_putting_price', 'a_read_alice_floor_book', 'a_read_alice_shelf_books'
   ]);
-  eq(real.nodes.length, 56);
+  eq(real.nodes.length, 68);
 });
 
 check('published edge IDs keep their order and later slices are appended', () => {
@@ -106,9 +109,10 @@ check('published edge IDs keep their order and later slices are appended', () =>
     'e_stormy_todd_orders_alice_upstairs', 'e_stormy_alice_upstairs_stay_still',
     'e_stormy_alice_upstairs_deviant', 'e_stormy_deviant_go_upstairs',
     'e_stormy_go_upstairs_reach_alice', 'e_stormy_deviant_reason', 'e_stormy_reason_knocked',
-    'e_home_rewash_red_ice', 'e_home_red_ice_enrage_todd', 'e_home_watch_tv_block_view', 'e_home_backyard_rewash_clothes'
+    'e_home_rewash_red_ice', 'e_home_red_ice_enrage_todd', 'e_home_watch_tv_block_view', 'e_home_backyard_rewash_clothes',
+    'e_home_pills_gun', 'e_home_todd_bed_alice_room'
   ]);
-  eq(real.edges.length, 53);
+  eq(real.edges.length, 55);
   eq(real.edges.map(e => [e.from, e.to, e.kind]), [
     ['a_welcome', 'a_todd', 'traced'], ['a_todd', 'a_clean1', 'traced'],
     ['a_clean1', 'a_ask', 'traced'], ['a_ask', 'a_go', 'traced'],
@@ -140,7 +144,9 @@ check('published edge IDs keep their order and later slices are appended', () =>
     ['a_rewash_clothes', 'a_find_red_ice', 'traced'],
     ['a_find_red_ice', 'a_enrage_todd', 'traced'],
     ['a_watch_todd_tv', 'a_block_todd_view', 'traced'],
-    ['a_take_laundry_backyard', 'a_rewash_clothes', 'traced']
+    ['a_take_laundry_backyard', 'a_rewash_clothes', 'traced'],
+    ['a_tidy_pills', 'a_gun_seen', 'traced'],
+    ['a_make_todd_bed', 'a_alice_goes_room', 'traced']
   ]);
 });
 
@@ -209,9 +215,9 @@ check('conditions keep each checkpoint timing alternative attached to its own ed
 });
 
 check('unknowns stay unknown and no source-vs-source conflict is invented', () => {
-  eq(real.uncertainties.map(u => u.status), ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown']);
+  eq(real.uncertainties.map(u => u.status), ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown']);
   eq(real.uncertainties.map(u => u.id), [
-    'u_box_trigger', 'u_key_threshold', 'u_home_first_floor_order', 'u_stormy_internal',
+    'u_box_trigger', 'u_key_threshold', 'u_home_first_floor_order', 'u_home_second_floor_order', 'u_stormy_internal',
     'u_checkpoint_timer_11', 'u_gun_state_check', 'u_window_route_outcome',
     'u_stormy_escape_todd_state'
   ]);
@@ -283,6 +289,98 @@ check('A New Home first-floor events keep only source-supported local progressio
   assert(unknown && unknown.status === 'unknown', 'unresolved order and requirements must be recorded');
   Object.keys(sources).forEach(id => assert(unknown.nodes.includes(id), id + ' missing from first-floor uncertainty'));
   ['e_home_backyard_rewash_clothes', 'e_home_rewash_red_ice', 'e_home_red_ice_enrage_todd', 'e_home_watch_tv_block_view'].forEach(id => assert(unknown.edges.includes(id), id + ' missing from first-floor uncertainty'));
+});
+
+check('A New Home second-floor expansion appends twelve guide-reported events with scoped sources', () => {
+  const byId = new Map(real.nodes.map(n => [n.id, n]));
+  const ids = [
+    'a_clean_todd_room', 'a_tidy_pills', 'a_make_todd_bed', 'a_alice_goes_room',
+    'a_clean_toilet', 'a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom',
+    'a_read_android_qb', 'a_read_putting_price', 'a_read_alice_floor_book', 'a_read_alice_shelf_books'
+  ];
+  eq(real.nodes.slice(-12).map(n => n.id), ids, 'the 12 second-floor events must be appended in order');
+  const sources = {
+    a_clean_todd_room: ['powerpyxHome', 'gamefaqs'],
+    a_tidy_pills: ['powerpyxHome', 'gamefaqs'],
+    a_make_todd_bed: ['powerpyxHome', 'gamefaqs'],
+    a_alice_goes_room: ['powerpyxHome', 'gamefaqs'],
+    a_clean_toilet: ['powerpyxHome', 'gamefaqs'],
+    a_arrange_bathroom_bottles: ['powerpyxHome', 'gamefaqs'],
+    a_store_bathroom_clothes: ['powerpyxHome', 'gamefaqs'],
+    a_mop_bathroom: ['powerpyxHome', 'gamefaqs'],
+    a_read_android_qb: ['powerpyxHome'],
+    a_read_putting_price: ['powerpyxHome'],
+    a_read_alice_floor_book: ['powerpyxHome', 'gamefaqs'],
+    a_read_alice_shelf_books: ['powerpyxHome']
+  };
+  ids.forEach(id => {
+    const node = byId.get(id);
+    assert(node && node.chapter === 'home' && node.kind === 'action', id + ' must be an A New Home action event');
+    eq(node.src, sources[id], id + ' source attribution');
+    assert(/second-floor/i.test(node.sub || ''), id + ' must identify its second-floor context');
+    assert(!/\b(optional (activity|event|action|branch)|is mandatory|must be completed|are exclusive|mutually exclusive)\b/i.test(node.note || ''),
+      id + ' must not claim unsupported optionality or necessity');
+  });
+  assert(/PowerPyx-only/i.test(byId.get('a_read_android_qb').note) && /PowerPyx-only/i.test(byId.get('a_read_putting_price').note),
+    'the two exact Todd-room magazine titles must stay PowerPyx-only');
+});
+
+check('the two second-floor relation edges keep exact semantics and source attribution', () => {
+  const ids = ['a_clean_todd_room', 'a_tidy_pills', 'a_make_todd_bed', 'a_alice_goes_room', 'a_clean_toilet',
+    'a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom', 'a_read_android_qb',
+    'a_read_putting_price', 'a_read_alice_floor_book', 'a_read_alice_shelf_books'];
+  const touching = real.edges.filter(e => ids.includes(e.from) || ids.includes(e.to));
+  eq(touching.map(e => [e.id, e.from, e.to, e.kind, e.src]), [
+    ['e_home_pills_gun', 'a_tidy_pills', 'a_gun_seen', 'traced', ['gamefaqs']],
+    ['e_home_todd_bed_alice_room', 'a_make_todd_bed', 'a_alice_goes_room', 'traced', ['powerpyxHome', 'gamefaqs']]
+  ]);
+  eq(real.edges.slice(-2).map(e => e.id), ['e_home_pills_gun', 'e_home_todd_bed_alice_room'],
+    'the two new relations must stay appended after every prior edge');
+  const pills = real.edges.find(e => e.id === 'e_home_pills_gun');
+  assert(/reported sequence/i.test(pills.note) && /not an eligibility requirement/i.test(pills.note),
+    'the pills-to-gun link must be a reported sequence, not an eligibility requirement');
+  assert(/pill bottle/i.test(pills.note) && /GameFAQs/i.test(pills.note), 'the pills-to-gun link must state the GameFAQs pill-bottle sequence');
+  const bed = real.edges.find(e => e.id === 'e_home_todd_bed_alice_room');
+  assert(/reported sequence/i.test(bed.note) && /not an eligibility requirement/i.test(bed.note),
+    'the bed-to-Alice-room link must be a reported sequence, not an eligibility requirement');
+  assert(!real.conditions.some(c => c.appliesTo.some(id => ['e_home_pills_gun', 'e_home_todd_bed_alice_room'].includes(id))),
+    'second-floor sequence edges must not inherit later requirements');
+});
+
+check('second-floor guide order is recorded without universal room prerequisites or a Talk AND gate', () => {
+  const ids = ['a_clean_todd_room', 'a_tidy_pills', 'a_make_todd_bed', 'a_alice_goes_room', 'a_clean_toilet',
+    'a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom', 'a_read_android_qb',
+    'a_read_putting_price', 'a_read_alice_floor_book', 'a_read_alice_shelf_books'];
+  const uncertainty = real.uncertainties.find(u => u.id === 'u_home_second_floor_order');
+  assert(uncertainty && uncertainty.status === 'unknown', 'the differing second-floor guide orders must stay unknown');
+  ids.concat('a_talk').forEach(id => assert(uncertainty.nodes.includes(id), id + ' missing from second-floor order uncertainty'));
+  ['e_home_pills_gun', 'e_home_todd_bed_alice_room'].forEach(id => assert(uncertainty.edges.includes(id), id + ' missing from second-floor order uncertainty'));
+  assert(/different orders/i.test(uncertainty.explanation), 'the uncertainty must record the source-specific order difference');
+  assert(/not universal|not.*AND gate/i.test(uncertainty.explanation), 'the uncertainty must not encode a universal room-cleaning gate');
+  assert(!real.edges.some(e => ids.includes(e.from) && ['a_talk', 'a_clean2', 'a_room'].includes(e.to)),
+    'second-floor events must not become generic prerequisites or spokes');
+  const talkConditions = real.conditions.filter(c => c.appliesTo.includes('e_home_talk_key'));
+  eq(talkConditions.map(c => [c.id, c.operator]), [['cond_key_relationship', 'SINGLE']]);
+  assert(!real.conditions.some(c => c.appliesTo.includes('e_home_room_talk') && c.operator === 'AND'),
+    'Talk with Alice must not gain a universal AND room-cleaning condition');
+});
+
+check('the unsupported exact Alice-key relationship level stays removed', () => {
+  assert(!/Neutral/i.test(JSON.stringify(real)), 'the atlas data must not claim a Neutral relationship level');
+  const key = real.nodes.find(n => n.id === 'a_key');
+  const detail = real.detail.a_key;
+  const condition = real.conditions.find(c => c.id === 'cond_key_relationship');
+  const uncertainty = real.uncertainties.find(u => u.id === 'u_key_threshold');
+  const text = [key.note, key.sub, detail.status, detail.summary, detail.unknown, condition.summary,
+    condition.requirements.join(' '), uncertainty.explanation].join(' ');
+  assert(!/\b(Neutral|Warm|Distant)\b/i.test(text), 'no named or exact relationship level may be claimed');
+  assert(/not state|does not state|unstated|not named|exact relationship level/i.test(text),
+    'the key text must say the exact relationship level is unknown');
+  eq([condition.id, condition.operator, condition.appliesTo, condition.requirements.length],
+    ['cond_key_relationship', 'SINGLE', ['e_home_talk_key'], 1]);
+  const keyBox = real.edges.find(e => e.id === 'e_home_key_box');
+  eq([keyBox.from, keyBox.to, keyBox.kind], ['a_key', 'a_box', 'traced']);
+  assert(uncertainty && uncertainty.status === 'unknown', 'u_key_threshold must stay unknown');
 });
 
 check('gun and window expansion keeps possession, outcomes and route limits separate', () => {
@@ -470,6 +568,45 @@ rejects('rejects claiming that first-floor chores are optional', d => {
 rejects('rejects removing the first-floor ordering uncertainty', d => {
   d.uncertainties = d.uncertainties.filter(u => u.id !== 'u_home_first_floor_order');
 }, /u_home_first_floor_order must remain explicit/);
+
+rejects('rejects removing a second-floor event', d => {
+  d.nodes = d.nodes.filter(n => n.id !== 'a_mop_bathroom');
+}, /a_mop_bathroom must be an A New Home action event/);
+
+rejects('rejects an inferred second-floor chore spoke', d => {
+  d.edges.push({ id: 'e_fixture_second_floor_spoke', from: 'a_make_todd_bed', to: 'a_clean_todd_room', kind: 'traced', src: ['powerpyxHome'] });
+}, /second-floor events must have exactly two local relation edges/);
+
+rejects('rejects a second-floor chore becoming a universal Talk with Alice prerequisite', d => {
+  d.edges.push({ id: 'e_fixture_second_floor_talk', from: 'a_mop_bathroom', to: 'a_talk', kind: 'traced', src: ['powerpyxHome'] });
+}, /must not become universal prerequisites for Talk with Alice|must have exactly two local relation edges/);
+
+rejects('rejects changing the pills-to-gun source to a guide that does not state the sequence', d => {
+  d.edges.find(e => e.id === 'e_home_pills_gun').src = ['powerpyxHome'];
+}, /e_home_pills_gun must keep its source attribution/);
+
+rejects('rejects presenting the pills-to-gun report as a prerequisite', d => {
+  d.edges.find(e => e.id === 'e_home_pills_gun').kind = 'prerequisite';
+}, /e_home_pills_gun must preserve its reported local sequence/);
+
+rejects('rejects removing the second-floor order uncertainty', d => {
+  d.uncertainties = d.uncertainties.filter(u => u.id !== 'u_home_second_floor_order');
+}, /u_home_second_floor_order must remain explicit/);
+
+rejects('rejects a universal AND condition for Talk with Alice', d => {
+  const condition = d.conditions.find(c => c.id === 'cond_key_relationship');
+  condition.operator = 'AND';
+  condition.requirements = ['Clean Todd’s room.', 'Alice trusts Kara enough to give the key.'];
+}, /cond_key_relationship must stay SINGLE/);
+
+rejects('rejects restoring an exact Neutral relationship level', d => {
+  const condition = d.conditions.find(c => c.id === 'cond_key_relationship');
+  condition.requirements = ['Reported relationship level: Neutral or higher.'];
+}, /must not claim a named or exact relationship level/);
+
+rejects('rejects removing the key-to-box relation', d => {
+  d.edges = d.edges.filter(e => e.id !== 'e_home_key_box');
+}, /e_home_key_box must stay the traced a_key → a_box relation/);
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

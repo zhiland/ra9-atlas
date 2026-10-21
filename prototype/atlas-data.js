@@ -56,9 +56,9 @@ const ATLAS = {
     disclaimer: 'Guide-based and screenshot-transcribed only. No transition is verified in game; game version and platform are unknown.',
     counts: {
       chapters: 3,
-      nodes: 56,
-      edges: 53,
-      tracedEdges: 37,
+      nodes: 68,
+      edges: 55,
+      tracedEdges: 39,
       conditionalEdges: 8,
       prerequisiteEdges: 5,
       hypothesisEdges: 3,
@@ -86,14 +86,14 @@ const ATLAS = {
     {
       id: 'home',
       name: 'A New Home',
-      code: 'D2 · selected Alice sequence + carried clues',
+      code: 'D2 · selected Alice sequence + carried clues + second-floor events',
       frame: { x: 30, y: 120, w: 1930, h: 530 },
-      desc: 'Selected local sequence transcribed from the Steam chapter screenshot, two guide-reported carried-state clues and selected first-floor events. Other chores and unresolved side links remain omitted.',
+      desc: 'Selected local sequence transcribed from the Steam chapter screenshot, two guide-reported carried-state clues, and selected first- and second-floor events. Other chores and unresolved side links remain omitted.',
       coverage: {
         status: 'partial',
-        scope: 'Selected local Alice sequence, two separate guide-reported gun/window clues, and selected guide-reported first-floor events.',
-        included: '23 events: 10 screenshot-transcribed events from WELCOME HOME through OPEN ALICE’S BOX; two gun/window clues; and 11 first-floor events. The selected progressions are laundry to backyard to washer to Red Ice to Todd’s reported reaction, and watch TV to blocking Todd’s view.',
-        omitted: 'Other first- and second-floor chores, unresolved screenshot side links, the order and requirements among separate first-floor tasks, Alice’s conversation choices, how the gun clue is checked by the game, and window-escape outcomes.',
+        scope: 'Selected local Alice sequence, two separate guide-reported gun/window clues, and selected guide-reported first- and second-floor events.',
+        included: '35 events: 10 screenshot-transcribed events from WELCOME HOME through OPEN ALICE’S BOX; two gun/window clues; 11 first-floor events; and 12 second-floor events. The selected progressions are laundry to backyard to washer to Red Ice to Todd’s reported reaction, watch TV to blocking Todd’s view, Todd pills to the gun sighting, and Todd’s bed to Alice going to her room.',
+        omitted: 'Other chores, unresolved screenshot side links, the differing guide order and unstated requirements among separate first- and second-floor tasks, Alice’s conversation choices, the exact relationship level for the key, how the gun clue is checked by the game, and window-escape outcomes.',
         sources: ['steam', 'gamefaqs', 'powerpyxHome', 'transcript', 'neoseekerKara']
       }
     },
@@ -141,14 +141,14 @@ const ATLAS = {
     { id: 'a_clean2', chapter: 'home', label: 'CLEAN SECOND FLOOR', short: 'Clean second floor', kind: 'action', x: 1000, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
     { id: 'a_room', chapter: 'home', label: "CLEAN ALICE'S ROOM", short: "Clean Alice's room", kind: 'action', x: 1190, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
     { id: 'a_talk', chapter: 'home', label: 'TALK WITH ALICE', short: 'Talk with Alice', kind: 'action', x: 1380, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
-    { id: 'a_key', chapter: 'home', label: 'ALICE GIVES KARA A KEY', short: 'Alice gives key', kind: 'flag', x: 1570, y: 250, w: 170, h: 84, sub: 'condition single-source', status: 'mixed', src: ['steam', 'gamefaqs', 'powerpyxHome'],
-      note: 'The screenshot shows the link; GameFAQs alone reports a Neutral-or-higher relationship threshold.' },
+    { id: 'a_key', chapter: 'home', label: 'ALICE GIVES KARA A KEY', short: 'Alice gives key', kind: 'flag', x: 1570, y: 250, w: 170, h: 84, sub: 'condition level unstated', status: 'mixed', src: ['steam', 'gamefaqs', 'powerpyxHome'],
+      note: 'The screenshot shows the link; GameFAQs reports Alice trusts Kara enough to give the key but does not name a relationship level. PowerPyx lists favorable conversation choices without a threshold.' },
     { id: 'a_box', chapter: 'home', label: "OPEN ALICE'S BOX", short: 'Open box', kind: 'action', x: 1760, y: 250, w: 170, h: 84, sub: 'later trigger unresolved', status: 'mixed', src: ['steam', 'transcript', 'neoseekerKara'],
       note: 'Contents are transcript-supported. Whether this box, a photo, or another action carries the later Todd state is unresolved.' },
 
     /* ---- A New Home: guide-reported carried clues (separate from possession) ---- */
-    { id: 'a_gun_seen', chapter: 'home', label: 'SEE GUN IN TODD’S NIGHTSTAND', short: 'See nightstand gun', kind: 'flag', x: 1000, y: 400, w: 170, h: 84, sub: 'clue seen · not possession', status: 'guide', src: ['powerpyxHome'],
-      note: 'PowerPyx reports checking Todd’s nightstand while cleaning his room; this records the clue being seen, not the gun being carried.' },
+    { id: 'a_gun_seen', chapter: 'home', label: 'SEE GUN IN TODD’S NIGHTSTAND', short: 'See nightstand gun', kind: 'flag', x: 1000, y: 400, w: 170, h: 84, sub: 'clue seen · not possession', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'PowerPyx reports checking Todd’s nightstand while cleaning his room. GameFAQs instead reports opening the pill bottle and then finding the handgun in the bedside-table drawer. This records the clue being seen, not the gun being carried.' },
     { id: 'a_window_open', chapter: 'home', label: 'OPEN ALICE’S ROOM WINDOW', short: 'Open room window', kind: 'action', x: 1190, y: 500, w: 170, h: 84, sub: 'opened · future route only', status: 'guide', src: ['powerpyxHome'],
       note: 'PowerPyx says opening the window unlocks a possible future escape way. The opening is represented; escape success is not.' },
 
@@ -247,7 +247,33 @@ const ATLAS = {
     { id: 'a_activate_vacuum', chapter: 'home', label: 'Activate vacuum', short: 'Activate vacuum', kind: 'action', x: 810, y: 523, w: 170, h: 54, sub: 'first-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
       note: 'Both guides report activating the vacuum robot during first-floor cleaning.' },
     { id: 'a_take_out_trash', chapter: 'home', label: 'Take out trash', short: 'Take out trash', kind: 'action', x: 620, y: 562, w: 170, h: 54, sub: 'first-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
-      note: 'Both guides report collecting first-floor trash and taking it out. PowerPyx lists this after other first-floor steps; GameFAQs describes it first.' }
+      note: 'Both guides report collecting first-floor trash and taking it out. PowerPyx lists this after other first-floor steps; GameFAQs describes it first.' },
+
+    /* ---- A New Home: selected second-floor activity records ---- */
+    { id: 'a_clean_todd_room', chapter: 'home', label: 'Clean Todd’s room', short: 'Clean Todd’s room', kind: 'action', x: 1490, y: 346, w: 170, h: 54, sub: 'second-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report cleaning Todd’s room, including making the bed and tidying the room. The underlying interaction order differs by guide and is not inferred here.' },
+    { id: 'a_tidy_pills', chapter: 'home', label: 'Tidy pills', short: 'Tidy pills', kind: 'action', x: 1300, y: 346, w: 170, h: 54, sub: 'second-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report the pill bottle at Todd’s bedside. PowerPyx calls the step Tidy Pills and has Kara check the bottle; GameFAQs says to grab the bottle before opening the bedside-table drawer.' },
+    { id: 'a_make_todd_bed', chapter: 'home', label: 'Make Todd’s bed', short: 'Make Todd’s bed', kind: 'action', x: 1680, y: 346, w: 170, h: 54, sub: 'second-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report making Todd’s bed. PowerPyx places the automatic Alice move after this action; GameFAQs makes the bed last in Todd’s room.' },
+    { id: 'a_alice_goes_room', chapter: 'home', label: 'Alice goes to her room', short: 'Alice goes to room', kind: 'action', x: 1680, y: 444, w: 170, h: 54, sub: 'second-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report Alice going to her room after Todd’s bed is made. This is a reported automatic move, not a player task or an eligibility gate.' },
+    { id: 'a_clean_toilet', chapter: 'home', label: 'Clean toilet', short: 'Clean toilet', kind: 'action', x: 1300, y: 444, w: 170, h: 54, sub: 'second-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report cleaning the toilet on the second floor. PowerPyx places it before the bathroom; GameFAQs places it after Todd’s room.' },
+    { id: 'a_arrange_bathroom_bottles', chapter: 'home', label: 'Arrange bathroom bottles', short: 'Arrange bottles', kind: 'action', x: 1490, y: 444, w: 170, h: 54, sub: 'second-floor · guide-listed bathroom action', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report arranging or rearranging the bathroom bottles; PowerPyx specifies the bathtub.' },
+    { id: 'a_store_bathroom_clothes', chapter: 'home', label: 'Store bathroom clothes', short: 'Store clothes', kind: 'action', x: 1380, y: 543, w: 170, h: 50, sub: 'second-floor · guide-listed bathroom action', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'PowerPyx reports storing the dirty clothes; GameFAQs says to pick up the towels. Both place the action in the bathroom cleaning.' },
+    { id: 'a_mop_bathroom', chapter: 'home', label: 'Mop bathroom', short: 'Mop bathroom', kind: 'action', x: 1570, y: 543, w: 170, h: 50, sub: 'second-floor · guide-listed bathroom action', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report mopping the bathroom floor.' },
+    { id: 'a_read_android_qb', chapter: 'home', label: 'Read “Android QB”', short: 'Read Android QB', kind: 'action', x: 1760, y: 543, w: 170, h: 50, sub: 'second-floor reading', status: 'guide', src: ['powerpyxHome'],
+      note: 'PowerPyx names “Android QB” on the cupboard by Todd’s door and says to read both pages. GameFAQs reports a magazine on the shelf with the speakers but does not name it. The exact title is PowerPyx-only.' },
+    { id: 'a_read_putting_price', chapter: 'home', label: 'Read “Putting a Price”', short: 'Read Putting a Price', kind: 'action', x: 1380, y: 596, w: 170, h: 54, sub: 'second-floor reading', status: 'guide', src: ['powerpyxHome'],
+      note: 'PowerPyx names “Putting a Price” on the cupboard by Todd’s door and says to read both pages. GameFAQs reports one unnamed magazine in Todd’s room. The exact title is PowerPyx-only.' },
+    { id: 'a_read_alice_floor_book', chapter: 'home', label: 'Read Alice’s floor book', short: 'Read floor book', kind: 'action', x: 1570, y: 596, w: 170, h: 54, sub: 'second-floor reading', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report the book on Alice’s floor. PowerPyx names it “Alice in Wonderland”; GameFAQs only says Kara comments on the book Alice has been reading.' },
+    { id: 'a_read_alice_shelf_books', chapter: 'home', label: 'Read Alice’s shelf books', short: 'Read shelf books', kind: 'action', x: 1760, y: 596, w: 170, h: 54, sub: 'second-floor reading', status: 'guide', src: ['powerpyxHome'],
+      note: 'PowerPyx reports reading the books on Alice’s shelf between the bed and the door. GameFAQs does not describe shelf books in this section.' }
   ],
 
   /* id is the stable link id; array index and order stay unchanged for ?edge=N.
@@ -265,9 +291,9 @@ const ATLAS = {
     { id: 'e_home_go_clean2', from: 'a_go', to: 'a_clean2', kind: 'traced', src: ['steam'] },
     { id: 'e_home_clean2_room', from: 'a_clean2', to: 'a_room', kind: 'traced', src: ['steam'] },
     { id: 'e_home_room_talk', from: 'a_room', to: 'a_talk', kind: 'traced', src: ['steam'] },
-    { id: 'e_home_talk_key', from: 'a_talk', to: 'a_key', kind: 'conditional', label: 'reported condition: relationship threshold (single source)', labelAt: { x: 1650, y: 230 },
+    { id: 'e_home_talk_key', from: 'a_talk', to: 'a_key', kind: 'conditional', label: 'reported condition: Alice trusts Kara (level unstated)', labelAt: { x: 1650, y: 230 },
       src: ['steam', 'gamefaqs', 'powerpyxHome'],
-      note: 'The screenshot shows the link itself. GameFAQs alone reports the key is given at Neutral or higher; PowerPyx describes the conversation without a threshold.' },
+      note: 'The screenshot shows the link itself. GameFAQs says Alice trusts Kara enough to give the key but does not name a relationship level; PowerPyx lists favorable conversation choices without a threshold.' },
     { id: 'e_home_key_box', from: 'a_key', to: 'a_box', kind: 'traced', src: ['steam'] },
 
     /* Cross-chapter candidate hypothesis — stays dashed, never causal */
@@ -412,7 +438,15 @@ const ATLAS = {
       note: 'GameFAQs reports the TV stare before Kara blocks Todd’s view and says that both actions add flowchart entries.' },
     { id: 'e_home_backyard_rewash_clothes', from: 'a_take_laundry_backyard', to: 'a_rewash_clothes', kind: 'traced',
       src: ['powerpyxHome', 'gamefaqs'],
-      note: 'Both guides report taking the laundry to the backyard, meeting Alice there, then bringing the laundry back to the washing machine.' }
+      note: 'Both guides report taking the laundry to the backyard, meeting Alice there, then bringing the laundry back to the washing machine.' },
+
+    /* A New Home second-floor relationships stated by the guides */
+    { id: 'e_home_pills_gun', from: 'a_tidy_pills', to: 'a_gun_seen', kind: 'traced',
+      src: ['gamefaqs'],
+      note: 'GameFAQs/Mogg reports opening the pill bottle and then finding the handgun in the bedside-table drawer. This is a reported sequence, not an eligibility requirement. PowerPyx reports checking the nightstand without stating the pill-bottle order.' },
+    { id: 'e_home_todd_bed_alice_room', from: 'a_make_todd_bed', to: 'a_alice_goes_room', kind: 'traced',
+      src: ['powerpyxHome', 'gamefaqs'],
+      note: 'Both guides report Alice going to her room after Todd’s bed is made. This is a reported sequence, not an eligibility requirement or a general room-cleaning prerequisite.' }
   ],
 
   /* Conditions are plain-English groups over existing edges. They add no edge
@@ -423,9 +457,9 @@ const ATLAS = {
       id: 'cond_key_relationship',
       appliesTo: ['e_home_talk_key'],
       operator: 'SINGLE',
-      summary: 'One reported condition on the key step: GameFAQs says Alice gives Kara the key at a Neutral-or-higher relationship. The screenshot and PowerPyx do not state that threshold.',
+      summary: 'One reported condition on the key step: GameFAQs says Alice trusts Kara enough to give the key but does not name a relationship level. PowerPyx lists favorable conversation choices without a threshold.',
       requirements: [
-        'Reported relationship threshold: Neutral or higher (GameFAQs only).'
+        'Alice trusts Kara enough to give the key (exact relationship level not stated).'
       ],
       sources: ['gamefaqs', 'steam', 'powerpyxHome']
     },
@@ -487,7 +521,7 @@ const ATLAS = {
     {
       id: 'u_key_threshold',
       status: 'unknown',
-      explanation: 'The exact relationship requirement is a single-source claim and has not been checked in game; PowerPyx describes the conversation without a threshold.',
+      explanation: 'The exact relationship requirement is not stated by either reviewed guide and has not been checked in game. GameFAQs reports trust sufficient for the key without naming a level; PowerPyx lists conversation choices without a threshold.',
       nodes: ['a_key'],
       edges: ['e_home_talk_key'],
       sources: ['gamefaqs', 'powerpyxHome', 'steam']
@@ -498,6 +532,14 @@ const ATLAS = {
       explanation: 'PowerPyx and GameFAQs list the unrelated first-floor chores in different orders. The map records only the source-stated laundry and TV progressions; it does not claim an order, exclusivity, or mandatory status among the other chores.',
       nodes: ['a_clean1', 'a_read_android_power', 'a_read_connecting_dots', 'a_wash_dishes', 'a_take_laundry_backyard', 'a_rewash_clothes', 'a_find_red_ice', 'a_enrage_todd', 'a_watch_todd_tv', 'a_block_todd_view', 'a_activate_vacuum', 'a_take_out_trash'],
       edges: ['e_home_backyard_rewash_clothes', 'e_home_rewash_red_ice', 'e_home_red_ice_enrage_todd', 'e_home_watch_tv_block_view'],
+      sources: ['powerpyxHome', 'gamefaqs']
+    },
+    {
+      id: 'u_home_second_floor_order',
+      status: 'unknown',
+      explanation: 'PowerPyx and GameFAQs list the second-floor chores in different orders. PowerPyx lists Todd’s room (pills and magazines), Alice going to her room, toilet, bathroom, Alice’s room/window, then the floor and shelf books. GameFAQs starts with the bathroom, then Alice’s room/window, then Todd’s room (pills, handgun, bed), then the toilet and floor book. PowerPyx also says Talk with Alice requires Todd’s room, the bathroom and Alice’s room plus reading the floor and shelf books; GameFAQs only says Alice’s room must be cleaned before Todd’s. These guide-specific orders and conditions are recorded as differing reports, not universal prerequisites or an AND gate.',
+      nodes: ['a_clean_todd_room', 'a_tidy_pills', 'a_make_todd_bed', 'a_alice_goes_room', 'a_clean_toilet', 'a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom', 'a_read_android_qb', 'a_read_putting_price', 'a_read_alice_floor_book', 'a_read_alice_shelf_books', 'a_talk'],
+      edges: ['e_home_pills_gun', 'e_home_todd_bed_alice_room'],
       sources: ['powerpyxHome', 'gamefaqs']
     },
     {
@@ -547,9 +589,9 @@ const ATLAS = {
   /* Detail panel entries. src lists ref keys; unknown carries the unresolved text. */
   detail: {
     a_key: {
-      status: 'Guide-reported · single source for the threshold',
-      summary: 'The Steam screenshot shows TALK WITH ALICE → ALICE GIVES KARA A KEY → OPEN ALICE’S BOX. GameFAQs additionally reports that the key is given at Neutral or higher relationship; PowerPyx describes the conversation without stating a threshold.',
-      unknown: 'The exact relationship requirement is a single-source claim and has not been checked in game.',
+      status: 'Guide-reported · relationship level unstated',
+      summary: 'The Steam screenshot shows TALK WITH ALICE → ALICE GIVES KARA A KEY → OPEN ALICE’S BOX. GameFAQs says Alice trusts Kara enough to give the key but does not name a relationship level; PowerPyx lists favorable conversation choices without stating a threshold.',
+      unknown: 'The exact relationship level is not stated by either guide and has not been checked in game.',
       src: ['steam', 'gamefaqs', 'powerpyxHome']
     },
     a_box: {
@@ -561,10 +603,10 @@ const ATLAS = {
     },
     a_gun_seen: {
       status: 'Guide-reported · clue seen, not possession',
-      summary: 'PowerPyx reports that while cleaning Todd’s room upstairs, Kara can check the nightstand and see a gun. The guide marks this as a cross-chapter impact that may matter later.',
-      unknown: 'The exact save/state flag the game uses is not verified in game. This node does not claim Kara carries the gun in A New Home.',
+      summary: 'PowerPyx reports that while cleaning Todd’s room upstairs, Kara can check the nightstand and see a gun. GameFAQs describes opening the pill bottle and then finding the handgun in the bedside-table drawer. Both mark the clue as a cross-chapter impact that may matter later.',
+      unknown: 'The exact save/state flag the game uses is not verified in game. This node does not claim Kara carries the gun in A New Home, and the two guides describe the discovery in a different order.',
       cross: { chapter: 'stormy', node: 's_take_gun', label: 'Show the Stormy Night pickup node' },
-      src: ['powerpyxHome', 'powerpyxStormy']
+      src: ['powerpyxHome', 'gamefaqs', 'powerpyxStormy']
     },
     a_window_open: {
       status: 'Guide-reported · window opened',
@@ -638,6 +680,78 @@ const ATLAS = {
       summary: 'PowerPyx and GameFAQs both report collecting first-floor trash and taking it out. PowerPyx lists it late; GameFAQs starts with it.',
       unknown: 'The different guide order does not establish a fixed sequence. Exclusivity and mandatory completion are also unstated.',
       src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_clean_todd_room: {
+      status: 'Guide-reported · second-floor event',
+      summary: 'Both reviewed guides report cleaning Todd’s room, including making the bed and tidying the room. PowerPyx also lists the guitar, shelves and papers; GameFAQs summarizes the mess.',
+      unknown: 'PowerPyx says Talk with Alice is available only after Todd’s room, the bathroom and Alice’s room are cleaned and the floor/shelf books are read. GameFAQs instead says Alice’s room must be cleaned before Todd’s. These are source-specific reports; the map does not assert one universal gate.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_tidy_pills: {
+      status: 'Guide-reported · second-floor event',
+      summary: 'Both guides report the pill bottle at Todd’s bedside. PowerPyx calls the step Tidy Pills and has Kara check the bottle; GameFAQs says to grab the bottle and then open the bedside-table drawer.',
+      unknown: 'The guides describe the handgun discovery differently: GameFAQs places it after the pill bottle, while PowerPyx has Kara check the nightstand directly. The reported sequence is not an eligibility requirement.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_make_todd_bed: {
+      status: 'Guide-reported · second-floor event',
+      summary: 'Both guides report making Todd’s bed. PowerPyx places the automatic Alice move after this action; GameFAQs makes the bed last in Todd’s room.',
+      unknown: 'The guides place the bed-making step differently within the room-cleaning walkthrough. No fixed order or requirement is inferred.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_alice_goes_room: {
+      status: 'Guide-reported · second-floor sequence',
+      summary: 'Both guides report that Alice goes to her room after Todd’s bed is made.',
+      unknown: 'The move is an automatic scene event, not a player task or a condition for later chapter access. The guides do not state what else may trigger it.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_clean_toilet: {
+      status: 'Guide-reported · second-floor event',
+      summary: 'Both guides report cleaning the toilet on the second floor. PowerPyx places it before the bathroom; GameFAQs places it after Todd’s room.',
+      unknown: 'The different walkthrough positions do not establish a fixed order or a requirement for Talk with Alice.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_arrange_bathroom_bottles: {
+      status: 'Guide-reported · second-floor event',
+      summary: 'Both guides report arranging or rearranging the bathroom bottles; PowerPyx specifies the bathtub.',
+      unknown: 'PowerPyx lists cleaning the bathroom as one Talk with Alice prerequisite, but neither guide states that arranging bottles is a separate gate. This is a guide-listed action, not a verified chart box.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_store_bathroom_clothes: {
+      status: 'Guide-reported · second-floor event',
+      summary: 'PowerPyx reports storing the dirty clothes; GameFAQs says to pick up the towels. Both place the action in the bathroom cleaning.',
+      unknown: 'PowerPyx lists cleaning the bathroom as one Talk with Alice prerequisite, but neither guide states that this individual action is a separate gate. This is a guide-listed action, not a verified chart box.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_mop_bathroom: {
+      status: 'Guide-reported · second-floor event',
+      summary: 'Both guides report mopping the bathroom floor.',
+      unknown: 'PowerPyx lists cleaning the bathroom as one Talk with Alice prerequisite, but neither guide states that mopping is a separate gate. This is a guide-listed action, not a verified chart box.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_read_android_qb: {
+      status: 'Guide-reported · single-source title',
+      summary: 'PowerPyx names “Android QB” on the cupboard by Todd’s door and says to read both pages. GameFAQs reports a magazine on the shelf with the speakers but does not name it.',
+      unknown: 'The exact title is PowerPyx-only. The guides do not establish the order, requirements, or consequences of reading it.',
+      src: ['powerpyxHome']
+    },
+    a_read_putting_price: {
+      status: 'Guide-reported · single-source title',
+      summary: 'PowerPyx names “Putting a Price” on the cupboard by Todd’s door and says to read both pages. GameFAQs reports one unnamed magazine in Todd’s room.',
+      unknown: 'The exact title is PowerPyx-only. GameFAQs does not establish a second magazine or a fixed reading order.',
+      src: ['powerpyxHome']
+    },
+    a_read_alice_floor_book: {
+      status: 'Guide-reported · second-floor reading',
+      summary: 'Both guides report the book on Alice’s floor. PowerPyx names it “Alice in Wonderland”; GameFAQs only says Kara comments on the book Alice has been reading.',
+      unknown: 'PowerPyx lists this floor book among the Talk with Alice requirements. GameFAQs reports Kara reading the book and commenting on it before the conversation but does not explicitly call it a gate. The exact title is PowerPyx-only.',
+      src: ['powerpyxHome', 'gamefaqs']
+    },
+    a_read_alice_shelf_books: {
+      status: 'Guide-reported · single-source event',
+      summary: 'PowerPyx reports reading the books on Alice’s shelf between the bed and the door as part of the Talk with Alice requirement.',
+      unknown: 'GameFAQs does not describe shelf books in this section. Whether reading them is universally required is not established.',
+      src: ['powerpyxHome']
     },
     s_alive: {
       status: 'Guide-reported · carried state',

@@ -70,6 +70,18 @@ const EXPECTED = {
     a_block_todd_view: { x: 1000, y: 580, w: 170, h: 54 },
     a_activate_vacuum: { x: 810, y: 523, w: 170, h: 54 },
     a_take_out_trash: { x: 620, y: 562, w: 170, h: 54 },
+    a_clean_todd_room: { x: 1490, y: 346, w: 170, h: 54 },
+    a_tidy_pills: { x: 1300, y: 346, w: 170, h: 54 },
+    a_make_todd_bed: { x: 1680, y: 346, w: 170, h: 54 },
+    a_alice_goes_room: { x: 1680, y: 444, w: 170, h: 54 },
+    a_clean_toilet: { x: 1300, y: 444, w: 170, h: 54 },
+    a_arrange_bathroom_bottles: { x: 1490, y: 444, w: 170, h: 54 },
+    a_store_bathroom_clothes: { x: 1380, y: 543, w: 170, h: 50 },
+    a_mop_bathroom: { x: 1570, y: 543, w: 170, h: 50 },
+    a_read_android_qb: { x: 1760, y: 543, w: 170, h: 50 },
+    a_read_putting_price: { x: 1380, y: 596, w: 170, h: 54 },
+    a_read_alice_floor_book: { x: 1570, y: 596, w: 170, h: 54 },
+    a_read_alice_shelf_books: { x: 1760, y: 596, w: 170, h: 54 },
     s_take_gun: { x: 2045, y: 210, w: 190, h: 84 },
     s_gun_struggle: { x: 2305, y: 210, w: 190, h: 84 },
     s_kara_shoots_todd: { x: 2565, y: 210, w: 190, h: 84 },
@@ -278,10 +290,10 @@ async function run(browser) {
     assert(kara.w >= 1000, 'Kara checkpoint region lost its widened bounds: ' + kara.w);
   });
 
-  await ok('all 56 node boxes keep the expected static world geometry', async function () {
+  await ok('all 68 node boxes keep the expected static world geometry', async function () {
     const actual = {};
     snapshot.nodes.forEach(function (node) { actual[node.id] = node.layout; });
-    assert(snapshot.nodes.length === 56, 'expected 56 node boxes, got ' + snapshot.nodes.length);
+    assert(snapshot.nodes.length === 68, 'expected 68 node boxes, got ' + snapshot.nodes.length);
     Object.keys(EXPECTED.nodes).forEach(function (id) {
       assert(actual[id], 'missing node ' + id);
       sameBox(actual[id], EXPECTED.nodes[id], 'node ' + id);
@@ -318,6 +330,27 @@ async function run(browser) {
       'the magazine readings should use the two upper activity columns');
     assert(byId.a_enrage_todd.x > byId.a_find_red_ice.x && byId.a_block_todd_view.x > byId.a_watch_todd_tv.x,
       'known local first-floor sequences must read left to right');
+  });
+
+  await ok('second-floor events stay in their own A New Home lane', async function () {
+    const ids = ['a_clean_todd_room', 'a_tidy_pills', 'a_make_todd_bed', 'a_alice_goes_room',
+      'a_clean_toilet', 'a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom',
+      'a_read_android_qb', 'a_read_putting_price', 'a_read_alice_floor_book', 'a_read_alice_shelf_books'];
+    const byId = Object.fromEntries(snapshot.nodes.map(function (node) { return [node.id, node.layout]; }));
+    const rowY = byId.a_clean2.y;
+    ids.forEach(function (id) {
+      assert(byId[id], 'missing second-floor event ' + id);
+      assert(byId[id].y > rowY, id + ' must stay below the main A New Home row');
+      assert(byId[id].x > byId.a_room.x, id + ' must stay to the right of Alice’s room cleaning step');
+      assert(byId[id].x + byId[id].w <= EXPECTED.frames.home.x + EXPECTED.frames.home.w,
+        id + ' leaves the A New Home frame horizontally');
+      assert(byId[id].y + byId[id].h <= EXPECTED.frames.home.y + EXPECTED.frames.home.h,
+        id + ' leaves the A New Home frame vertically');
+    });
+    assert(byId.a_tidy_pills.y === byId.a_clean_todd_room.y && byId.a_clean_todd_room.y === byId.a_make_todd_bed.y,
+      'Todd’s room events should share the first second-floor lane');
+    assert(byId.a_make_todd_bed.x < byId.a_alice_goes_room.x || byId.a_make_todd_bed.y < byId.a_alice_goes_room.y,
+      'the bed-to-Alice-room sequence must not run backwards');
   });
 
   await ok('Stormy and checkpoint nodes keep clear row and column gutters', async function () {

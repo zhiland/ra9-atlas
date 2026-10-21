@@ -73,7 +73,7 @@ local QA evidence and are not committed.
 The game graph remains a selected, guide-backed sample: 3 chapter regions, 45
 events, and 49 connectors. Coverage is partial and no transition is verified
 in-game. Synthetic benchmark labels and topology are not game content. The
-The A New Home relationship-threshold caption now clears its adjacent boxes.
+The A New Home relationship-condition caption now clears its adjacent boxes.
 Physical phones, Safari/iOS, and real touch input were not tested.
 
 The previous LOD screenshots and benchmark discussion are historical. This

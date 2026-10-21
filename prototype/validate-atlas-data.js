@@ -530,6 +530,157 @@ function validateAtlas(ATLAS) {
     return errors;
   });
 
+  check('Alice key keeps the key-to-box relation while the exact relationship level stays unstated', () => {
+    const errors = [];
+    const key = byId.get('a_key'), talk = byId.get('a_talk'), box = byId.get('a_box');
+    if (!key || !talk || !box) {
+      errors.push('a_key/a_talk/a_box missing');
+      return errors;
+    }
+    const link = edgeById.get('e_home_talk_key');
+    if (!link || link.from !== 'a_talk' || link.to !== 'a_key' || link.kind !== 'conditional') {
+      errors.push('e_home_talk_key must stay the conditional a_talk → a_key connector');
+    }
+    const keyBox = edgeById.get('e_home_key_box');
+    if (!keyBox || keyBox.from !== 'a_key' || keyBox.to !== 'a_box' || keyBox.kind !== 'traced') {
+      errors.push('e_home_key_box must stay the traced a_key → a_box relation');
+    }
+    const relation = conditions.find(c => c.id === 'cond_key_relationship');
+    if (!relation) errors.push('cond_key_relationship is missing');
+    else {
+      if (relation.operator !== 'SINGLE') errors.push('cond_key_relationship must stay SINGLE, not an AND/OR rule');
+      if (JSON.stringify(relation.appliesTo) !== JSON.stringify(['e_home_talk_key'])) {
+        errors.push('cond_key_relationship must apply only to e_home_talk_key');
+      }
+      if (!Array.isArray(relation.requirements) || relation.requirements.length !== 1) {
+        errors.push('cond_key_relationship must keep exactly one unnamed-level requirement');
+      }
+    }
+    const unknown = uncertainties.find(u => u.id === 'u_key_threshold');
+    if (!unknown || unknown.status !== 'unknown') errors.push('u_key_threshold must stay explicit');
+    else if (!unknown.nodes || !unknown.nodes.includes('a_key') ||
+             !unknown.edges || !unknown.edges.includes('e_home_talk_key')) {
+      errors.push('u_key_threshold must reference a_key and e_home_talk_key');
+    }
+    const applies = conditions.filter(c => c.appliesTo && c.appliesTo.includes('e_home_talk_key'));
+    if (applies.length !== 1 || applies[0].id !== 'cond_key_relationship') {
+      errors.push('e_home_talk_key must not gain additional room-cleaning or universal AND conditions');
+    }
+    const detail = (ATLAS.detail || {}).a_key;
+    const text = [
+      key.note || '', key.sub || '', link.label || '', link.note || '',
+      JSON.stringify(relation || {}), unknown ? unknown.explanation || '' : '',
+      detail ? `${detail.status || ''} ${detail.summary || ''} ${detail.unknown || ''}` : ''
+    ].join(' ');
+    if (/\b(Neutral|Warm|Distant)\b/i.test(text)) {
+      errors.push('the A New Home key text must not claim a named or exact relationship level');
+    }
+    if (!/(not state|does not state|unstated|not named|without.*threshold|exact relationship level)/i.test(text)) {
+      errors.push('the A New Home key text must state that the exact relationship level is unknown');
+    }
+    return errors;
+  });
+
+  check('A New Home second-floor events keep only the two reported local sequences and no universal room prerequisites', () => {
+    const errors = [];
+    const requiredSources = {
+      a_clean_todd_room: ['powerpyxHome', 'gamefaqs'],
+      a_tidy_pills: ['powerpyxHome', 'gamefaqs'],
+      a_make_todd_bed: ['powerpyxHome', 'gamefaqs'],
+      a_alice_goes_room: ['powerpyxHome', 'gamefaqs'],
+      a_clean_toilet: ['powerpyxHome', 'gamefaqs'],
+      a_arrange_bathroom_bottles: ['powerpyxHome', 'gamefaqs'],
+      a_store_bathroom_clothes: ['powerpyxHome', 'gamefaqs'],
+      a_mop_bathroom: ['powerpyxHome', 'gamefaqs'],
+      a_read_android_qb: ['powerpyxHome'],
+      a_read_putting_price: ['powerpyxHome'],
+      a_read_alice_floor_book: ['powerpyxHome', 'gamefaqs'],
+      a_read_alice_shelf_books: ['powerpyxHome']
+    };
+    for (const [id, refs] of Object.entries(requiredSources)) {
+      const node = byId.get(id);
+      if (!node || node.chapter !== 'home' || node.kind !== 'action') {
+        errors.push(`${id} must be an A New Home action event`);
+        continue;
+      }
+      if (!Array.isArray(node.src) || refs.some(ref => !node.src.includes(ref))) {
+        errors.push(`${id} is missing a supporting source`);
+      }
+      if (!/second-floor/i.test(node.sub || '')) errors.push(`${id} must identify its second-floor context`);
+      if (/\b(optional (activity|event|action|branch)|is mandatory|must be completed|are exclusive|mutually exclusive)\b/i.test(node.note || '')) {
+        errors.push(`${id} must not claim unsupported optionality, necessity or exclusivity`);
+      }
+    }
+    const expected = [
+      ['e_home_pills_gun', 'a_tidy_pills', 'a_gun_seen', ['gamefaqs']],
+      ['e_home_todd_bed_alice_room', 'a_make_todd_bed', 'a_alice_goes_room', ['powerpyxHome', 'gamefaqs']]
+    ];
+    const newIds = Object.keys(requiredSources);
+    const touching = edges.filter(e => newIds.includes(e.from) || newIds.includes(e.to));
+    if (touching.length !== expected.length) {
+      errors.push(`second-floor events must have exactly two local relation edges, found ${touching.length}`);
+    }
+    for (const [id, from, to, sources] of expected) {
+      const edge = edgeById.get(id);
+      if (!edge || edge.from !== from || edge.to !== to || edge.kind !== 'traced') {
+        errors.push(`${id} must preserve its reported local sequence as a traced relation`);
+        continue;
+      }
+      if (JSON.stringify(edge.src || []) !== JSON.stringify(sources)) {
+        errors.push(`${id} must keep its source attribution: ${sources.join(', ')}`);
+      }
+      if (!/reported sequence/i.test(edge.note || '') || !/not an eligibility requirement/i.test(edge.note || '')) {
+        errors.push(`${id} note must call the relation a reported sequence, not an eligibility requirement`);
+      }
+    }
+    if (edges.slice(-2).map(e => e.id).join(',') !== expected.map(item => item[0]).join(',')) {
+      errors.push('the two second-floor relation edges must stay appended after all prior edges');
+    }
+    if (edges.some(e => newIds.includes(e.from) && e.to === 'a_talk')) {
+      errors.push('second-floor events must not become universal prerequisites for Talk with Alice');
+    }
+    for (const condition of conditions) {
+      if (condition.appliesTo && condition.appliesTo.some(id => ['e_home_pills_gun', 'e_home_todd_bed_alice_room'].includes(id))) {
+        errors.push(`condition ${condition.id} must not attach a requirement to a second-floor sequence edge`);
+      }
+    }
+    const uncertainty = uncertainties.find(u => u.id === 'u_home_second_floor_order');
+    if (!uncertainty || uncertainty.status !== 'unknown') {
+      errors.push('u_home_second_floor_order must remain explicit');
+    } else {
+      const text = uncertainty.explanation || '';
+      if (!/different orders/i.test(text) || !/not universal|not.*AND gate/i.test(text)) {
+        errors.push('u_home_second_floor_order must scope the differing guide orders without a universal gate');
+      }
+      for (const id of newIds.concat('a_talk')) {
+        if (!uncertainty.nodes || !uncertainty.nodes.includes(id)) errors.push(`u_home_second_floor_order must reference ${id}`);
+      }
+      for (const [id] of expected) {
+        if (!uncertainty.edges || !uncertainty.edges.includes(id)) errors.push(`u_home_second_floor_order must reference ${id}`);
+      }
+    }
+    const toddRoomDetail = (ATLAS.detail || {}).a_clean_todd_room;
+    const toddRoomText = toddRoomDetail
+      ? `${toddRoomDetail.summary || ''} ${toddRoomDetail.unknown || ''}`
+      : '';
+    if (!/PowerPyx says Talk with Alice is available only after Todd.s room/i.test(toddRoomText) ||
+        !/GameFAQs (?:instead )?says Alice.s room must be cleaned before Todd.s/i.test(toddRoomText)) {
+      errors.push('Todd-room detail must preserve the source-specific Talk requirement and differing room order');
+    }
+    if (/does not make the room cleaning a prerequisite/i.test(toddRoomText)) {
+      errors.push('Todd-room detail must not deny the PowerPyx prerequisite report');
+    }
+    for (const id of ['a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom']) {
+      const detail = (ATLAS.detail || {})[id];
+      const detailText = detail ? `${detail.summary || ''} ${detail.unknown || ''}` : '';
+      if (!/PowerPyx lists cleaning the bathroom as one Talk with Alice prerequisite/i.test(detailText) ||
+          !/not a verified chart box/i.test(detailText)) {
+        errors.push(`${id} must distinguish bathroom-level Talk prerequisite reporting from the guide-listed microtask`);
+      }
+    }
+    return errors;
+  });
+
   check('only Kara shooting Todd carries the gun; window availability gates a distinct successful route', () => {
     const errors = [];
     const gunIn = edges.filter(e => e.to === 's_gun_carried');
@@ -848,8 +999,8 @@ function validateAtlas(ATLAS) {
     for (const [key, value] of Object.entries(actual)) {
       if (counts[key] !== value) errors.push(`meta.counts.${key} is ${counts[key]} but the data has ${value}`);
     }
-    if (actual.nodes !== 56) errors.push(`expected 56 boxes, found ${actual.nodes}`);
-    if (actual.edges !== 53) errors.push(`expected 53 connectors, found ${actual.edges}`);
+    if (actual.nodes !== 68) errors.push(`expected 68 boxes, found ${actual.nodes}`);
+    if (actual.edges !== 55) errors.push(`expected 55 connectors, found ${actual.edges}`);
     return errors;
   });
 

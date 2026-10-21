@@ -1,6 +1,6 @@
 # PoC4 — multi-chapter atlas coverage and source note
 
-Date: 2026-10-19; bounded data/provenance contract, Stormy Night escape routes, the Stormy Night entry slice and eleven selected A New Home first-floor events added 2026-10-20. Scope: the static PoC4 prototype showing selected parts of
+Date: 2026-10-19; bounded data/provenance contract, Stormy Night escape routes, the Stormy Night entry slice, eleven selected A New Home first-floor events and twelve second-floor events added 2026-10-20. Scope: the static PoC4 prototype showing selected parts of
 **A New Home**, **Stormy Night** and **Battle for Detroit — Kara** on one
 surface. The default [poc4-editorial.html](../../prototype/poc4-editorial.html)
 entry now uses the neutral gray PoC3 palette, with orthogonal connectors ending
@@ -24,10 +24,13 @@ verification. No game art or screenshot is embedded or redistributed.
 The ten-node **A New Home** sequence and its nine links are transcribed from
 the visible Steam Community guide screenshot. The labels are event names from
 that chart; this is not a copied guide-text corpus, but the selection and
-ordering remain screenshot-derived. Eleven additional first-floor events are
-independently worded guide summaries, not screenshot transcription. Only four
-source-stated local progressions are connected. Other first-floor order and
-requirements remain unknown. See [the A New Home first-floor slice](anewhome-firstfloor-slice.md).
+ordering remain screenshot-derived. Eleven additional first-floor events and
+twelve second-floor events are independently worded guide summaries, not
+screenshot transcription. Six source-stated local progressions are connected:
+four first-floor and two second-floor. Other order and requirements remain
+unknown, including the differing second-floor guide orders. See [the A New Home
+first-floor slice](anewhome-firstfloor-slice.md) and [the second-floor
+slice](anewhome-secondfloor-slice.md).
 No reuse license for the guide image or transcribed chart structure was
 identified in the [source-license audit](source-license-audit.md).
 That audit records evidence and recommendations, not a legal determination.
@@ -42,7 +45,7 @@ PoC3 files were published previously and remain unchanged by this PoC4 work.
 | Type | Meaning in the prototype | Where it appears |
 |---|---|---|
 | Screenshot transcription | Steam "100% Chapter Flowcharts" reference image, read 2026-10-18; structure only | The **A New Home** local sequence (see [map-reference-analysis.md](map-reference-analysis.md)) |
-| Guide-reported (secondary) | PowerPyx *A New Home*, *Stormy Night* and *Battle for Detroit — Kara*; Gamer Guides *Stormy Night* and *Battle for Detroit — Kara*; GameFAQs *A New Home* and *Stormy Night* | selected A New Home first-floor events, Kara branch nodes/edges, relationship-threshold condition, ordered Stormy Night entry events and response branches, gun states and two successful non-gun routes |
+| Guide-reported (secondary) | PowerPyx *A New Home*, *Stormy Night* and *Battle for Detroit — Kara*; Gamer Guides *Stormy Night* and *Battle for Detroit — Kara*; GameFAQs *A New Home* and *Stormy Night* | selected A New Home first- and second-floor events, Kara branch nodes/edges, the unnamed Alice-key relationship condition, ordered Stormy Night entry events and response branches, gun states and two successful non-gun routes |
 | User-provided claim | The user-supplied Fandom node sequence; the same wording appears in the inspected PowerPyx, Fandom and Neoseeker pages | `Alice says goodbye to Todd` chip and its details entry |
 | Transcript | Fandom *A New Home* transcript lines 1947–1964 | Box-contents summary in the details panel |
 | Unresolved | Candidate links that the reviewed sources cannot distinguish | The dashed box → dialogue hypothesis |
@@ -55,8 +58,8 @@ verified in game.
 | Measure | Count | Note |
 |---|---:|---|
 | Chapter regions | **3** | A New Home, Stormy Night, Battle for Detroit — Kara |
-| Boxes (nodes) | **56** | 23 A New Home events/clues + 24 Stormy Night events/states + 9 Kara events/outcomes |
-| Connectors (edges) | **53** | 37 traced + 8 conditional + 5 prerequisite gates + 3 unresolved hypotheses |
+| Boxes (nodes) | **68** | 35 A New Home events/clues + 24 Stormy Night events/states + 9 Kara events/outcomes |
+| Connectors (edges) | **55** | 39 traced + 8 conditional + 5 prerequisite gates + 3 unresolved hypotheses |
 | Cross-chapter connectors | **4** | Two A New Home → Stormy Night prerequisites and two existing Stormy Night/A New Home → Kara links |
 
 ## Data/provenance contract
@@ -70,18 +73,21 @@ all three chapters are `partial`. Each chapter now carries an explicit
 Every previously published node and edge keeps its array order; new content is
 appended and every edge has a stable `e_*` ID. Array-index `?edge=N` links
 remain canonical; stable IDs are accepted as input aliases. Five plain-English
-condition groups cover the key threshold (`SINGLE`), the two separate Meet Todd
-gates (`AND`), the separate below-11 late-bus and above-11 on-time detour
-outcomes (`AND` per edge), and the window QTE success step (`SINGLE`). Route
-transitions do not inherit requirements from later steps; the window-opening
-prerequisite remains a separate edge. Four first-floor progressions are directly guide-reported. Other selected
-events have no inferred spokes, fixed order, or Alice-key/trust predicate. The entry slice adds no
-condition groups: its seven links are directly guide-stated `traced`
-transitions. Eight `unknown` records cover the box trigger, key threshold,
-first-floor event order/requirements/exclusivity, Stormy Night internals,
-exact 11:00 boundary, the exact gun-state check, window-route outcomes, and the
-missing Todd state after either successful non-gun escape. No source-vs-source
-conflict is recorded or invented.
+condition groups cover the unnamed Alice-key trust condition (`SINGLE`), the two
+separate Meet Todd gates (`AND`), the separate below-11 late-bus and above-11
+on-time detour outcomes (`AND` per edge), and the window QTE success step
+(`SINGLE`). Route transitions do not inherit requirements from later steps; the
+window-opening prerequisite remains a separate edge. Six local progressions are
+directly guide-reported: four first-floor and two second-floor. Other selected
+events have no inferred spokes, fixed order, or universal room-cleaning
+predicate. The entry slice adds no condition groups: its seven links are
+directly guide-stated `traced` transitions. Nine `unknown` records cover the box
+trigger, the unnamed key relationship level, first-floor event
+order/requirements/exclusivity, the differing second-floor order and
+guide-specific Talk comments, Stormy Night internals, the exact 11:00 boundary,
+the exact gun-state check, window-route outcomes, and the missing Todd state
+after either successful non-gun escape. No source-vs-source conflict is
+recorded or invented.
 
 ## Included per chapter
 
@@ -109,12 +115,17 @@ conflict is recorded or invented.
   dashed inference edges because the guides do not state Todd’s later state.
   No other internal chapter topology is transcribed.
 - **Additional A New Home actions.** The map includes two guide-reported
-  upstairs clues and eleven selected first-floor events. The magazine titles
-  come from PowerPyx only. Four local progressions connect the laundry trip to
-  the backyard, washer, Red Ice and Todd’s reported reaction, plus watching TV
-  to blocking Todd’s view. The remaining events have no inferred spokes. The
-  map does not claim a fixed order, requirements, exclusivity, or an
-  Alice-key/trust condition. See [the first-floor slice](anewhome-firstfloor-slice.md).
+  upstairs clues, eleven selected first-floor events and twelve selected
+  second-floor events. The magazine titles come from PowerPyx only. Four
+  first-floor progressions connect the laundry trip to the backyard, washer,
+  Red Ice and Todd’s reported reaction, plus watching TV to blocking Todd’s
+  view. Two second-floor progressions connect the pill bottle to the gun
+  sighting (GameFAQs/Mogg only) and Todd’s bed to Alice going to her room (both
+  guides). The remaining events have no inferred spokes. The map does not claim
+  a fixed order, universal room-cleaning prerequisites, an AND gate for Talk
+  with Alice, exclusivity, or an exact Alice-key relationship level. See [the
+  first-floor slice](anewhome-firstfloor-slice.md) and [the second-floor
+  slice](anewhome-secondfloor-slice.md).
 - **Checkpoint detour.** The local route choice, reported timing split,
   late-bus outcome, and terminal connection are included. Both timing paths
   reach the terminal; exactly 11:00 remains unknown.
@@ -127,10 +138,13 @@ conflict is recorded or invented.
 
 ## Deliberately omitted
 
-- The rest of **A New Home**: chores other than the eleven selected events,
-  unlinked screenshot side labels whose arrows are unresolved, and any claimed
-  activity order, exclusivity or mandatory completion. The second-floor
-  conversation order and an Alice-key trust condition are also not added.
+- The rest of **A New Home**: chores other than the eleven first-floor and
+  twelve second-floor selected events, unlinked screenshot side labels whose
+  arrows are unresolved, and any claimed activity order, exclusivity or
+  mandatory completion. The differing second-floor guide order and the
+  guide-specific Talk with Alice comments are recorded as unknown, not encoded
+  as universal prerequisites. The exact Alice-key relationship level is also
+  not claimed.
 - Other **Stormy Night** internal branches: the too-slow path, hidden timers,
   fatal or survival outcomes beyond the selected non-deviant fatal route,
   Fail to Hide/Defend Alice alternatives, failed window QTEs, miss-bus
@@ -151,15 +165,21 @@ conflict is recorded or invented.
   hypothesis** that never claims causality, and it is not a gate into the
   meeting: the prototype cannot be made to route *through* it as a
   prerequisite, and the validator fails if such an edge is ever added.
-- **Relationship threshold for Alice's key.** GameFAQs alone reports a
-  Neutral-or-higher requirement; the Steam screenshot shows the link and
-  PowerPyx describes the conversation without a threshold. Drawn as a
-  dash-dot "reported condition" with a single-source label.
+- **Relationship condition for Alice's key.** GameFAQs says Alice trusts Kara
+  enough to give the key but does not name a relationship level; PowerPyx lists
+  favorable conversation choices without a threshold. The Steam screenshot
+  shows the link. Drawn as a dash-dot "reported condition" whose exact level
+  remains unknown. `u_key_threshold` records the gap.
 - **First-floor event order and requirements.** PowerPyx and GameFAQs list
   several events in different orders. The map draws only four reported local
   progressions. It does not infer that unrelated events are optional, required,
   or exclusive. `u_home_first_floor_order` records the unresolved details. The
   magazine titles are named by PowerPyx only.
+- **Second-floor event order and Talk requirements.** PowerPyx and GameFAQs
+  list the second-floor chores in different orders and describe different
+  Talk with Alice conditions. The map draws only the pills→gun and
+  bed→Alice-room reported sequences. `u_home_second_floor_order` records the
+  difference; it is not a universal room-cleaning prerequisite or an AND gate.
 - **Whether the box state affects meeting availability or only dialogue
   options** is unknown; the details panel says so on both related nodes.
 - **How the Stormy Night survival state is reached** is outside the reviewed
@@ -179,17 +199,19 @@ conflict is recorded or invented.
 
 ## Checks run (2026-10-20)
 
-- `npm test` passes. The data validators report 3 chapters, 56 nodes, 53 edges,
-  five condition groups, eight unknowns, and no conflicts.
-- Contract tests: **57/57**. They reject unsupported generic first-floor spokes,
-  unsupported optionality claims, and removal of any of the four local
-  progressions.
+- `npm test` passes. The data validators report 3 chapters, 68 nodes, 55 edges,
+  five condition groups, nine unknowns, and no conflicts.
+- Contract tests: **70/70**. They reject unsupported generic first-floor and
+  second-floor spokes, unsupported optionality claims, removal of any of the six
+  local progressions, a universal Talk with Alice AND gate, and restoration of a
+  named key relationship level.
 - Core unit tests: **43/43**. Map inventory tests: **4/4**. Stable-zoom tests:
-  **10/10**. Layout tests: **10/10**. Chromium browser checks: **55/55** across
+  **10/10**. Layout tests: **11/11**. Chromium browser checks: **55/55** across
   three palette variants and mobile viewport emulation.
-- The layout checks include all 56 real node boxes, label containment, the
-  horizontal A New Home main sequence, first-floor event spacing and the four
-  source-backed local progressions. Browser tests ran over localhost HTTP.
+- The layout checks include all 68 real node boxes, label containment, the
+  horizontal A New Home main sequence, first- and second-floor event spacing,
+  and the six source-backed local progressions. Browser tests ran over localhost
+  HTTP.
 - Fresh screenshots of whole-map fit and A New Home chapter focus were
   inspected. They are temporary review artifacts and are not committed.
 
