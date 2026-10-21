@@ -403,6 +403,7 @@
 
     document.getElementById('nodes').innerHTML = D.nodes.map(function (n) {
       var classes = ['node', n.kind];
+      if (n.chapter === 'hostage') classes.push('hostage');
       if (n.kind === 'choice' && n.h <= 70) classes.push('compact');
       if (state.selected === n.id) classes.push('selected');
       var shownLabel = n.heading || n.label;

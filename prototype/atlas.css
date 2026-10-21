@@ -121,6 +121,13 @@ a:hover { text-decoration: underline; }
 .node.choice.compact .opt { padding: 2px 7px; font-size: 10.5px; line-height: 1.25; }
 .node.choice.compact .opt .from-option { display: none; }
 
+/* The Hostage type trial is chapter-specific. Text stays in world space and
+   follows the same camera transform as every other chart element. */
+.node.hostage .node-label { font-size: 13.5px; }
+.node.hostage.choice.compact .node-label { font-size: 12px; }
+.node.hostage.choice .opt { font-size: 13.5px; }
+.node.hostage.choice.compact .opt { font-size: 12.5px; }
+
 .edge { fill: none; stroke: var(--edge); stroke-width: 1.5; marker-end: url(#arrowhead); }
 .edge.conditional { stroke: var(--strong); stroke-dasharray: 7 3 2 3; }
 .edge.prerequisite { stroke: var(--gate); stroke-width: 1.9; }
