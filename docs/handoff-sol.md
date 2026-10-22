@@ -120,6 +120,9 @@ Complete the setup in this order:
 
 ## Verified local checkpoint and next work
 
+- Implementation checkpoint: local commit `814bd32` on
+  `codex/isolation-preflight`, followed by documentation that records that
+  checkpoint. No branch was pushed and no new PR was created in this package.
 - Continuation baseline: PRs #19–21 were checked on 2026-10-22 and remain open
   and unmerged. PR #21 head is `2576a95`, based on `26c6e19`; the GitHub API
   returned no submitted reviews or inline review threads for all three PRs.

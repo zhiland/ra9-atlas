@@ -8,7 +8,8 @@ The implementation roadmap is recorded in [ROADMAP.md](ROADMAP.md) and split acr
 
 ## Decision
 
-Continuation checkpoint, 2026-10-22: PRs #19–21 are open and unmerged at
+Implementation checkpoint: `814bd32` on `codex/isolation-preflight` (local,
+not pushed). Continuation check, 2026-10-22: PRs #19–21 are open and unmerged at
 `0ddb64d`, `26c6e19`, and `2576a95`. GitHub returned no formal reviews or inline
 review threads. The next bounded package on `codex/isolation-preflight` adds a
 [reproducible offline isolation preflight](notes/isolation-preflight.md).
