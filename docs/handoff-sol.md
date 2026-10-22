@@ -171,17 +171,17 @@ Open a new Codex chat in the Detroit project. Select GPT-6.1 Sol at the client
 default reasoning effort. Paste this prompt:
 
 ```text
-Продолжи проект ra9-atlas. Сначала прочитай docs/handoff-sol.md из ветки
-codex/sol-handoff (PR #21), затем docs/spec.md, docs/STATUS.md и docs/ROADMAP.md.
-Проверь git status, фактические коммиты и стек PR #19 → #20 → #21. Ничего
-не сливай и не публикуй автоматически. Сохрани локальные и незакоммиченные
-пользовательские файлы.
+Continue the ra9-atlas project. First read docs/handoff-sol.md from branch
+codex/sol-handoff (PR #21). Then read docs/spec.md, docs/STATUS.md, and
+docs/ROADMAP.md. Check git status, the actual commits, and the stacked PRs
+#19 → #20 → #21. Do not merge or publish automatically. Preserve local and
+uncommitted user files.
 
-После проверки базового состояния возьми один небольшой следующий пакет:
-подготовь черновой chapter packet для репрезентативной главы по доступным
-публичным источникам. Явно запиши охват, пропуски, источники и неизвестное;
-не объявляй пакет независимо проверенным и не переноси данные в runtime до
-отдельной проверки. Не запускай OpenCode, пока граница изоляции из
-docs/notes/opencode-macos-isolation.md не реализована и не проверена.
-Отчитайся кратко по-русски о результате, проверках и оставшихся границах.
+After checking the baseline, take one small next package: prepare a draft
+chapter packet for a representative chapter using available public sources.
+Record coverage, omissions, sources, and unknowns explicitly. Do not mark
+the packet independently reviewed or move its data into runtime before a
+separate review. Do not run OpenCode until the isolation boundary described
+in docs/notes/opencode-macos-isolation.md is implemented and tested. Report
+the result, checks, and remaining limits concisely in Russian.
 ```
