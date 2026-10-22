@@ -18,6 +18,17 @@ This roadmap replaces the earlier sequence of isolated PoC expansions. The Stage
 
 Issue tracking: Stage 1 uses [#1](https://github.com/zhiland/ra9-atlas/issues/1) and [#4](https://github.com/zhiland/ra9-atlas/issues/4); Stage 2 uses [#2](https://github.com/zhiland/ra9-atlas/issues/2) and [#10](https://github.com/zhiland/ra9-atlas/issues/10); Stage 3 uses [#1](https://github.com/zhiland/ra9-atlas/issues/1) and [#3](https://github.com/zhiland/ra9-atlas/issues/3); Stage 4 uses [#11](https://github.com/zhiland/ra9-atlas/issues/11) and [#5](https://github.com/zhiland/ra9-atlas/issues/5); Stage 5 uses [#8](https://github.com/zhiland/ra9-atlas/issues/8), [#6](https://github.com/zhiland/ra9-atlas/issues/6), and [#10](https://github.com/zhiland/ra9-atlas/issues/10). These issues track work; the stage gates define when it is ready to advance.
 
+## Execution handoff
+
+After the chapter-preparation package reaches a clean, tested commit, use
+[the Sol handoff](handoff-sol.md) for the next bounded work package. Start with
+GPT-6.1 Sol at the client's default reasoning effort. Raise effort for a hard
+local task; bring Astra back for a cross-stage decision with unresolved source,
+architecture, rights or product tradeoffs. Keep independent source review and
+the stage gates regardless of model. Recheck branch and PR state before work;
+the handoff records a point in time and authorizes no automatic merge or
+publication.
+
 ## Working rules from the PoC
 
 - Do not treat screenshot-transcribed official chart structure and supplementary guide events as interchangeable. Label each source type and keep source-derived rights separate from the MIT license for original code and documentation.
