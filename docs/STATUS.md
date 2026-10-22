@@ -8,6 +8,18 @@ The implementation roadmap is recorded in [ROADMAP.md](ROADMAP.md) and split acr
 
 ## Decision
 
+Continuation checkpoint, 2026-10-22: PRs #19–21 are open and unmerged at
+`0ddb64d`, `26c6e19`, and `2576a95`. GitHub returned no formal reviews or inline
+review threads. The next bounded package on `codex/isolation-preflight` adds a
+[reproducible offline isolation preflight](notes/isolation-preflight.md).
+Its final Seatbelt profile passed 21 synthetic canaries, and eight setup tests
+passed. The baseline full `npm test` passed outside the Codex sandbox, including
+58 browser checks. User files were preserved. No graph content changed.
+**OpenCode was not started.** Production isolation remains blocked on the
+actual runtime/public-export audit, private standalone server/native-policy
+tests, reviewed network allowance, and synthetic provider check. This is an
+offline prerequisite package, not completion of the full launch gate.
+
 The map-first concept is accepted for a small prototype. PoC 2.0 applies the light Steam flowchart grammar. This is a UI concept only; it does not establish gameplay accuracy, full coverage, or release readiness.
 
 ## Complete

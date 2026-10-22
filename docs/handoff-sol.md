@@ -49,6 +49,15 @@ external-agent run.
 
 ## OpenCode isolation: how to finish setup
 
+Continuation, 2026-10-22: the bounded
+[offline preflight package](notes/isolation-preflight.md) adds a versioned
+synthetic harness with 21 passing boundary probes and eight setup tests.
+It does not launch OpenCode or admit repository files. Its narrower profile
+was tested with the Apple CLT Python runtime and shell children only.
+Do not substitute it for the production launch template below. Actual
+OpenCode runtime, standalone server, native policy, network, and provider
+checks remain open. The current owner instruction prohibits starting OpenCode.
+
 Read the [macOS isolation study](notes/opencode-macos-isolation.md) before any
 external-agent run. The installed OpenCode is V2.0.32. The read-only audit found
 no deny policy in the inspected local config paths; saved sessions and any
@@ -110,6 +119,18 @@ Complete the setup in this order:
    data to test the boundary.
 
 ## Verified local checkpoint and next work
+
+- Continuation baseline: PRs #19–21 were checked on 2026-10-22 and remain open
+  and unmerged. PR #21 head is `2576a95`, based on `26c6e19`; the GitHub API
+  returned no submitted reviews or inline review threads for all three PRs.
+  Work continues on `codex/isolation-preflight` from that PR #21 head.
+  The main checkout's two original untracked documents were preserved: the
+  identical isolation study is now tracked from PR #21, and the old Obsidian
+  update draft remains untracked and unchanged. The full baseline `npm test`
+  passed outside the Codex sandbox. No content packet or runtime data changed
+  in this isolation prerequisite package. Finish the remaining launch gates
+  before any external-agent run. Content work without OpenCode can proceed
+  through the separate preparation/source-review gates below.
 
 - The public GitHub checkpoint is `0ddb64d` on
   `origin/codex/hostage-pilot`. PR [#19](https://github.com/zhiland/ra9-atlas/pull/19)
