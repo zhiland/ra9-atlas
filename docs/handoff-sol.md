@@ -164,3 +164,24 @@ Complete the setup in this order:
 
 The next executor should update [STATUS](STATUS.md) and this handoff with the
 actual final commit and PR state after the checkpoint closes.
+
+## Copy-paste prompt for the next chat
+
+Open a new Codex chat in the Detroit project. Select GPT-6.1 Sol at the client
+default reasoning effort. Paste this prompt:
+
+```text
+Продолжи проект ra9-atlas. Сначала прочитай docs/handoff-sol.md из ветки
+codex/sol-handoff (PR #21), затем docs/spec.md, docs/STATUS.md и docs/ROADMAP.md.
+Проверь git status, фактические коммиты и стек PR #19 → #20 → #21. Ничего
+не сливай и не публикуй автоматически. Сохрани локальные и незакоммиченные
+пользовательские файлы.
+
+После проверки базового состояния возьми один небольшой следующий пакет:
+подготовь черновой chapter packet для репрезентативной главы по доступным
+публичным источникам. Явно запиши охват, пропуски, источники и неизвестное;
+не объявляй пакет независимо проверенным и не переноси данные в runtime до
+отдельной проверки. Не запускай OpenCode, пока граница изоляции из
+docs/notes/opencode-macos-isolation.md не реализована и не проверена.
+Отчитайся кратко по-русски о результате, проверках и оставшихся границах.
+```
