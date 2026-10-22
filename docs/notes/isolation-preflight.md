@@ -1,8 +1,10 @@
 # Offline isolation preflight
 
 Date: 2026-10-22. Scope: the next bounded isolation package after PR #21.
-**OpenCode remains blocked.** This package does not complete its production
-launch gate and does not install or start OpenCode, a VM, or a provider session.
+**Historical checkpoint.** This offline package did not complete the launch
+gate. The later [controlled runner](../opencode-runner.md) completed synthetic
+provider/native-policy tests and a public-commit smoke task on 2026-10-22.
+The remaining-gate list below describes this earlier offline package only.
 
 ## Repository checkpoint
 

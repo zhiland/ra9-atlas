@@ -42,87 +42,52 @@ Structural validation does not approve sources or reuse rights.
 Project documents and UI copy are in English. Owner-facing chat is concise
 Russian. The MIT license covers original code and documentation only. Do not
 copy private vault content, credentials, agent logs, or local research caches
-into the public repository. A macOS isolation runner for external OpenCode work
-is under investigation. Treat it as unverified until its public-only filesystem
-boundary has been enforced and tested. Use only prepared public files for any
-external-agent run.
+into the public repository. The [controlled OpenCode runner](opencode-runner.md) passed its macOS
+boundary, native-policy, synthetic provider and public-commit smoke checks on
+2026-10-22. Use that runner with prepared public content for external work.
+Keep its host/version limits and per-run gates.
 
-## OpenCode isolation: how to finish setup
+## OpenCode isolation: verified controlled runner
 
-Continuation, 2026-10-22: the bounded
-[offline preflight package](notes/isolation-preflight.md) adds a versioned
-synthetic harness with 21 passing boundary probes and eight setup tests.
-It does not launch OpenCode or admit repository files. Its narrower profile
-was tested with the Apple CLT Python runtime and shell children only.
-Do not substitute it for the production launch template below. Actual
-OpenCode runtime, standalone server, native policy, network, and provider
-checks remain open. The current owner instruction prohibits starting OpenCode.
+The owner authorized completion and testing of OpenCode setup on 2026-10-22.
+Use [the runner guide](opencode-runner.md) before an external development task.
+The guide replaces the earlier unbuilt launch template. The historical
+[isolation study](notes/opencode-macos-isolation.md) and
+[offline preflight](notes/isolation-preflight.md) explain earlier checkpoints.
 
-Read the [macOS isolation study](notes/opencode-macos-isolation.md) before any
-external-agent run. The installed OpenCode is V2.0.32. The read-only audit found
-no deny policy in the inspected local config paths; saved sessions and any
-connected Console policy were not inspected. V2 allows `external_directory` by
-default. An illustrative policy in the study passed JSON syntax checking only.
-Its effect on tools was **not** tested. Deny shell and external integrations
-as defense in depth. OpenCode permissions and prompt instructions do not
-confine the host filesystem.
+The final runner passed 51 synthetic boundary/native-policy/provider checks,
+then a 49-check smoke task on public PR #21 commit `2576a95`. Actual GLM
+read/write tools worked through the fixed free-provider relay. Fourteen runner
+regression tests, eight original setup tests, and the full project suite passed.
+No smoke patch was applied to the product. User files remain preserved.
 
-The required launch shape is: a clean public scratch workspace and environment
-→ an OS sandbox or a Linux VM with no host-home mount → `opencode --standalone`
-**inside** that boundary. `--standalone` starts a private server; an ordinary
-CLI session can send tool work to an existing unsandboxed shared server. Put
-`HOME`, all `XDG_*_HOME` directories, and `TMPDIR` inside the scratch workspace.
-Use an `env -i` equivalent. Do not pass host-home mounts, tokens, credentials,
-private files, pre-opened private descriptors, or symlinks to private data. A
-Linux VM with no host-home mount is the clearer durable option; Linux
-Bubblewrap can add a second boundary there, but does not run on macOS.
+The wrapper starts an authenticated private `serve --stdio` process inside
+Seatbelt on one exact loopback port. It runs the client inside that boundary
+with an explicit `--server` URL and verifies the server PID. This fulfills the
+private-server objective without admitting arbitrary standalone dynamic ports.
+It never attaches to the user's shared OpenCode service. Direct external
+networking stays denied. The inference relay accepts only the fixed free model
+and upstream route. No user credentials or paid fallback are supplied.
 
-There is **no verified production launch command or runner yet**. The local
-`sandbox-exec`/Seatbelt profile in the study is an offline prototype with no
-network access. It passed synthetic read/write, sibling, symlink, shell-child,
-and environment canaries plus offline OpenCode path checks. It has a broad
-system/runtime read allowlist and uses deprecated `sandbox-exec`; no provider
-call or network-enabled OpenCode session was tested. Do not present this
-prototype as a one-folder production sandbox.
+Every invocation repeats final-profile canaries, waits for the native policy
+plugin to become active, checks its real permission decisions and effective
+config, and rejects unverified public input. Public Git trees are copied from
+one anonymously confirmed commit, with no untracked/private files, symlinks,
+submodules, hardlinks or caches. Task output becomes a reviewed text patch.
+Codex runs tests in the trusted checkout. Shell and external integrations stay
+denied in OpenCode. No automatic patch application, push, PR merge or publication
+is part of the wrapper.
 
-Planned launch template, **not a runnable command yet**:
-
-```text
-env -i HOME=<scratch/home> XDG_CONFIG_HOME=<scratch/config>
-  XDG_DATA_HOME=<scratch/data> XDG_CACHE_HOME=<scratch/cache>
-  XDG_STATE_HOME=<scratch/state> TMPDIR=<scratch/tmp> PATH=<reviewed-runtime-path>
-  <validated-OS-wrapper-or-no-home-mount-VM-entry> <OpenCode-binary> --standalone
-```
-
-The executed offline diagnostic was the temporary synthetic harness
-`/private/tmp/opencode-sandbox-study/test_seatbelt.py`, run outside the Codex
-sandbox. It is not the wrapper in this template.
-
-Complete the setup in this order:
-
-1. Inspect the candidate VM or wrapper scripts, mounts, process tree, inherited
-   environment, descriptors, and the public scratch copy. Exclude symlinks,
-   submodules, hardlinks, caches, and private host paths that could cross the
-   boundary. Keep tests on fabricated canaries.
-2. Repeat allowed-workspace read/write and denied sibling read/list/write,
-   symlink, shell-child, and environment-secret probes under the **actual**
-   OS boundary. Test the private OpenCode server with `--standalone`; confirm
-   it does not attach to an existing shared service.
-3. Install and test a V2 native policy inside that scratch environment. Check
-   effective config, a permitted read/edit, and denied shell, external
-   directory and integration actions. The study's policy is an uninstalled
-   example, not a completed setting.
-4. Review the smallest needed network allowance. Repeat the canaries after
-   changing it, then make one provider call with synthetic public input in a
-   dummy workspace. Only after those checks pass should an approved external
-   run receive a prepared copy of the public repository. Never use private
-   data to test the boundary.
+The tested boundary remains macOS Seatbelt, not a security guarantee or VM.
+Revalidate after runtime/profile changes. Keep the pinned binary and runner
+checks. A no-home-mount Linux VM remains the preferred durable alternative.
 
 ## Verified local checkpoint and next work
 
-- Implementation checkpoint: local commit `814bd32` on
+- Historical offline checkpoint: local commit `814bd32` on
   `codex/isolation-preflight`, followed by documentation that records that
-  checkpoint. No branch was pushed and no new PR was created in this package.
+  checkpoint. The later controlled runner is described above. No branch was
+  pushed and no new PR was created during either isolation package.
 - Continuation baseline: PRs #19–21 were checked on 2026-10-22 and remain open
   and unmerged. PR #21 head is `2576a95`, based on `26c6e19`; the GitHub API
   returned no submitted reviews or inline review threads for all three PRs.
@@ -131,9 +96,9 @@ Complete the setup in this order:
   identical isolation study is now tracked from PR #21, and the old Obsidian
   update draft remains untracked and unchanged. The full baseline `npm test`
   passed outside the Codex sandbox. No content packet or runtime data changed
-  in this isolation prerequisite package. Finish the remaining launch gates
-  before any external-agent run. Content work without OpenCode can proceed
-  through the separate preparation/source-review gates below.
+  in that offline prerequisite package. Its pending OpenCode gates were later
+  completed by the controlled runner above. Content work retains the separate
+  preparation/source-review gates below.
 
 - The public GitHub checkpoint is `0ddb64d` on
   `origin/codex/hostage-pilot`. PR [#19](https://github.com/zhiland/ra9-atlas/pull/19)
@@ -195,8 +160,8 @@ Open a new Codex chat in the Detroit project. Select GPT-6.1 Sol at the client
 default reasoning effort. Paste this prompt:
 
 ```text
-Continue the ra9-atlas project. First read docs/handoff-sol.md from branch
-codex/sol-handoff (PR #21). Then read docs/spec.md, docs/STATUS.md, and
+Continue the ra9-atlas project. First read docs/handoff-sol.md from the current
+checkout, including its verified OpenCode runner update. Read docs/spec.md, docs/STATUS.md, and
 docs/ROADMAP.md. Check git status, the actual commits, and the stacked PRs
 #19 → #20 → #21. Do not merge or publish automatically. Preserve local and
 uncommitted user files.
@@ -205,7 +170,7 @@ After checking the baseline, take one small next package: prepare a draft
 chapter packet for a representative chapter using available public sources.
 Record coverage, omissions, sources, and unknowns explicitly. Do not mark
 the packet independently reviewed or move its data into runtime before a
-separate review. Do not run OpenCode until the isolation boundary described
-in docs/notes/opencode-macos-isolation.md is implemented and tested. Report
+separate review. Use only the tested tools/isolation/opencode_runner.py wrapper for OpenCode.
+Read docs/opencode-runner.md and retain its per-run gates and review boundary. Report
 the result, checks, and remaining limits concisely in Russian.
 ```
