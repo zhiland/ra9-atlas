@@ -47,6 +47,68 @@ is under investigation. Treat it as unverified until its public-only filesystem
 boundary has been enforced and tested. Use only prepared public files for any
 external-agent run.
 
+## OpenCode isolation: how to finish setup
+
+Read the [macOS isolation study](notes/opencode-macos-isolation.md) before any
+external-agent run. The installed OpenCode is V2.0.32. The read-only audit found
+no deny policy in the inspected local config paths; saved sessions and any
+connected Console policy were not inspected. V2 allows `external_directory` by
+default. An illustrative policy in the study passed JSON syntax checking only.
+Its effect on tools was **not** tested. Deny shell and external integrations
+as defense in depth. OpenCode permissions and prompt instructions do not
+confine the host filesystem.
+
+The required launch shape is: a clean public scratch workspace and environment
+→ an OS sandbox or a Linux VM with no host-home mount → `opencode --standalone`
+**inside** that boundary. `--standalone` starts a private server; an ordinary
+CLI session can send tool work to an existing unsandboxed shared server. Put
+`HOME`, all `XDG_*_HOME` directories, and `TMPDIR` inside the scratch workspace.
+Use an `env -i` equivalent. Do not pass host-home mounts, tokens, credentials,
+private files, pre-opened private descriptors, or symlinks to private data. A
+Linux VM with no host-home mount is the clearer durable option; Linux
+Bubblewrap can add a second boundary there, but does not run on macOS.
+
+There is **no verified production launch command or runner yet**. The local
+`sandbox-exec`/Seatbelt profile in the study is an offline prototype with no
+network access. It passed synthetic read/write, sibling, symlink, shell-child,
+and environment canaries plus offline OpenCode path checks. It has a broad
+system/runtime read allowlist and uses deprecated `sandbox-exec`; no provider
+call or network-enabled OpenCode session was tested. Do not present this
+prototype as a one-folder production sandbox.
+
+Planned launch template, **not a runnable command yet**:
+
+```text
+env -i HOME=<scratch/home> XDG_CONFIG_HOME=<scratch/config>
+  XDG_DATA_HOME=<scratch/data> XDG_CACHE_HOME=<scratch/cache>
+  XDG_STATE_HOME=<scratch/state> TMPDIR=<scratch/tmp> PATH=<reviewed-runtime-path>
+  <validated-OS-wrapper-or-no-home-mount-VM-entry> <OpenCode-binary> --standalone
+```
+
+The executed offline diagnostic was the temporary synthetic harness
+`/private/tmp/opencode-sandbox-study/test_seatbelt.py`, run outside the Codex
+sandbox. It is not the wrapper in this template.
+
+Complete the setup in this order:
+
+1. Inspect the candidate VM or wrapper scripts, mounts, process tree, inherited
+   environment, descriptors, and the public scratch copy. Exclude symlinks,
+   submodules, hardlinks, caches, and private host paths that could cross the
+   boundary. Keep tests on fabricated canaries.
+2. Repeat allowed-workspace read/write and denied sibling read/list/write,
+   symlink, shell-child, and environment-secret probes under the **actual**
+   OS boundary. Test the private OpenCode server with `--standalone`; confirm
+   it does not attach to an existing shared service.
+3. Install and test a V2 native policy inside that scratch environment. Check
+   effective config, a permitted read/edit, and denied shell, external
+   directory and integration actions. The study's policy is an uninstalled
+   example, not a completed setting.
+4. Review the smallest needed network allowance. Repeat the canaries after
+   changing it, then make one provider call with synthetic public input in a
+   dummy workspace. Only after those checks pass should an approved external
+   run receive a prepared copy of the public repository. Never use private
+   data to test the boundary.
+
 ## Verified local checkpoint and next work
 
 - The public GitHub checkpoint is `0ddb64d` on
