@@ -92,10 +92,65 @@ def public_archive(repository, commit):
                 raise RuntimeError("Public commit SHA mismatch")
     finally:
         connection.close()
-    tree = subprocess.check_output(["git", "-C", str(repository), "ls-tree", "-r", commit])
-    if any(line.startswith((b"160000 ", b"120000 ")) for line in tree.splitlines()):
-        raise ValueError("Public tree contains a submodule or symlink")
-    return subprocess.check_output(["git", "-C", str(repository), "archive", "--format=tar", commit])
+    # Export verified objects, not `git archive`: local replace refs and
+    # export-subst attributes can substitute unpublished content or ref names.
+    environment = {
+        "PATH": "/usr/bin:/bin", "LANG": "C", "LC_ALL": "C",
+        "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_NO_REPLACE_OBJECTS": "1", "GIT_TERMINAL_PROMPT": "0",
+        "GIT_NO_LAZY_FETCH": "1",
+    }
+
+    def object_bytes(kind, oid):
+        if not re.fullmatch(r"[0-9a-f]{40}", oid):
+            raise ValueError("Invalid Git object ID")
+        content = subprocess.check_output(
+            ["/usr/bin/git", "-C", str(repository), "--no-replace-objects", "cat-file", kind, oid],
+            env=environment, stdin=subprocess.DEVNULL, close_fds=True)
+        header = (kind + " " + str(len(content)) + "\0").encode("ascii")
+        if hashlib.sha1(header + content).hexdigest() != oid:
+            raise ValueError("Git object hash mismatch: " + oid)
+        return content
+
+    commit_bytes = object_bytes("commit", commit)
+    first_line = commit_bytes.split(b"\n", 1)[0]
+    if not re.fullmatch(rb"tree [0-9a-f]{40}", first_line):
+        raise ValueError("Public commit has no valid root tree")
+    output = io.BytesIO()
+    with tarfile.open(fileobj=output, mode="w") as archive:
+        def append_tree(oid, prefix="", depth=0):
+            if depth > 100:
+                raise ValueError("Public tree exceeds supported directory depth")
+            data = object_bytes("tree", oid)
+            offset = 0
+            while offset < len(data):
+                separator = data.index(b" ", offset)
+                end = data.index(b"\0", separator + 1)
+                mode = data[offset:separator]
+                name = data[separator + 1:end].decode("utf-8")
+                if "/" in name or not name:
+                    raise ValueError("Invalid Git tree entry name")
+                path = prefix + name
+                if not allowed_path(path):
+                    raise ValueError("Disallowed public tree entry: " + path)
+                raw_oid = data[end + 1:end + 21]
+                if len(raw_oid) != 20:
+                    raise ValueError("Truncated Git tree object")
+                child_oid = raw_oid.hex()
+                offset = end + 21
+                if mode == b"40000":
+                    append_tree(child_oid, path + "/", depth + 1)
+                elif mode in (b"100644", b"100755"):
+                    content = object_bytes("blob", child_oid)
+                    entry = tarfile.TarInfo(path)
+                    entry.size = len(content)
+                    entry.mode = 0o600
+                    archive.addfile(entry, io.BytesIO(content))
+                else:
+                    raise ValueError("Public tree contains unsupported entry: " + path)
+
+        append_tree(first_line[5:].decode("ascii"))
+    return output.getvalue()
 
 
 class InferenceRelay:
@@ -235,6 +290,11 @@ def audit_tree(directory):
 
 
 def patch_text(before, after):
+    def lines(content):
+        # Git hunks use LF only. Bare CR and Unicode separators are file content.
+        parts = content.decode("utf-8").split("\n")
+        return [part + "\n" for part in parts[:-1]] + ([parts[-1]] if parts[-1] else [])
+
     result = []
     for name in sorted(before.keys() | after.keys()):
         if before.get(name) == after.get(name):
@@ -247,8 +307,8 @@ def patch_text(before, after):
             result.append("new file mode 100644\n")
         elif name not in after:
             result.append("deleted file mode 100644\n")
-        old = before.get(name, b"").decode("utf-8").splitlines(keepends=True)
-        new = after.get(name, b"").decode("utf-8").splitlines(keepends=True)
+        old = lines(before.get(name, b""))
+        new = lines(after.get(name, b""))
         result.extend(difflib.unified_diff(old, new,
                       fromfile=left if name in before else "/dev/null",
                       tofile=right if name in after else "/dev/null"))

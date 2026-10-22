@@ -140,3 +140,18 @@ Official references: [private servers](https://dev.opencode.ai/v2/docs/cli/),
 [configuration](https://dev.opencode.ai/v2/docs/config/),
 [native policies](https://dev.opencode.ai/v2/docs/policies/),
 [API schema](https://dev.opencode.ai/v2/openapi.json).
+
+## Repository review correction — 2026-10-22
+
+Independent code review found that local `git replace` refs could substitute
+an unpublished tree for a confirmed public SHA. Local `export-subst` attributes
+could also insert unpublished ref names through `git archive`.
+The exporter now reads raw commit/tree/blob objects with fixed `/usr/bin/git`,
+a clean Git environment, replacement refs disabled and lazy fetching disabled.
+It verifies each object's hash and builds the archive without attributes or ref expansion.
+
+The 18 regression tests cover both reproductions, inherited Git overrides,
+and exact patch application with bare CR and Unicode separators.
+The corrected runner repeated all 51 synthetic end-to-end checks successfully.
+The original 49-check public smoke above remains a historical baseline.
+Use the corrected exporter for future tasks; older source backups retain the defects.

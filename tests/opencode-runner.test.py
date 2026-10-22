@@ -66,6 +66,59 @@ class RunnerBoundaryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Duplicate"):
             runner.unpack_public_archive(archive_bytes([("a", tarfile.REGTYPE), ("a", tarfile.REGTYPE)]), self.root / "out")
 
+    def public_repository(self, content="PUBLIC\n"):
+        repository = self.root / "repository"
+        repository.mkdir()
+        self.git(repository, "init", "-q")
+        self.git(repository, "config", "user.name", "Synthetic runner test")
+        self.git(repository, "config", "user.email", "synthetic@example.invalid")
+        (repository / "public.txt").write_text(content)
+        self.git(repository, "add", "public.txt")
+        self.git(repository, "commit", "-qm", "Public fixture")
+        return repository, self.git(repository, "rev-parse", "HEAD").strip().decode()
+
+    def git(self, repository, *arguments):
+        return subprocess.check_output(["/usr/bin/git", "-C", str(repository), *arguments],
+                                       stderr=subprocess.PIPE)
+
+    def admitted_text(self, repository, commit):
+        upstream = Mock()
+        response = upstream.getresponse.return_value
+        response.status = 200
+        response.read.side_effect = [b'{"private":false}', json.dumps({"sha": commit}).encode()]
+        with patch.object(runner.http.client, "HTTPSConnection", return_value=upstream):
+            data = runner.public_archive(repository, commit)
+        with tarfile.open(fileobj=io.BytesIO(data)) as archive:
+            return archive.extractfile("public.txt").read().decode()
+
+    def test_public_archive_ignores_local_replace_refs(self):
+        repository, public_commit = self.public_repository()
+        (repository / "public.txt").write_text("FABRICATED_PRIVATE_CANARY\n")
+        self.git(repository, "commit", "-qam", "Unpublished fixture")
+        private_commit = self.git(repository, "rev-parse", "HEAD").strip().decode()
+        self.git(repository, "replace", public_commit, private_commit)
+        self.assertEqual(self.admitted_text(repository, public_commit), "PUBLIC\n")
+
+    def test_public_archive_ignores_uncommitted_attributes_and_private_refs(self):
+        original = "$Format:%D$\n"
+        repository, public_commit = self.public_repository(original)
+        self.git(repository, "tag", "FABRICATED_PRIVATE_TAG")
+        (repository / ".git/info/attributes").write_text("public.txt export-subst\n")
+        self.assertEqual(self.admitted_text(repository, public_commit), original)
+
+    def test_public_archive_excludes_inherited_git_environment_overrides(self):
+        repository, public_commit = self.public_repository()
+        hostile_environment = {
+            "GIT_DIR": str(self.root / "nonexistent-private-repository"),
+            "GIT_WORK_TREE": str(self.root / "nonexistent-private-worktree"),
+            "GIT_OBJECT_DIRECTORY": str(self.root / "nonexistent-private-objects"),
+            "GIT_ALTERNATE_OBJECT_DIRECTORIES": str(self.root / "private-alternates"),
+            "GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "core.repositoryformatversion",
+            "GIT_CONFIG_VALUE_0": "999", "GIT_CONFIG_GLOBAL": str(self.root / "private-config"),
+        }
+        with patch.dict(os.environ, hostile_environment):
+            self.assertEqual(self.admitted_text(repository, public_commit), "PUBLIC\n")
+
     def test_export_rejects_symlink_before_reading_target(self):
         project = self.root / "project"
         project.mkdir()
@@ -99,6 +152,22 @@ class RunnerBoundaryTests(unittest.TestCase):
         for port in [0, 80, 65536, '443"))']:
             with self.subTest(port=port), self.assertRaises(ValueError):
                 runner.candidate_profile(self.root, (port, 45000))
+
+    def test_patch_preserves_non_lf_separators_as_content(self):
+        for separator in ["\r", "\v", "\f", "\x85", "\u2028", "\u2029", "\r\n"]:
+            for ending in ["", "\n"]:
+                with self.subTest(separator=repr(separator), ending=repr(ending)):
+                    before = ("a" + separator + "old" + ending).encode("utf-8")
+                    after = ("a" + separator + "new" + ending).encode("utf-8")
+                    (self.root / "separator.txt").write_bytes(before)
+                    # write_bytes avoids platform newline translation in the patch itself.
+                    diff = self.root / "separator.patch"
+                    diff.write_bytes(runner.patch_text({"separator.txt": before},
+                                                      {"separator.txt": after}).encode("utf-8"))
+                    result = subprocess.run(["git", "apply", "--no-index", str(diff)],
+                                            cwd=self.root, capture_output=True, text=True)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual((self.root / "separator.txt").read_bytes(), after)
 
     def test_patch_preserves_empty_file_creation_and_deletion(self):
         (self.root / "removed.txt").touch()
