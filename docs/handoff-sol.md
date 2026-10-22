@@ -49,6 +49,9 @@ Keep its host/version limits and per-run gates.
 
 ## OpenCode isolation: verified controlled runner
 
+Implementation checkpoint: local commit `77eee10` on
+`codex/isolation-preflight`, followed by checkpoint/routing documentation.
+
 The owner authorized completion and testing of OpenCode setup on 2026-10-22.
 Use [the runner guide](opencode-runner.md) before an external development task.
 The guide replaces the earlier unbuilt launch template. The historical

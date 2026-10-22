@@ -16,6 +16,8 @@ Fourteen runner regression tests, eight original setup tests, and the full
 `npm test` passed. Shell/external integrations and direct external networking
 remain denied. Use the pinned runner, prepared public commits and reviewed
 patches. The tested Seatbelt boundary remains host/version specific.
+Implementation checkpoint: local commit `77eee10` on
+`codex/isolation-preflight`, followed by the checkpoint and routing documentation.
 
 PRs #19–21 remain open and unmerged at `0ddb64d`, `26c6e19`, and `2576a95`.
 The GitHub connector confirmed public visibility and PR #21's exact head before
