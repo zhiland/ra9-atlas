@@ -172,12 +172,13 @@ function validateAtlas(ATLAS) {
     return errors;
   });
 
-  check('no self-loops and no duplicate directed edges', () => {
+  check('no self-loops or duplicate directed option edges', () => {
     const errors = [];
     const seen = new Set();
     for (const e of edges) {
       if (e.from === e.to) errors.push(`self-loop on "${e.from}"`);
-      const key = `${e.from}->${e.to}`;
+      const option = e.fromOption == null ? '' : `#${e.fromOption}`;
+      const key = `${e.from}${option}->${e.to}`;
       if (seen.has(key)) errors.push(`duplicate edge ${key}`);
       seen.add(key);
     }
@@ -379,7 +380,7 @@ function validateAtlas(ATLAS) {
     return errors;
   });
 
-  check('The Hostage chart keeps all 33 boxes, 40 labels and 36 connectors', () => {
+  check('The Hostage transcription keeps 33 boxes, 40 labels and its 36 pictured connectors', () => {
     const errors = [];
     const hostageChapter = chapterById.get('hostage');
     if (!hostageChapter) {
@@ -389,7 +390,7 @@ function validateAtlas(ATLAS) {
     if (hostageChapter.coverage.status !== 'checked-against-chart') {
       errors.push(`hostage coverage should be checked-against-chart, found "${hostageChapter.coverage.status}"`);
     }
-    for (const source of ['steam', 'powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy']) {
+    for (const source of ['steam', 'shazooHostageChart', 'powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy']) {
       if (!hostageChapter.coverage.sources.includes(source)) {
         errors.push('hostage coverage must include the chart/carry source "' + source + '"');
       }
@@ -463,10 +464,12 @@ function validateAtlas(ATLAS) {
 
     const chartEdges = edges.filter(e => byId.has(e.from) && byId.has(e.to) &&
       byId.get(e.from).chapter === 'hostage' && byId.get(e.to).chapter === 'hostage');
-    if (chartEdges.length !== 36) errors.push(`hostage chart should have 36 connectors, found ${chartEdges.length}`);
+    if (hostageChapter.coverage.visibleConnectorCount !== 36) errors.push('Hostage visibleConnectorCount must stay 36 for the Steam screenshot');
+    if (hostageChapter.coverage.modeledEdgeClaimCount !== 37) errors.push('Hostage modeledEdgeClaimCount must stay 37 after the explicit option split');
+    if (chartEdges.length !== 37) errors.push(`hostage should have 37 modeled edge claims for 36 pictured connectors, found ${chartEdges.length}`);
     const uncertainEdges = chartEdges.filter(e => e.kind === 'uncertain');
-    if (uncertainEdges.length !== 5) errors.push(`hostage chart should have 5 uncertain connectors, found ${uncertainEdges.length}`);
-    if (chartEdges.filter(e => e.kind === 'traced').length !== 31) errors.push('hostage chart should keep 31 traced connectors');
+    if (uncertainEdges.length !== 4) errors.push(`hostage should have 4 uncertain edge claims, found ${uncertainEdges.length}`);
+    if (chartEdges.filter(e => e.kind === 'traced').length !== 33) errors.push('hostage should keep 33 traced edge claims');
     if (chartEdges.some(e => !e.src || !e.src.includes('steam'))) errors.push('every Hostage chart connector must cite the Steam chart');
     if (uncertainEdges.some(e => !/uncertain|ambig|not.*(clear|confiden|separab)|prevents a confident/i.test(e.note || ''))) {
       errors.push('each uncertain Hostage connector needs its own uncertainty note');
@@ -478,8 +481,8 @@ function validateAtlas(ATLAS) {
     if (!unknown) errors.push('u_hostage_chart_uncertain is missing');
     else {
       if (unknown.status !== 'unknown') errors.push('u_hostage_chart_uncertain must stay unknown');
-      if (!Array.isArray(unknown.edges) || unknown.edges.length !== 5) {
-        errors.push('u_hostage_chart_uncertain must reference exactly the 5 uncertain connectors');
+      if (!Array.isArray(unknown.edges) || unknown.edges.length !== 4) {
+        errors.push('u_hostage_chart_uncertain must reference exactly the 4 uncertain edge claims');
       } else {
         for (const id of uncertainEdges.map(e => e.id)) {
           if (!unknown.edges.includes(id)) errors.push(`u_hostage_chart_uncertain must reference ${id}`);
@@ -1177,7 +1180,7 @@ function validateAtlas(ATLAS) {
       if (counts[key] !== value) errors.push(`meta.counts.${key} is ${counts[key]} but the data has ${value}`);
     }
     if (actual.nodes !== 102) errors.push(`expected 102 boxes, found ${actual.nodes}`);
-    if (actual.edges !== 92) errors.push(`expected 92 connectors, found ${actual.edges}`);
+    if (actual.edges !== 93) errors.push(`expected 93 connectors, found ${actual.edges}`);
     return errors;
   });
 

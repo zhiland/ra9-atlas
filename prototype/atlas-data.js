@@ -59,12 +59,12 @@ const ATLAS = {
     counts: {
       chapters: 5,
       nodes: 102,
-      edges: 92,
-      tracedEdges: 70,
+      edges: 93,
+      tracedEdges: 72,
       conditionalEdges: 8,
       prerequisiteEdges: 6,
       hypothesisEdges: 3,
-      uncertainEdges: 5,
+      uncertainEdges: 4,
       crossChapterEdges: 5
     }
   },
@@ -83,7 +83,8 @@ const ATLAS = {
     gamerGuides: 'https://www.gamerguides.com/detroit-become-human/guide/walkthrough/chapter-1/chapter-31-battle-for-detroit-kara',
     powerpyxHostage: 'https://www.powerpyx.com/detroit-become-human-the-hostage-opening-walkthrough-100/',
     powerpyxPublicEnemy: 'https://www.powerpyx.com/detroit-become-human-public-enemy-walkthrough-100/',
-    gamefaqsPublicEnemy: 'https://gamefaqs.gamespot.com/ps4/182637-detroit-become-human/faqs/76123/public-enemy'
+    gamefaqsPublicEnemy: 'https://gamefaqs.gamespot.com/ps4/182637-detroit-become-human/faqs/76123/public-enemy',
+    shazooHostageChart: 'https://shazoo.ru/2018/04/24/64787/polnoe-prohozhdenie-detroit-become-human-zajmet-25-30-chasov'
   },
 
   canvas: { width: 4950, height: 2500 },
@@ -134,15 +135,17 @@ const ATLAS = {
     {
       id: 'hostage',
       name: 'The Hostage',
-      code: 'D1 · complete visible chart · saved-cop carry',
+      code: 'D1 · visible chart transcription · saved-cop carry',
       frame: { x: 0, y: 1120, w: 4450, h: 1340 },
-      desc: 'The complete visible Hostage chart transcribed from one Steam “100% Chapter Flowcharts” screenshot: 33 boxes, 40 visible labels and 36 connectors. Five connectors are dashed and question-marked because their routes, sources or branch rows could not be traced confidently. GET CLOSE ENOUGH is kept as an unresolved no-outgoing-edge endpoint. The saved-cop option also carries one guide-supported prerequisite into Public Enemy; that evidence is separate from the chart uncertainty.',
+      desc: 'The visible Hostage chart is transcribed from one Steam “100% Chapter Flowcharts” screenshot: 33 boxes, 40 labels and 36 pictured connectors. An alternate selected-path chart resolves two readings and narrows one connector. The graph keeps 37 edge claims because the Friendly→FAIL candidate remains separate and uncertain; this does not add a confirmed pictured connector. GET CLOSE ENOUGH stays unresolved. The saved-cop option also has one guide-supported prerequisite into Public Enemy.',
       coverage: {
         status: 'checked-against-chart',
-        scope: 'Every box, visible label and connector in the single full Hostage chart screenshot, plus one guide-supported saved-cop prerequisite into Public Enemy.',
-        included: '33 boxes: 3 stage containers, 7 two-row choice groups (14 option labels), 16 action/flag boxes, 1 start and 6 endings. All 40 visible labels are present. 36 chart connectors are drawn: 31 traced and 5 uncertain (dashed with a ? badge). GET CLOSE ENOUGH has no outgoing connector. One cross-chapter prerequisite leaves the SAVE WOUNDED COP option; LEAVE WOUNDED COP has no drawn consequence.',
+        scope: 'Every box, visible label and connector in the single full Hostage chart screenshot, two readings checked against a separate selected-path chart, and one guide-supported saved-cop prerequisite into Public Enemy.',
+        visibleConnectorCount: 36,
+        modeledEdgeClaimCount: 37,
+        included: '33 boxes: 3 stage containers, 7 two-row choice groups (14 option labels), 16 action/flag boxes, 1 start and 6 endings. All 40 visible labels are present. The Steam chart shows 36 connectors. The map has 37 internal Hostage edge claims after one approach relation is split into an uncertain Friendly candidate and a chart-supported Cold route. It has 33 traced and 4 uncertain claims; the extra candidate is not counted as a confirmed pictured connector. GET CLOSE ENOUGH has no outgoing connector. One cross-chapter prerequisite leaves the SAVE WOUNDED COP option; LEAVE WOUNDED COP has no modeled consequence.',
         omitted: 'In-game verification; any branch set beyond this one screenshot; later Public Enemy cop rescue, death or other outcomes; consequences of meeting the saved cop; any outcome for LEAVE WOUNDED COP.',
-        sources: ['steam', 'powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy']
+        sources: ['steam', 'shazooHostageChart', 'powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy']
       }
     },
     {
@@ -342,7 +345,7 @@ const ATLAS = {
     { id: 'wounded_cop', chapter: 'hostage', label: 'LEAVE WOUNDED COP / SAVE WOUNDED COP', heading: 'Wounded cop choice', short: 'Wounded cop choice', kind: 'choice', x: 2685, y: 2270, w: 230, h: 64, options: ['LEAVE WOUNDED COP', 'SAVE WOUNDED COP'], status: 'mixed', src: ['steam', 'powerpyxHostage', 'powerpyxPublicEnemy'],
       note: 'Two-row choice box; the screenshot marks SAVE WOUNDED COP with a yellow highlight icon. PowerPyx reports that saving the wounded cop makes him appear later in Public Enemy. Only that saved-cop carry is drawn; the leave option has no consequence in this slice.' },
     { id: 'fail_negotiate', chapter: 'hostage', label: 'FAIL TO NEGOTIATE', short: 'Fail to negotiate', kind: 'action', x: 3065, y: 1490, w: 230, h: 36, status: 'ocr', src: ['steam'],
-      note: 'Sits on the negotiation output bus. Its true source (the approach choice, or the negotiation stage) is ambiguous.' },
+      note: 'The Steam chart has a shared negotiation output bus. The Cold Approach connector is readable in a separate selected-path chart; the stage input and any Friendly Approach input remain uncertain.' },
 
     { id: 'honest_deviant', chapter: 'hostage', label: 'BE HONEST WITH DEVIANT', short: 'Be honest with deviant', kind: 'action', x: 3445, y: 1510, w: 230, h: 36, status: 'ocr', src: ['steam'] },
     { id: 'lie_deviant', chapter: 'hostage', label: 'LIE TO DEVIANT', short: 'Lie to deviant', kind: 'action', x: 3445, y: 1690, w: 210, h: 36, status: 'ocr', src: ['steam'] },
@@ -580,23 +583,29 @@ const ATLAS = {
     { id: 'e_hostage_gun_deviant_shot', from: 'use_gun', to: 'end_deviant_shot', kind: 'traced', src: ['steam'] },
     { id: 'e_hostage_gun_connor_shot', from: 'use_gun', to: 'end_connor_shot', kind: 'traced', src: ['steam'] },
 
-    /* Five connectors that cannot be confidently traced from the screenshot. */
+    /* Unresolved readings after checking the alternate selected-path chart. */
     { id: 'e_hostage_start_fish', from: 'mission_start', to: 'fish', kind: 'uncertain', src: ['steam'],
       note: 'The fish choice hangs off the MISSION START → TALK TO CAPT. ALLEN segment; the exact tap junction is ambiguous.' },
     { id: 'e_hostage_search_swat', from: 'stage-search', to: 'swat_injured', kind: 'uncertain', via: 1639, src: ['steam'],
       note: 'SWAT INJURED is fed from the search area but the tap point of its rising connector is not clear.' },
     { id: 'e_hostage_negotiate_fail', from: 'stage-negotiate', to: 'fail_negotiate', kind: 'uncertain', via: 2990, src: ['steam'],
       note: 'FAIL TO NEGOTIATE sits on a shared negotiation bus; the source line is not separable by eye.' },
-    { id: 'e_hostage_approach_fail', from: 'approach', to: 'fail_negotiate', kind: 'uncertain', src: ['steam'],
-      note: 'A connector from the approach choice reaches FAIL TO NEGOTIATE, but the crossing bus prevents a confident trace.' },
-    { id: 'e_hostage_fail_jumps', from: 'fail_negotiate', to: 'deviant_jumps', kind: 'uncertain', src: ['steam'],
-      note: 'A long connector links FAIL TO NEGOTIATE to DEVIANT JUMPS WITH EMMA across the outcome crossings; the route is not confidently traced.' },
+    { id: 'e_hostage_approach_fail', from: 'approach', fromOption: 0, to: 'fail_negotiate', kind: 'uncertain', src: ['steam'],
+      note: 'This preserves the old ?edge=89 claim as a narrowed uncertain Friendly Approach candidate. The Steam chart does not identify the option row. A separate selected-path chart traces Cold Approach instead; no Friendly route is confirmed, so this candidate remains uncertain.' },
+    { id: 'e_hostage_fail_jumps', from: 'fail_negotiate', to: 'deviant_jumps', kind: 'traced', src: ['steam', 'shazooHostageChart'],
+      note: 'A separate 48%-complete chart visibly traces this connector on its selected path. This is a chart reading, not gameplay verification or proof that every failed-negotiation scenario has this result.' },
 
     /* One source-backed cross-chapter prerequisite; not a chart connector. */
     { id: 'e_hostage_save_cop_public_enemy', from: 'wounded_cop', fromOption: 1, to: 'pe_meet_cop', kind: 'prerequisite', via: 3420,
       label: 'prerequisite: saved wounded cop in The Hostage', labelAt: { x: 3800, y: 2362 },
       src: ['powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy'],
-      note: 'PowerPyx Hostage says saving the wounded cop makes him appear later in Public Enemy; PowerPyx Public Enemy lists “Saved During ‘The Hostage’” and “Meet Cop From Hostage Situation”. It is separate from the Hostage chart’s five uncertain connectors. The same guide also lists later cop outcomes, which are outside this slice. Guide-reported, not gameplay-verified; matching guides are not independent verification.' }
+      note: 'PowerPyx Hostage says saving the wounded cop makes him appear later in Public Enemy; PowerPyx Public Enemy lists “Saved During ‘The Hostage’” and “Meet Cop From Hostage Situation”. This is a guide-reported, not gameplay-verified carry, separate from chart uncertainty. Later cop outcomes are outside this slice; matching guides are not independent verification.' },
+
+    /* Option-specific reading of an existing pictured connector. Appended so
+       all published ?edge=N positions remain stable. */
+    { id: 'e_hostage_cold_approach_fail', from: 'approach', fromOption: 1, to: 'fail_negotiate', kind: 'traced',
+      src: ['steam', 'shazooHostageChart'],
+      note: 'The separate 48%-complete chart visibly traces the selected Cold Approach route to FAIL TO NEGOTIATE. This disambiguates the option row for that pictured connector only; it does not establish a complete rule table.' }
   ],
 
   /* Conditions are plain-English groups over existing edges. They add no edge
@@ -743,10 +752,10 @@ const ATLAS = {
     {
       id: 'u_hostage_chart_uncertain',
       status: 'unknown',
-      explanation: 'Five connectors in the single Hostage chart screenshot could not be traced confidently: the fish branch off the start segment, the rising SWAT INJURED tap, the two possible sources into FAIL TO NEGOTIATE, and the long FAIL TO NEGOTIATE → DEVIANT JUMPS route. They are drawn as dashed uncertain connectors with a ? badge. This is chart-transcription uncertainty only. The SAVE WOUNDED COP → Meet Cop prerequisite is separately guide-supported and is not one of these uncertain connectors.',
+      explanation: 'Four Hostage edge claims remain uncertain: the fish branch tap, the rising SWAT INJURED tap, the stage-to-FAIL TO NEGOTIATE tap, and whether Friendly Approach also reaches FAIL TO NEGOTIATE. A separate selected-path chart traces Cold Approach → FAIL TO NEGOTIATE and FAIL TO NEGOTIATE → DEVIANT JUMPS WITH EMMA. The Friendly candidate preserves the old ?edge=89 link but is not a confirmed extra connector in the 36-connector Steam image. This is chart-transcription uncertainty, not gameplay uncertainty. The SAVE WOUNDED COP → Meet Cop prerequisite is separately guide-supported.',
       nodes: ['mission_start', 'fish', 'stage-search', 'swat_injured', 'stage-negotiate', 'fail_negotiate', 'approach', 'deviant_jumps'],
-      edges: ['e_hostage_start_fish', 'e_hostage_search_swat', 'e_hostage_negotiate_fail', 'e_hostage_approach_fail', 'e_hostage_fail_jumps'],
-      sources: ['steam']
+      edges: ['e_hostage_start_fish', 'e_hostage_search_swat', 'e_hostage_negotiate_fail', 'e_hostage_approach_fail'],
+      sources: ['steam', 'shazooHostageChart']
     }
   ],
 

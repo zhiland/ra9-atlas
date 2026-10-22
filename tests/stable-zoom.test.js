@@ -471,7 +471,7 @@ async function runRealDataset(browser) {
     const scales = snapshots.map(function (s) { return s.scale; });
     assert(new Set(scales).size === scales.length, 'sampled scales should all differ: ' + scales.join(', '));
     snapshots.forEach(function (s) {
-      assert(s.nodes.length === 102 && s.edges.length === 92,
+      assert(s.nodes.length === 102 && s.edges.length === 93,
         'scale ' + s.scale + ' changed mounted graph inventory');
       assert(s.nodes.every(function (n) { return n.labelInsideNode; }),
         'scale ' + s.scale + ' has a node label outside its box');

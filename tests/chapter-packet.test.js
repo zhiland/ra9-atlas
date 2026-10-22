@@ -95,7 +95,7 @@ check('packet identity, chapter scope and coverage boundary are versioned', () =
   eq(packet.coverage.status, 'checked-against-chart');
   assert(packet.coverage.scope && packet.coverage.included.length > 0 && packet.coverage.omitted.length > 0,
     'scope, included and omitted coverage are required');
-  assert(packet.coverage.omitted.some(item => /in-game verification/i.test(item)), 'gameplay verification must stay omitted');
+  assert(packet.coverage.omitted.some(item => /gameplay verification/i.test(item)), 'gameplay verification must stay omitted');
   assert(packet.coverage.omitted.some(item => /LEAVE WOUNDED COP/i.test(item)), 'the leave-cop boundary must stay omitted');
   assert(packet.coverage.omitted.some(item => /legal clearance|reuse/i.test(item)), 'rights clearance must stay outside the packet claim');
 });
@@ -120,6 +120,8 @@ check('pilot counts, node IDs, labels and choice options match the regression fi
   for (const [id, options] of Object.entries(pilot.choiceOptions)) {
     eq(nodeById.get(id).options, options, id + ' options');
   }
+  const approachRoutes = chartEdges.filter(edge => edge.from === 'approach' && edge.to === 'fail_negotiate');
+  eq(approachRoutes.map(edge => [edge.fromOption, edge.kind]), [[0, 'uncertain'], [1, 'traced']]);
 });
 
 check('chart nodes and edges match the actual Hostage ATLAS slice by label and endpoint', () => {
@@ -144,7 +146,7 @@ check('chart nodes and edges match the actual Hostage ATLAS slice by label and e
   eq(chartEdges.map(edge => edge.id), pilot.edgeIds);
 });
 
-check('the five uncertain Hostage connectors stay uncertain and GET CLOSE ENOUGH stays open-ended', () => {
+check('Hostage option-specific readings preserve the old index and GET CLOSE ENOUGH stays open-ended', () => {
   const uncertain = chartEdges.filter(edge => edge.kind === 'uncertain');
   eq(uncertain.map(edge => edge.id), pilot.uncertainEdgeIds);
   assert(uncertain.every(edge => /uncertain|ambiguous|not clear|not separable|not confidently|prevents a confident/i.test(edge.note || '')),
@@ -153,8 +155,17 @@ check('the five uncertain Hostage connectors stay uncertain and GET CLOSE ENOUGH
   const unknown = packet.unknowns.find(item => item.id === 'u_hostage_chart_uncertain');
   assert(unknown && unknown.status === 'unknown', 'chart uncertainty must stay explicit');
   eq(unknown.edges, pilot.uncertainEdgeIds);
-  assert(/chart-transcription uncertainty/i.test(unknown.explanation), 'the unknown must stay scoped to chart transcription');
+  assert(/chart-reading uncertainty/i.test(unknown.explanation), 'the unknown must stay scoped to chart transcription');
   assert(!unknown.edges.includes(pilot.savedCop.edgeId), 'chart uncertainty must not absorb the saved-cop prerequisite');
+  const friendly = chartEdges.find(edge => edge.id === 'e_hostage_approach_fail');
+  const cold = chartEdges.find(edge => edge.id === 'e_hostage_cold_approach_fail');
+  const failJumps = chartEdges.find(edge => edge.id === 'e_hostage_fail_jumps');
+  eq([friendly.fromOption, friendly.kind, friendly.legacyEdgeIndex], [0, 'uncertain', 89]);
+  eq([cold.fromOption, cold.kind, cold.legacyEdgeIndex], [1, 'traced', 92]);
+  eq([failJumps.kind, failJumps.legacyEdgeIndex], ['traced', 90]);
+  assert(/narrowed|old.*index|legacy/i.test(packet.legacy.note), 'the index 89 semantic narrowing must be explicit');
+  assert(/not counted as a confirmed extra screenshot connector/i.test(packet.coverage.included.join(' ')),
+    'the unresolved Friendly candidate must not increase the confirmed pictured connector count');
 });
 
 check('the saved-cop prerequisite is separate, guide-reported and edge-local', () => {
@@ -167,7 +178,7 @@ check('the saved-cop prerequisite is separate, guide-reported and edge-local', (
   const edge = item.edges[0];
   eq([edge.from, edge.fromOption, edge.to, edge.kind, edge.legacyEdgeIndex],
     [pilot.savedCop.from, pilot.savedCop.fromOption, pilot.savedCop.to, pilot.savedCop.kind, pilot.savedCop.legacyEdgeIndex]);
-  assert(/guide-reported, not gameplay-verified/i.test(edge.note || ''), 'the saved-cop edge must keep its evidence limit');
+  assert(/guide-reported.*not gameplay-verified/i.test(edge.note || ''), 'the saved-cop edge must keep its evidence limit');
   assert(!chartEdges.some(candidate => candidate.from === 'wounded_cop' && candidate.fromOption === 0),
     'LEAVE WOUNDED COP must have no drawn consequence');
   const condition = packet.conditions.find(itemCondition => itemCondition.id === pilot.savedCop.conditionId);
@@ -178,7 +189,7 @@ check('the saved-cop prerequisite is separate, guide-reported and edge-local', (
 });
 
 check('source locators, separate access outcomes and rights review states are recorded', () => {
-  eq(packet.sources.map(source => source.id), ['steamHostageChart', 'powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy']);
+  eq(packet.sources.map(source => source.id), ['steamHostageChart', 'shazooHostageChart', 'powerpyxHostage', 'powerpyxPublicEnemy', 'gamefaqsPublicEnemy']);
   for (const source of packet.sources) {
     assert(/^https?:\/\//.test(source.url), source.id + ' needs an absolute URL');
     assert(source.locator, source.id + ' needs a locator');
@@ -298,6 +309,11 @@ console.log('\nchapter packet — malformed fixtures');
 rejects('rejects an unsupported packet version', p => { p.packetVersion = '2.0'; }, /packetVersion must be "1\.0"/);
 rejects('rejects a duplicate chart node ID', p => { p.chart.nodes[1].id = p.chart.nodes[0].id; }, /duplicate node id/);
 rejects('rejects a duplicate chart edge ID', p => { p.chart.edges[1].id = p.chart.edges[0].id; }, /duplicate edge id/);
+rejects('rejects a duplicate directed choice-option edge', p => {
+  const edge = clone(p.chart.edges.find(item => item.id === 'e_hostage_cold_approach_fail'));
+  edge.id = 'e_fixture_duplicate_cold';
+  p.chart.edges.push(edge);
+}, /duplicate directed edge approach#1->fail_negotiate/);
 rejects('rejects a duplicate source ID', p => { p.sources[1].id = p.sources[0].id; }, /duplicate source id/);
 rejects('rejects a duplicate condition ID', p => { p.conditions.push(clone(p.conditions[0])); }, /duplicate condition id/);
 rejects('rejects a duplicate unknown ID', p => { p.unknowns.push(clone(p.unknowns[0])); }, /duplicate unknown id/);
@@ -306,7 +322,9 @@ rejects('rejects an unknown source class', p => { p.sources[0].class = 'official
 rejects('rejects a missing source locator', p => { p.sources[0].locator = ''; }, /has no locator/);
 rejects('rejects an invalid access date', p => { p.sources[0].access[0].date = '2026-02-31'; }, /real YYYY-MM-DD date/);
 rejects('rejects an unknown access outcome', p => { p.sources[0].access[0].outcome = 'assumed'; }, /outcome must be one of/);
-rejects('rejects an HTTP error outcome without a status', p => { delete p.sources[3].access[0].httpStatus; }, /needs an HTTP status number/);
+rejects('rejects an HTTP error outcome without a status', p => {
+  delete p.sources.find(source => source.id === 'gamefaqsPublicEnemy').access[0].httpStatus;
+}, /needs an HTTP status number/);
 rejects('rejects an invalid rights review state', p => { p.sources[0].rights.state = 'cleared'; }, /rights\.state must be one of/);
 rejects('rejects a rights record with no note', p => { p.sources[0].rights.note = ''; }, /rights\.note is required/);
 rejects('rejects a chart source reference that does not exist', p => { p.chart.sources = ['missing']; }, /references unknown source "missing"/);

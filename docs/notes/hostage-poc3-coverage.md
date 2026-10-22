@@ -148,10 +148,27 @@ original 64px box heights. The three stage containers use a distinct `stage`
 node kind; `MISSION START` maps to an action with a start sublabel and the six
 endings map to outcomes.
 
-The 36 chart connectors are appended in their PoC3 order. Thirty-one are
-`traced`; the same five routes listed above are `uncertain`, rendered dashed
-with `?` badges. `u_hostage_chart_uncertain` names exactly those five edges and
-keeps chart-transcription uncertainty separate from guide evidence. `GET CLOSE
+The PoC3 reference inventory remains 36 pictured connectors. The PoC4 map keeps
+their order and adds an explicit option-specific split. A 48%-complete
+selected-path chart in the Shazoo article was inspected on 2026-10-21 by an
+independent source reviewer. Article lines 64–65 introduce the diagram. The
+image is hosted at
+`https://cdn.shazoo.ru/255202_rAFsabVh4Q_41663243971_12ae17c3f7_o.jpg`.
+The selected blue path traces COLD APPROACH → FAIL TO NEGOTIATE → DEVIANT JUMPS
+WITH EMMA. This supports chart readings only. It does not verify gameplay or
+show the full chart. The image and article text are not copied into the product.
+
+The PoC4 atlas now stores 37 Hostage edge claims: 33 `traced` and 4 `uncertain`.
+`e_hostage_fail_jumps` keeps its ID and index 90 but is now traced for this
+selected path. The old `e_hostage_approach_fail` retains ID and index 89, now
+narrowed to an uncertain FRIENDLY APPROACH candidate. The new traced COLD
+APPROACH edge, `e_hostage_cold_approach_fail`, is appended at index 92. This is
+an explicit legacy-index migration. The old `?edge=89` URL still selects the
+same array position, but its displayed claim is now narrower. The Friendly
+candidate is not counted as a second confirmed connector in the 36-connector
+Steam screenshot. `u_hostage_chart_uncertain` lists the four remaining uncertain
+claims and keeps chart-transcription uncertainty separate from guide evidence.
+The three remaining original tap-point readings stay unresolved. `GET CLOSE
 ENOUGH` remains a no-outgoing-edge point with no invented outcome.
 
 One cross-chapter prerequisite is added:
@@ -169,7 +186,7 @@ rescue/kill outcomes are omitted. The carry is guide-reported, not
 gameplay-verified; matching guides
 are not independent verification.
 
-The atlas therefore reports 5 chapter regions, 102 nodes and 92 edges, with
+The atlas therefore reports 5 chapter regions, 102 nodes and 93 edges, with
 *The Hostage* as `checked-against-chart` and *Public Enemy* as `partial`. The
 existing 68 nodes and 55 edges keep their IDs, order and world geometry. See the
 [PoC4 coverage ledger](poc4-coverage.md), [data contract](../data-contract.md),
@@ -197,15 +214,15 @@ and [source register](../SOURCES.md).
 - Inline renderer script extracted from `hostage-poc3.html` and passed `node --check`.
 - `node prototype/validate-atlas-data.js` — Stage 1 checks: 33 Hostage boxes in
   PoC3 order, 40 unique labels, 7 two-row choices, 3 stage containers, 6
-  outcomes, 36 chart connectors (31 traced + 5 uncertain), dead-end
+  outcomes, 36 pictured connectors (37 mapped claims: 33 traced + 4 uncertain), dead-end
   `GET CLOSE ENOUGH`, layout containment, and the exact saved-cop
   option/target/kind/condition/source fence. All checks pass.
-- `node tests/atlas-data-contract.test.js` — 83/83, including malformed fixtures
+- `node tests/atlas-data-contract.test.js` — 84/84, including malformed fixtures
   for an outgoing `GET CLOSE ENOUGH`, moved saved-cop option, retargeted or
   weakened prerequisite, outgoing Public Enemy content, removed condition, and
   a LEAVE consequence.
 - Browser suite — 58/58 across three palettes and mobile emulation, including
-  five dashed uncertain paths and `?` badges, the dead end, and saved-cop
+  four dashed uncertain claims and `?` badges, the selected-path readings, the dead end, and saved-cop
   navigation/evidence over localhost. Temporary whole-atlas and Hostage-fit
   screenshots were captured under `/private/tmp/`.
 

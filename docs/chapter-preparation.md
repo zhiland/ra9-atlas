@@ -95,8 +95,9 @@ kinds, choice options, edge IDs, endpoints and `?edge=N` indices. The exact
 33-box / 40-label / 36-connector regression lives in the test fixture, not in the
 generic validator.
 
-- The five chart connectors that the ledger marks uncertain stay `uncertain` in
-  the packet. None is resolved or upgraded.
+- The selected-path review narrows one approach connector to Cold and resolves
+  its FAIL-to-jumps continuation. Four remaining chart-edge claims stay
+  uncertain; the separate Friendly candidate retains legacy index 89.
 - `GET CLOSE ENOUGH` keeps no outgoing edge.
 - The saved-cop prerequisite is supplementary and guide-reported, not chart
   structure or gameplay verification. `LEAVE WOUNDED COP` has no consequence in
@@ -115,8 +116,9 @@ generic validator.
   unknown.
 - It does not finalize the full-product data contract, choose a database, migrate
   runtime ownership or change `?edge=N` to a new canonical permalink form.
-- It does not change graph content, IDs, edge order, geometry, UI, screenshots or
-  the five unresolved Hostage connector meanings.
+- The packet workflow itself does not change graph content, IDs, edge order,
+  geometry, UI, or screenshots. The separate selected-path review has narrowed
+  the Friendly candidate at index 89 and left four Hostage edge claims uncertain.
 
 Stage 2 remains in progress. This package is the repeatable preparation gate for
 the next chapter batch; the production schema and runtime migration decisions

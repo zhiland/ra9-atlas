@@ -322,7 +322,8 @@ function validatePacket(packet, options) {
     unique(p.conflicts, 'conflict');
     const seenEdges = new Set();
     for (const edge of allEdges.filter(isObject)) {
-      const key = `${edge.from}->${edge.to}`;
+      const option = edge.fromOption == null ? '' : `#${edge.fromOption}`;
+      const key = `${edge.from}${option}->${edge.to}`;
       if (seenEdges.has(key)) errors.push(`duplicate directed edge ${key} ("${edge.id}")`);
       seenEdges.add(key);
     }

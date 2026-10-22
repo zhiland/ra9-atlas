@@ -33,8 +33,12 @@ unknown, including the differing second-floor guide orders. See [the A New Home
 first-floor slice](anewhome-firstfloor-slice.md) and [the second-floor
 slice](anewhome-secondfloor-slice.md).
 The Stage 1 pilot appends the 33-box *The Hostage* chart already transcribed for
-PoC3, preserving its 40 visible labels and 36 connectors. Five connector routes
-remain chart-transcription uncertainties and are drawn dashed with `?` badges.
+PoC3, preserving its 40 visible labels and 36 pictured connectors. A selected-
+path chart review resolves the FAIL TO NEGOTIATE → DEVIANT JUMPS connector and
+the Cold Approach option. The old ambiguous approach edge remains as an
+uncertain Friendly-option candidate. The map therefore stores 37 Hostage edge
+claims: 33 traced and 4 uncertain. The Friendly candidate is not counted as an
+additional confirmed screenshot connector.
 One separate, guide-supported prerequisite links `SAVE WOUNDED COP` to the
 bounded *Public Enemy* “Meet Cop From Hostage Situation” node. That carry is
 guide-reported, not gameplay-verified; `LEAVE WOUNDED COP` has no drawn
@@ -68,7 +72,7 @@ verified in game.
 |---|---:|---|
 | Chapter regions | **5** | A New Home, Stormy Night, Battle for Detroit — Kara, The Hostage, Public Enemy (one node) |
 | Boxes (nodes) | **102** | 35 A New Home + 24 Stormy Night + 9 Kara + 33 Hostage + 1 Public Enemy |
-| Connectors (edges) | **92** | 70 traced + 8 conditional + 6 prerequisite gates + 3 unresolved hypotheses + 5 uncertain chart connectors |
+| Connectors (edges) | **93** | 72 traced + 8 conditional + 6 prerequisite gates + 3 unresolved hypotheses + 4 uncertain chart claims |
 | Cross-chapter connectors | **5** | Two A New Home → Stormy Night prerequisites, two Stormy Night/A New Home → Kara links, one saved-cop Hostage → Public Enemy prerequisite |
 
 ## Data/provenance contract
@@ -97,8 +101,8 @@ trigger, the unnamed key relationship level, first-floor event
 order/requirements/exclusivity, the differing second-floor order and
 guide-specific Talk comments, Stormy Night internals, the exact 11:00 boundary,
 the exact gun-state check, window-route outcomes, the missing Todd state after
-either successful non-gun escape, and the five ambiguous Hostage chart
-connectors. The Hostage record explicitly excludes the saved-cop prerequisite,
+either successful non-gun escape, and four uncertain Hostage chart edge claims.
+The Hostage record explicitly excludes the saved-cop prerequisite,
 which rests on guide statements rather than a confident chart trace. No
 source-vs-source conflict is recorded or invented.
 
@@ -148,12 +152,13 @@ source-vs-source conflict is recorded or invented.
   the `Todd dialogue` choice (reported options `Persuade Todd` / `Fail to
   persuade Todd`), then to `Todd sends soldiers away → Alice says goodbye to
   Todd` or `Security check follows`.
-- **The Hostage — complete visible chart.** All 33 boxes and 40 visible labels
+- **The Hostage — visible chart transcription.** All 33 boxes and 40 visible labels
   are represented, including three stage containers, seven two-row choice
-  groups, the `GET CLOSE ENOUGH` dead end, and six outcomes. Thirty-one
-  connectors are traced; five are dashed `uncertain` chart connectors with
-  `?` badges and one scoped unknown record. Chart uncertainty is kept separate
-  from guide-supported cross-chapter evidence. See [the Hostage
+  groups, the `GET CLOSE ENOUGH` dead end, and six outcomes. The chart shows 36
+  connectors. The atlas has 37 claims: 33 traced and four uncertain, including
+  a narrowed Friendly candidate at retained index 89. The extra candidate is
+  not counted as a confirmed pictured connector. Chart uncertainty is kept
+  separate from guide-supported cross-chapter evidence. See [the Hostage
   ledger](hostage-poc3-coverage.md).
 - **Public Enemy — one bounded meeting node.** `Meet Cop From Hostage
   Situation` records the guide-reported meeting and its incoming `SAVE WOUNDED
@@ -236,21 +241,21 @@ source-vs-source conflict is recorded or invented.
 
 ## Checks run (2026-10-21)
 
-- `npm test` passes. The data validators report 5 chapters, 102 nodes, 92 edges,
+- `npm test` passes. The data validators report 5 chapters, 102 nodes, 93 edges,
   six condition groups, ten unknowns, and no conflicts.
-- Contract tests: **83/83**. They reject unsupported generic first-floor and
+- Contract tests: **84/84**. They reject unsupported generic first-floor and
   second-floor spokes, unsupported optionality claims, removal of any of the six
   local progressions, a universal Talk with Alice AND gate, restoration of a
   named key relationship level, a Hostage outgoing edge from `GET CLOSE ENOUGH`,
   removal or weakening of the saved-cop prerequisite, a consequence for
-  `LEAVE WOUNDED COP`, and relabelling the five uncertain chart connectors.
+  `LEAVE WOUNDED COP`, and relabelling an uncertain Hostage edge claim.
 - Core unit tests: **43/43**. Map inventory tests: **4/4**. Stable-zoom tests:
   **10/10**. Layout tests: **12/12**. Chromium browser checks: **58/58** across
   three palette variants and mobile viewport emulation.
 - The layout checks include all 102 real node boxes, five chapter frames, label
   containment, the horizontal A New Home main sequence, first- and second-floor
   event spacing, and the Hostage frame fit. Browser tests ran over localhost
-  HTTP and check five dashed `uncertain` paths, five `?` badges, the `GET CLOSE
+  HTTP and check four dashed `uncertain` paths, four `?` badges, the `GET CLOSE
   ENOUGH` dead end, and saved-cop navigation/evidence.
 - Fresh whole-atlas and Hostage-fit screenshots were inspected. They are
   temporary review artifacts in `/private/tmp/` and are not committed.

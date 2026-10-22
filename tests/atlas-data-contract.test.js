@@ -135,9 +135,9 @@ check('published edge IDs keep their order and later slices are appended', () =>
     'e_hostage_sacrifice_died', 'e_hostage_gun_deviant_shot', 'e_hostage_gun_connor_shot',
     'e_hostage_start_fish', 'e_hostage_search_swat', 'e_hostage_negotiate_fail',
     'e_hostage_approach_fail', 'e_hostage_fail_jumps',
-    'e_hostage_save_cop_public_enemy'
+    'e_hostage_save_cop_public_enemy', 'e_hostage_cold_approach_fail'
   ]);
-  eq(real.edges.length, 92);
+  eq(real.edges.length, 93);
   eq(real.edges.map(e => [e.from, e.to, e.kind]).slice(0, 55), [
     ['a_welcome', 'a_todd', 'traced'], ['a_todd', 'a_clean1', 'traced'],
     ['a_clean1', 'a_ask', 'traced'], ['a_ask', 'a_go', 'traced'],
@@ -193,8 +193,8 @@ check('published edge IDs keep their order and later slices are appended', () =>
     ['use_gun', 'end_connor_shot', 'traced'],
     ['mission_start', 'fish', 'uncertain'], ['stage-search', 'swat_injured', 'uncertain'],
     ['stage-negotiate', 'fail_negotiate', 'uncertain'], ['approach', 'fail_negotiate', 'uncertain'],
-    ['fail_negotiate', 'deviant_jumps', 'uncertain'],
-    ['wounded_cop', 'pe_meet_cop', 'prerequisite']
+    ['fail_negotiate', 'deviant_jumps', 'traced'],
+    ['wounded_cop', 'pe_meet_cop', 'prerequisite'], ['approach', 'fail_negotiate', 'traced']
   ]);
 });
 
@@ -510,7 +510,7 @@ check('the two successful non-gun escape routes stay separate and Todd links sta
     'Todd-state unknown must explain the missing state and the inference');
 });
 
-check('The Hostage chart preserves 33 boxes, 40 visible labels and 36 connectors', () => {
+check('The Hostage chart preserves its 36 pictured connectors and maps 37 explicit edge claims', () => {
   const hostage = real.chapters.find(c => c.id === 'hostage');
   assert(hostage && hostage.coverage.status === 'checked-against-chart', 'Hostage must stay checked against the full chart');
   eq(hostage.frame, { x: 0, y: 1120, w: 4450, h: 1340 });
@@ -542,9 +542,24 @@ check('The Hostage chart preserves 33 boxes, 40 visible labels and 36 connectors
     const from = real.nodes.find(n => n.id === e.from), to = real.nodes.find(n => n.id === e.to);
     return from.chapter === 'hostage' && to.chapter === 'hostage';
   });
-  eq(chartEdges.length, 36);
-  eq(chartEdges.filter(e => e.kind === 'traced').length, 31);
-  eq(chartEdges.filter(e => e.kind === 'uncertain').length, 5);
+  eq(hostage.coverage.visibleConnectorCount, 36);
+  eq(hostage.coverage.modeledEdgeClaimCount, 37);
+  eq(chartEdges.length, 37);
+  eq(chartEdges.filter(e => e.kind === 'traced').length, 33);
+  eq(chartEdges.filter(e => e.kind === 'uncertain').length, 4);
+  const friendly = chartEdges.find(e => e.id === 'e_hostage_approach_fail');
+  const cold = chartEdges.find(e => e.id === 'e_hostage_cold_approach_fail');
+  const jumps = chartEdges.find(e => e.id === 'e_hostage_fail_jumps');
+  eq([friendly.fromOption, friendly.kind, real.edges.indexOf(friendly)], [0, 'uncertain', 89]);
+  eq([cold.fromOption, cold.kind, real.edges.indexOf(cold)], [1, 'traced', 92]);
+  eq([jumps.kind, real.edges.indexOf(jumps)], ['traced', 90]);
+  assert(/narrowed.*Friendly/i.test(friendly.note), 'old edge index 89 must state its narrowed Friendly meaning');
+  assert(/selected.*Cold Approach/i.test(cold.note), 'new edge must remain scoped to the selected Cold path');
+  assert(/selected path/i.test(jumps.note) && /not gameplay verification/i.test(jumps.note),
+    'resolved FAIL→Jumps must stay a chart-image reading, not a gameplay claim');
+  assert(chartEdges.some(e => e.from === 'approach' && e.fromOption === 0 && e.to === 'fail_negotiate') &&
+    chartEdges.some(e => e.from === 'approach' && e.fromOption === 1 && e.to === 'fail_negotiate'),
+    'option-specific links to one target must remain separate claims');
   assert(chartEdges.filter(e => e.kind === 'uncertain').every(e => e.note), 'uncertain connectors need notes');
   eq(real.edges.filter(e => e.from === 'get_close'), []);
   const unknown = real.uncertainties.find(u => u.id === 'u_hostage_chart_uncertain');
@@ -579,6 +594,11 @@ console.log('atlas-data.js — malformed fixtures');
 rejects('rejects duplicate node IDs', d => { d.nodes[1].id = d.nodes[0].id; }, /duplicate node id/);
 rejects('rejects duplicate chapter IDs', d => { d.chapters[1].id = d.chapters[0].id; }, /duplicate chapter id/);
 rejects('rejects duplicate edge IDs', d => { d.edges[1].id = d.edges[0].id; }, /duplicate edge id/);
+rejects('rejects duplicate directed choice-option edges', d => {
+  const duplicate = JSON.parse(JSON.stringify(d.edges.find(e => e.id === 'e_hostage_cold_approach_fail')));
+  duplicate.id = 'e_fixture_duplicate_cold';
+  d.edges.push(duplicate);
+}, /duplicate edge approach#1->fail_negotiate/);
 rejects('rejects duplicate condition IDs', d => { d.conditions[1].id = d.conditions[0].id; }, /duplicate condition id/);
 rejects('rejects an edge with a dangling target endpoint', d => { d.edges[0].to = 'missing_node'; }, /edge to "missing_node" has no node/);
 rejects('rejects a node with no source references', d => { d.nodes[0].src = []; }, /node "a_welcome" has no src keys/);
@@ -754,14 +774,14 @@ rejects('rejects drawing a consequence for LEAVE WOUNDED COP', d => {
   d.edges.push({ id: 'e_fixture_leave_cop', from: 'wounded_cop', to: 'fail_negotiate', fromOption: 0, kind: 'traced', src: ['steam'] });
 }, /LEAVE WOUNDED COP must have no drawn consequence/);
 
-rejects('rejects relabelling an uncertain Hostage connector as traced', d => {
+rejects('rejects relabelling an unrelated uncertain Hostage connector as traced', d => {
   d.edges.find(e => e.id === 'e_hostage_start_fish').kind = 'traced';
-}, /5 uncertain connectors|must reference exactly the 5 uncertain connectors/);
+}, /4 uncertain edge claims|must reference exactly the 4 uncertain edge claims/);
 
 rejects('rejects merging Hostage chart uncertainty into the saved-cop gate', d => {
   const unknown = d.uncertainties.find(u => u.id === 'u_hostage_chart_uncertain');
   unknown.edges.push('e_hostage_save_cop_public_enemy');
-}, /must reference exactly the 5 uncertain connectors|must not absorb the guide-supported saved-cop prerequisite/);
+}, /must reference exactly the 4 uncertain edge claims|must not absorb the guide-supported saved-cop prerequisite/);
 
 rejects('rejects changing a Hostage stage container into a plain box', d => {
   d.nodes.find(n => n.id === 'stage-negotiate').kind = 'action';

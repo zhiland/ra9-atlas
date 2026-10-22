@@ -19,7 +19,10 @@ bounded *Public Enemy* meeting node. See [PoC4 coverage](notes/poc4-coverage.md)
       each bounded expansion appends only source-attributed content without
       changing published geometry.
 - [x] The Stage 1 pilot keeps all 33 Hostage chart boxes, 40 visible labels and
-      36 connectors, and adds only one saved-cop prerequisite into one bounded
+      all 36 pictured Steam connectors. A selected-path chart review supports
+      two exact readings and narrows one option connector. The atlas records 37
+      internal Hostage edge claims, with the extra Friendly candidate marked
+      uncertain. It adds only one saved-cop prerequisite into one bounded
       Public Enemy meeting node.
 - [x] Existing `?edge=N` links keep working; stable edge IDs are accepted as
       aliases.
@@ -32,7 +35,7 @@ bounded *Public Enemy* meeting node. See [PoC4 coverage](notes/poc4-coverage.md)
 
 ## Scope and record shape
 
-The contract covers five chapter regions, 102 nodes, 92 edges, six condition
+The contract covers five chapter regions, 102 nodes, 93 edges, six condition
 groups, ten uncertainty records and no conflict records in
 `prototype/atlas-data.js`. The sample declares `meta.contractVersion: '1.0'`.
 
@@ -87,8 +90,10 @@ Kara has selected checkpoint and meeting branches. The *Public Enemy* region is
 a single guide-reported meeting node, not a chapter transcription.
 
 *The Hostage* is `checked-against-chart`: all 33 visible boxes, 40 labels and 36
-connectors from the Steam chart are represented. Thirty-one connectors are
-`traced`; five are `uncertain` and drawn dashed with `?` badges. `GET CLOSE
+connectors from the Steam chart are represented. A selected-path chart review
+adds option-specific readings without claiming full topology. The atlas stores
+37 Hostage edge claims: 33 are `traced`; four are `uncertain` and drawn dashed
+with `?` badges. `GET CLOSE
 ENOUGH` remains a chart-visible dead end. The omitted parts are recorded per
 chapter. Version and platform remain `unknown`; no transition is
 gameplay-verified.
@@ -186,7 +191,8 @@ edge is more verified than its source and status state.
   room-cleaning prerequisites or an AND gate. The Todd-state record specifically
   holds the missing state after either successful non-gun escape; the dashed
   links to `s_alive` are inferences, not confirmed outcomes. The Hostage record
-  covers only the five ambiguous chart connectors and explicitly does not absorb
+  covers the four remaining uncertain edge claims after the selected-path review
+  and explicitly does not absorb
   the guide-supported saved-cop prerequisite.
 - A `conflict` record would describe sources that disagree with each other. The
   current sample has no normalised source-vs-source conflict, so `conflicts` is
@@ -230,10 +236,13 @@ structural error, not a silent caveat.
   condition is `SINGLE` on `e_home_talk_key`, and the named relationship levels
   `Neutral`, `Warm` and `Distant` are rejected because the guides do not state
   an exact level;
-- Hostage chart fences: all 33 PoC3 boxes retain their IDs/order, all 40 visible
-  labels survive, exactly 36 chart connectors remain (31 traced and 5
-  `uncertain`), the five uncertain links stay dashed and share one scoped unknown
-  record, and `GET CLOSE ENOUGH` gains no outgoing edge;
+- Hostage chart fences: all 33 PoC3 boxes retain their IDs/order and all 40
+  visible labels survive. The Steam image still accounts for 36 pictured
+  connectors. The atlas stores 37 edge claims after one option-specific split:
+  33 are traced and 4 remain uncertain. The Friendly candidate is not an
+  extra confirmed connector. The old `?edge=89` position stays fixed and its
+  narrower meaning is documented. One scoped unknown record names the remaining
+  uncertainty, and `GET CLOSE ENOUGH` gains no outgoing edge;
 - saved-cop fence: `wounded_cop` has one outgoing connector from option index 1
   only, targets `pe_meet_cop`, stays `prerequisite`, cites both PowerPyx pages,
   keeps its guide-reported/not-gameplay-verified note, and has exactly one
