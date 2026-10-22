@@ -606,9 +606,6 @@ function validatePacket(packet, options) {
       if (merge.state === 'ready' && p.packetStatus !== 'reviewed') {
         errors.push('mergeGate cannot be ready unless packetStatus is "reviewed"');
       }
-      if (merge.state === 'blocked' && approved) {
-        errors.push('an approved independent review must set mergeGate to "ready"');
-      }
       if (p.packetStatus === 'draft' && merge.state === 'ready') {
         errors.push('a draft packet must keep the merge gate blocked');
       }

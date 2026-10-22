@@ -4,6 +4,20 @@ Prepared: 2026-10-22 from chapter-preparation commit `26c6e19`. Recheck the
 branch and PR state at the start of the next work package; this document is a
 checkpoint, not a live status feed.
 
+## Current continuation update — 2026-10-22
+
+Read [STATUS](STATUS.md) and the [repository review](notes/repository-review-2026-10-22.md)
+first. The earlier source-review-pending statements below are historical.
+The Hostage source review approved the corrected packet, with 32 traced and
+5 uncertain claims. Both approach origins remain uncertain. FAIL-to-JUMPS is
+traced directly in the primary Steam image. Its publication gate remains blocked.
+The validator now permits approved source review with a blocked merge gate.
+
+Runner checkpoint `7f89e88` fixes public export against local Git replacement
+and attributes, and preserves non-LF text in exported patches. It passed 18
+regressions and repeated 51 synthetic end-to-end checks. Use this corrected
+runner, not the old b75ea04 archive. Branch/PR states remain dated snapshots.
+
 ## Model and transition decision
 
 Use **GPT-6.1 Sol at the client's default reasoning effort** for bounded chapter

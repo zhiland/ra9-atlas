@@ -7,7 +7,7 @@
 
    What this suite does and does not prove: it serves the static pages from
    localhost and drives them in headless Chromium. It exercises consent and remembered
-   consent, the continuous story map, the three LOD steps, fit bounds,
+   consent, the continuous story map, the stable world across camera scales, fit bounds,
    chapter focus, actual cross-chapter navigation, both detail-close paths,
    history, search keyboard handling, hash round-trips and text contrast in
    all three palettes, plus a scoped 390x845 mobile-emulation layout,
@@ -423,12 +423,12 @@ async function runVariant(browser, variant) {
       }).map(function (edge) { return edge.id; });
       return { paths: paths, badges: badges, chart: chart };
     });
-    assert(uncertain.chart.length === 4, 'fixture should keep 4 uncertain Hostage edge claims');
-    assert(uncertain.paths.length === 4, 'four uncertain Hostage paths must render, got ' + uncertain.paths.length);
+    assert(uncertain.chart.length === 5, 'fixture should keep 5 uncertain Hostage edge claims');
+    assert(uncertain.paths.length === 5, 'five uncertain Hostage paths must render, got ' + uncertain.paths.length);
     assert(uncertain.paths.every(function (path) { return uncertain.chart.includes(path.id) && path.dash !== 'none'; }),
       'every uncertain Hostage connector must stay dashed');
-    assert(uncertain.badges.length === 4 && uncertain.badges.every(function (badge) { return badge.text === '?'; }),
-      'four question-mark badges must stay attached to the uncertain claims');
+    assert(uncertain.badges.length === 5 && uncertain.badges.every(function (badge) { return badge.text === '?'; }),
+      'five question-mark badges must stay attached to the uncertain claims');
 
     const readings = await page.evaluate(function () {
       return ['e_hostage_approach_fail', 'e_hostage_cold_approach_fail', 'e_hostage_fail_jumps'].map(function (id) {
@@ -439,7 +439,7 @@ async function runVariant(browser, variant) {
       });
     });
     assert(readings.map(function (item) { return [item.fromOption, item.kind, item.rendered]; }).toString() ===
-      '0,uncertain,true,1,traced,true,,traced,true',
+      '0,uncertain,true,1,uncertain,true,,traced,true',
       'option split and selected FAIL→Jumps route must stay visible: ' + JSON.stringify(readings));
 
     await page.locator('[data-node="get_close"]').click();

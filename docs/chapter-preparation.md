@@ -48,6 +48,11 @@ be review-ready when coverage is `partial` or `checked-against-chart`. Partial
 coverage must retain its explicit scope, included items and omissions. The gate
 does not mean the chapter is complete. A `not-added` packet is never review-ready.
 
+An approved independent source review may retain a `blocked` merge gate.
+Record the remaining publication, integration or rights concern in the gate's
+reason. Approval alone does not open the merge gate. Structural validation can
+pass in this state, but `--require-review` still exits 2.
+
 ## Workflow
 
 1. **Extraction** — transpose chart structure into `chart`; keep guide-reported
@@ -95,16 +100,18 @@ kinds, choice options, edge IDs, endpoints and `?edge=N` indices. The exact
 33-box / 40-label / 36-connector regression lives in the test fixture, not in the
 generic validator.
 
-- The selected-path review narrows one approach connector to Cold and resolves
-  its FAIL-to-jumps continuation. Four remaining chart-edge claims stay
-  uncertain; the separate Friendly candidate retains legacy index 89.
-- `GET CLOSE ENOUGH` keeps no outgoing edge.
-- The saved-cop prerequisite is supplementary and guide-reported, not chart
-  structure or gameplay verification. `LEAVE WOUNDED COP` has no consequence in
-  the packet.
-- Independent review is `pending` and the merge gate is `blocked`. A separate
-  GameFAQs access outcome is recorded, but it is not approval of the full packet
-  or proof of independent research.
+- Independent source review completed on 2026-10-22. Its requested corrections
+  were checked in a separate follow-up. See [the report](notes/hostage-packet-source-review.md).
+- The source chart still has 33 boxes, 40 labels and 36 pictured connectors.
+  The 37 modeled claims contain 32 traced and 5 uncertain links. Both approach
+  origins are uncertain. The alternate chart is pre-release/demo-era.
+- The primary Steam image directly supports the FAIL-to-JUMPS connector.
+  `GET CLOSE ENOUGH` keeps no outgoing edge. All IDs and legacy indices remain fixed.
+- The saved-cop prerequisite is supplementary and guide-reported. No consequence
+  for `LEAVE WOUNDED COP` or gameplay verification is claimed.
+- Independent review is `approved` and packet status is `reviewed`. The merge gate
+  remains `blocked` for the unresolved source-derived publication decision.
+  `--require-review` therefore still exits 2.
 
 ## What this package does not establish
 
@@ -118,7 +125,7 @@ generic validator.
   runtime ownership or change `?edge=N` to a new canonical permalink form.
 - The packet workflow itself does not change graph content, IDs, edge order,
   geometry, UI, or screenshots. The separate selected-path review has narrowed
-  the Friendly candidate at index 89 and left four Hostage edge claims uncertain.
+  the Friendly candidate at index 89 and left five Hostage edge claims uncertain after the independent correction.
 
 Stage 2 remains in progress. This package is the repeatable preparation gate for
 the next chapter batch; the production schema and runtime migration decisions

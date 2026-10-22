@@ -1,21 +1,100 @@
-# ra9-atlas
+# rA9 Atlas
 
-An unofficial, evidence-labeled map prototype for choices and consequences in **Detroit: Become Human**.
+An unofficial interactive map of choices and consequences in **Detroit: Become Human**.
+The goal is a complete, source-audited guide. The current application is a partial static prototype.
 
-**Status:** PoC4 is a partial, guide-backed prototype with neutral-gray default styling and orthogonal arrow connectors. The stable-zoom renderer keeps the same real nodes, labels, chapter regions, and connectors at every camera scale; zoom changes only the camera transform. The Hostage pilot accounts for 33 boxes, 40 labels, and 36 connectors in the full Steam chart. A selected-path chart review supports two readings and narrows one ambiguous link. The atlas records 37 Hostage edge claims: 33 traced and 4 uncertain. The uncertain Friendly candidate is not counted as an additional confirmed screenshot connector. One bounded *Public Enemy* saved-cop meeting node remains. The atlas shows 5 chapter regions, 102 nodes, and 93 edges; *The Hostage* is checked against its visible chart evidence, while other regions remain partial. This is not a complete or in-game-verified map.
+**Spoilers:** the map contains story outcomes. Its consent screen covers the map until you accept.
 
-- [Current status](docs/STATUS.md)
-- [Source register](docs/SOURCES.md) · [source-license audit](docs/notes/source-license-audit.md)
-- [Intent and scope](docs/intent.md)
-- [Specification](docs/spec.md)
-- [PoC4 data/provenance contract](docs/data-contract.md) · [chapter preparation packet](docs/chapter-preparation.md)
-- [Roadmap and implementation issues](docs/ROADMAP.md)
-- [License and content boundaries](docs/license-boundary.md)
-- [Preparation plan](docs/PREPARATION-PLAN.md)
-- [Glossary](docs/CONTEXT.md)
-- [Project notes](docs/notes/)
-- [Map prototype](prototype/navigation-mockup.html)
-- [PoC3 — The Hostage chapter map](prototype/hostage-poc3.html) · [coverage note](docs/notes/hostage-poc3-coverage.md)
-- [PoC4 — multi-chapter map](prototype/poc4-editorial.html) ([amber palette](prototype/poc4-amber.html), [dark cyan palette](prototype/poc4-darkcyan.html)) · [coverage note](docs/notes/poc4-coverage.md) · [Hostage chart ledger](docs/notes/hostage-poc3-coverage.md) · [stable zoom map slice](docs/notes/overview-lod-slice.md) · [Stormy Night escape slice](docs/notes/stormy-escape-slice.md) · [Stormy Night entry slice](docs/notes/stormy-entry-slice.md) · [A New Home second-floor slice](docs/notes/anewhome-secondfloor-slice.md)
+## Try the prototype
 
-Research notes contain spoilers. Sources and uncertainty are documented. The project code and original project documentation are licensed under MIT; third-party content, game-derived material, and source-derived samples are excluded. See [license boundaries](docs/license-boundary.md). The project is not affiliated with Quantic Dream or Sony Interactive Entertainment.
+Use Node.js 20 or later and npm for development. Python 3 can serve the static files.
+From the repository root:
+
+```sh
+python3 -m http.server 8000 --bind 127.0.0.1
+```
+
+Open [the default map](http://127.0.0.1:8000/prototype/poc4-editorial.html).
+[Amber](http://127.0.0.1:8000/prototype/poc4-amber.html) and
+[dark cyan](http://127.0.0.1:8000/prototype/poc4-darkcyan.html) use the same data and behavior.
+No backend or runtime package installation is required to view the map.
+
+Select a chapter, search for an event, or select a node or connector for evidence and details.
+Zoom changes the camera. The nodes and branches stay in one map world.
+
+## Coverage and evidence
+
+The sample has **102 nodes and 93 edge claims across five chapter regions**.
+The Hostage inventory accounts for 33 boxes, 40 labels and 36 pictured connectors.
+Its option-specific model has 37 claims: **32 traced and 5 uncertain**.
+Both approach-to-failure origins remain uncertain. The other four chapter regions are partial.
+
+Chart coverage, guide support, gameplay verification and interface tests are separate claims.
+No gameplay transition is verified. Uncertain links stay labeled and dashed.
+The [Hostage source review](docs/notes/hostage-packet-source-review.md) records its findings.
+Source-derived publication rights remain unresolved.
+
+See [current status](docs/STATUS.md), [coverage](docs/notes/poc4-coverage.md),
+[source register](docs/SOURCES.md), and [license boundaries](docs/license-boundary.md).
+
+## Development checks
+
+```sh
+npm ci
+npx playwright install chromium
+npm test
+```
+
+The suite validates data and preparation packets, then checks graph behavior,
+layout and desktop/mobile-width Chromium interactions. Browser tests need permission
+for a localhost server. Viewport emulation does not certify Safari, physical touch,
+assistive technology or gameplay accuracy.
+
+Useful focused checks:
+
+```sh
+npm run validate
+npm run test:packet
+node prototype/validate-chapter-packet.js packets/hostage.packet.json --require-review
+/usr/bin/python3 -B tests/opencode-runner.test.py
+/usr/bin/python3 -B tests/seatbelt-preflight.test.py
+```
+
+`--require-review` exits 2 while the merge gate remains blocked.
+The runner regression tests use local sockets and mocked upstream requests.
+They do not launch OpenCode or contact a model provider. The runner itself requires
+the pinned macOS runtime in [its guide](docs/opencode-runner.md).
+
+## Project map
+
+| Path | Purpose |
+| --- | --- |
+| `prototype/atlas-data.js` | Current runtime graph and evidence metadata |
+| `prototype/atlas-app.js`, `atlas-core.js`, `atlas.css` | Shared map UI, navigation and styling |
+| `packets/` | Chapter preparation documents, separate from runtime ownership |
+| `tests/` | Data, interaction and isolation regressions |
+| `tools/isolation/` | Controlled OpenCode launcher and boundary probes |
+| `docs/` | Requirements, roadmap, source records and historical research |
+
+Start with the [specification](docs/spec.md), [roadmap](docs/ROADMAP.md),
+[data contract](docs/data-contract.md), and [packet workflow](docs/chapter-preparation.md).
+The [documentation index](docs/README.md) distinguishes current instructions from historical checkpoints.
+The earlier [map concept](prototype/navigation-mockup.html) and
+[standalone Hostage prototype](prototype/hostage-poc3.html) remain reference artifacts.
+
+## OpenCode workflow
+
+Use only `tools/isolation/opencode_runner.py`, following the
+[runner guide](docs/opencode-runner.md). It admits a confirmed public commit,
+uses a fresh isolated workspace and exports a patch for review.
+Run project tests in the trusted checkout after reviewing and applying that patch.
+The tested macOS boundary is host/version specific.
+
+## License and affiliation
+
+MIT covers original project code and documentation only.
+Game content, third-party sources and source-derived samples are excluded.
+See [LICENSE](LICENSE), [content boundaries](docs/license-boundary.md), and
+[the source-rights audit](docs/notes/source-license-audit.md).
+
+This project is not affiliated with Quantic Dream or Sony Interactive Entertainment.

@@ -1,6 +1,6 @@
 # ra9-atlas — agent run log
 
-Updated: 2026-10-18. These are bounded runs, not continuously active agents.
+Updated: 2026-10-22. These are bounded runs, not continuously active agents.
 
 | Run | Model / effort | Task | Result |
 |---|---|---|---|
@@ -32,3 +32,13 @@ Before D1–D3: 98% of the five-hour window and 60% of the weekly window remaine
 After D1–D3: 70% and 56% remained.
 Before translation: 55% and 54% remained.
 These measurements cover the whole account. They are not current capacity estimates.
+
+## 2026-10-22 repository and source review
+
+Separate Standards and Spec reviewers inspected the fixed-point diff
+`git diff 2576a95...b75ea04` and relevant packet/runtime code. A separate
+Hostage reviewer inspected the primary chart and live guide locations.
+The executor applied corrections and requested follow-up checks.
+See [repository findings](notes/repository-review-2026-10-22.md) and
+[the Hostage review](notes/hostage-packet-source-review.md).
+Source approval leaves the separate publication gate blocked.

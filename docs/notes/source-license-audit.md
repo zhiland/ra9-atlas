@@ -70,3 +70,12 @@ Rights layers used below: **code**; **data/text** (structured data, authored pro
 - Access limitations during checks: GameFAQs `/terms` returns 404 (footer points to Fandom ToS); GameFAQs board thread returns 403; refero.design terms paths returned no content; Fandom file-page metadata exposes no license template for the checked image.
 
 See also [source register](../SOURCES.md), [initial source survey](source-survey.md), and [chapter coverage snapshot](source-coverage-initial.md).
+
+## 2026-10-22 source-review clarification
+
+The [Hostage packet review](hostage-packet-source-review.md) rechecked attribution
+and the existing reference-only boundaries. It did not establish a new reuse
+license or grant publication clearance. Shazoo's 2018-04-24 context is pre-release.
+Its chart does not resolve the option-specific Cold origin. Source interpretation
+can be approved while the publication decision remains blocked. This is not a
+legal finding that all uses of the recorded facts are forbidden.

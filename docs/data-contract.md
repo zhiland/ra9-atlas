@@ -191,7 +191,7 @@ edge is more verified than its source and status state.
   room-cleaning prerequisites or an AND gate. The Todd-state record specifically
   holds the missing state after either successful non-gun escape; the dashed
   links to `s_alive` are inferences, not confirmed outcomes. The Hostage record
-  covers the four remaining uncertain edge claims after the selected-path review
+  covers the five uncertain edge claims after independent review, including both approach origins
   and explicitly does not absorb
   the guide-supported saved-cop prerequisite.
 - A `conflict` record would describe sources that disagree with each other. The

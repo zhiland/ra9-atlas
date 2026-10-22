@@ -1,0 +1,33 @@
+# Documentation index
+
+Use these documents for current work:
+
+| Document | Authority and scope |
+| --- | --- |
+| [STATUS](STATUS.md) | Current checkpoint, verification results and next package |
+| [Specification](spec.md) | Approved product requirements and acceptance boundaries |
+| [Roadmap](ROADMAP.md) | Stage order and completion gates |
+| [Data contract](data-contract.md) | Bounded runtime sample contract |
+| [Chapter preparation](chapter-preparation.md) | Packet extraction, validation, source review and merge gate |
+| [Source register](SOURCES.md) | Evidence provenance and access limitations |
+| [License boundary](license-boundary.md) | Original MIT work and excluded material |
+| [OpenCode runner](opencode-runner.md) | Current external-agent launch procedure |
+| [Sol handoff](handoff-sol.md) | Continuation checklist; recheck its dated Git/PR snapshot |
+| [Repository review](notes/repository-review-2026-10-22.md) | Code findings, cleanup and verification |
+| [Hostage source review](notes/hostage-packet-source-review.md) | Independent evidence review and corrections |
+
+## Historical records
+
+[PREPARATION-PLAN](PREPARATION-PLAN.md), [PoC4 plan](poc4-plan.md), and
+[PoC4 execution checklist](poc4-execution-checklist.md) retain their original stage checkpoints.
+They do not override the current specification, roadmap or status.
+
+The [isolation study](notes/opencode-macos-isolation.md) and
+[offline preflight](notes/isolation-preflight.md) explain earlier isolation work.
+Their old launch templates and incomplete-gate lists are historical.
+Use the current runner guide for execution.
+
+Other files under `notes/` record bounded research, decisions and earlier UI checks.
+Check their dates and scope before treating a statement as current.
+Raw agent logs and downloaded evidence remain local and ignored by Git.
+Do not delete evidence records merely because a later checkpoint supersedes them.

@@ -1,5 +1,8 @@
 # OpenCode on macOS: folder isolation study (22 October 2026)
 
+Historical checkpoint. For current requirements and work order, use [the runner guide](../opencode-runner.md) and [current status](../STATUS.md).
+The statements below describe the original package, not the current repository state.
+
 ## Decision
 
 Use an isolated Linux VM with **no host-home mount** for the strongest boundary before giving an agent a network-connected model and shell. Place a fresh copy of the public repository in the guest, or mount only a dedicated public scratch directory. Lima supports `--mount-none`/plain mode; its ordinary default mounts the host home read-only, which is unacceptable here. Bubblewrap can add a second, mount-based boundary **inside Linux**; it is Linux-specific and does not run natively on this Mac. [Lima usage](https://lima-vm.io/docs/usage/), [Lima plain mode](https://lima-vm.io/docs/config/plain/), [Bubblewrap README](https://github.com/containers/bubblewrap/blob/main/README.md), [Apple Virtualization framework](https://developer.apple.com/documentation/virtualization/creating-and-running-a-linux-virtual-machine).

@@ -194,7 +194,7 @@ check('published edge IDs keep their order and later slices are appended', () =>
     ['mission_start', 'fish', 'uncertain'], ['stage-search', 'swat_injured', 'uncertain'],
     ['stage-negotiate', 'fail_negotiate', 'uncertain'], ['approach', 'fail_negotiate', 'uncertain'],
     ['fail_negotiate', 'deviant_jumps', 'traced'],
-    ['wounded_cop', 'pe_meet_cop', 'prerequisite'], ['approach', 'fail_negotiate', 'traced']
+    ['wounded_cop', 'pe_meet_cop', 'prerequisite'], ['approach', 'fail_negotiate', 'uncertain']
   ]);
 });
 
@@ -545,17 +545,17 @@ check('The Hostage chart preserves its 36 pictured connectors and maps 37 explic
   eq(hostage.coverage.visibleConnectorCount, 36);
   eq(hostage.coverage.modeledEdgeClaimCount, 37);
   eq(chartEdges.length, 37);
-  eq(chartEdges.filter(e => e.kind === 'traced').length, 33);
-  eq(chartEdges.filter(e => e.kind === 'uncertain').length, 4);
+  eq(chartEdges.filter(e => e.kind === 'traced').length, 32);
+  eq(chartEdges.filter(e => e.kind === 'uncertain').length, 5);
   const friendly = chartEdges.find(e => e.id === 'e_hostage_approach_fail');
   const cold = chartEdges.find(e => e.id === 'e_hostage_cold_approach_fail');
   const jumps = chartEdges.find(e => e.id === 'e_hostage_fail_jumps');
   eq([friendly.fromOption, friendly.kind, real.edges.indexOf(friendly)], [0, 'uncertain', 89]);
-  eq([cold.fromOption, cold.kind, real.edges.indexOf(cold)], [1, 'traced', 92]);
+  eq([cold.fromOption, cold.kind, real.edges.indexOf(cold)], [1, 'uncertain', 92]);
   eq([jumps.kind, real.edges.indexOf(jumps)], ['traced', 90]);
   assert(/narrowed.*Friendly/i.test(friendly.note), 'old edge index 89 must state its narrowed Friendly meaning');
   assert(/selected.*Cold Approach/i.test(cold.note), 'new edge must remain scoped to the selected Cold path');
-  assert(/selected path/i.test(jumps.note) && /not gameplay verification/i.test(jumps.note),
+  assert(/full Steam chart/i.test(jumps.note) && /not gameplay verification/i.test(jumps.note),
     'resolved FAIL→Jumps must stay a chart-image reading, not a gameplay claim');
   assert(chartEdges.some(e => e.from === 'approach' && e.fromOption === 0 && e.to === 'fail_negotiate') &&
     chartEdges.some(e => e.from === 'approach' && e.fromOption === 1 && e.to === 'fail_negotiate'),
@@ -776,12 +776,12 @@ rejects('rejects drawing a consequence for LEAVE WOUNDED COP', d => {
 
 rejects('rejects relabelling an unrelated uncertain Hostage connector as traced', d => {
   d.edges.find(e => e.id === 'e_hostage_start_fish').kind = 'traced';
-}, /4 uncertain edge claims|must reference exactly the 4 uncertain edge claims/);
+}, /5 uncertain edge claims|must reference exactly the 5 uncertain edge claims/);
 
 rejects('rejects merging Hostage chart uncertainty into the saved-cop gate', d => {
   const unknown = d.uncertainties.find(u => u.id === 'u_hostage_chart_uncertain');
   unknown.edges.push('e_hostage_save_cop_public_enemy');
-}, /must reference exactly the 4 uncertain edge claims|must not absorb the guide-supported saved-cop prerequisite/);
+}, /must reference exactly the 5 uncertain edge claims|must not absorb the guide-supported saved-cop prerequisite/);
 
 rejects('rejects changing a Hostage stage container into a plain box', d => {
   d.nodes.find(n => n.id === 'stage-negotiate').kind = 'action';

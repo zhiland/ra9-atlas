@@ -1,77 +1,78 @@
-# ra9-atlas — resume point
+# rA9 Atlas — current checkpoint
 
-Updated: 2026-10-22. Status: PoC4 Stage 1 pilot with a Stage 2 preparation gate in review — the prototype has a stable-zoom map renderer, bounded data/provenance contract, and selected content expansions. The graph covers 5 chapter regions with 102 nodes and 93 edge claims. *The Hostage* is accounted against its visible chart evidence; A New Home, Stormy Night, Battle for Detroit — Kara, and the bounded *Public Enemy* sample remain partial. No gameplay transition is verified. After the Hostage selected-path correction, `npm test` passes: contract 84, unit 43, map 4, stable zoom 10, layout 12, packet 55, browser 58; mobile checks use Chromium viewport emulation.
+Updated: 2026-10-22. Stage 1 source review is complete for the bounded Hostage
+pilot. Stage 2 preparation is implemented. Production schema, runtime ownership,
+permalink migration, full chart inventory and hosting remain open.
 
-The owner has now answered the follow-up grill questions in [grill-round-01.md](notes/grill-round-01.md). The decisions are consolidated in [spec.md](spec.md) and the open work in [ROADMAP.md](ROADMAP.md). Direction: static site, free hosting, no server maintenance; custom domain purchase is acceptable. No hosting provider or full-product data contract is selected. The first release may be an explicitly incomplete public preview; full-game coverage remains the end goal. A robust cross-chapter vertical slice is the first implementation milestone. No images, analytics, or advertising trackers in the first release. Q7's selected-chapter cross-link emphasis is provisional, Q17 replay-state help needs fact-checking, and the source-review procedure remains open.
+## Product state
 
-The implementation roadmap is recorded in [ROADMAP.md](ROADMAP.md) and split across 11 open GitHub issues, with separate deferred issues for personal progress, images, and player-choice percentages. The root [MIT license](../LICENSE) applies to original project code and documentation only; [license-boundary.md](license-boundary.md) excludes game content, third-party sources, and source-derived samples. This is a license-scope statement, not clearance of existing source-derived material. Guide-supported claims may be published with source and status; whole-game gameplay verification is not a release gate. The full-product data contract and hosting choice remain open; the bounded [PoC4 contract](data-contract.md) is implemented.
+The static PoC4 map contains **102 nodes and 93 edge claims in five regions**.
+The Hostage inventory accounts for **33 boxes, 40 labels and 36 pictured connectors**.
+Its option-specific model contains **37 claims: 32 traced and 5 uncertain**.
+Both approach-to-FAIL origins remain uncertain. The other four regions are partial.
+No gameplay transition is verified. Coverage does not imply full-game completeness.
 
-## Decision
+The approved direction remains a complete source-audited map, with an explicitly
+incomplete preview allowed. Use one stable map world and camera-only zoom.
+Desktop is primary, mobile support is required. The first release uses static
+hosting without a backend, images, analytics or advertising. The provider remains
+undecided. See [specification](spec.md) and [roadmap](ROADMAP.md).
 
-OpenCode setup completed for controlled use on 2026-10-22. The
-[runner guide](opencode-runner.md) records 51 passing synthetic
-boundary/native-policy/provider checks and a 49-check public-commit smoke task.
-OpenCode performed real read/write work through the fixed free GLM relay.
-Fourteen runner regression tests, eight original setup tests, and the full
-`npm test` passed. Shell/external integrations and direct external networking
-remain denied. Use the pinned runner, prepared public commits and reviewed
-patches. The tested Seatbelt boundary remains host/version specific.
-Implementation checkpoint: local commit `77eee10` on
-`codex/isolation-preflight`, followed by the checkpoint and routing documentation.
+## Review and corrections
 
-PRs #19–21 remain open and unmerged at `0ddb64d`, `26c6e19`, and `2576a95`.
-The GitHub connector confirmed public visibility and PR #21's exact head before
-repository admission. Work remains local on `codex/isolation-preflight`.
-User files were preserved. The repository smoke patch was not applied, and no
-graph data, PR or hosting state changed. Source review remains pending.
+The [independent Hostage review](notes/hostage-packet-source-review.md) identified
+pre-release provenance and an unsupported option-origin reading. The corrected
+Cold candidate is uncertain at the same index 92. The Friendly candidate stays
+uncertain at index 89. FAIL-to-JUMPS stays traced at index 90, now supported by a
+continuous connector in the primary Steam image. All IDs, endpoints, options,
+legacy indices and geometry remain unchanged.
 
-The map-first concept is accepted for a small prototype. PoC 2.0 applies the light Steam flowchart grammar. This is a UI concept only; it does not establish gameplay accuracy, full coverage, or release readiness.
+The packet source review is **approved** after a separate correction check.
+Its merge gate remains **blocked** for the unresolved source-derived publication
+decision. The saved-cop meeting prerequisite is guide-reported, not gameplay-verified.
+Source agreement is not proof of independent research. No later cop outcomes were added.
 
-## Complete
+The [repository review](notes/repository-review-2026-10-22.md) fixed three defects:
+public Git input substitution, patch export splitting non-LF text, and source
+approval forcing the merge gate open. README and the documentation index now
+show current usage. Superseded plans retain explicit historical labels.
 
-- PoC3 — The Hostage chapter map — passed its data/layout validator and JavaScript syntax checks. It contains 33 boxes, 40 visible labels, and 36 edges (5 uncertain); its coverage note documents source and browser/game verification limits. Checkpoint commit `2ca9e25` was pushed to `origin/main`.
-- PoC4 scope and checklist: [poc4-plan.md](poc4-plan.md). OpenCode v2.0.32 CLI/catalog were inspected; the installed catalog lists `opencode/deepseek-v4.1-flash-free` and `opencode/glm-5.3-flash-free`, and the CLI accepts `provider/model#variant`. Official DeepSeek and OpenCode docs support the `max` effort concept. A minimal `#max` request selected the DeepSeek model, but the free-model service rejected it before returning a model response; backend application of max remains **unverified**. No paid fallback or access workaround was used. The public-only prompt remains in an ignored local log. A later follow-up session on the same free route completed earlier implementation work.
-- PoC4 — multi-chapter atlas is a partial, guide-backed sample. The gray, amber, and dark-cyan entry points share one map renderer. The existing A New Home chart sequence and unresolved Alice-box hypothesis remain. Eleven selected first-floor events add four sourced local progressions, and twelve selected second-floor events add two sourced local sequences; the guides list the second-floor chores in different orders, and no universal room-cleaning prerequisites are encoded. Other ordering and requirements remain unknown. The expanded sample adds a checkpoint detour/late-bus route and selected A New Home gun/window actions with Stormy Night outcomes. Two distinct successful non-gun routes are included: corridor hiding to the front-door/backyard exit, and the locked-room window route through the reported QTE to the bus. Kara and Alice shooting Todd stay distinct; only the guide-stated Kara outcome carries the gun. Meet Todd keeps its two separate prerequisite gates. The guides do not state Todd’s later state after either non-gun escape, so both links to “Todd survives” are labelled inferences with an explicit unknown. Stormy entry shows Todd ordering Kara to stay still, Alice running upstairs, then either the fatal outcome (Todd kills Alice and Kara) or deviant alternatives. The exact 11-minute boundary, full Stormy Night topology, other fatal/survival routes, and in-game state checks remain unresolved. *The Hostage* preserves the 36 pictured Steam connectors and 40 labels; the atlas has 37 internal edge claims (33 traced, 4 uncertain) after the selected-path review. `?edge=89` retains its index and ID but now means the uncertain Friendly-option candidate; the new Cold-option edge uses index 92. The guide-supported SAVE WOUNDED COP → *Public Enemy* meeting prerequisite remains separate. No game transition is verified.
-- PoC4 data/provenance contract — [data-contract.md](data-contract.md) describes 102 nodes, 93 edges, six plain-English condition groups, ten unknown records, and no source-conflict records. The timing alternatives, window QTE condition, and saved-cop prerequisite are attached only to their own edges; route actions do not inherit future requirements. Chapter coverage (`partial` or `checked-against-chart`) stays separate from claim status. `?edge=N` stays canonical; stable edge IDs remain aliases. The alternate Hostage chart source is reference-only; it supports two chart readings, not gameplay or full topology. The stable-zoom renderer remains unchanged.
-- Stage 2 preparation gate — [chapter-preparation.md](chapter-preparation.md) adds a versioned *The Hostage* packet, an empty author template, and a dependency-free validator/reconciler. The packet separates chart-transcribed structure from the guide-reported saved-cop prerequisite, records source locators/access/rights review states, and documents the `?edge=89` narrowing while preserving its array position. The remaining four uncertain Hostage claims stay explicit. Independent review of the packet remains pending; structural validation does not establish source truth, source independence, rights clearance, or gameplay verification. The production schema and runtime source-of-truth migration remain open.
-- Stormy Night entry slice — [stormy-entry-slice.md](notes/stormy-entry-slice.md) records seven added nodes and seven added links for Todd’s stay-still order, Alice running upstairs, and the response branches. The stay-still branch leads only to the terminal “Todd kills Alice and Kara” outcome, which is distinct from `s_dead` and never reaches `s_alive` or the later meeting. The deviant go-upstairs alternative joins only the existing `s_reach_alice` route; Reason with Todd stops where Todd knocks Kara down and reaches Alice before Kara. The too-slow path, hidden timers, exact QTE/difficulty and other fatal/survival routes remain omitted.
-- Stormy Night escape slice — [stormy-escape-slice.md](notes/stormy-escape-slice.md) records nine added nodes and eleven added internal links for the two successful non-gun routes. The window route requires the window opened in A New Home; the corridor route does not. The routes share only the “reach Alice” entry and do not unlock each other. Both exit endpoints link to `s_alive` only by `hypothesis` edges labelled as unresolved inferences; `u_stormy_escape_todd_state` records that the guides never state Todd’s later state. Other fatal/survival branches, miss-bus outcomes, failed QTEs and other difficulty-specific branches remain omitted.
-- Graph-scale spike — the deterministic 1,000-node / 1,650-edge synthetic fixture passes current desktop performance, stable-world inventory, and node-text containment gates. Every node, label, and path remains mounted; no label readability at whole-map fit is claimed. The three synthetic choice boxes have enough world-space height for their titles and options. Mobile is Chromium viewport emulation only. No Cytoscape comparison was run; SVG remains provisional at this synthetic density. See [graph-scale-spike.md](notes/graph-scale-spike.md) and [stable zoom map slice](notes/overview-lod-slice.md).
+## OpenCode
 
-- Stable-zoom map — [stable zoom map slice](notes/overview-lod-slice.md) retires the earlier semantic LOD experiment. At every scale the renderer keeps the same real graph in one world and changes only the camera transform. The gray PoC remains a selected sample, not full-game coverage. Static-spacing changes widen Stormy Night and Kara checkpoint lanes, clear caption/node collisions, and open the A New Home relationship-caption gap. Node and edge identities and all graph content remain unchanged.
+Use only the [controlled runner](opencode-runner.md). Independent review found
+local Git replace/attribute substitution could affect the old archive exporter.
+The corrected exporter checks raw Git object hashes in a clean environment.
+Older source backups retain that defect and must not be used for new tasks.
 
-- The preparation plan received an independent Astra review and discussion.
-- Gate 01: fschutt contains one chapter. AI Player contains 32 chapter files but simplifies the game.
-- The initial registry lists 32 chapters. Full coverage is unverified.
-- OpenCode completed a public-source review. The orchestrator corrected its unsupported conclusions.
-- Two GPT-6 Luna agents checked D1–D3 against guides. The orchestrator reviewed attribution and claim strength.
-- Gate 02 permits a mockup with evidence labels. It does not establish gameplay verification.
-- OpenCode produced `notes/navigation-mockup-brief.md` for R1–R2 using D1–D3. It separates UI checks from guide-reported claims, preserves the unresolved D2 trigger and D3 11:00 boundary, and defines navigation acceptance checks. No claim is marked in-game verified. The saved brief is 1,197 words, longer than the requested concise target; OpenCode revision was interrupted after repeated unsuccessful condensation. Raw session log remains local and ignored by Git.
-- The first navigation mockup was rejected as card-based. Its [old check record](notes/navigation-mockup-check.md) is historical.
-- The [map-first replacement](../prototype/navigation-mockup.html) shows an overall sample canvas and three detailed chapter maps. Nodes and branches remain visible together. The overall canvas has a dashed, unresolved Alice's box → Todd link; D1 and D3 remain separate. [OCR and structure note](notes/map-reference-analysis.md) records representative Steam image transcription. [Map check record](notes/map-prototype-check.md) records static checks and limits.
-- The map data (refs, N/E helpers, maps, detail) moved out of [navigation-mockup.html](../prototype/navigation-mockup.html) into [map-data.js](../prototype/map-data.js), a classic script loaded before the UI script so the file still opens directly over file://. Every node, edge, status, source URL, label, and the unresolved cross-chapter example is unchanged. [validate-map-data.js](../prototype/validate-map-data.js) checks unique map node IDs, edge endpoints, and that the cross-chapter example stays unresolved; run `node prototype/validate-map-data.js`. All checks pass.
-- [spec.md](spec.md) records the approved product requirements; production data and hosting decisions remain open. [CONTEXT.md](CONTEXT.md) defines the main terms.
-- Project documents are in English. The project owner approved the public `zhiland/ra9-atlas` repository. Project documents are organized under [docs/](./).
+The corrected runner passed 51 synthetic end-to-end checks and 18 regression
+tests. Eight preflight tests pass. The earlier public-commit smoke passed 49
+checks; its patch was not applied. Seatbelt remains deprecated and host/version
+specific. OpenCode sees prepared public commits only and exports reviewed patches.
 
-## Next
+## Git and verification
 
-- Review the implemented [ROADMAP Stage 1](ROADMAP.md) pilot: the *Hostage* ledger accounts for all visible boxes, labels and connectors, and the bounded saved-cop carry distinguishes prerequisite evidence from chart uncertainty. Confirm the source boundary before adding later cop outcomes or more *Public Enemy* content.
-- Run the Stage 2 preparation gate on the next chapter batch: extract into a packet, pass structural validation, complete independent source review, then open the merge gate. A structural pass alone does not approve a packet.
-- Use the pilot to decide the production data/evidence pipeline and stable permalink migration before scaling to full-game chapter batches. Keep the current 102/93 PoC contract explicitly bounded to its sample.
-- Continue data, source-review, desktop, and mobile checks throughout. Use gameplay checks only for material conflicts or specific uncertainties; whole-game gameplay verification is not a gate.
+PRs #19–21 were rechecked and remain open/unmerged at `0ddb64d`, `26c6e19`,
+and `2576a95`. The corrected runner is in draft [PR #22](https://github.com/zhiland/ra9-atlas/pull/22)
+at `7f89e88`, based on PR #21. Runner changes are isolated from this
+source-review/cleanup package.
+No automatic merge or site publication is authorized.
+The untracked user file `docs/notes/obsidian-update-draft.md` remains unchanged
+with SHA-256 `f0a9eb2733ba7b3bcd886852dbd30fe093912f50351b1dd16a7eacae37998833`.
 
-## Budget
+Full baseline `npm test` passed. Final verification results and new draft PR
+checkpoints are recorded in the [repository review](notes/repository-review-2026-10-22.md).
+The restricted sandbox cannot bind localhost sockets; those checks run with
+appropriate local execution permission. Mobile tests use Chromium viewport
+emulation. Safari, physical touch, assistive technology and gameplay are unverified.
 
-Account limits change across all chats. Check them before each work package.
-Below 20% remaining, save progress and defer a large package.
-The run log records historical measurements, not current capacity.
+## Next bounded work
 
-The map is a static prototype, not a production site. Chromium viewport emulation does not verify a physical device, Safari/iOS, or real touch gestures. The test harness serves pages from localhost; it does not rely on direct file access.
+1. Prepare a partial A New Home packet from existing public evidence, with chart
+   transcription and guide claims separate. Keep independent review pending.
+2. Use that second packet to decide canonical data ownership and reproducible
+   generation. Preserve `?edge=N` compatibility before migrating permalinks.
+3. Reconcile the chapter/character-chart inventory before larger content batches.
+4. Resolve source-derived publication boundaries before opening the merge/release gate.
 
-## Limits
-
-The static PoC4 application exists, but the production stack and full-product data contract remain open; only the bounded [PoC4 sample contract](data-contract.md) is implemented. No transition was verified directly in the game.
-Mobile-width layout (≤900 px) is regression-tested at 390×844 in Chromium viewport emulation; no physical-device, Safari, or iOS testing has been done. Synthetic 1,000-node labels scale with the map and are naturally tiny at fit; all generated node and choice text fits its fixed world-space box. This is a performance fixture, not a readability or gameplay-accuracy certification.
-Game Navigator and the local AI Player viewer were not installed or tested.
-Downloaded evidence and raw agent logs remain local and are excluded from Git.
-Source licensing does not automatically permit reuse of game data, text, or images.
+Check shared account capacity before each package. Below 20% remaining, preserve
+progress and defer a large package. Raw logs and downloaded evidence stay local.

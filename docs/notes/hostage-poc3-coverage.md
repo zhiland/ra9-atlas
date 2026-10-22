@@ -158,18 +158,19 @@ The selected blue path traces COLD APPROACH → FAIL TO NEGOTIATE → DEVIANT JU
 WITH EMMA. This supports chart readings only. It does not verify gameplay or
 show the full chart. The image and article text are not copied into the product.
 
-The PoC4 atlas now stores 37 Hostage edge claims: 33 `traced` and 4 `uncertain`.
-`e_hostage_fail_jumps` keeps its ID and index 90 but is now traced for this
-selected path. The old `e_hostage_approach_fail` retains ID and index 89, now
-narrowed to an uncertain FRIENDLY APPROACH candidate. The new traced COLD
-APPROACH edge, `e_hostage_cold_approach_fail`, is appended at index 92. This is
-an explicit legacy-index migration. The old `?edge=89` URL still selects the
-same array position, but its displayed claim is now narrower. The Friendly
-candidate is not counted as a second confirmed connector in the 36-connector
-Steam screenshot. `u_hostage_chart_uncertain` lists the four remaining uncertain
-claims and keeps chart-transcription uncertainty separate from guide evidence.
-The three remaining original tap-point readings stay unresolved. `GET CLOSE
-ENOUGH` remains a no-outgoing-edge point with no invented outcome.
+Independent review on 2026-10-22 corrected the earlier selected-path reading.
+The Shazoo article is pre-release/demo-era (2018-04-24), and both approach
+lines join a shared negotiation bus. Selected events do not establish a direct
+Cold-to-FAIL connector. The atlas retains 37 claims: **32 traced and 5 uncertain**.
+`e_hostage_cold_approach_fail` remains at index 92 but is now uncertain.
+`e_hostage_approach_fail` remains the narrowed Friendly candidate at index 89.
+The extra candidate is not a newly confirmed connector in the 36-connector image.
+`e_hostage_fail_jumps` remains traced at index 90 because the independent reviewer
+followed its continuous connector in the full Steam image itself. It no longer
+depends on alternate-build equivalence. The unknown record includes both approach
+origins and the pre-release build boundary. `GET CLOSE ENOUGH` remains open-ended.
+See [the source-review report](hostage-packet-source-review.md) for visual locators,
+access outcomes, correction approval and the separate blocked publication gate.
 
 One cross-chapter prerequisite is added:
 `wounded_cop` option index 1 (`SAVE WOUNDED COP`) → `pe_meet_cop` (`Meet Cop

@@ -84,13 +84,13 @@ check('the real Hostage packet passes structural and ATLAS reconciliation', () =
   eq(result.counts.conditions, pilot.counts.conditions);
   eq(result.counts.unknowns, pilot.counts.unknowns);
   eq(result.counts.conflicts, pilot.counts.conflicts);
-  assert(result.reviewReady === false, 'the pilot must not be review-ready before independent review');
+  assert(result.reviewReady === false, 'the pilot must not be review-ready while publication rights remain unresolved');
 });
 
 check('packet identity, chapter scope and coverage boundary are versioned', () => {
   eq(packet.kind, 'ra9-atlas.chapter-preparation.packet');
   eq(packet.packetVersion, '1.0');
-  eq(packet.packetStatus, 'prepared');
+  eq(packet.packetStatus, 'reviewed');
   eq(packet.chapter, { id: pilot.chapterId, title: pilot.atlasChapterTitle });
   eq(packet.coverage.status, 'checked-against-chart');
   assert(packet.coverage.scope && packet.coverage.included.length > 0 && packet.coverage.omitted.length > 0,
@@ -121,7 +121,7 @@ check('pilot counts, node IDs, labels and choice options match the regression fi
     eq(nodeById.get(id).options, options, id + ' options');
   }
   const approachRoutes = chartEdges.filter(edge => edge.from === 'approach' && edge.to === 'fail_negotiate');
-  eq(approachRoutes.map(edge => [edge.fromOption, edge.kind]), [[0, 'uncertain'], [1, 'traced']]);
+  eq(approachRoutes.map(edge => [edge.fromOption, edge.kind]), [[0, 'uncertain'], [1, 'uncertain']]);
 });
 
 check('chart nodes and edges match the actual Hostage ATLAS slice by label and endpoint', () => {
@@ -161,7 +161,7 @@ check('Hostage option-specific readings preserve the old index and GET CLOSE ENO
   const cold = chartEdges.find(edge => edge.id === 'e_hostage_cold_approach_fail');
   const failJumps = chartEdges.find(edge => edge.id === 'e_hostage_fail_jumps');
   eq([friendly.fromOption, friendly.kind, friendly.legacyEdgeIndex], [0, 'uncertain', 89]);
-  eq([cold.fromOption, cold.kind, cold.legacyEdgeIndex], [1, 'traced', 92]);
+  eq([cold.fromOption, cold.kind, cold.legacyEdgeIndex], [1, 'uncertain', 92]);
   eq([failJumps.kind, failJumps.legacyEdgeIndex], ['traced', 90]);
   assert(/narrowed|old.*index|legacy/i.test(packet.legacy.note), 'the index 89 semantic narrowing must be explicit');
   assert(/not counted as a confirmed extra screenshot connector/i.test(packet.coverage.included.join(' ')),
@@ -198,18 +198,22 @@ check('source locators, separate access outcomes and rights review states are re
     assert(!/cleared|approved for reuse/i.test(source.rights.state), source.id + ' must not claim clearance');
   }
   const gamefaqs = packet.sources.find(source => source.id === 'gamefaqsPublicEnemy');
-  eq(gamefaqs.access.map(access => [access.outcome, access.httpStatus || null]), [['http-error', 403], ['inspected', null]]);
+  eq(gamefaqs.access.map(access => [access.outcome, access.httpStatus || null]), [['http-error', 403], ['inspected', null], ['inspected', null]]);
   assert(gamefaqs.access.some(access => /separate reviewer/i.test(access.actor)),
     'the separate reviewer access must stay attributed separately');
 });
 
-check('independent review stays pending and distinct from structural validation', () => {
+check('approved independent source review keeps the publication merge gate blocked', () => {
   const result = validatePacket(clone(packet), { atlas: ATLAS });
   assert(result.ok, result.errors.join('\n        '));
-  eq(result.review.state, 'pending');
+  eq(result.review.state, 'approved');
+  eq(result.review.approved, true);
   eq(result.review.mergeGate, 'blocked');
   eq(result.reviewReady, false);
   assert(packet.review.independent.required === true, 'independent review must be required');
+  eq(packet.review.independent.reviewer, 'Separate Codex Hostage source-review agent');
+  eq(packet.review.independent.date, '2026-10-22');
+  assert(/publication rights remain unresolved/i.test(packet.review.mergeGate.reason), 'publication decision must stay explicit');
   assert(/structural validation/i.test(packet.review.mergeGate.reason), 'the merge gate must distinguish structural checks');
 });
 
@@ -362,16 +366,59 @@ rejects('rejects an exact chapter reconciliation with a missing ATLAS node', p =
   p.chart.nodes = p.chart.nodes.filter(node => node.id !== 'get_close');
   p.chart.edges = p.chart.edges.filter(edge => edge.from !== 'get_close' && edge.to !== 'get_close');
 }, /chart node ID set is missing: get_close/);
-rejects('rejects readiness before independent approval', p => { p.review.mergeGate.state = 'ready'; p.review.mergeGate.reason = 'Ready.'; }, /mergeGate cannot be ready before/);
-rejects('rejects packetStatus reviewed without an approved review', p => { p.packetStatus = 'reviewed'; }, /requires an approved independent review/);
+rejects('rejects readiness before independent approval', p => {
+  p.review.independent.state = 'pending';
+  p.packetStatus = 'prepared';
+  p.review.mergeGate.state = 'ready';
+  p.review.mergeGate.reason = 'Ready.';
+}, /mergeGate cannot be ready before/);
+rejects('rejects packetStatus reviewed without an approved review', p => {
+  p.packetStatus = 'reviewed';
+  p.review.independent.state = 'pending';
+}, /requires an approved independent review/);
 rejects('rejects an approved review without a reviewer or date', p => {
   p.packetStatus = 'reviewed';
   p.review.independent.state = 'approved';
+  p.review.independent.reviewer = null;
+  p.review.independent.date = null;
   p.review.mergeGate.state = 'ready';
   p.review.mergeGate.reason = 'Ready.';
 }, /needs a named reviewer|needs a real YYYY-MM-DD date/);
 
 console.log('\nchapter packet — CLI');
+check('an approved source review can retain a blocked merge gate in the validator and CLI', () => {
+  const candidate = clone(packet);
+  candidate.packetStatus = 'reviewed';
+  candidate.review.independent.state = 'approved';
+  candidate.review.independent.reviewer = 'Synthetic independent reviewer';
+  candidate.review.independent.date = '2026-10-22';
+  candidate.review.mergeGate.state = 'blocked';
+  candidate.review.mergeGate.reason = 'Source interpretation approved. Publication rights remain unresolved.';
+  const result = validatePacket(candidate, { atlas: ATLAS });
+  assert(!result.failed, result.errors.join('\n        '));
+  eq(result.review.approved, true);
+  eq(result.reviewReady, false);
+  eq(result.review.mergeGate, 'blocked');
+
+  const temporary = fs.mkdtempSync(path.join(require('os').tmpdir(), 'ra9-packet-gate-'));
+  try {
+    const file = path.join(temporary, 'approved-blocked.packet.json');
+    fs.writeFileSync(file, JSON.stringify(candidate));
+    const structural = spawnSync(process.execPath, ['prototype/validate-chapter-packet.js', file], {
+      cwd: root, encoding: 'utf8'
+    });
+    eq(structural.status, 0, structural.stderr || structural.stdout);
+    const gated = spawnSync(process.execPath, ['prototype/validate-chapter-packet.js', file, '--require-review'], {
+      cwd: root, encoding: 'utf8'
+    });
+    eq(gated.status, 2, gated.stderr || gated.stdout);
+    assert(/Independent review: approved; merge gate: blocked; review-ready: no/.test(gated.stdout),
+      'the CLI must preserve source approval and the separate blocked merge gate');
+  } finally {
+    fs.rmSync(temporary, { recursive: true });
+  }
+});
+
 check('the CLI exits 0 for structural success and 2 when review is required', () => {
   const structural = spawnSync(process.execPath, ['prototype/validate-chapter-packet.js', 'packets/hostage.packet.json'], {
     cwd: root,
@@ -384,7 +431,7 @@ check('the CLI exits 0 for structural success and 2 when review is required', ()
     cwd: root,
     encoding: 'utf8'
   });
-  eq(gated.status, 2, 'the merge gate must block before independent review');
+  eq(gated.status, 2, 'the merge gate must block while publication rights remain unresolved');
 });
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');

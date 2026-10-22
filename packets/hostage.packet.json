@@ -1,7 +1,7 @@
 {
   "kind": "ra9-atlas.chapter-preparation.packet",
   "packetVersion": "1.0",
-  "packetStatus": "prepared",
+  "packetStatus": "reviewed",
   "packetId": "hostage-chart-and-saved-cop",
   "chapter": {
     "id": "hostage",
@@ -9,18 +9,18 @@
   },
   "coverage": {
     "status": "checked-against-chart",
-    "scope": "All boxes, labels and 36 pictured connectors in the full Steam Hostage chart, with selected-path readings checked against a separate 48%-complete Hostage chart, plus the separate saved-cop prerequisite into Public Enemy.",
+    "scope": "All 33 boxes, 40 labels and 36 pictured connectors in the full Steam Hostage chart, represented by 37 claims with both approach origins uncertain, plus the separate guide-reported saved-cop prerequisite.",
     "included": [
       "33 chart boxes and 40 visible labels from the Steam screenshot. The screenshot shows 36 connectors.",
-      "37 internal chart-edge claims: 33 traced and 4 uncertain. One pictured approach relation is split into a traced Cold option and an uncertain Friendly candidate. The candidate is not counted as a confirmed extra screenshot connector.",
+      "37 internal chart-edge claims: 32 traced and 5 uncertain. Both Friendly and Cold option origins remain uncertain. The Friendly candidate is not counted as a confirmed extra screenshot connector.",
       "One supplementary saved-cop prerequisite from SAVE WOUNDED COP to the existing Public Enemy meeting node, with one edge-local condition.",
       "One explicit chart-reading unknown record and no source-vs-source conflict record."
     ],
     "omitted": [
       "Gameplay verification, game version/platform, and any branch set beyond the inspected chart evidence.",
-      "Exact origin of the stage-to-FAIL connector, any Friendly Approach route to FAIL, the remaining three chart ambiguities, and every branch not visible in the selected-path screenshot.",
+      "Exact fish/SWAT/stage-to-FAIL tap points, both option-specific approach origins, released-build correspondence of the pre-release Shazoo image, and any topology beyond the full Steam chart.",
       "LEAVE WOUNDED COP consequences, later cop rescue or death outcomes, everything after the Public Enemy meeting, and all other Public Enemy content.",
-      "Full independent review of the packet and legal clearance or permission to reuse source text, images, or chart-derived expression."
+      "Publication clearance or permission to reuse source text, images, or chart-derived expression remains unresolved; independent source-review findings are tracked separately."
     ],
     "sources": [
       "steamHostageChart",
@@ -47,13 +47,19 @@
       "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
       "class": "chart-image",
       "role": "Primary chart transcription for visible Hostage nodes, labels and connectors.",
-      "locator": "The Hostage region of the “100% Chapter Flowcharts” guide image (7288×2648); manually read region by region.",
+      "locator": "The Hostage chart, 7288x2648. FAIL-to-JUMPS continuous connector approximately x4450-6100, y800-1250; chart inventory and shared-bus approach origins inspected. Primary image SHA256 2d9c33bed33d367c7d670d725b7a61f68cd8e792a883a9508d63c5fae04d755a.",
       "access": [
         {
           "date": "2026-10-18",
           "actor": "project transcription",
           "outcome": "inspected",
           "note": "The visible Hostage region was transcribed from the guide image."
+        },
+        {
+          "date": "2026-10-22",
+          "actor": "independent Hostage packet reviewer",
+          "outcome": "inspected",
+          "note": "Reviewed full 7288x2648 chart inventory and FAIL-to-JUMPS continuous connector. Both approach origins remain uncertain. See docs/notes/hostage-packet-source-review.md."
         }
       ],
       "attribution": "Steam Community guide “Detroit: Become Human | 100% Chapter Flowcharts”. The guide credits Reddit user throwawaydeviant9 for paths/screenshots and Neoseeker’s Krystal109 for high-resolution images.",
@@ -66,14 +72,20 @@
       "id": "shazooHostageChart",
       "url": "https://shazoo.ru/2018/04/24/64787/polnoe-prohozhdenie-detroit-become-human-zajmet-25-30-chasov",
       "class": "chart-image",
-      "role": "Visual cross-check for two selected-path Hostage connector readings.",
-      "locator": "Article lines 64–65 introduce the branching diagram; image https://cdn.shazoo.ru/255202_rAFsabVh4Q_41663243971_12ae17c3f7_o.jpg, 48%-complete Hostage chart, blue selected route at Cold Approach → FAIL TO NEGOTIATE → DEVIANT JUMPS WITH EMMA.",
+      "role": "Pre-release/demo-era visual reference only. Does not resolve either option-specific approach origin in the released chart.",
+      "locator": "Article dated 2018-04-24, before release, discusses the upcoming game and available demo. Image https://cdn.shazoo.ru/255202_rAFsabVh4Q_41663243971_12ae17c3f7_o.jpg shows a 48%-complete chart. Selected-blue co-occurrence does not establish a direct Cold-to-FAIL connector.",
       "access": [
         {
           "date": "2026-10-21",
           "actor": "independent source reviewer",
           "outcome": "inspected",
           "note": "The selected-path chart image was inspected for connector origin and continuation. It is not a full chart or gameplay verification."
+        },
+        {
+          "date": "2026-10-22",
+          "actor": "independent Hostage packet reviewer",
+          "outcome": "inspected",
+          "note": "Inspected article and image. Pre-release/demo-era provenance and shared-bus ambiguity invalidate the earlier option-origin resolution. See docs/notes/hostage-packet-source-review.md."
         }
       ],
       "attribution": "Shazoo article on Detroit: Become Human walkthrough, with a secondary-hosted in-game flowchart image.",
@@ -87,13 +99,19 @@
       "url": "https://www.powerpyx.com/detroit-become-human-the-hostage-opening-walkthrough-100/",
       "class": "supplementary-guide",
       "role": "Supports the saved wounded-cop later-appearance claim.",
-      "locator": "The Hostage / Opening guide, closing wounded-cop choice section, around §§40–42 as supplied for the Stage 1 pilot.",
+      "locator": "Negotiation section, wounded-cop cross-chapter entry: saving the officer makes him appear in Public Enemy. Access-specific extracted line 42, not a publisher section number.",
       "access": [
         {
           "date": "2026-10-21",
           "actor": "project source review",
           "outcome": "inspected-excerpt",
           "note": "The closing choice section was consulted for the reported later appearance."
+        },
+        {
+          "date": "2026-10-22",
+          "actor": "independent Hostage packet reviewer",
+          "outcome": "inspected",
+          "note": "Live page inspected at the recorded heading and item. Guide support only; research independence remains unknown. See docs/notes/hostage-packet-source-review.md."
         }
       ],
       "attribution": "PowerPyx, Detroit: Become Human — The Hostage / Opening walkthrough.",
@@ -107,13 +125,19 @@
       "url": "https://www.powerpyx.com/detroit-become-human-public-enemy-walkthrough-100/",
       "class": "supplementary-guide",
       "role": "Names the saved-cop state and the bounded Public Enemy meeting node.",
-      "locator": "Public Enemy guide sections around §§64–66: “Saved During ‘The Hostage’” and “Meet Cop From Hostage Situation”.",
+      "locator": "Broadcast-room investigation, saved-during-The-Hostage state and following Meet Cop From Hostage Situation entry. Access-specific extracted lines 65-66.",
       "access": [
         {
           "date": "2026-10-21",
           "actor": "project source review",
           "outcome": "inspected-excerpt",
           "note": "Only the saved-cop state and meeting interaction were consulted."
+        },
+        {
+          "date": "2026-10-22",
+          "actor": "independent Hostage packet reviewer",
+          "outcome": "inspected",
+          "note": "Live page inspected at the recorded heading and item. Guide support only; research independence remains unknown. See docs/notes/hostage-packet-source-review.md."
         }
       ],
       "attribution": "PowerPyx, Detroit: Become Human — Public Enemy walkthrough.",
@@ -127,7 +151,7 @@
       "url": "https://gamefaqs.gamespot.com/ps4/182637-detroit-become-human/faqs/76123/public-enemy",
       "class": "supplementary-guide",
       "role": "Separately rechecked cross-reference for the saved-cop carry.",
-      "locator": "Public Enemy guide §192: the officer saved in the first chapter later stops Connor and thanks him.",
+      "locator": "Mogg guide v1.8 (updated 2018-10-15), Broadcast Room and Kitchen, paragraph before the magazine step: the saved officer stops Connor and thanks him. Access-specific extracted line 192.",
       "access": [
         {
           "date": "2026-10-21",
@@ -141,6 +165,12 @@
           "actor": "separate reviewer",
           "outcome": "inspected",
           "note": "A separate reviewer accessed the page and confirmed §192. This access outcome is not approval of the full packet or proof of independent guide research."
+        },
+        {
+          "date": "2026-10-22",
+          "actor": "independent Hostage packet reviewer",
+          "outcome": "inspected",
+          "note": "Live page inspected at the recorded heading and item. Guide support only; research independence remains unknown. See docs/notes/hostage-packet-source-review.md."
         }
       ],
       "attribution": "GameFAQs/Mogg, Detroit: Become Human — Public Enemy guide.",
@@ -601,7 +631,7 @@
         "to": "fail_negotiate",
         "kind": "uncertain",
         "legacyEdgeIndex": 89,
-        "note": "Preserves legacy index 89 as the unresolved Friendly Approach candidate. The Steam chart does not identify this option row. The separate selected-path chart traces Cold Approach instead; it does not confirm a Friendly route, so this candidate remains uncertain.",
+        "note": "This preserves the old ?edge=89 claim as a narrowed uncertain Friendly Approach candidate. Neither inspected chart identifies an unambiguous option-specific origin on the shared negotiation bus.",
         "fromOption": 0
       },
       {
@@ -610,10 +640,9 @@
         "to": "deviant_jumps",
         "kind": "traced",
         "legacyEdgeIndex": 90,
-        "note": "A separate 48%-complete chart visibly traces this connector on its selected path. This is a chart reading, not gameplay verification or proof that every failed-negotiation scenario has this result.",
+        "note": "Independent review on 2026-10-22 traces the continuous FAIL TO NEGOTIATE connector right and upward into DEVIANT JUMPS WITH EMMA in the full Steam chart. This chart reading does not depend on the pre-release selected path and is not gameplay verification.",
         "sources": [
-          "steamHostageChart",
-          "shazooHostageChart"
+          "steamHostageChart"
         ]
       },
       {
@@ -621,13 +650,13 @@
         "from": "approach",
         "fromOption": 1,
         "to": "fail_negotiate",
-        "kind": "traced",
+        "kind": "uncertain",
         "sources": [
           "steamHostageChart",
           "shazooHostageChart"
         ],
         "legacyEdgeIndex": 92,
-        "note": "The separate 48%-complete chart visibly traces the selected Cold Approach route to FAIL TO NEGOTIATE. This disambiguates the option row for that pictured connector only; it does not establish a complete rule table."
+        "note": "The selected Cold Approach line joins a shared negotiation bus. Its direct route to FAIL TO NEGOTIATE remains uncertain. The Shazoo image is pre-release/demo-era (2018-04-24); correspondence with the released chart is unknown. Selected choices do not establish a sufficient gameplay condition."
       }
     ]
   },
@@ -658,7 +687,7 @@
           "kind": "prerequisite",
           "legacyEdgeIndex": 91,
           "label": "prerequisite: saved wounded cop in The Hostage",
-          "note": "PowerPyx Hostage says saving the wounded cop makes him appear later in Public Enemy; PowerPyx Public Enemy lists “Saved During ‘The Hostage’” and “Meet Cop From Hostage Situation”. This supplementary guide-reported carry is separate from the Hostage chart transcription and its four remaining uncertain edge claims. It is not gameplay-verified; matching guides are not independent verification."
+          "note": "PowerPyx Hostage says saving the wounded cop makes him appear later in Public Enemy; PowerPyx Public Enemy lists “Saved During ‘The Hostage’” and “Meet Cop From Hostage Situation”. This supplementary guide-reported carry is separate from the Hostage chart transcription and its five remaining uncertain edge claims. It is not gameplay-verified; matching guides are not independent verification."
         }
       ]
     }
@@ -683,7 +712,7 @@
     {
       "id": "u_hostage_chart_uncertain",
       "status": "unknown",
-      "explanation": "Four Hostage edge claims remain uncertain: the fish branch tap, the rising SWAT INJURED tap, the stage-to-FAIL TO NEGOTIATE tap, and whether Friendly Approach also reaches FAIL TO NEGOTIATE. A separate selected-path chart traces Cold Approach → FAIL TO NEGOTIATE and FAIL TO NEGOTIATE → DEVIANT JUMPS WITH EMMA. The Friendly candidate preserves the old ?edge=89 link but is not a confirmed extra connector in the 36-connector Steam image. This is chart-reading uncertainty, not gameplay uncertainty. The SAVE WOUNDED COP → Meet Cop prerequisite is separately guide-supported.",
+      "explanation": "Five Hostage edge claims remain uncertain: the fish branch tap, the rising SWAT INJURED tap, the stage-to-FAIL TO NEGOTIATE tap, and both option-specific Friendly and Cold approach origins. Both approach lines join a shared negotiation bus. The Shazoo image is pre-release/demo-era and released-build correspondence is unknown. Independent Steam-image review traces FAIL TO NEGOTIATE to DEVIANT JUMPS WITH EMMA. This is chart-transcription uncertainty and chart-reading uncertainty, not a source conflict or gameplay verification. The saved-cop prerequisite remains separately guide-reported.",
       "nodes": [
         "mission_start",
         "fish",
@@ -698,7 +727,8 @@
         "e_hostage_start_fish",
         "e_hostage_search_swat",
         "e_hostage_negotiate_fail",
-        "e_hostage_approach_fail"
+        "e_hostage_approach_fail",
+        "e_hostage_cold_approach_fail"
       ],
       "sources": [
         "steamHostageChart",
@@ -710,15 +740,15 @@
   "review": {
     "independent": {
       "required": true,
-      "state": "pending",
-      "reviewer": null,
-      "date": null,
+      "state": "approved",
+      "reviewer": "Separate Codex Hostage source-review agent",
+      "date": "2026-10-22",
       "scope": "Full independent source review of the Hostage chart transcription and the saved-cop carry, separate from automated structural validation.",
-      "notes": "The Hostage ledger records independent guide/transcript review of the full branch set as outstanding. The separate GameFAQs §192 access is a source access outcome, not approval of this packet."
+      "notes": "Follow-up on 2026-10-22 approved the corrected source interpretation within the visible chart and bounded guide-reported scope. Cold origin remains uncertain, FAIL-to-JUMPS is supported directly by the Steam image, and the alternate chart retains its pre-release boundary. See docs/notes/hostage-packet-source-review.md. Approval does not establish gameplay verification, independent guide research, or publication rights."
     },
     "mergeGate": {
       "state": "blocked",
-      "reason": "Independent source review is pending. Structural validation does not establish source truth, rights clearance, or gameplay verification."
+      "reason": "Independent source interpretation is approved within its recorded uncertainty. Source-derived publication rights remain unresolved. Structural validation and source-review approval do not clear publication rights or verify gameplay."
     }
   }
 }

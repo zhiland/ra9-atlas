@@ -6,8 +6,8 @@
     "visibleLabels": 40,
     "chartEdges": 37,
     "visibleConnectors": 36,
-    "tracedEdges": 33,
-    "uncertainEdges": 4,
+    "tracedEdges": 32,
+    "uncertainEdges": 5,
     "choiceGroups": 7,
     "choiceOptions": 14,
     "stageContainers": 3,
@@ -168,7 +168,8 @@
     "e_hostage_start_fish",
     "e_hostage_search_swat",
     "e_hostage_negotiate_fail",
-    "e_hostage_approach_fail"
+    "e_hostage_approach_fail",
+    "e_hostage_cold_approach_fail"
   ],
   "savedCop": {
     "supplementId": "saved-cop-carry",

@@ -34,10 +34,10 @@ first-floor slice](anewhome-firstfloor-slice.md) and [the second-floor
 slice](anewhome-secondfloor-slice.md).
 The Stage 1 pilot appends the 33-box *The Hostage* chart already transcribed for
 PoC3, preserving its 40 visible labels and 36 pictured connectors. A selected-
-path chart review resolves the FAIL TO NEGOTIATE → DEVIANT JUMPS connector and
-the Cold Approach option. The old ambiguous approach edge remains as an
-uncertain Friendly-option candidate. The map therefore stores 37 Hostage edge
-claims: 33 traced and 4 uncertain. The Friendly candidate is not counted as an
+path image is pre-release/demo-era. Independent review traces FAIL TO NEGOTIATE →
+DEVIANT JUMPS directly in the full Steam image. Both approach origins remain
+uncertain; selected blue events do not resolve the shared negotiation bus. The map therefore stores 37 Hostage edge
+claims: 32 traced and 5 uncertain. The Friendly candidate is not counted as an
 additional confirmed screenshot connector.
 One separate, guide-supported prerequisite links `SAVE WOUNDED COP` to the
 bounded *Public Enemy* “Meet Cop From Hostage Situation” node. That carry is
@@ -72,7 +72,7 @@ verified in game.
 |---|---:|---|
 | Chapter regions | **5** | A New Home, Stormy Night, Battle for Detroit — Kara, The Hostage, Public Enemy (one node) |
 | Boxes (nodes) | **102** | 35 A New Home + 24 Stormy Night + 9 Kara + 33 Hostage + 1 Public Enemy |
-| Connectors (edges) | **93** | 72 traced + 8 conditional + 6 prerequisite gates + 3 unresolved hypotheses + 4 uncertain chart claims |
+| Connectors (edges) | **93** | 71 traced + 8 conditional + 6 prerequisite gates + 3 unresolved hypotheses + 5 uncertain chart claims |
 | Cross-chapter connectors | **5** | Two A New Home → Stormy Night prerequisites, two Stormy Night/A New Home → Kara links, one saved-cop Hostage → Public Enemy prerequisite |
 
 ## Data/provenance contract
@@ -101,7 +101,7 @@ trigger, the unnamed key relationship level, first-floor event
 order/requirements/exclusivity, the differing second-floor order and
 guide-specific Talk comments, Stormy Night internals, the exact 11:00 boundary,
 the exact gun-state check, window-route outcomes, the missing Todd state after
-either successful non-gun escape, and four uncertain Hostage chart edge claims.
+either successful non-gun escape, and five uncertain Hostage chart edge claims.
 The Hostage record explicitly excludes the saved-cop prerequisite,
 which rests on guide statements rather than a confident chart trace. No
 source-vs-source conflict is recorded or invented.
@@ -155,7 +155,7 @@ source-vs-source conflict is recorded or invented.
 - **The Hostage — visible chart transcription.** All 33 boxes and 40 visible labels
   are represented, including three stage containers, seven two-row choice
   groups, the `GET CLOSE ENOUGH` dead end, and six outcomes. The chart shows 36
-  connectors. The atlas has 37 claims: 33 traced and four uncertain, including
+  connectors. The atlas has 37 claims: 32 traced and five uncertain, including
   a narrowed Friendly candidate at retained index 89. The extra candidate is
   not counted as a confirmed pictured connector. Chart uncertainty is kept
   separate from guide-supported cross-chapter evidence. See [the Hostage

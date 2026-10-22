@@ -468,8 +468,8 @@ function validateAtlas(ATLAS) {
     if (hostageChapter.coverage.modeledEdgeClaimCount !== 37) errors.push('Hostage modeledEdgeClaimCount must stay 37 after the explicit option split');
     if (chartEdges.length !== 37) errors.push(`hostage should have 37 modeled edge claims for 36 pictured connectors, found ${chartEdges.length}`);
     const uncertainEdges = chartEdges.filter(e => e.kind === 'uncertain');
-    if (uncertainEdges.length !== 4) errors.push(`hostage should have 4 uncertain edge claims, found ${uncertainEdges.length}`);
-    if (chartEdges.filter(e => e.kind === 'traced').length !== 33) errors.push('hostage should keep 33 traced edge claims');
+    if (uncertainEdges.length !== 5) errors.push(`hostage should have 5 uncertain edge claims, found ${uncertainEdges.length}`);
+    if (chartEdges.filter(e => e.kind === 'traced').length !== 32) errors.push('hostage should keep 32 traced edge claims');
     if (chartEdges.some(e => !e.src || !e.src.includes('steam'))) errors.push('every Hostage chart connector must cite the Steam chart');
     if (uncertainEdges.some(e => !/uncertain|ambig|not.*(clear|confiden|separab)|prevents a confident/i.test(e.note || ''))) {
       errors.push('each uncertain Hostage connector needs its own uncertainty note');
@@ -481,8 +481,8 @@ function validateAtlas(ATLAS) {
     if (!unknown) errors.push('u_hostage_chart_uncertain is missing');
     else {
       if (unknown.status !== 'unknown') errors.push('u_hostage_chart_uncertain must stay unknown');
-      if (!Array.isArray(unknown.edges) || unknown.edges.length !== 4) {
-        errors.push('u_hostage_chart_uncertain must reference exactly the 4 uncertain edge claims');
+      if (!Array.isArray(unknown.edges) || unknown.edges.length !== 5) {
+        errors.push('u_hostage_chart_uncertain must reference exactly the 5 uncertain edge claims');
       } else {
         for (const id of uncertainEdges.map(e => e.id)) {
           if (!unknown.edges.includes(id)) errors.push(`u_hostage_chart_uncertain must reference ${id}`);
