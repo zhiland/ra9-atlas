@@ -86,3 +86,10 @@ The two Python suites are unit tests, not live agent runs:
 - [Checkout](https://github.com/actions/checkout)
 - [Setup Node releases](https://github.com/actions/setup-node/releases)
 - [Playwright CI](https://playwright.dev/docs/ci-intro)
+
+## Executed checkpoint
+
+[Run39908393426](https://github.com/zhiland/ra9-atlas/actions/runs/39908393426)
+passed all steps on Ubuntu24.04 at `593b589` (2026-10-23), including npm/Chromium
+and both mocked Python suites. This verifies the tested implementation, not the
+native macOS isolation boundary or gameplay evidence.

@@ -96,3 +96,14 @@ all11 stable-zoom checks pass locally. Hosted execution must confirm the fix.
 CSS follow-up review caught the initial flex-row side effect. The final rule
 uses a centered column with stretched children; the regression checks horizontal
 text containment and sublabel stacking as well as vertical bounds.
+
+## Verified implementation checkpoint
+
+Implementation `593b589c2a2f15004437f9770f8d1502637aa9f2` passed the full local
+npm suite and [hosted Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/39908393426):
+Node22, Chromium, runner18 and preflight8, including the fallback-font regression.
+The final documentation checkpoint does not change tested implementation files.
+The CSS reviewer separately closed the column/wrapping finding at this commit.
+Standards axis:3 findings resolved, none open. Spec axis:2 findings resolved,
+none open (the staging issue was shared). Hosted workflow-admission corrections
+are documented above and all hosted steps now pass.

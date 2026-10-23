@@ -14,7 +14,8 @@ Python runner18 and preflight8. Independent source-index review found no discrep
 Both code-review axes resolved their findings. The first hosted attempt exposed a
 workflow-context error, corrected in `3bb6aab`. Its Node run then exposed a
 fallback-font label overflow; the renderer fix and an additional regression are
-under hosted verification.
+verified on Ubuntu. [CI run](https://github.com/zhiland/ra9-atlas/actions/runs/39908393426)
+passed all Node/Chromium and Python steps at implementation commit `593b589`.
 See [package review](notes/authoring-pipeline-review.md). No PR was merged or site deployed.
 
 ## Product state
