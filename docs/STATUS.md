@@ -4,6 +4,14 @@ Updated: 2026-10-23. Stage 1 source review is complete for the bounded Hostage
 pilot. Stage 2 preparation is implemented. Canonical JSON authoring and deterministic generation now preserve the existing sample.
 Full-product schema expansion, permalink output migration, actual game-chart census and hosting remain open.
 
+## Preparation choice-version checkpoint
+
+[Packet 1.1](notes/packet-choice-arity.md) permits groups with more than two
+options during preparation. Default creation and existing 1.0 packets stay
+binary. Runtime is unchanged and remains binary. Exact runtime reconciliation,
+source review and publication gates are not relaxed. This prerequisite does not
+create or approve a Painter leisure packet. See the report for final checks.
+
 ## Painter runtime checkpoint
 
 The [opening integration](notes/painter-runtime-integration.md) appends nine nodes

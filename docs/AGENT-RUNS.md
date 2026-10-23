@@ -114,3 +114,11 @@ Codex added canonical data, ledger, generation and regressions. A separate sourc
 fidelity review found zero discrepancies and verified full preservation of old
 objects. Independent Standards/Spec review and final tests are recorded in the
 [integration report](notes/painter-runtime-integration.md).
+
+## 2026-10-23 preparation choices version 1.1
+
+Controlled OpenCode from public `bee077d` changed the single preparation validator,
+passed49 checks and stopped its server. Patch inspection/apply-check preceded use.
+Codex added18 synthetic regressions and version documentation. Existing packets,
+map data and runtime remain unchanged. Final review/CI results are in the
+[version report](notes/packet-choice-arity.md).

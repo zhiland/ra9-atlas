@@ -5,9 +5,11 @@
      node prototype/validate-chapter-packet.js --emit-template hostage \
        --title "The Hostage" --out packets/hostage.packet.json
 
-   The validator checks packet structure, source metadata, stable IDs, changed
-   edges, edge-local conditions, coverage boundaries, unknown/conflict records,
+   The validator checks packet structure, packet version, source metadata, stable
+   IDs, changed edges, edge-local conditions, coverage boundaries, unknown/conflict records,
    legacy ?edge=N claims, review metadata and optional ATLAS reconciliation.
+   Packet versions 1.0 and 1.1 are both accepted: 1.0 keeps exactly two options
+   per choice node and 1.1 allows more than two.
    It does not verify a game claim, source truth, independence, or rights
    clearance. Those remain separate review and merge gates.
 
@@ -22,6 +24,7 @@ const { readAtlasData } = require('./validate-atlas-data.js');
 
 const PACKET_KIND = 'ra9-atlas.chapter-preparation.packet';
 const PACKET_VERSION = '1.0';
+const SUPPORTED_PACKET_VERSIONS = new Set(['1.0', '1.1']);
 const PACKET_STATUSES = new Set(['draft', 'prepared', 'reviewed']);
 const COVERAGE_STATUSES = new Set(['not-added', 'partial', 'checked-against-chart']);
 const BASES = new Set(['chart-transcribed', 'guide-reported', 'mixed', 'unknown']);
@@ -84,7 +87,7 @@ function sourceRefErrors(sourceIds, owner, refs, required) {
   return errors;
 }
 
-function nodeShapeErrors(node, owner, requireChapter) {
+function nodeShapeErrors(node, owner, requireChapter, packetVersion) {
   const errors = [];
   if (!isObject(node)) return [`${owner} must be an object`];
   const id = text(node.id);
@@ -97,10 +100,26 @@ function nodeShapeErrors(node, owner, requireChapter) {
     errors.push(`${owner} ("${id || '?'}") chapter "${node.chapter}" must match ${ID_RE}`);
   }
   if (node.kind === 'choice') {
-    if (!Array.isArray(node.options) || node.options.length !== 2 ||
-        node.options.some(option => typeof option !== 'string' || !option.trim()) ||
-        new Set(node.options).size !== 2) {
-      errors.push(`${owner} ("${id || '?'}") must list exactly two unique non-empty options`);
+    // The option rule follows the packet version threaded in by the caller:
+    // 1.0 keeps exactly two unique non-empty options, 1.1 needs at least two.
+    const version = packetVersion === '1.1' ? '1.1' : '1.0';
+    const rule = version === '1.1' ? 'at least two unique non-empty options' : 'exactly two unique non-empty options';
+    const options = Array.isArray(node.options) ? node.options : null;
+    if (!options) {
+      errors.push(`${owner} ("${id || '?'}") must list ${rule} for packet version "${version}"`);
+    } else {
+      const valid = options.filter(option => typeof option === 'string' && option.trim());
+      const malformed = options.length - valid.length;
+      if (malformed) {
+        errors.push(`${owner} ("${id || '?'}") has ${malformed === 1 ? 'one option' : `${malformed} options`} that is not a non-empty string`);
+      }
+      if (new Set(valid).size !== valid.length) {
+        errors.push(`${owner} ("${id || '?'}") must not repeat options`);
+      }
+      const arityOk = version === '1.1' ? valid.length >= 2 : valid.length === 2;
+      if (!arityOk) {
+        errors.push(`${owner} ("${id || '?'}") must list ${rule} for packet version "${version}" (found ${options.length})`);
+      }
     }
   } else if (node.options != null && (!Array.isArray(node.options) || node.options.length)) {
     errors.push(`${owner} ("${id || '?'}") is not a choice and must not list options`);
@@ -268,8 +287,8 @@ function validatePacket(packet, options) {
     const errors = [];
     if (!isObject(packet)) errors.push('packet must be a JSON object');
     if (p.kind !== PACKET_KIND) errors.push(`kind must be "${PACKET_KIND}", found "${p.kind}"`);
-    if (p.packetVersion !== PACKET_VERSION) {
-      errors.push(`packetVersion must be "${PACKET_VERSION}", found "${p.packetVersion}"`);
+    if (!SUPPORTED_PACKET_VERSIONS.has(p.packetVersion)) {
+      errors.push(`packetVersion must be one of ${[...SUPPORTED_PACKET_VERSIONS].map(v => `"${v}"`).join(', ')}, found "${p.packetVersion}"`);
     }
     if (!PACKET_STATUSES.has(p.packetStatus)) {
       errors.push(`packetStatus must be one of ${[...PACKET_STATUSES].join(', ')}, found "${p.packetStatus}"`);
@@ -393,7 +412,7 @@ function validatePacket(packet, options) {
     errors.push(...sourceRefErrors(sourceIds, 'chart', p.chart.sources, hasChartEvidence || p.packetStatus !== 'draft'));
     chartNodes.forEach((node, index) => {
       const owner = `chart node[${index}]`;
-      errors.push(...nodeShapeErrors(node, owner, false));
+      errors.push(...nodeShapeErrors(node, owner, false, p.packetVersion));
     });
     if (p.packetStatus !== 'draft' && chartNodes.length === 0 && supplementaryEdges.length === 0) {
       errors.push('a non-draft packet needs at least one chart node or supplementary edge');
@@ -447,7 +466,7 @@ function validatePacket(packet, options) {
       if (!Array.isArray(item.externalNodes)) errors.push(`${owner} externalNodes must be an array`);
       if (!Array.isArray(item.edges)) errors.push(`${owner} edges must be an array`);
       nodes.forEach((node, nodeIndex) => {
-        errors.push(...nodeShapeErrors(node, `${owner} external node[${nodeIndex}]`, true));
+        errors.push(...nodeShapeErrors(node, `${owner} external node[${nodeIndex}]`, true, p.packetVersion));
       });
       const edgeMap = new Map(allNodes.filter(isObject).map(node => [node.id, node]));
       edges.forEach((edge, edgeIndex) => {
@@ -546,7 +565,7 @@ function validatePacket(packet, options) {
         errors.push('legacy metadata is required when any edge claims legacyEdgeIndex');
       } else {
         if (p.legacy.canonical !== '?edge=N') {
-          errors.push(`legacy.canonical must stay "?edge=N" for packet version ${PACKET_VERSION}`);
+          errors.push(`legacy.canonical must stay "?edge=N" for packet version "${p.packetVersion || PACKET_VERSION}"`);
         }
         if (!text(p.legacy.edgeIndexBase)) errors.push('legacy.edgeIndexBase is required');
         if (!text(p.legacy.note)) errors.push('legacy.note is required');

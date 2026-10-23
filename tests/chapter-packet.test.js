@@ -310,7 +310,7 @@ check('an approved partial packet can pass review without claiming complete chap
 });
 
 console.log('\nchapter packet — malformed fixtures');
-rejects('rejects an unsupported packet version', p => { p.packetVersion = '2.0'; }, /packetVersion must be "1\.0"/);
+rejects('rejects an unsupported packet version', p => { p.packetVersion = '2.0'; }, /packetVersion.*1\.0.*1\.1/);
 rejects('rejects a duplicate chart node ID', p => { p.chart.nodes[1].id = p.chart.nodes[0].id; }, /duplicate node id/);
 rejects('rejects a duplicate chart edge ID', p => { p.chart.edges[1].id = p.chart.edges[0].id; }, /duplicate edge id/);
 rejects('rejects a duplicate directed choice-option edge', p => {
