@@ -6,7 +6,7 @@ checkpoint, not a live status feed.
 
 ## Current continuation update — 2026-10-23
 
-The third [preparation packet](notes/shades-of-color-source-review.md) covers
+Draft [PR #27](https://github.com/zhiland/ra9-atlas/pull/27) saves the third [preparation packet](notes/shades-of-color-source-review.md) covers
 Shades of Color: 12 boxes, 5 continuous connectors, 6 detached segments left unknown.
 Independent source review approves the partial interpretation; publication is blocked.
 The runtime graph is unchanged. The current inventory has 22 unattributed entries

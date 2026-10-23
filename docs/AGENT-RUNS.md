@@ -60,3 +60,17 @@ reviewers found heading/contract issues and a missing resolver export; all were
 corrected. The source reviewer then approved the corrected partial packet.
 See [the implementation report](notes/anewhome-correction-implementation.md).
 Publication remains blocked independently of source approval.
+
+## 2026-10-23 Shades of Color preparation
+
+OpenCode assembled the third packet from parent-inspected public facts through
+`opencode_runner.py`, starting at public `8fb8313`. All 49 boundary/native-policy/
+provider checks passed and the private server stopped. Parent patch review fixed
+preparation metadata and a missing unknown-record source/reference.
+
+The separate `shades_source_review` agent independently derived the chart inventory
+before comparing the packet, then approved the partial source interpretation.
+Separate Standards and Spec reviewers found no implementation defect; their shared
+provenance wording clarification was applied. See [the source and implementation
+report](notes/shades-of-color-source-review.md). Publication remains blocked;
+no runtime integration, merge or deployment was performed.

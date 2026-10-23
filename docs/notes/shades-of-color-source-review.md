@@ -110,3 +110,14 @@ compatibility ledger, generated graph and UI have no diff against the base.
 The user's untracked draft retains SHA256
 `f0a9eb2733ba7b3bcd886852dbd30fe093912f50351b1dd16a7eacae37998833`.
 Hosted CI results belong to the draft PR checkpoint, not source approval.
+
+## Hosted checkpoint
+
+Draft [PR #27](https://github.com/zhiland/ra9-atlas/pull/27) targets PR #26.
+[Ubuntu run 39952003660](https://github.com/zhiland/ra9-atlas/actions/runs/39952003660)
+passed every step at implementation `380c09b2be24532641d1ee4ef15d4d220b75cd21`:
+full npm/Chromium, runner 18 and preflight 8. The job took 11m56s, with most time in
+browser dependency installation. It did not fail or require a retry.
+The final report/journal checkpoint changes documentation only.
+No merge or deployment occurred. Physical touch, Safari, assistive technology,
+platform/build and gameplay verification remain outside this check.

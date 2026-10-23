@@ -20,6 +20,10 @@ See [package review](notes/authoring-pipeline-review.md). No PR was merged or si
 
 ## Third preparation packet
 
+Draft [PR #27](https://github.com/zhiland/ra9-atlas/pull/27), based on PR #26,
+saves implementation `380c09b`. Its [Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/39952003660)
+passed all Node/Chromium and Python steps.
+
 The [Shades of Color source review](notes/shades-of-color-source-review.md) approves
 12 visible boxes and 5 continuous box-to-box connectors for a partial preparation
 packet. Six segments from five detached icons retain unknown source-box semantics.
