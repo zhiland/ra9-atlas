@@ -1100,12 +1100,58 @@ async function runMobileRegression(browser) {
   await page.close();
 }
 
+// Hold real hash events so a quick close always precedes the queued URL event.
+async function runHashCloseRegression(browser) {
+  console.log('scenario delayed hash event after closing details');
+  const page = await browser.newPage({ viewport: { width: 390, height: 845 } });
+  await page.addInitScript(function () {
+    const add = window.addEventListener.bind(window);
+    window.__ra9DeferredHashes = [];
+    window.addEventListener = function (type, listener, options) {
+      if (type === 'hashchange') add(type, function (event) {
+        window.__ra9DeferredHashes.push(function () { listener.call(window, event); });
+      }, options);
+      else add(type, listener, options);
+    };
+    window.__ra9FlushHashes = function () {
+      window.__ra9DeferredHashes.splice(0).forEach(function (deliver) { deliver(); });
+    };
+  });
+  await page.goto(baseUrl + '/prototype/poc4-editorial.html');
+  await page.locator('#consent').click();
+  await page.locator('#q').fill('meet');
+  await page.locator('#results [data-hit="k_meet"]').click();
+  await page.waitForFunction(function () { return window.__ra9DeferredHashes.length > 0; });
+  await ok('queued self-written hash cannot reopen details after Escape', async function () {
+    await page.keyboard.press('Escape');
+    assert(await page.locator('#details').isHidden(), 'Escape must close details before URL delivery');
+    const hash = await page.evaluate(function () { return location.hash; });
+    await page.evaluate(function () { window.__ra9FlushHashes(); });
+    assert(await page.locator('#details').isHidden(), 'queued hash reopened the closed details');
+    assert(await page.evaluate(function () { return location.hash; }) === hash, 'close must preserve the selected permalink');
+  });
+  await ok('external hash navigation and browser Back still restore actual edge and node targets', async function () {
+    await page.evaluate(function () { location.hash = '#shades-of-color/sc_store?edge=96'; });
+    await page.waitForFunction(function () { return window.__ra9DeferredHashes.length > 0; });
+    await page.evaluate(function () { window.__ra9FlushHashes(); });
+    assert(await page.locator('#details [data-edge-evidence="96"]').count() === 1, 'external edge navigation must still work');
+    await page.goBack();
+    await page.waitForFunction(function () { return window.__ra9DeferredHashes.length > 0; });
+    await page.evaluate(function () { window.__ra9FlushHashes(); });
+    assert((await textOf(page, '#details')).includes('Meet Todd'), 'Back must restore the prior node');
+  });
+  await page.close();
+}
+
 (async function main() {
   const server = await startServer();
   const browser = await chromium.launch();
   try {
-    for (const variant of VARIANTS) await runVariant(browser, variant);
-    await runMobileRegression(browser);
+    if (!process.argv.includes('--hash-close-only')) {
+      for (const variant of VARIANTS) await runVariant(browser, variant);
+      await runMobileRegression(browser);
+    }
+    await runHashCloseRegression(browser);
   } finally {
     await browser.close();
     await new Promise(function (resolve) { server.close(resolve); });

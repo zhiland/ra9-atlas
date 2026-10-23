@@ -73,7 +73,7 @@ Spec: two findings resolved; none open. Live-source truth review was separate.
 ## Executed local verification
 
 Full `npm test` passed: 20 build, inventory regression, 94 contract, 44 unit, 4 map,
-11 stable zoom, 12 layout, 59 packet, 6 Shades packet, 21 Shades runtime and 66 browser
+11 stable zoom, 12 layout, 59 packet, 6 Shades packet, 21 Shades runtime and 68 browser
 checks. The generic validator adds the dedicated reviewed-chapter fence without
 removing earlier source, geometry or permalink checks. All three packet CLIs pass
 structural validation; the publication-required check remains blocked by design.
@@ -81,3 +81,17 @@ The new chapter has exact packet/runtime reconciliation and no invented origin.
 
 No game transition, physical touch, Safari or assistive technology is verified.
 No merge or deployment is authorized or performed.
+
+## Delayed hash event regression
+
+The first [hosted run](https://github.com/zhiland/ra9-atlas/actions/runs/39963644989)
+exposed a mobile Escape race. A queued hash event from the application's own
+navigation could reopen details after the user closed them. Closing details must
+preserve the selected permalink. The handler now consumes matching old/new URL
+pairs for its own writes; external hashes and browser Back still restore state.
+
+A deterministic browser regression holds actual hash events, closes details,
+then releases the queue. It failed before the fix and passes after it. External
+edge 96 navigation and browser Back pass in the same regression. The full local
+suite now passes all 68 browser checks. A separate Standards follow-up found no
+open issue in the fix. No source data or graph identity changed.

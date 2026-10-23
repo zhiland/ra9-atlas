@@ -20,6 +20,7 @@
 
   var state = C.createState();
   var hashApplied = false;
+  var pendingOwnHashes = [];
   var cam = { scale: 1, tx: 0, ty: 0 };
   var app = document.getElementById('app');
   var lastTrigger = null;
@@ -348,7 +349,11 @@
 
   function setHash() {
     var h = C.hashFor(state);
-    if (location.hash !== h) location.hash = h;
+    if (location.hash !== h) {
+      var oldURL = location.href;
+      location.hash = h;
+      pendingOwnHashes.push({ oldURL: oldURL, newURL: location.href });
+    }
   }
 
   /* ---------- graph ---------- */
@@ -837,7 +842,13 @@
     }
   });
 
-  window.addEventListener('hashchange', function () {
+  window.addEventListener('hashchange', function (event) {
+    // UI commits already applied these targets. A delayed self-event must not
+    // undo a later close while its permalink deliberately stays unchanged.
+    var own = pendingOwnHashes.findIndex(function (change) {
+      return change.oldURL === event.oldURL && change.newURL === event.newURL;
+    });
+    if (own !== -1) { pendingOwnHashes.splice(own, 1); return; }
     if (!state.consented) return;
     var next = C.applyHash(state, location.hash, D);
     if (!C.sameTarget(next, state)) {

@@ -85,3 +85,12 @@ bounded fence and 21 regressions. Separate source follow-up found one detail
 citation omission, fixed and regression-tested. Standards found no defect; Spec
 requested mobile appended-link coverage and corrected inventory wording, both
 closed. See [the integration report](notes/shades-runtime-integration.md).
+
+## 2026-10-23 delayed hash regression follow-up
+
+Ubuntu CI exposed details reopening after mobile Escape. Codex reproduced the
+queued self-written hash event with the real browser handler, corrected event
+consumption, and verified external hashes and browser Back. The regression failed
+before the fix and passed after it. Full npm verification passes 68 browser checks;
+a separate Standards follow-up found no open issue. See the
+[integration report](notes/shades-runtime-integration.md).

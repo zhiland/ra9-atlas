@@ -23,7 +23,11 @@ See [package review](notes/authoring-pipeline-review.md). No PR was merged or si
 The [reviewed integration](notes/shades-runtime-integration.md) appends 12 nodes
 and 5 edges in a sixth region, with 21 dedicated runtime regressions. Old graph
 objects, geometry and indices are preserved; all source/publication limits remain.
-Full local npm passes, including 21 runtime regressions and 66 browser checks.
+Full local npm passes, including 21 runtime regressions and 68 browser checks.
+Draft [PR #28](https://github.com/zhiland/ra9-atlas/pull/28) contains the integration.
+Its first hosted run exposed a delayed hash-event race after mobile Escape; a
+deterministic regression reproduced it, and the navigation handler is corrected.
+Hosted verification of the correction is pending.
 Independent Standards and Spec reviews have no open findings.
 
 ## Previous third preparation packet checkpoint
