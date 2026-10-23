@@ -70,3 +70,14 @@ The first hosted attempt rejected `runner.temp` in workflow-level `env` before
 creating a job. GitHub annotation: `Unrecognized named-value: runner` at line19.
 The browser-path setting now belongs to job-level `env`, where the runner context
 is available. This workflow defect escaped the earlier local code-review pass.
+
+## Executed local checks and preservation
+
+Final full `npm test` passed:20 build, inventory regression,94 contract,44 unit,
+4 map,10 stable zoom,12 layout,59 packet and62 browser checks. Mocked Python suites
+passed18 runner and8 preflight tests. `git diff --check` passed;270 local Markdown
+links resolved before the final status links were added.
+The pre-existing untracked `docs/notes/obsidian-update-draft.md` remains unchanged
+(SHA256 `f0a9eb2733ba7b3bcd886852dbd30fe093912f50351b1dd16a7eacae37998833`).
+Draft [PR #26](https://github.com/zhiland/ra9-atlas/pull/26) targets PR #25's branch.
+The graph has no semantic change. No PR was merged and no site was deployed.

@@ -4,6 +4,17 @@ Updated: 2026-10-23. Stage 1 source review is complete for the bounded Hostage
 pilot. Stage 2 preparation is implemented. Canonical JSON authoring and deterministic generation now preserve the existing sample.
 Full-product schema expansion, permalink output migration, actual game-chart census and hosting remain open.
 
+## Authoring package checkpoint
+
+Draft [PR #26](https://github.com/zhiland/ra9-atlas/pull/26) adds canonical JSON,
+lossless browser generation, compatibility checks, the partial source-index
+inventory and hosted CI. All local checks pass: 20 build tests, inventory regression,
+94 contract, 44 unit, 4 map, 10 stable zoom, 12 layout, 59 packet, 62 browser;
+Python runner18 and preflight8. Independent source-index review found no discrepancy.
+Both code-review axes resolved their findings. The first hosted attempt exposed a
+workflow-context error, corrected in `5efdc27`; hosted test execution is pending.
+See [package review](notes/authoring-pipeline-review.md). No PR was merged or site deployed.
+
 ## Product state
 
 The static PoC4 map contains **102 nodes and 94 active connectors in five regions**.
