@@ -384,7 +384,7 @@ async function runVariant(browser, variant) {
     await page.locator('#details').waitFor({ state: 'hidden' });
   });
 
-  await ok('The Hostage chart keeps four uncertain claims, selected-path readings, a dead end and the saved-cop carry', async function () {
+  await ok('The Hostage chart keeps five uncertain claims, the primary-image reading, a dead end and the saved-cop carry', async function () {
     await openChapter(page, 'hostage');
     assert(await page.locator('[data-chapter="hostage"]').getAttribute('aria-pressed') === 'true', 'Hostage chapter is not active');
     assert(await page.locator('.node.stage').count() === 3, 'three Hostage stage containers must stay visually distinct');

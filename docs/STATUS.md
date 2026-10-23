@@ -1,6 +1,6 @@
 # rA9 Atlas — current checkpoint
 
-Updated: 2026-10-22. Stage 1 source review is complete for the bounded Hostage
+Updated: 2026-10-23. Stage 1 source review is complete for the bounded Hostage
 pilot. Stage 2 preparation is implemented. Production schema, runtime ownership,
 permalink migration, full chart inventory and hosting remain open.
 
@@ -54,7 +54,8 @@ specific. OpenCode sees prepared public commits only and exports reviewed patche
 PRs #19–21 were rechecked and remain open/unmerged at `0ddb64d`, `26c6e19`,
 and `2576a95`. The corrected runner is in draft [PR #22](https://github.com/zhiland/ra9-atlas/pull/22)
 at `7f89e88`, based on PR #21. Runner changes are isolated from this
-source-review/cleanup package.
+source-review/cleanup package. Draft [PR #23](https://github.com/zhiland/ra9-atlas/pull/23)
+saves that package at `78d94ea`, based on #22.
 No automatic merge or site publication is authorized.
 The untracked user file `docs/notes/obsidian-update-draft.md` remains unchanged
 with SHA-256 `f0a9eb2733ba7b3bcd886852dbd30fe093912f50351b1dd16a7eacae37998833`.
@@ -67,8 +68,10 @@ emulation. Safari, physical touch, assistive technology and gameplay are unverif
 
 ## Next bounded work
 
-1. Prepare a partial A New Home packet from existing public evidence, with chart
-   transcription and guide claims separate. Keep independent review pending.
+1. Review sources for the [partial A New Home draft](notes/anewhome-packet-draft.md).
+   Its 10 chart nodes, 9 local edges and 2 supplementary clues reconcile with the
+   current ATLAS. Extraction uses inherited public evidence, not fresh source access.
+   Independent review is pending and the merge gate remains blocked.
 2. Use that second packet to decide canonical data ownership and reproducible
    generation. Preserve `?edge=N` compatibility before migrating permalinks.
 3. Reconcile the chapter/character-chart inventory before larger content batches.

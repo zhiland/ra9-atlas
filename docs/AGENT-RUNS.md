@@ -1,6 +1,6 @@
 # ra9-atlas — agent run log
 
-Updated: 2026-10-22. These are bounded runs, not continuously active agents.
+Updated: 2026-10-23. These are bounded runs, not continuously active agents.
 
 | Run | Model / effort | Task | Result |
 |---|---|---|---|
@@ -42,3 +42,10 @@ The executor applied corrections and requested follow-up checks.
 See [repository findings](notes/repository-review-2026-10-22.md) and
 [the Hostage review](notes/hostage-packet-source-review.md).
 Source approval leaves the separate publication gate blocked.
+
+## 2026-10-23 next-chapter draft checkpoint
+
+OpenCode completed the bounded A New Home extraction through the corrected
+runner from public commit `7f89e88`. Codex reviewed/corrected the one-file patch
+and validated it against ATLAS. The packet remains draft and source review is
+pending. See [the extraction note](notes/anewhome-packet-draft.md).

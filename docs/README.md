@@ -14,6 +14,7 @@ Use these documents for current work:
 | [OpenCode runner](opencode-runner.md) | Current external-agent launch procedure |
 | [Sol handoff](handoff-sol.md) | Continuation checklist; recheck its dated Git/PR snapshot |
 | [Repository review](notes/repository-review-2026-10-22.md) | Code findings, cleanup and verification |
+| [A New Home draft](notes/anewhome-packet-draft.md) | Second partial packet, inherited evidence and pending source review |
 | [Hostage source review](notes/hostage-packet-source-review.md) | Independent evidence review and corrections |
 
 ## Historical records

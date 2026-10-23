@@ -10,6 +10,8 @@ Files:
 
 - [packets/hostage.packet.json](../packets/hostage.packet.json) — the real
   *The Hostage* pilot packet.
+- [packets/a-new-home.packet.json](../packets/a-new-home.packet.json) — partial
+  next-chapter draft with inherited evidence, pending independent source review.
 - [packets/chapter-template.json](../packets/chapter-template.json) — a valid
   empty draft for another chapter.
 - [prototype/validate-chapter-packet.js](../prototype/validate-chapter-packet.js)
@@ -130,3 +132,10 @@ generic validator.
 Stage 2 remains in progress. This package is the repeatable preparation gate for
 the next chapter batch; the production schema and runtime migration decisions
 remain open.
+
+## Second packet trial — 2026-10-23
+
+The [A New Home draft](notes/anewhome-packet-draft.md) exercises a partial
+chapter, same-chapter supplementary nodes, one edge-local guide condition and
+legacy-index reconciliation. `npm run validate:packet` validates both real packets.
+It does not migrate runtime ownership or approve the new packet sources.

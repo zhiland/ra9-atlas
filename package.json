@@ -4,7 +4,7 @@
   "description": "Static, evidence-labeled map prototypes (PoC2-PoC4). No runtime dependencies.",
   "scripts": {
     "validate": "node prototype/validate-map-data.js && node prototype/validate-hostage-data.js && node prototype/validate-atlas-data.js && npm run validate:packet",
-    "validate:packet": "node prototype/validate-chapter-packet.js packets/hostage.packet.json",
+    "validate:packet": "node prototype/validate-chapter-packet.js packets/hostage.packet.json && node prototype/validate-chapter-packet.js packets/a-new-home.packet.json",
     "test:unit": "node tests/atlas-core.test.js",
     "test:contract": "node tests/atlas-data-contract.test.js",
     "test:map": "node tests/map-first.test.js",

@@ -1,0 +1,363 @@
+{
+  "kind": "ra9-atlas.chapter-preparation.packet",
+  "packetVersion": "1.0",
+  "packetStatus": "draft",
+  "packetId": "a-new-home-packet",
+  "chapter": {
+    "id": "home",
+    "title": "A New Home"
+  },
+  "atlas": {
+    "source": "prototype/atlas-data.js",
+    "chapterId": "home",
+    "exactChapterNodes": false,
+    "exactChapterEdges": false
+  },
+  "legacy": {
+    "canonical": "?edge=N",
+    "edgeIndexBase": "prototype/atlas-data.js edges[]",
+    "note": "The nine chart edges preserve their runtime ATLAS array positions 0–8 as legacyEdgeIndex. No edge is added, removed or reordered, so index-based ?edge=N links resolve to the same array positions they have today."
+  },
+  "coverage": {
+    "status": "partial",
+    "scope": "Bounded draft repackage of existing public evidence for A New Home: the ten screenshot-transcribed sequence nodes and their nine local edges from the prototype atlas, plus two guide-reported clue nodes as separate supplementary evidence. This extraction repackages the prior public project transcription only; no new research was performed.",
+    "included": [
+      "Ten chart nodes, WELCOME HOME through OPEN ALICE'S BOX, preserving runtime node IDs, labels and kinds from prototype/atlas-data.js.",
+      "Nine chart-local edges, e_home_welcome_todd through e_home_key_box, preserving runtime edge IDs, kinds and legacyEdgeIndex 0–8, including the one conditional key edge.",
+      "The existing ATLAS condition claim on the key edge, repackaged as one edge-local SINGLE condition: Alice trusts Kara enough to give the key, with no stated relationship level.",
+      "Two guide-reported clue nodes, a_gun_seen and a_window_open, included separately as supplementary externalNodes with no invented edges.",
+      "Two unknown records: the missing full chapter topology and the exact Alice-key relationship threshold."
+    ],
+    "omitted": [
+      "Other chores: the atlas's separately guide-reported first- and second-floor events and unresolved screenshot side labels.",
+      "Dialogue alternatives: Alice's conversation choices and every other dialogue branch.",
+      "Full chapter topology: the complete A New Home flowchart is not transcribed; only the ten-node screenshot-selected sequence is included.",
+      "Cross-chapter conditions and carried-state gates: the a_gun_seen → Stormy Night gun prerequisite, the a_window_open → Stormy Night window-route prerequisite, the a_box → Todd-dialogue hypothesis, and every other cross-chapter condition; no cross-chapter edge is packaged here.",
+      "Gameplay verification, game version and platform: no transition is verified in game.",
+      "The exact key relationship threshold that gates ALICE GIVES KARA A KEY; recorded as an unknown, not asserted.",
+      "Publication rights: all sources remain reference-only; no reuse license, clearance or permission is asserted.",
+      "Independent review: independent source review is pending, so the merge gate stays blocked."
+    ],
+    "sources": [
+      "steamChart",
+      "powerpyxHome",
+      "gamefaqsHome"
+    ]
+  },
+  "sources": [
+    {
+      "id": "steamChart",
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
+      "class": "chart-image",
+      "role": "Inherited chart transcription for the ten sequence nodes and nine pictured local relations. Guide-reported eligibility and clue claims have separate source records.",
+      "locator": "A New Home region of the “100% Chapter Flowcharts” guide image (6743×1300); read region by region per docs/notes/map-reference-analysis.md, heading “A New Home: OCR transcription with visible links”.",
+      "access": [
+        {
+          "date": "2026-10-22",
+          "actor": "extraction worker",
+          "outcome": "not-accessed",
+          "note": "This extraction worker performed no fresh source check. The transcription is inherited from the prior public project, transcribed 2026-10-18 and recorded in docs/notes/map-reference-analysis.md; it is repackaged here unchanged."
+        }
+      ],
+      "attribution": "Steam Community guide “Detroit: Become Human | 100% Chapter Flowcharts” by StongLory; the guide credits Reddit user /u/throwawaydeviant9 for paths/screenshots and Neoseeker’s Krystal109 (Krystalogistik) for high-resolution flowchart images.",
+      "rights": {
+        "state": "reference-only",
+        "note": "The source-license audit found no reuse license. Steam marks the item removed although embedded images remain visible. Evidence only; no image, text or chart-derived expression is cleared for reuse or publication."
+      }
+    },
+    {
+      "id": "powerpyxHome",
+      "url": "https://www.powerpyx.com/detroit-become-human-a-new-home-walkthrough-100/",
+      "class": "supplementary-guide",
+      "role": "Supports the guide-reported nightstand-gun sighting, the opened Alice's-room window, and the favorable-conversation framing of the key condition.",
+      "locator": "A New Home walkthrough sections on cleaning Todd's room and Alice's room, and the Talk with Alice choice list, as cited in docs/notes/anewhome-secondfloor-slice.md.",
+      "access": [
+        {
+          "date": "2026-10-22",
+          "actor": "extraction worker",
+          "outcome": "not-accessed",
+          "note": "This extraction worker performed no fresh source check. The cited guide claims are inherited from the prior public project review recorded in the project notes."
+        }
+      ],
+      "attribution": "PowerPyx, Detroit: Become Human — A New Home walkthrough.",
+      "rights": {
+        "state": "reference-only",
+        "note": "All rights reserved per the source-license audit. Cite independently worded facts only; no guide text, image or chart expression is cleared for reuse."
+      }
+    },
+    {
+      "id": "gamefaqsHome",
+      "url": "https://gamefaqs.gamespot.com/ps4/182637-detroit-become-human/faqs/76123/a-new-home",
+      "class": "supplementary-guide",
+      "role": "Second guide for the clue events (pill-bottle-then-drawer gun sighting variant) and the key-trust statement that names no relationship level.",
+      "locator": "A New Home FAQ by Mogg, sections on the second-floor chores (pills, bedside-table drawer) and Alice's key, as cited in docs/notes/anewhome-secondfloor-slice.md.",
+      "access": [
+        {
+          "date": "2026-10-22",
+          "actor": "extraction worker",
+          "outcome": "not-accessed",
+          "note": "This extraction worker performed no fresh source check. The cited guide claims are inherited from the prior public project review recorded in the project notes."
+        }
+      ],
+      "attribution": "GameFAQs/Mogg, Detroit: Become Human — A New Home FAQ/Walkthrough.",
+      "rights": {
+        "state": "reference-only",
+        "note": "No reuse license identified; site terms are Fandom's per the source-license audit. Cite independently worded facts only; no guide text is reproduced."
+      }
+    }
+  ],
+  "chart": {
+    "basis": "chart-transcribed",
+    "sources": [
+      "steamChart"
+    ],
+    "nodes": [
+      {
+        "id": "a_welcome",
+        "label": "WELCOME HOME",
+        "kind": "action"
+      },
+      {
+        "id": "a_todd",
+        "label": "JOIN TODD",
+        "kind": "action"
+      },
+      {
+        "id": "a_clean1",
+        "label": "CLEAN FIRST FLOOR",
+        "kind": "action"
+      },
+      {
+        "id": "a_ask",
+        "label": "ASK TO GO UPSTAIRS",
+        "kind": "action"
+      },
+      {
+        "id": "a_go",
+        "label": "GO UPSTAIRS",
+        "kind": "action"
+      },
+      {
+        "id": "a_clean2",
+        "label": "CLEAN SECOND FLOOR",
+        "kind": "action"
+      },
+      {
+        "id": "a_room",
+        "label": "CLEAN ALICE'S ROOM",
+        "kind": "action"
+      },
+      {
+        "id": "a_talk",
+        "label": "TALK WITH ALICE",
+        "kind": "action"
+      },
+      {
+        "id": "a_key",
+        "label": "ALICE GIVES KARA A KEY",
+        "kind": "flag"
+      },
+      {
+        "id": "a_box",
+        "label": "OPEN ALICE'S BOX",
+        "kind": "action"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e_home_welcome_todd",
+        "from": "a_welcome",
+        "to": "a_todd",
+        "kind": "traced",
+        "legacyEdgeIndex": 0,
+        "sources": [
+          "steamChart"
+        ]
+      },
+      {
+        "id": "e_home_todd_clean1",
+        "from": "a_todd",
+        "to": "a_clean1",
+        "kind": "traced",
+        "legacyEdgeIndex": 1,
+        "sources": [
+          "steamChart"
+        ]
+      },
+      {
+        "id": "e_home_clean1_ask",
+        "from": "a_clean1",
+        "to": "a_ask",
+        "kind": "traced",
+        "legacyEdgeIndex": 2,
+        "sources": [
+          "steamChart"
+        ]
+      },
+      {
+        "id": "e_home_ask_go",
+        "from": "a_ask",
+        "to": "a_go",
+        "kind": "traced",
+        "legacyEdgeIndex": 3,
+        "sources": [
+          "steamChart"
+        ]
+      },
+      {
+        "id": "e_home_go_clean2",
+        "from": "a_go",
+        "to": "a_clean2",
+        "kind": "traced",
+        "legacyEdgeIndex": 4,
+        "sources": [
+          "steamChart"
+        ]
+      },
+      {
+        "id": "e_home_clean2_room",
+        "from": "a_clean2",
+        "to": "a_room",
+        "kind": "traced",
+        "legacyEdgeIndex": 5,
+        "sources": [
+          "steamChart"
+        ]
+      },
+      {
+        "id": "e_home_room_talk",
+        "from": "a_room",
+        "to": "a_talk",
+        "kind": "traced",
+        "legacyEdgeIndex": 6,
+        "sources": [
+          "steamChart"
+        ]
+      },
+      {
+        "id": "e_home_talk_key",
+        "from": "a_talk",
+        "to": "a_key",
+        "kind": "conditional",
+        "legacyEdgeIndex": 7,
+        "note": "Repackaged from the atlas conditional edge: the screenshot shows the link; GameFAQs says Alice trusts Kara enough to give the key but does not name a relationship level; PowerPyx lists favorable conversation choices without a threshold.",
+        "sources": [
+          "steamChart"
+        ]
+      },
+      {
+        "id": "e_home_key_box",
+        "from": "a_key",
+        "to": "a_box",
+        "kind": "traced",
+        "legacyEdgeIndex": 8,
+        "sources": [
+          "steamChart"
+        ]
+      }
+    ]
+  },
+  "supplementary": [
+    {
+      "id": "nightstand-gun-clue",
+      "basis": "guide-reported",
+      "summary": "Inherited guide-reported nightstand gun sighting, not taking or possessing the gun. PowerPyx describes checking the nightstand; GameFAQs describes pills before the drawer sighting. No local order, eligibility or cross-chapter edge is added.",
+      "sources": [
+        "powerpyxHome",
+        "gamefaqsHome"
+      ],
+      "externalNodes": [
+        {
+          "id": "a_gun_seen",
+          "chapter": "home",
+          "label": "SEE GUN IN TODD’S NIGHTSTAND",
+          "kind": "flag"
+        }
+      ],
+      "edges": []
+    },
+    {
+      "id": "opened-window-clue",
+      "basis": "guide-reported",
+      "summary": "Inherited PowerPyx-reported opening of Alice room window. This records the opening only, not escape success or a game-verified later consequence. No edge is added.",
+      "sources": [
+        "powerpyxHome"
+      ],
+      "externalNodes": [
+        {
+          "id": "a_window_open",
+          "chapter": "home",
+          "label": "OPEN ALICE’S ROOM WINDOW",
+          "kind": "action"
+        }
+      ],
+      "edges": []
+    }
+  ],
+  "conditions": [
+    {
+      "id": "cond_key_relationship",
+      "appliesTo": "e_home_talk_key",
+      "operator": "SINGLE",
+      "summary": "One reported condition on the key step, repackaged unchanged from the ATLAS condition of the same id: GameFAQs says Alice trusts Kara enough to give the key but does not name a relationship level; PowerPyx lists favorable conversation choices without a threshold. Whether this is a game-checked condition and what values trigger it remain unknown.",
+      "requirements": [
+        "Alice trusts Kara enough to give the key (exact relationship level not stated)."
+      ],
+      "sources": [
+        "gamefaqsHome",
+        "powerpyxHome"
+      ]
+    }
+  ],
+  "unknowns": [
+    {
+      "id": "u_home_full_topology",
+      "status": "unknown",
+      "explanation": "The full chapter chart is not transcribed. This draft packages only the existing public ten-node sequence and nine local edges. Other chore branches and unresolved screenshot side links remain omitted. No fresh image inspection or complete topology claim is made.",
+      "nodes": [
+        "a_welcome",
+        "a_clean1",
+        "a_ask",
+        "a_go",
+        "a_clean2",
+        "a_room",
+        "a_talk"
+      ],
+      "edges": [],
+      "sources": [
+        "steamChart"
+      ]
+    },
+    {
+      "id": "u_key_threshold",
+      "status": "unknown",
+      "explanation": "The exact relationship (or trust) level that makes Alice give Kara the key is unknown. The inherited review found that GameFAQs says Alice trusts Kara enough to give the key without naming a level, and PowerPyx lists favorable conversation choices without a threshold; an earlier “Neutral-or-higher” attribution was retracted in the project notes. The condition record on e_home_talk_key states the reported requirement only; the threshold itself is not asserted.",
+      "nodes": [
+        "a_key"
+      ],
+      "edges": [
+        "e_home_talk_key"
+      ],
+      "sources": [
+        "gamefaqsHome",
+        "powerpyxHome",
+        "steamChart"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "review": {
+    "independent": {
+      "required": true,
+      "state": "pending",
+      "reviewer": null,
+      "date": null,
+      "scope": "Full independent source review of the inherited A New Home transcription, the supplementary guide-reported clue nodes, the packaged key condition and the omissions, separate from automated structural validation.",
+      "notes": "No independent review has started on this repackaging. Every recorded source access for this packet is 'not-accessed' by the extraction worker: all evidence is inherited from the prior public project transcription and review, so nothing here is independent verification of any source."
+    },
+    "mergeGate": {
+      "state": "blocked",
+      "reason": "Independent source review is pending, every packaged source claim is inherited rather than freshly accessed, and no reuse rights are cleared. Structural validation does not establish source truth, independence, rights clearance, or gameplay verification."
+    }
+  }
+}
