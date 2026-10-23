@@ -68,8 +68,9 @@ staging finding). No unresolved blocker is known in the reviewed package.
 
 The first hosted attempt rejected `runner.temp` in workflow-level `env` before
 creating a job. GitHub annotation: `Unrecognized named-value: runner` at line19.
-The browser-path setting now belongs to job-level `env`, where the runner context
-is available. This workflow defect escaped the earlier local code-review pass.
+A job-level `env` retry was rejected for the same reason. The setting now uses
+`$RUNNER_TEMP` in the first shell step, persisted through `GITHUB_ENV`; it does
+not evaluate a runner expression before a runner exists. This workflow defect escaped the earlier local code-review pass.
 
 ## Executed local checks and preservation
 

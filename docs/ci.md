@@ -24,8 +24,8 @@ with the version tag documented beside the pin:
 - `actions/checkout@v7.0.1` → `3d3c42e5aac5ba805825da76410c181273ba90b1`
 - `actions/setup-node@v7.1.0` → `949feb2413d6458794dcd2491c4babbbce0c15c1`
 
-`PLAYWRIGHT_BROWSERS_PATH` is set to `${{ runner.temp }}/playwright` at the
-job level, so Chromium is downloaded to scratch space instead of a shared
+`PLAYWRIGHT_BROWSERS_PATH` is set to `$RUNNER_TEMP/playwright` by the first shell step through
+`GITHUB_ENV`, so Chromium is downloaded to scratch space instead of a shared
 tool cache and is discarded with the runner. `npm ci` installs the lockfile state. Action setup and browser/system dependency installation also use the network.
 
 ## Steps
