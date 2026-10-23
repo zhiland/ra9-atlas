@@ -74,3 +74,12 @@ These gaps prevent `reconciled-source-indices` from implying a complete characte
 Only index metadata, short titles, source URLs, attributions and original reconciliation notes were added. No screenshots, transcript, walkthrough prose, node topology or raw guide corpus was saved. The [license boundary](../license-boundary.md) and [source audit](source-license-audit.md) still apply. The repository MIT license does not grant rights in third-party metadata selection, expression or underlying game material.
 
 A local structural check parsed the JSON and confirmed 32 contiguous chapter orders, 39 heading entries, unique stable IDs, resolvable source references and exactly five runtime associations. It also confirmed one checked-against-chart entry, four partial entries and 34 not-added entries. This check proves internal consistency only. It does not verify game inventory or source truth.
+
+## Bounded character-attribution follow-up — 2026-10-23
+
+The initial index-only reconciliation above retained 23 null character values.
+The later [Shades of Color source review](shades-of-color-source-review.md) directly
+inspected its chart and chapter guide. Markus is now attributed using an explicit
+additional source record and locator, leaving 22 null entries in current JSON.
+The twelve-box preparation packet remains separate from runtime: its inventory
+coverage stays `not-added`. The original source-index counts 32/39 do not change.

@@ -35,6 +35,8 @@ Chart coverage, guide support, gameplay verification and interface tests are sep
 No gameplay transition is verified. Uncertain links stay labeled and dashed.
 The [Hostage review](docs/notes/hostage-packet-source-review.md) and
 [A New Home review](docs/notes/anewhome-packet-source-review.md) record their bounded findings.
+The [Shades of Color preparation](docs/notes/shades-of-color-source-review.md) is source-reviewed
+but remains outside the displayed graph. Its detached icon origins stay unknown.
 Source-derived publication rights remain unresolved.
 
 See [current status](docs/STATUS.md), [coverage](docs/notes/poc4-coverage.md),

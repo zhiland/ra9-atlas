@@ -6,6 +6,14 @@ checkpoint, not a live status feed.
 
 ## Current continuation update — 2026-10-23
 
+The third [preparation packet](notes/shades-of-color-source-review.md) covers
+Shades of Color: 12 boxes, 5 continuous connectors, 6 detached segments left unknown.
+Independent source review approves the partial interpretation; publication is blocked.
+The runtime graph is unchanged. The current inventory has 22 unattributed entries
+following a separately sourced Markus attribution. Use STATUS for final Git/test results.
+
+## Previous authoring update — 2026-10-23
+
 The authoring/CI/inventory package moves graph editing to `data/atlas.source.json`,
 with `data/legacy-index.json` preserving published identities and generated browser JS.
 Read [authoring workflow](authoring-data.md), [CI](ci.md) and the

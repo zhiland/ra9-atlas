@@ -3,13 +3,13 @@
   "version": 1,
   "reconciliation": {
     "state": "partial",
-    "scope": "Reconcile metadata in two live source indices with five existing runtime regions. Chapter order follows PowerPyx numbering. Chart entries preserve Steam headings and are not a certified in-game chart census.",
+    "scope": "Reconcile metadata in two live source indices with five existing runtime regions. Chapter order follows PowerPyx numbering. Chart entries preserve Steam headings and are not a certified in-game chart census. A bounded Shades of Color guide/chart review now supplies its Markus attribution; other chapter bodies remain outside this inventory check.",
     "limitations": [
       "32 numbered chapters include Opening, which has no separate Steam chart heading.",
       "39 Steam chart/route headings are reconciled to 31 non-Opening chapters. Headings do not establish complete in-game chart cardinality.",
-      "23 early chart entries have no character attribution in the inspected index headings. Their character value is null.",
+      "22 early chart entries retain null character values. Shades of Color now has a separate, source-reviewed Markus attribution beyond the index headings.",
       "On the Run has one unsplit index heading. Its possible character subdivisions remain unresolved.",
-      "No chart images, guide chapter corpora, in-game transitions or platform/build differences were inspected for this inventory.",
+      "The original reconciliation used index metadata only. The bounded Shades of Color follow-up inspects its chart images and chapter guide for character attribution. Other chapter images, guide corpora, gameplay and platform/build differences remain uninspected in this inventory.",
       "Existing Hostage checked-against-chart status applies only to its documented visible-chart scope. Other existing runtime regions remain partial.",
       "Source-derived metadata and title attribution do not grant publication rights under the repository MIT license."
     ]
@@ -41,6 +41,15 @@
       "accessOutcome": "Local runtime coverage and existing preparation packets read. These provide runtime IDs and existing scoped coverage labels only.",
       "attribution": "ra9-atlas project. Underlying third-party source attributions remain in the cited files.",
       "independenceNote": "Internal records reuse earlier source evidence. They are not independent confirmation of index or game facts."
+    },
+    {
+      "id": "powerpyx-shades-guide",
+      "url": "https://www.powerpyx.com/detroit-become-human-shades-of-color-walkthrough-100/",
+      "locator": "Checkpoint: Walking in the Park; vendor, protesters and Markus Took the Bus bullets.",
+      "accessDate": "2026-10-23",
+      "accessOutcome": "Live page inspected by extraction parent and separate source reviewer. Character attribution only enters this inventory; gameplay topology does not.",
+      "attribution": "PowerPyx, Shades of Color walkthrough dated 2018-05-24.",
+      "independenceNote": "Supplementary guide. Research independence from the Steam chart is unknown; the chart also names Markus."
     }
   ],
   "chapters": [
@@ -111,13 +120,14 @@
       "charts": [
         {
           "id": "shades-of-color-chart",
-          "character": null,
+          "character": "markus",
           "label": "Shades of Color",
           "kind": "source-index-entry",
           "route": null,
           "sources": [
             "steam-chart-index",
-            "powerpyx-chapter-index"
+            "powerpyx-chapter-index",
+            "powerpyx-shades-guide"
           ],
           "locator": [
             {
@@ -129,6 +139,11 @@
               "source": "powerpyx-chapter-index",
               "heading": "Shades of Color",
               "location": "Chapters item 3"
+            },
+            {
+              "source": "powerpyx-shades-guide",
+              "heading": "Checkpoint: Walking in the Park",
+              "location": "Vendor, protesters and Markus Took the Bus bullets identify Markus. See source-reviewed shades-of-color.packet.json; runtime coverage stays not-added."
             }
           ],
           "coverage": "not-added",
@@ -137,7 +152,8 @@
       ],
       "sources": [
         "powerpyx-chapter-index",
-        "steam-chart-index"
+        "steam-chart-index",
+        "powerpyx-shades-guide"
       ],
       "notes": [
         "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
@@ -1542,7 +1558,7 @@
     },
     {
       "id": "unattributed-early-chart-characters",
-      "explanation": "The 23 early entries with character=null lack character attribution in the inspected index headings. Do not infer them from story knowledge.",
+      "explanation": "The 22 early entries with character=null lack character attribution in the inspected index headings. Do not infer them from story knowledge. Shades of Color is separately attributed to Markus by the bounded chapter-source review.",
       "sources": [
         "steam-chart-index",
         "powerpyx-chapter-index"

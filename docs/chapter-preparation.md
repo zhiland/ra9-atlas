@@ -1,10 +1,10 @@
 # Chapter preparation packet
 
 Status: implemented 2026-10-21 for the bounded Stage 2 pilot. This is a
-**preparation gate**, not the finalized production data schema and not a runtime
-source-of-truth migration. The runtime graph remains
-[prototype/atlas-data.js](../prototype/atlas-data.js) and file-open behaviour is
-unchanged.
+**preparation gate**. Canonical graph authoring now uses
+[data/atlas.source.json](../data/atlas.source.json) under [ADR 0002](adr/0002-canonical-atlas-source.md).
+[prototype/atlas-data.js](../prototype/atlas-data.js) is generated. Packets remain
+separate evidence documents and do not automatically change the graph.
 
 Files:
 
@@ -12,6 +12,8 @@ Files:
   *The Hostage* pilot packet.
 - [packets/a-new-home.packet.json](../packets/a-new-home.packet.json) — partial
   reviewed selection corrected against the chart; publication gate blocked.
+- [packets/shades-of-color.packet.json](../packets/shades-of-color.packet.json) —
+  bounded next-chapter preparation; detached icon origins remain unknown.
 - [packets/chapter-template.json](../packets/chapter-template.json) — a valid
   empty draft for another chapter.
 - [prototype/validate-chapter-packet.js](../prototype/validate-chapter-packet.js)
@@ -124,14 +126,14 @@ generic validator.
 - It does not verify any transition in game; game version and platform remain
   unknown.
 - It does not finalize the full-product data contract, choose a database, migrate
-  runtime ownership or change `?edge=N` to a new canonical permalink form.
+  runtime ownership by itself or change `?edge=N` to a new canonical permalink form.
 - The packet workflow itself does not change graph content, IDs, edge order,
   geometry, UI, or screenshots. The separate selected-path review has narrowed
   the Friendly candidate at index 89 and left five Hostage edge claims uncertain after the independent correction.
 
-Stage 2 remains in progress. This package is the repeatable preparation gate for
-the next chapter batch; the production schema and runtime migration decisions
-remain open.
+Stage 2 remains in progress. This package provides a repeatable preparation gate.
+Canonical JSON ownership and generation are now decided separately; extending
+the full-product schema and canonical permalink output remains open.
 
 ## Second packet trial — 2026-10-23
 
@@ -151,4 +153,14 @@ old indices/replacements in `legacy.note`. [ADR 0001](adr/0001-withdrawn-edge-pe
 explains why their old IDs and endpoints remain for permalink notices.
 The packet is `reviewed` with source approval; its publication gate is blocked.
 This repeatable correction exposed why validation against runtime cannot prove
-source accuracy. The production source format and regeneration path remain open.
+source accuracy. The later [authoring decision](authoring-data.md) establishes canonical JSON
+and generation without changing this source-review boundary.
+
+## Third packet — Shades of Color
+
+The [source-reviewed packet](notes/shades-of-color-source-review.md) contains
+12 chart boxes and 5 continuous box-to-box edges. Six icon-origin segments remain
+unknown instead of becoming invented edges. The packet has no ATLAS reconciliation
+because the chapter is absent from the runtime graph. Source approval retains a
+blocked publication gate. `npm run validate:packet` includes all three packets;
+`npm run test:shades` pins the source-reviewed bounds and review-required exit 2.

@@ -18,7 +18,7 @@ const mutate = (change, expected) => {
 assert.deepEqual(validateInventory(inventory, atlas), []);
 assert.equal(inventory.chapters.length, 32);
 assert.equal(allCharts(inventory).length, 39);
-assert.equal(allCharts(inventory).filter(chart => chart.character === null).length, 23);
+assert.equal(allCharts(inventory).filter(chart => chart.character === null).length, 22);
 assert.deepEqual(allCharts(inventory).flatMap(chart => chart.runtimeChapterIds).sort(), ['home', 'hostage', 'kara', 'public-enemy', 'stormy']);
 assert.equal(inventory.reconciliation.state, 'partial');
 assert.deepEqual(inventory.chapters.find(chapter => chapter.id === 'opening').charts, []);
@@ -59,4 +59,11 @@ assert(validateInventory(inventory, null).length > 0);
 const cli = spawnSync(process.execPath, [path.join(root, 'tools/data/validate-inventory.js')], { cwd: root, encoding: 'utf8' });
 assert.equal(cli.status, 0, cli.stderr);
 assert.match(cli.stdout, /PASS/);
+
+const shades = inventory.chapters.find(chapter => chapter.id === 'shades-of-color').charts[0];
+assert.equal(shades.character, 'markus');
+assert.ok(shades.sources.includes('powerpyx-shades-guide'));
+assert.equal(shades.coverage, 'not-added');
+assert.deepEqual(shades.runtimeChapterIds, []);
+
 console.log('PASS: chapter inventory regression checks');

@@ -22,6 +22,7 @@ Use these documents for current work:
 | [A New Home source review](notes/anewhome-packet-source-review.md) | Corrected partial topology and independent follow-up |
 | [A New Home implementation](notes/anewhome-correction-implementation.md) | Legacy withdrawal behavior and code-review findings |
 | [Withdrawal decision](adr/0001-withdrawn-edge-permalinks.md) | Preserve old claims without drawing false connectors |
+| [Shades of Color source review](notes/shades-of-color-source-review.md) | Third preparation packet; icon-origin gaps and runtime separation |
 | [Hostage source review](notes/hostage-packet-source-review.md) | Independent evidence review and corrections |
 
 ## Historical records

@@ -18,7 +18,7 @@ This roadmap replaces the earlier sequence of isolated PoC expansions. The Stage
 
 Issue tracking: Stage 1 uses [#1](https://github.com/zhiland/ra9-atlas/issues/1) and [#4](https://github.com/zhiland/ra9-atlas/issues/4); Stage 2 uses [#2](https://github.com/zhiland/ra9-atlas/issues/2) and [#10](https://github.com/zhiland/ra9-atlas/issues/10); Stage 3 uses [#1](https://github.com/zhiland/ra9-atlas/issues/1) and [#3](https://github.com/zhiland/ra9-atlas/issues/3); Stage 4 uses [#11](https://github.com/zhiland/ra9-atlas/issues/11) and [#5](https://github.com/zhiland/ra9-atlas/issues/5); Stage 5 uses [#8](https://github.com/zhiland/ra9-atlas/issues/8), [#6](https://github.com/zhiland/ra9-atlas/issues/6), and [#10](https://github.com/zhiland/ra9-atlas/issues/10). These issues track work; the stage gates define when it is ready to advance.
 
-The [partial inventory](notes/chapter-inventory-reconciliation.md) reconciles 32 numbered chapters and 39 source headings, with 23 unattributed early entries and unresolved game-chart boundaries. [CI](ci.md) supplies automated checks; it does not resolve source rights or select hosting.
+The [partial inventory](notes/chapter-inventory-reconciliation.md) reconciles 32 numbered chapters and 39 source headings, with 22 unattributed early entries after the bounded Shades of Color attribution and unresolved game-chart boundaries. [CI](ci.md) supplies automated checks; it does not resolve source rights or select hosting.
 
 ## Execution handoff
 

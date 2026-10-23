@@ -18,6 +18,18 @@ verified on Ubuntu. [CI run](https://github.com/zhiland/ra9-atlas/actions/runs/3
 passed all Node/Chromium and Python steps at implementation commit `593b589`.
 See [package review](notes/authoring-pipeline-review.md). No PR was merged or site deployed.
 
+## Third preparation packet
+
+The [Shades of Color source review](notes/shades-of-color-source-review.md) approves
+12 visible boxes and 5 continuous box-to-box connectors for a partial preparation
+packet. Six segments from five detached icons retain unknown source-box semantics.
+No side-event ordering or later Painter edge is invented. Runtime coverage stays
+`not-added`; the browser graph remains 102 nodes and 96 records in five regions.
+The inventory now identifies Markus through the separately reviewed chapter guide,
+leaving 22 null character entries. Six new packet regressions and the full npm
+suite pass. Independent Standards and Spec reviews have no open implementation
+finding; a shared source-scope wording clarification is fixed. All source-derived publication gates remain blocked.
+
 ## Product state
 
 The static PoC4 map contains **102 nodes and 94 active connectors in five regions**.
@@ -102,7 +114,7 @@ emulation. Safari, physical touch, assistive technology and gameplay are unverif
 
 1. Use the canonical authoring bundle and compatibility ledger for future graph edits.
    Both reviewed packets retain blocked publication gates; generation adds no approval.
-2. Start the next bounded source packet from the [partial inventory](notes/chapter-inventory-reconciliation.md).
+2. Continue bounded source packets from the [partial inventory](notes/chapter-inventory-reconciliation.md).
    It reconciles 32 chapter rows and 39 source headings, not actual complete game-chart boundaries.
    Resolve character and subdivision gaps before claiming those charts complete.
 3. Preserve withdrawal history and `?edge=N` behavior when extending the sample-specific validator.
