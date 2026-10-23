@@ -82,3 +82,13 @@ The pre-existing untracked `docs/notes/obsidian-update-draft.md` remains unchang
 (SHA256 `f0a9eb2733ba7b3bcd886852dbd30fe093912f50351b1dd16a7eacae37998833`).
 Draft [PR #26](https://github.com/zhiland/ra9-atlas/pull/26) targets PR #25's branch.
 The graph has no semantic change. No PR was merged and no site was deployed.
+
+## Hosted font regression
+
+The admitted Ubuntu run reached Node tests and exposed a real renderer defect:
+`inv_father` wraps to two lines with the Linux fallback font, while a 36px action
+button still reserves vertical padding. Stable-zoom bounds checks failed; they
+were not relaxed. Short Hostage action buttons now use zero vertical padding and
+center the original label with flex layout. Graph coordinates, boxes, labels and
+font size are unchanged. A new wide-monospace regression forces the two-line case;
+all11 stable-zoom checks pass locally. Hosted execution must confirm the fix.

@@ -478,6 +478,22 @@ async function runRealDataset(browser) {
     });
   });
 
+  await ok('short Hostage actions contain two-line labels with a wide fallback font', async function () {
+    const style = await page.addStyleTag({ content: '.node.hostage.action { font-family: monospace; }' });
+    try {
+      await waitFrames(page);
+      const result = await page.evaluate(function () {
+        return Array.from(document.querySelectorAll('.node.hostage.action')).map(function (node) {
+          const box = node.getBoundingClientRect();
+          const label = node.querySelector('.node-label').getBoundingClientRect();
+          return { id: node.dataset.node, inside: label.top >= box.top - .1 && label.bottom <= box.bottom + .1 };
+        });
+      });
+      assert(result.length > 0, 'fixture must contain short Hostage actions');
+      result.forEach(function (node) { assert(node.inside, node.id + ': fallback label leaves node'); });
+    } finally { await style.evaluate(function (el) { el.remove(); }); }
+  });
+
   await ok('pan changes translation only and fit restores the whole stable chart', async function () {
     await resetAtlas(page);
     const before = await snapshot(page);

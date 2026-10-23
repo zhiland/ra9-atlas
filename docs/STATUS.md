@@ -9,10 +9,12 @@ Full-product schema expansion, permalink output migration, actual game-chart cen
 Draft [PR #26](https://github.com/zhiland/ra9-atlas/pull/26) adds canonical JSON,
 lossless browser generation, compatibility checks, the partial source-index
 inventory and hosted CI. All local checks pass: 20 build tests, inventory regression,
-94 contract, 44 unit, 4 map, 10 stable zoom, 12 layout, 59 packet, 62 browser;
+94 contract, 44 unit, 4 map, 11 stable zoom (including fallback-font regression), 12 layout, 59 packet, 62 browser;
 Python runner18 and preflight8. Independent source-index review found no discrepancy.
 Both code-review axes resolved their findings. The first hosted attempt exposed a
-workflow-context error, corrected in `5efdc27`; hosted test execution is pending.
+workflow-context error, corrected in `3bb6aab`. Its Node run then exposed a
+fallback-font label overflow; the renderer fix and an additional regression are
+under hosted verification.
 See [package review](notes/authoring-pipeline-review.md). No PR was merged or site deployed.
 
 ## Product state
