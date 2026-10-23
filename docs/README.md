@@ -9,7 +9,8 @@ Use these documents for current work:
 | [Roadmap](ROADMAP.md) | Stage order and completion gates |
 | [Authoring package review](notes/authoring-pipeline-review.md) | Separate code/source review and execution boundary |
 | [Canonical authoring](authoring-data.md) | Versioned JSON, identity ledger and deterministic generation |
-| [Next packet: The Painter](notes/painter-packet-plan.md) | Source inspection, single-file extraction and acceptance gates |
+| [Painter source review](notes/painter-packet-source-review.md) | Fourth packet: bounded opening, independent source check and gates |
+| [Painter acceptance plan](notes/painter-packet-plan.md) | Completed preparation plan, historical baseline |
 | [Chapter inventory](notes/chapter-inventory-reconciliation.md) | Partial source-index reconciliation and explicit gaps |
 | [CI](ci.md) | Hosted checks and verification boundaries |
 | [Data contract](data-contract.md) | Bounded runtime sample contract |

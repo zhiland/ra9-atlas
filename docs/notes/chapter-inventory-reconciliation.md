@@ -75,11 +75,14 @@ Only index metadata, short titles, source URLs, attributions and original reconc
 
 A local structural check parsed the JSON and confirmed 32 contiguous chapter orders, 39 heading entries, unique stable IDs, resolvable source references and exactly five runtime associations. It also confirmed one checked-against-chart entry, four partial entries and 34 not-added entries. This check proves internal consistency only. It does not verify game inventory or source truth.
 
-## Bounded character-attribution follow-up — 2026-10-23
+## Bounded character-attribution follow-ups — 2026-10-23
 
-The initial index-only reconciliation above retained 23 null character values.
-The later [Shades of Color source review](shades-of-color-source-review.md) directly
-inspected its chart and chapter guide. Markus is now attributed using an explicit
-additional source record and locator, leaving 22 null entries in current JSON.
-The twelve-box preparation packet remains separate from runtime: its inventory
-coverage stays `not-added`. The original source-index counts 32/39 do not change.
+The initial index-only checkpoint retained 23 null character values. Separate
+[Shades](shades-of-color-source-review.md) and [Painter](painter-packet-source-review.md)
+source reviews inspect their charts and chapter guides. Explicit guide source
+records and locators support Markus attribution, leaving 21 null entries now.
+Shades has a partial runtime region. The Painter has a partial preparation packet
+and no runtime region, so its inventory coverage stays `not-added`.
+The current six runtime associations contain one checked-against-chart and five
+partial entries. The 32 chapter rows and 39 source headings remain unchanged.
+The earlier counts in this report describe the initial checkpoint.

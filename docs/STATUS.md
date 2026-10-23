@@ -4,6 +4,16 @@ Updated: 2026-10-23. Stage 1 source review is complete for the bounded Hostage
 pilot. Stage 2 preparation is implemented. Canonical JSON authoring and deterministic generation now preserve the existing sample.
 Full-product schema expansion, permalink output migration, actual game-chart census and hosting remain open.
 
+## Painter preparation checkpoint
+
+The [reviewed opening packet](notes/painter-packet-source-review.md) contains nine
+boxes, five continuous traces and three detached segments with unknown origins.
+It is a fourth source-approved partial packet, with publication blocked. No
+runtime region, graph object, geometry, generated data or legacy index changes.
+Separate guide evidence supplies Markus attribution, leaving 21 null character
+entries in the inventory. Six dedicated packet regressions are added. Final
+local/hosted verification is recorded in the source-review report.
+
 ## Authoring package checkpoint
 
 Draft [PR #26](https://github.com/zhiland/ra9-atlas/pull/26) adds canonical JSON,
@@ -131,8 +141,9 @@ emulation. Safari, physical touch, assistive technology and gameplay are unverif
 ## Next bounded work
 
 1. Use the canonical authoring bundle and compatibility ledger for future graph edits.
-   All three reviewed packets retain blocked publication gates; generation adds no approval.
-2. Prepare [The Painter packet](notes/painter-packet-plan.md) from the [partial inventory](notes/chapter-inventory-reconciliation.md).
+   All four reviewed packets retain blocked publication gates; generation adds no approval.
+2. Plan a separate integration of the reviewed Painter opening, or prepare the
+   next bounded slice from the [partial inventory](notes/chapter-inventory-reconciliation.md).
    It reconciles 32 chapter rows and 39 source headings, not actual complete game-chart boundaries.
    Resolve character and subdivision gaps before claiming those charts complete.
 3. Preserve withdrawal history and `?edge=N` behavior when extending the sample-specific validator.

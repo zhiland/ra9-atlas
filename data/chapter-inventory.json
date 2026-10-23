@@ -3,13 +3,13 @@
   "version": 1,
   "reconciliation": {
     "state": "partial",
-    "scope": "Reconcile metadata in two live source indices with six existing runtime regions. Chapter order follows PowerPyx numbering. Chart entries preserve Steam headings and are not a certified in-game chart census. A bounded Shades of Color guide/chart review now supplies its Markus attribution; other chapter bodies remain outside this inventory check.",
+    "scope": "Reconcile metadata in two live source indices with six existing runtime regions. Chapter order follows PowerPyx numbering. Chart entries preserve Steam headings and are not a certified in-game chart census. Bounded Shades of Color and The Painter guide/chart reviews supply Markus attributions. Other chapter bodies remain outside this inventory check.",
     "limitations": [
       "32 numbered chapters include Opening, which has no separate Steam chart heading.",
       "39 Steam chart/route headings are reconciled to 31 non-Opening chapters. Headings do not establish complete in-game chart cardinality.",
-      "22 early chart entries retain null character values. Shades of Color now has a separate, source-reviewed Markus attribution beyond the index headings.",
+      "21 early chart entries retain null character values. Shades of Color and The Painter now have separate, source-reviewed Markus attributions beyond the index headings.",
       "On the Run has one unsplit index heading. Its possible character subdivisions remain unresolved.",
-      "The original reconciliation used index metadata only. The bounded Shades of Color follow-up inspects its chart images and chapter guide for character attribution. Other chapter images, guide corpora, gameplay and platform/build differences remain uninspected in this inventory.",
+      "The original reconciliation used index metadata only. The bounded Shades of Color and The Painter follow-ups inspect their chart images and chapter guides for character attribution. Other chapter images, guide corpora, gameplay and platform/build differences remain uninspected in this inventory.",
       "Existing Hostage checked-against-chart status applies only to its documented visible-chart scope. Other existing runtime regions, including the integrated Shades of Color slice, remain partial.",
       "Source-derived metadata and title attribution do not grant publication rights under the repository MIT license."
     ]
@@ -50,6 +50,15 @@
       "accessOutcome": "Live page inspected by extraction parent and separate source reviewer. Character attribution only enters this inventory; gameplay topology does not.",
       "attribution": "PowerPyx, Shades of Color walkthrough dated 2018-05-24.",
       "independenceNote": "Supplementary guide. Research independence from the Steam chart is unknown; the chart also names Markus."
+    },
+    {
+      "id": "powerpyx-painter-guide",
+      "url": "https://www.powerpyx.com/detroit-become-human-the-painter-walkthrough-100/",
+      "locator": "Checkpoint: Arriving Home, Carl Notices Markus clothes paragraph.",
+      "accessDate": "2026-10-23",
+      "accessOutcome": "Live page inspected by extraction parent and separate source reviewer. Character attribution only enters this inventory, not gameplay topology.",
+      "attribution": "PowerPyx, The Painter walkthrough dated 2018-05-24.",
+      "independenceNote": "Supplementary guide. Independence from the Steam chart is unknown."
     }
   ],
   "chapters": [
@@ -216,13 +225,14 @@
       "charts": [
         {
           "id": "the-painter-chart",
-          "character": null,
+          "character": "markus",
           "label": "The Painter",
           "kind": "source-index-entry",
           "route": null,
           "sources": [
             "steam-chart-index",
-            "powerpyx-chapter-index"
+            "powerpyx-chapter-index",
+            "powerpyx-painter-guide"
           ],
           "locator": [
             {
@@ -234,6 +244,11 @@
               "source": "powerpyx-chapter-index",
               "heading": "The Painter",
               "location": "Chapters item 5"
+            },
+            {
+              "source": "powerpyx-painter-guide",
+              "heading": "Checkpoint: Arriving Home",
+              "location": "The clothes paragraph names Markus. Separate source review approves the partial preparation packet; no runtime region is added."
             }
           ],
           "coverage": "not-added",
@@ -242,11 +257,12 @@
       ],
       "sources": [
         "powerpyx-chapter-index",
-        "steam-chart-index"
+        "steam-chart-index",
+        "powerpyx-painter-guide"
       ],
       "notes": [
         "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
-        "Character is not named by these index headings. Character attribution remains unresolved."
+        "Index headings do not name the character. The separately inspected chapter guide supports Markus attribution. Runtime coverage remains not-added."
       ]
     },
     {

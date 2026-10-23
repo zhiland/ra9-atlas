@@ -94,3 +94,14 @@ consumption, and verified external hashes and browser Back. The regression faile
 before the fix and passed after it. Full npm verification passes 68 browser checks;
 a separate Standards follow-up found no open issue. See the
 [integration report](notes/shades-runtime-integration.md).
+
+## 2026-10-23 Painter opening preparation
+
+A separate source reviewer derived nine boxes, five traces and three detached
+segments before the packet existed. The controlled OpenCode worker used public
+`419835a`, passed 49 checks and stopped its server. Its only patch was the packet.
+Codex inspected/applied it after `git apply --check` and supplied missing required
+review-scope metadata. The source reviewer then approved the bounded packet with
+no corrections. Six packet regressions and a sourced inventory attribution are
+added. Runtime and publication gates remain unchanged. See the
+[report](notes/painter-packet-source-review.md) for code-review and test results.

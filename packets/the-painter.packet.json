@@ -1,0 +1,278 @@
+{
+  "kind": "ra9-atlas.chapter-preparation.packet",
+  "packetVersion": "1.0",
+  "packetStatus": "reviewed",
+  "packetId": "the-painter-packet",
+  "chapter": {
+    "id": "the-painter",
+    "title": "The Painter"
+  },
+  "coverage": {
+    "status": "partial",
+    "scope": "Source-reviewed partial chart transcription: all nine visible boxes of the opening through the next checkpoint, five continuous box-to-box connectors and four unknown records. Three detached icon-origin segments have no declared source box; their semantics remain unresolved.",
+    "included": [
+      "Nine visible chart boxes inventoried as nodes: two stages/checkpoints (ARRIVING HOME, FIND SOMETHING TO DO) and seven actions.",
+      "Exactly five continuous traced box-to-box edges: arrive→package, package→wake, wake→breakfast, wake→clothes and breakfast→find.",
+      "The three detached icon-origin segments are recorded only as unknowns: they start at a detached icon near the package box rather than the declared boxes and are NOT invented as edges.",
+      "Four unknown records: detached-segment origins, absence of a side-event ordering beyond the five traced edges, the clothes eligibility/cross-chapter trigger and the platform/game build.",
+      "Reference-only rights state for both sources, with a Steam removed-item notice despite the accessible page and images."
+    ],
+    "omitted": [
+      "The three detached icon-origin segments are not modeled as edges; no edge is invented from an icon to its apparent target (pt_birds, pt_north, pt_titan).",
+      "Icon legend semantics: the triangle beside the clothes box is not interpreted as an eligibility rule or packaged.",
+      "Optional side-event ordering and the clothes eligibility/cross-chapter trigger: the guide-reported protester-harassment prerequisite for Carl's comment is not verified and no causal edge, exact trigger or cross-chapter edge is modeled.",
+      "Percentages and the displayed completion claim: excluded; partial coverage does not claim complete gameplay.",
+      "Leisure categories, the studio, painting choices, the chapter outcome and the later painting/replay advice: outside this slice and not adopted as gameplay rules.",
+      "Source images: no image content is reproduced or packaged.",
+      "Gameplay verification, platform and game version: no transition is verified in game and the build is unknown.",
+      "Publication rights: both sources remain reference-only; no reuse license, clearance or permission is asserted, and publication clearance is omitted."
+    ],
+    "sources": [
+      "steamPainter",
+      "powerpyxPainter"
+    ]
+  },
+  "sources": [
+    {
+      "id": "steamPainter",
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
+      "class": "chart-image",
+      "role": "Basis for the transcribed partial chart: nine visible boxes of the opening through the next checkpoint and five continuous box-to-box edges. Detached icon-origin segments and legend semantics are not transcribed as chart content.",
+      "locator": "The Painter section; wide chart image https://images.steamusercontent.com/ugc/1469813569888642618/46A96B75406313591FE214D6DBC3CE7E88EC33F0/ 7271x1056, SHA256 1380647c97e77c8b8e3330afa4b1b1bb73c21e0d44fc5b04969ce43ac9a3b0aa; alternate opening screenshot https://images.steamusercontent.com/ugc/1333579200343348861/1195404B68995CE7A56984FD24294F79A366F6E3/ 1920x1080, SHA256 b8a5fbeb6f50c2ae84b21749d3193f6f679ea385f8bd308491a757925230afb7. A third image linked by Steam was not inspected and is outside this packet.",
+      "access": [
+        {
+          "date": "2026-10-23",
+          "actor": "extraction worker",
+          "outcome": "not-accessed",
+          "note": "The model did not access the image or the source page. All facts recorded here are parent-inspected public facts, not direct model source access."
+        },
+        {
+          "date": "2026-10-23",
+          "actor": "Codex extraction parent",
+          "outcome": "inspected",
+          "note": "Image inspected on 2026-10-23, with a readable crop of the wide opening. Both inspected images depict the same chart, not independent research. Steam shows a removed-item notice although the page and images remain accessible. No gameplay verification or publication clearance."
+        },
+        {
+          "date": "2026-10-23",
+          "actor": "Separate Codex painter_source_review agent",
+          "outcome": "inspected",
+          "note": "Independently inspected the live source page and applicable local chart images, then compared the bounded packet. No gameplay or rights clearance."
+        }
+      ],
+      "attribution": "Steam Community guide “Detroit: Become Human | 100% Chapter Flowcharts” by StongLory; the guide credits Reddit user /u/throwawaydeviant9 for original paths/screenshots and Neoseeker’s Krystal109 for high-resolution flowchart images.",
+      "rights": {
+        "state": "reference-only",
+        "note": "Steam marks the item removed although the page and embedded images remain accessible. Evidence only; no image, text or chart-derived expression is cleared for reuse or publication."
+      }
+    },
+    {
+      "id": "powerpyxPainter",
+      "url": "https://www.powerpyx.com/detroit-become-human-the-painter-walkthrough-100/",
+      "class": "supplementary-guide",
+      "role": "Supports the opening checkpoint section identifying Markus in the clothes discussion and the guide-reported protester-harassment prerequisite for Carl's comment. Guide list ordering is not used for chart connections and no exact trigger is adopted.",
+      "locator": "The Painter walkthrough, opening checkpoint section and harassment note. The later painting/replay advice is outside this slice. Access-specific extracted lines are not recorded; parent page review only.",
+      "access": [
+        {
+          "date": "2026-10-23",
+          "actor": "extraction worker",
+          "outcome": "not-accessed",
+          "note": "The model did not access the source page. All facts recorded here are parent-inspected public facts, not direct model source access."
+        },
+        {
+          "date": "2026-10-23",
+          "actor": "Codex extraction parent",
+          "outcome": "inspected",
+          "note": "Live page inspected on 2026-10-23. Guide list ordering does not support chart connections; source independence from the Steam chart is not established. No gameplay verification or publication clearance."
+        },
+        {
+          "date": "2026-10-23",
+          "actor": "Separate Codex painter_source_review agent",
+          "outcome": "inspected",
+          "note": "Independently inspected the live source page and applicable local chart images, then compared the bounded packet. No gameplay or rights clearance."
+        }
+      ],
+      "attribution": "PowerPyx, Detroit: Become Human — The Painter walkthrough.",
+      "rights": {
+        "state": "reference-only",
+        "note": "No reuse license identified; cite independently worded facts only. No guide text, image or chart expression is cleared for reuse or publication."
+      }
+    }
+  ],
+  "chart": {
+    "basis": "chart-transcribed",
+    "sources": [
+      "steamPainter"
+    ],
+    "nodes": [
+      {
+        "id": "pt_arrive",
+        "label": "ARRIVING HOME",
+        "kind": "stage"
+      },
+      {
+        "id": "pt_package",
+        "label": "DROP OFF PACKAGE",
+        "kind": "action"
+      },
+      {
+        "id": "pt_wake",
+        "label": "WAKE CARL",
+        "kind": "action"
+      },
+      {
+        "id": "pt_breakfast",
+        "label": "SERVE BREAKFAST",
+        "kind": "action"
+      },
+      {
+        "id": "pt_clothes",
+        "label": "CARL NOTICES MARKUS' CLOTHES",
+        "kind": "action"
+      },
+      {
+        "id": "pt_birds",
+        "label": "ACTIVATE BIRDS",
+        "kind": "action"
+      },
+      {
+        "id": "pt_north",
+        "label": "READ \"NORTH POLE RUSSIA\"",
+        "kind": "action"
+      },
+      {
+        "id": "pt_titan",
+        "label": "READ \"LIFE ON TITAN\"",
+        "kind": "action"
+      },
+      {
+        "id": "pt_find",
+        "label": "FIND SOMETHING TO DO",
+        "kind": "stage"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e_pt_arrive_package",
+        "from": "pt_arrive",
+        "to": "pt_package",
+        "kind": "traced",
+        "sources": [
+          "steamPainter"
+        ]
+      },
+      {
+        "id": "e_pt_package_wake",
+        "from": "pt_package",
+        "to": "pt_wake",
+        "kind": "traced",
+        "sources": [
+          "steamPainter"
+        ]
+      },
+      {
+        "id": "e_pt_wake_breakfast",
+        "from": "pt_wake",
+        "to": "pt_breakfast",
+        "kind": "traced",
+        "sources": [
+          "steamPainter"
+        ]
+      },
+      {
+        "id": "e_pt_wake_clothes",
+        "from": "pt_wake",
+        "to": "pt_clothes",
+        "kind": "traced",
+        "sources": [
+          "steamPainter"
+        ]
+      },
+      {
+        "id": "e_pt_breakfast_find",
+        "from": "pt_breakfast",
+        "to": "pt_find",
+        "kind": "traced",
+        "sources": [
+          "steamPainter"
+        ]
+      }
+    ]
+  },
+  "supplementary": [],
+  "conditions": [],
+  "unknowns": [
+    {
+      "id": "u_pt_detached_origins",
+      "status": "unknown",
+      "explanation": "The chart shows three detached segments sharing a detached icon near the package box rather than starting at a declared box, pointing toward pt_birds, pt_north and pt_titan. These segments are NOT invented as edges; no side-event ordering is established and their semantic meaning is unknown. The icon legend is omitted.",
+      "nodes": [
+        "pt_birds",
+        "pt_north",
+        "pt_titan"
+      ],
+      "edges": [],
+      "sources": [
+        "steamPainter"
+      ]
+    },
+    {
+      "id": "u_pt_order",
+      "status": "unknown",
+      "explanation": "No side-event ordering or optional-eligibility rule is known beyond the five traced continuous box-to-box edges. The chart's boxes and the guide's list ordering do not establish a required sequence or when optional steps are eligible.",
+      "nodes": [],
+      "edges": [
+        "e_pt_arrive_package",
+        "e_pt_package_wake",
+        "e_pt_wake_breakfast",
+        "e_pt_wake_clothes",
+        "e_pt_breakfast_find"
+      ],
+      "sources": [
+        "steamPainter",
+        "powerpyxPainter"
+      ]
+    },
+    {
+      "id": "u_pt_clothes",
+      "status": "unknown",
+      "explanation": "The clothes branch visibly leaves the wake box and ends at a triangle beside the clothes box; its legend meaning is not interpreted as an eligibility rule. The eligibility condition and any cross-chapter trigger are unverified: PowerPyx reports earlier protester harassment as a prerequisite for Carl's comment, which is guide-reported, not game-verified. No causal edge, exact trigger or cross-chapter edge is added and source independence is not established.",
+      "nodes": [
+        "pt_clothes"
+      ],
+      "edges": [
+        "e_pt_wake_clothes"
+      ],
+      "sources": [
+        "powerpyxPainter",
+        "steamPainter"
+      ]
+    },
+    {
+      "id": "u_pt_build",
+      "status": "unknown",
+      "explanation": "The platform and game build are unknown and no gameplay verification has been performed. Transcription is chart-based only; no transition has been verified in game.",
+      "nodes": [
+        "pt_arrive"
+      ],
+      "edges": [],
+      "sources": [
+        "steamPainter"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "review": {
+    "independent": {
+      "required": true,
+      "state": "approved",
+      "reviewer": "Separate Codex painter_source_review agent",
+      "date": "2026-10-23",
+      "scope": "Independent inspection of the opening through FIND SOMETHING TO DO, nine boxes, five continuous traces, three detached segments, guide evidence and access boundaries.",
+      "notes": "Reviewer derived counts before seeing the packet, then compared every label/kind/edge and four unknowns. Approved only for this partial source interpretation. Publication, research independence, build compatibility and gameplay remain unverified. See docs/notes/painter-packet-source-review.md."
+    },
+    "mergeGate": {
+      "state": "blocked",
+      "reason": "Source interpretation is independently approved for this partial opening slice. Publication rights remain unresolved and all sources are reference-only. No gameplay/build compatibility or source independence is established. Runtime integration is a separate package."
+    }
+  }
+}

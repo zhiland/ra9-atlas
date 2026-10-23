@@ -165,3 +165,14 @@ unknown instead of becoming invented edges. Its initial preparation had no ATLAS
 with new edges appended at 96–100, without changing source interpretation. Source approval retains a
 blocked publication gate. `npm run validate:packet` includes all three packets;
 `npm run test:shades` pins the source-reviewed bounds and review-required exit 2.
+
+## Fourth packet — The Painter opening
+
+The [reviewed preparation](notes/painter-packet-source-review.md) selects nine
+opening boxes, five continuous traces and three detached segments with unknown
+origins. Two checkpoints are stages. The later leisure/studio/painting chart is
+outside scope. Four unknown records preserve origins, ordering, clothes
+eligibility and platform/build gaps. The guide-reported harassment prerequisite
+is not a cross-chapter edge or game verification. No ATLAS reconciliation or
+legacy index is claimed. All four packet CLIs run in `validate:packet`.
+Independent source approval keeps publication blocked and runtime unchanged.

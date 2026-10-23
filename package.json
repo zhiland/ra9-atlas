@@ -4,7 +4,7 @@
   "description": "Static, evidence-labeled map prototypes (PoC2-PoC4). No runtime dependencies.",
   "scripts": {
     "validate": "npm run check:generated && npm run validate:inventory && node prototype/validate-map-data.js && node prototype/validate-hostage-data.js && node prototype/validate-atlas-data.js && npm run validate:packet",
-    "validate:packet": "node prototype/validate-chapter-packet.js packets/hostage.packet.json && node prototype/validate-chapter-packet.js packets/a-new-home.packet.json && node prototype/validate-chapter-packet.js packets/shades-of-color.packet.json",
+    "validate:packet": "node prototype/validate-chapter-packet.js packets/hostage.packet.json && node prototype/validate-chapter-packet.js packets/a-new-home.packet.json && node prototype/validate-chapter-packet.js packets/shades-of-color.packet.json && node prototype/validate-chapter-packet.js packets/the-painter.packet.json",
     "test:unit": "node tests/atlas-core.test.js",
     "test:contract": "node tests/atlas-data-contract.test.js",
     "test:map": "node tests/map-first.test.js",
@@ -12,7 +12,7 @@
     "test:layout": "node tests/atlas-layout.test.js",
     "test:browser": "node tests/poc4-browser.test.js",
     "test:packet": "node tests/chapter-packet.test.js",
-    "test": "npm run validate && npm run test:build && npm run test:inventory && npm run test:contract && npm run test:unit && npm run test:map && npm run test:stable-zoom && npm run test:layout && npm run test:packet && npm run test:shades && npm run test:shades-runtime && npm run test:browser",
+    "test": "npm run validate && npm run test:build && npm run test:inventory && npm run test:contract && npm run test:unit && npm run test:map && npm run test:stable-zoom && npm run test:layout && npm run test:packet && npm run test:shades && npm run test:shades-runtime && npm run test:painter && npm run test:browser",
     "bench:scale": "node benchmark/scale/run-benchmark.js",
     "build:data": "node tools/data/build-atlas.js",
     "check:generated": "node tools/data/build-atlas.js --check",
@@ -20,7 +20,8 @@
     "validate:inventory": "node tools/data/validate-inventory.js",
     "test:inventory": "node tests/chapter-inventory.test.js",
     "test:shades": "node tests/shades-packet.test.js",
-    "test:shades-runtime": "node tests/shades-runtime.test.js"
+    "test:shades-runtime": "node tests/shades-runtime.test.js",
+    "test:painter": "node tests/painter-packet.test.js"
   },
   "devDependencies": {
     "playwright": "^1.64.1"

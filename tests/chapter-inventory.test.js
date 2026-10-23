@@ -18,7 +18,7 @@ const mutate = (change, expected) => {
 assert.deepEqual(validateInventory(inventory, atlas), []);
 assert.equal(inventory.chapters.length, 32);
 assert.equal(allCharts(inventory).length, 39);
-assert.equal(allCharts(inventory).filter(chart => chart.character === null).length, 22);
+assert.equal(allCharts(inventory).filter(chart => chart.character === null).length, 21);
 assert.deepEqual(allCharts(inventory).flatMap(chart => chart.runtimeChapterIds).sort(), ['home', 'hostage', 'kara', 'public-enemy', 'shades-of-color', 'stormy']);
 assert.equal(inventory.reconciliation.state, 'partial');
 assert.deepEqual(inventory.chapters.find(chapter => chapter.id === 'opening').charts, []);
@@ -65,5 +65,11 @@ assert.equal(shades.character, 'markus');
 assert.ok(shades.sources.includes('powerpyx-shades-guide'));
 assert.equal(shades.coverage, 'partial');
 assert.deepEqual(shades.runtimeChapterIds, ['shades-of-color']);
+
+const painter = inventory.chapters.find(chapter => chapter.id === 'the-painter').charts[0];
+assert.equal(painter.character, 'markus');
+assert.ok(painter.sources.includes('powerpyx-painter-guide'));
+assert.equal(painter.coverage, 'not-added');
+assert.deepEqual(painter.runtimeChapterIds, []);
 
 console.log('PASS: chapter inventory regression checks');

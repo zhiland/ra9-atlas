@@ -37,7 +37,9 @@ The [Hostage review](docs/notes/hostage-packet-source-review.md) and
 [A New Home review](docs/notes/anewhome-packet-source-review.md) record their bounded findings.
 The [Shades of Color preparation](docs/notes/shades-of-color-source-review.md) is source-reviewed
 and integrated as a partial region. Its six detached icon origins stay unknown.
-Source-derived publication rights remain unresolved.
+The [Painter opening packet](docs/notes/painter-packet-source-review.md) is source-reviewed
+but not integrated: nine boxes, five traces and three detached segments with
+unknown origins. Source-derived publication rights remain unresolved.
 
 See [current status](docs/STATUS.md), [coverage](docs/notes/poc4-coverage.md),
 [source register](docs/SOURCES.md), and [license boundaries](docs/license-boundary.md).

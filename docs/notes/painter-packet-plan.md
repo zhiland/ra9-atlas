@@ -1,6 +1,9 @@
 # The Painter: next bounded preparation packet
 
-Status: ready for source inspection, not extracted. Date: 2026-10-23.
+Status: historical acceptance plan, completed as a bounded preparation packet.
+Date: 2026-10-23. See [source review and result](painter-packet-source-review.md).
+The following baseline and sequence describe the original plan. Runtime integration
+remains a separate task.
 
 ## Selection and baseline
 

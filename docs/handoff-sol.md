@@ -6,6 +6,14 @@ checkpoint, not a live status feed.
 
 ## Current continuation update — 2026-10-23
 
+The [Painter opening preparation](notes/painter-packet-source-review.md) is source
+approved for nine boxes and five traces. Three detached origins remain unknown.
+It is not integrated: runtime remains 114 nodes/101 records/99 active connectors.
+The inventory now has 21 null character entries. All four publication gates stay
+blocked. Read STATUS and the report for final Git/verification checkpoints.
+
+## Previous runtime update — 2026-10-23
+
 The [Shades runtime integration](notes/shades-runtime-integration.md) appends the
 approved 12-node/5-edge slice below the old frames. Runtime totals are 114 nodes,
 101 edge records and 99 active connectors in six regions. Packet/runtime
