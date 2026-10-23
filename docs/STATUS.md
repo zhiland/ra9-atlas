@@ -10,7 +10,7 @@ Full-product schema expansion, permalink output migration, actual game-chart cen
 options during preparation. Default creation and existing 1.0 packets stay
 binary. Runtime is unchanged and remains binary. Exact runtime reconciliation,
 source review and publication gates are not relaxed. This prerequisite does not
-create or approve a Painter leisure packet. See the report for final checks.
+create or approve a Painter leisure packet. [PR #31](https://github.com/zhiland/ra9-atlas/pull/31) passes Ubuntu CI at `911b5ff`, including 19 new regressions. Both review follow-ups are closed. Next: prepare the Painter leisure slice as explicit 1.1 after separate source inspection/review. The remaining 20% window is reserved; do not launch that package before capacity is available.
 
 ## Painter runtime checkpoint
 

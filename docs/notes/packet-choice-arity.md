@@ -50,7 +50,7 @@ during optional ATLAS reconciliation. A new fixture reproduced the bypass with
 changed labels/order in 1.0 and an added third option in 1.1. Codex added the same
 full-array comparison used for chart nodes. Matching external choices still pass.
 The regression failed before the fix and passed after it.
-Spec: one finding corrected, follow-up pending.
+Separate follow-up confirmed the fix at `911b5ff`. Spec: one finding resolved, none open.
 
 ## Full verification
 
@@ -58,4 +58,4 @@ Full npm passed: existing 20 build, inventory, 94 contract, 44 unit, 4 map,
 11 zoom, 12 layout, 59 packet, 6 Shades packet, 21 Shades runtime, 6 Painter
 packet, 21 Painter runtime and 72 browser checks, plus 19 new arity regressions.
 Existing packets, data and runtime are byte-identical to base `bee077d`.
-Hosted CI is pending.
+[Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/40010195335) passes at `911b5ff`, including the final 19 arity regressions, all Node/Chromium tests and mocked Python checks. Draft [PR #31](https://github.com/zhiland/ra9-atlas/pull/31) is stacked on #30. No merge or deployment.
