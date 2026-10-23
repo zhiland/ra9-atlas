@@ -35,7 +35,7 @@
     synthetic: 'Synthetic fixture · not evidence'
   };
   var KIND_LABEL = { action: 'Action', flag: 'State flag', choice: 'Choice', outcome: 'Outcome', stage: 'Stage container' };
-  var EDGE_LABEL = { traced: 'traced', conditional: 'reported condition', prerequisite: 'prerequisite gate', hypothesis: 'unresolved hypothesis', uncertain: 'uncertain chart connector' };
+  var EDGE_LABEL = { traced: 'traced', conditional: 'reported condition', prerequisite: 'prerequisite gate', hypothesis: 'unresolved hypothesis', uncertain: 'uncertain chart connector', withdrawn: 'withdrawn claim' };
   var SOURCE_LABEL = {
     steam: 'Steam chapter flowcharts (screenshot reference)',
     powerpyxHome: 'PowerPyx · A New Home',
@@ -70,6 +70,14 @@
   function edgeEvidence(e) {
     var a = byId[e.from], b = byId[e.to];
     var sources = edgeSources(e);
+    if (e.kind === 'withdrawn') {
+      return {
+        cls: 'withdrawn',
+        status: 'Withdrawn claim · historical record, not an active connector',
+        unknown: 'This claim was withdrawn during source review. It is kept only as history with its original endpoints: it is not an active connector on the map, and it never was verified in game.',
+        sources: sources
+      };
+    }
     if ((a && a.status === 'synthetic') || (b && b.status === 'synthetic')) {
       return {
         cls: 'synthetic',
@@ -193,6 +201,9 @@
 
   /* ---------- orthogonal routing (mirrored by prototype/validate-atlas-data.js) ---------- */
   function pathFor(e) {
+    if (e.points) return e.points.map(function (point, index) {
+      return (index ? 'L ' : 'M ') + point[0] + ' ' + point[1];
+    }).join(' ');
     var a = byId[e.from], b = byId[e.to];
     var fromY = e.fromOption == null ? a.y + a.h / 2 :
       a.y + (e.fromOption + 0.5) * a.h / a.options.length;
@@ -215,7 +226,10 @@
 
   function neighbours(id) {
     var set = {};
-    D.edges.forEach(function (e) { if (e.from === id || e.to === id) { set[e.from] = 1; set[e.to] = 1; } });
+    D.edges.forEach(function (e) {
+      if (!C.isActiveEdge(e)) return;
+      if (e.from === id || e.to === id) { set[e.from] = 1; set[e.to] = 1; }
+    });
     return set;
   }
 
@@ -358,6 +372,7 @@
     var focus = state.selected ? neighbours(state.selected) : null;
     var paths = [], labelQueue = [], badgeQueue = [];
     D.edges.forEach(function (e, i) {
+      if (!C.isActiveEdge(e)) return;
       var d = pathFor(e);
       var edgeFocused = state.edge === i;
       var active = edgeFocused || (state.selected && (e.from === state.selected || e.to === state.selected));
@@ -429,9 +444,14 @@
     });
 
     var c = D.meta.counts;
+    /* Withdrawn claims stay in the total edge count for their array indices,
+       so the connector count counts only active connectors; the withdrawn
+       records get their own number when the data reports one. */
+    var connectorCount = c.activeEdges != null ? c.activeEdges : c.edges;
     document.getElementById('status').innerHTML =
-      'Selected slice · ' + c.chapters + ' chapters · ' + c.nodes + ' nodes · ' + c.edges +
-      ' connectors · ' + c.crossChapterEdges + ' cross-chapter · not in-game verified';
+      'Selected slice · ' + c.chapters + ' chapters · ' + c.nodes + ' nodes · ' + connectorCount +
+      ' connectors' + (c.withdrawnEdges != null ? ' · ' + c.withdrawnEdges + ' withdrawn' : '') +
+      ' · ' + c.crossChapterEdges + ' cross-chapter · not in-game verified';
 
     document.querySelectorAll('[data-chapter]').forEach(function (b) {
       var on = b.getAttribute('data-chapter') === state.chapter;
@@ -471,6 +491,7 @@
 
     var related = [];
     D.edges.forEach(function (e, i) {
+      if (!C.isActiveEdge(e)) return;
       if (e.from === n.id || e.to === n.id) related.push({ edge: e, index: i });
     });
     var rows = related.map(function (item) {
@@ -498,9 +519,41 @@
 
     var focused = state.edge != null ? D.edges[state.edge] : null;
     var edgeBlock = '';
-    if (focused && byId[focused.from] && byId[focused.to]) {
+    if (focused && focused.kind === 'withdrawn' && byId[focused.from] && byId[focused.to]) {
+      /* Reached only through a legacy permalink that names the withdrawn
+         edge index or id: the claim is shown with its original endpoints,
+         its historical status, and the active replacements that superseded
+         it. It never appears as a map connector. */
+      var rev = edgeEvidence(focused);
+      var replacements = (focused.replacedBy || []).map(function (replId) {
+        var ri = C.resolveEdgeIndex(D, replId);
+        if (ri == null) return '';
+        var r = D.edges[ri];
+        if (!C.isActiveEdge(r)) return '';
+        var rOther = byId[r.to];
+        if (!rOther) return '';
+        return '<button data-open-edge="' + ri + '"' +
+          (state.edge === ri ? ' class="focused"' : '') +
+          '><span class="dir">' + (r.from === focused.to ? '←' : '→') + '</span>' +
+          esc(rOther.label) + (r.label ? ' — ' + esc(r.label) : '') +
+          '<span class="kind">' + esc(EDGE_LABEL[r.kind]) + '</span></button>';
+      }).join('');
+      edgeBlock = '<h3>Withdrawn claim (historical)</h3>' +
+        '<div class="edge-evidence" data-edge-evidence="' + state.edge + '" data-evidence="' + rev.cls + '">' +
+        '<p><strong>' + esc(byId[focused.from].label) + ' → ' + esc(byId[focused.to].label) + '</strong></p>' +
+        '<p><span class="chip ' + rev.cls + '">' + esc(EDGE_LABEL[focused.kind]) + '</span> ' + esc(rev.status) + '</p>' +
+        '<p class="note">' + esc(rev.unknown) + '</p>' +
+        (focused.label ? '<p class="note tiny">Connector label: ' + esc(focused.label) + '</p>' : '') +
+        (focused.note ? '<p class="note tiny">Evidence note: ' + esc(focused.note) + '</p>' : '') +
+        (replacements ? '<p class="tiny muted">Withdrawn in favour of these active connectors:</p>' +
+          '<div class="rowlist">' + replacements + '</div>' : '') +
+        '<p class="tiny muted">' + esc(sourceSummary(rev.sources)) + '</p>' +
+        edgeSourceLinks(rev.sources) +
+        '</div>';
+    } else if (focused && byId[focused.from] && byId[focused.to]) {
       var ev = edgeEvidence(focused);
-      edgeBlock = '<h3>Focused cross-chapter connector</h3>' +
+      edgeBlock = '<h3>' + (nodeChapter[focused.from] !== nodeChapter[focused.to]
+        ? 'Focused cross-chapter connector' : 'Focused connector') + '</h3>' +
         '<div class="edge-evidence" data-edge-evidence="' + state.edge + '" data-evidence="' + ev.cls + '">' +
         '<p><strong>' + esc(byId[focused.from].label) + ' → ' + esc(byId[focused.to].label) + '</strong></p>' +
         '<p><span class="chip ' + ev.cls + '">' + esc(EDGE_LABEL[focused.kind]) + '</span> ' + esc(ev.status) + '</p>' +
@@ -546,6 +599,13 @@
         var id = b.getAttribute('data-goto');
         lastTrigger = b;
         commit(C.selectNode(state, id, D), { center: id, hash: true });
+      };
+    });
+    /* Existing edge-focus path reused for replacement connectors: opening one
+       jumps by its original ATLAS array index and selects its actual to node. */
+    Array.prototype.forEach.call(el.querySelectorAll('[data-open-edge]'), function (b) {
+      b.onclick = function () {
+        focusEdgeFromMap(Number(b.getAttribute('data-open-edge')), b);
       };
     });
   }

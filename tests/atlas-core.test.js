@@ -44,8 +44,8 @@ function eq(actual, expected, msg) {
 }
 
 const nodeIds = ATLAS.nodes.map(function (n) { return n.id; });
-const edgesFrom = function (id) { return ATLAS.edges.filter(function (e) { return e.from === id; }); };
-const edgesTo = function (id) { return ATLAS.edges.filter(function (e) { return e.to === id; }); };
+const edgesFrom = function (id) { return ATLAS.edges.filter(function (e) { return C.isActiveEdge(e) && e.from === id; }); };
+const edgesTo = function (id) { return ATLAS.edges.filter(function (e) { return C.isActiveEdge(e) && e.to === id; }); };
 
 console.log('atlas-core.js — state transitions');
 check('createState starts unconsented on the whole atlas', function () {
@@ -417,7 +417,7 @@ check('A New Home first-floor events keep only source-supported progressions', f
   eq([edges.e_home_red_ice_enrage_todd.from, edges.e_home_red_ice_enrage_todd.to], ['a_find_red_ice', 'a_enrage_todd']);
   eq([edges.e_home_watch_tv_block_view.from, edges.e_home_watch_tv_block_view.to], ['a_watch_todd_tv', 'a_block_todd_view']);
   eq([edges.e_home_backyard_rewash_clothes.from, edges.e_home_backyard_rewash_clothes.to], ['a_take_laundry_backyard', 'a_rewash_clothes']);
-  eq(edgesFrom('a_clean1').map(function (e) { return e.to; }), ['a_ask']);
+  eq(edgesFrom('a_clean1').map(function (e) { return e.to; }), ['a_take_out_trash']);
   const unknown = ATLAS.uncertainties.find(function (u) { return u.id === 'u_home_first_floor_order'; });
   assert(unknown && unknown.status === 'unknown', 'unresolved first-floor order and requirements must be recorded');
   events.forEach(function (id) { assert(unknown.nodes.includes(id), id + ' must appear in the uncertainty record'); });
@@ -537,7 +537,7 @@ check('declared counts match the data', function () {
 });
 
 check('reaching the positive outcome never requires the unresolved hypothesis', function () {
-  const confirmed = ATLAS.edges.filter(function (e) { return e.kind !== 'hypothesis'; });
+  const confirmed = ATLAS.edges.filter(function (e) { return C.isActiveEdge(e) && e.kind !== 'hypothesis'; });
   const seen = { k_away: true };
   let grew = true;
   while (grew) {
@@ -548,6 +548,29 @@ check('reaching the positive outcome never requires the unresolved hypothesis', 
   }
   assert(seen.k_meet, 'the confirmed meeting gate path must reach k_meet');
   assert(!seen.a_box, 'a_box must not be a confirmed prerequisite of the positive outcome');
+});
+
+check('withdrawn edge permalinks preserve historical endpoints while replacements use new indices', function () {
+  const consented = C.consent(C.createState());
+  [2, 6].forEach(function (index) {
+    const edge = ATLAS.edges[index];
+    assert(!C.isActiveEdge(edge), 'withdrawn claim must not be an active edge');
+    const state = C.focusEdge(consented, edge.id, ATLAS);
+    eq([state.edge, state.selected], [index, edge.to]);
+    const hash = '#home/' + edge.to + '?edge=' + index;
+    eq(C.hashFor(state), hash);
+    eq(C.applyHash(consented, hash, ATLAS).edge, index);
+    edge.replacedBy.forEach(function (id) {
+      const replacement = C.focusEdge(state, id, ATLAS);
+      assert(replacement.edge >= 93 && C.isActiveEdge(ATLAS.edges[replacement.edge]), 'replacement must select its actual active record');
+    });
+  });
+  assert(!C.isActiveEdge(null), 'missing record cannot be active');
+  const synthetic = JSON.parse(JSON.stringify(ATLAS));
+  synthetic.edges[9].kind = 'withdrawn';
+  assert(!C.crossChapterLinks(synthetic).some(function (group) {
+    return group.edges.some(function (item) { return item.index === 9; });
+  }), 'withdrawn cross-chapter history must not become a chapter link');
 });
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');

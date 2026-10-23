@@ -434,5 +434,33 @@ check('the CLI exits 0 for structural success and 2 when review is required', ()
   eq(gated.status, 2, 'the merge gate must block while publication rights remain unresolved');
 });
 
+check('the corrected A New Home packet passes reconciliation but retains its publication gate', () => {
+  const home = JSON.parse(fs.readFileSync(path.join(root, 'packets/a-new-home.packet.json'), 'utf8'));
+  const result = validatePacket(home, { atlas: ATLAS });
+  assert(result.ok, result.errors.join('\n'));
+  eq([home.packetStatus, result.review.state, result.review.mergeGate, result.reviewReady],
+    ['reviewed', 'approved', 'blocked', false]);
+  eq([result.counts.chartNodes, result.counts.chartEdges, result.counts.supplementaryNodes], [11, 10, 2]);
+});
+check('the reviewed A New Home transcription excludes known-wrong legacy traces', () => {
+  const home = JSON.parse(fs.readFileSync(path.join(root, 'packets/a-new-home.packet.json'), 'utf8'));
+  const ids = home.chart.edges.map(edge => edge.id);
+  assert(!ids.includes('e_home_clean1_ask') && !ids.includes('e_home_room_talk'), 'withdrawn records must not become chart evidence');
+  eq(home.chart.edges.slice(-3).map(edge => [edge.id, edge.legacyEdgeIndex]),
+    [['e_home_clean1_trash', 93], ['e_home_trash_ask', 94], ['e_home_clean2_talk', 95]]);
+  eq(home.chart.nodes.filter(node => node.kind === 'stage').map(node => node.id), ['a_clean1', 'a_clean2']);
+  assert(/withdrawn historical claims/.test(home.legacy.note), 'the old indices need an explicit migration record');
+});
+check('the A New Home clues and key condition retain their separate guide support', () => {
+  const home = JSON.parse(fs.readFileSync(path.join(root, 'packets/a-new-home.packet.json'), 'utf8'));
+  eq(home.chart.sources, ['steamChart']);
+  eq(home.supplementary.map(item => item.sources), [['powerpyxHome', 'gamefaqsHome'], ['powerpyxHome']]);
+  eq(home.supplementary.map(item => item.edges), [[], []]);
+  eq(home.conditions.map(condition => condition.appliesTo), ['e_home_talk_key']);
+  assert(home.unknowns.some(item => item.id === 'u_key_threshold'), 'source review does not resolve the exact trust level');
+  assert(home.sources.every(source => source.access.some(access => access.date === '2026-10-23' && access.outcome === 'inspected')),
+    'each source needs the actual reviewer access outcome');
+});
+
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

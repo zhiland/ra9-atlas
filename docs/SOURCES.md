@@ -65,3 +65,14 @@ These sources inform presentation or implementation choices only. They are not e
 - **In-game verified** requires direct observation in the game under recorded conditions. No transition in the current prototype has this status.
 
 See [initial source survey](notes/source-survey.md), [chapter coverage snapshot](notes/source-coverage-initial.md), and the focused [D1–D3 evidence ledger](notes/verification-d1-d3.md) for more detail and limits.
+
+## A New Home independent review — 2026-10-23
+
+The [review](notes/anewhome-packet-source-review.md) inspected the existing
+6743×1300 Steam image and live PowerPyx/GameFAQs locations. It corrected an
+omitted TAKE OUT TRASH intermediate and the second-floor conversation origin.
+Both clean-floor headings are stages. Eleven selected nodes and ten pictured
+relations are approved within partial scope. The key threshold is unstated;
+the gun remains a sighting and the window claim keeps its narrower PowerPyx
+attribution. Guide research independence and publication rights remain separate.
+No game image, transcript or raw guide corpus is added to the repository.

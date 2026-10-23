@@ -49,3 +49,14 @@ OpenCode completed the bounded A New Home extraction through the corrected
 runner from public commit `7f89e88`. Codex reviewed/corrected the one-file patch
 and validated it against ATLAS. The packet remains draft and source review is
 pending. See [the extraction note](notes/anewhome-packet-draft.md).
+
+## 2026-10-23 A New Home independent source correction
+
+A separate reviewer found two inherited chart errors and corrected stage kinds.
+OpenCode implemented withdrawn-link UI/core behavior through the verified runner
+from public `2334d58`; 49 per-run checks passed. Codex inspected/applied the patch,
+corrected data/validation and tested legacy links. Separate Standards/Spec
+reviewers found heading/contract issues and a missing resolver export; all were
+corrected. The source reviewer then approved the corrected partial packet.
+See [the implementation report](notes/anewhome-correction-implementation.md).
+Publication remains blocked independently of source approval.

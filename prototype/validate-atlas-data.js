@@ -18,7 +18,7 @@ const path = require('path');
 const dataFile = path.join(__dirname, 'atlas-data.js');
 const CLAIM_STATUSES = new Set(['ocr', 'guide', 'user', 'unresolved', 'mixed']);
 const COVERAGE_STATUSES = new Set(['not-added', 'partial', 'checked-against-chart']);
-const EDGE_KINDS = new Set(['traced', 'conditional', 'prerequisite', 'hypothesis', 'uncertain']);
+const EDGE_KINDS = new Set(['traced', 'conditional', 'prerequisite', 'hypothesis', 'uncertain', 'withdrawn']);
 const CONDITION_OPERATORS = new Set(['SINGLE', 'AND', 'OR']);
 
 function readAtlasData(file) {
@@ -168,6 +168,52 @@ function validateAtlas(ATLAS) {
       if (!byId.has(e.to)) errors.push(`edge to "${e.to}" has no node`);
       if (!EDGE_KINDS.has(e.kind)) errors.push(`edge ${e.from}->${e.to} has unknown kind "${e.kind}"`);
       errors.push(...sourceRefErrors(`edge ${e.from}->${e.to}`, e.src, true));
+    }
+    return errors;
+  });
+
+  check('withdrawn claims retain valid active replacement references', () => {
+    const errors = [];
+    for (const edge of edges) {
+      if (edge.kind !== 'withdrawn') {
+        if (edge.replacedBy != null) errors.push(`${edge.id} is active but has replacedBy`);
+        continue;
+      }
+      if (!edge.note || !/withdrawn/i.test(edge.note)) errors.push(`${edge.id} needs a withdrawal reason`);
+      if (!Array.isArray(edge.replacedBy) || !edge.replacedBy.length) {
+        errors.push(`${edge.id} needs active replacement IDs`);
+        continue;
+      }
+      if (new Set(edge.replacedBy).size !== edge.replacedBy.length) errors.push(`${edge.id} repeats a replacement`);
+      for (const id of edge.replacedBy) {
+        const replacement = edgeById.get(id);
+        if (!replacement || replacement.kind === 'withdrawn') errors.push(`${edge.id} replacement ${id} must be an active edge`);
+      }
+      if (conditions.some(condition => condition.appliesTo === edge.id ||
+          (Array.isArray(condition.appliesTo) && condition.appliesTo.includes(edge.id)))) {
+        errors.push(`${edge.id} is withdrawn but retains a live condition`);
+      }
+    }
+    return errors;
+  });
+
+  check('authored edge points are orthogonal and anchored to their nodes', () => {
+    const errors = [];
+    for (const edge of edges) {
+      if (edge.points == null) continue;
+      const points = edge.points;
+      if (!Array.isArray(points) || points.length < 2 || points.some(point =>
+          !Array.isArray(point) || point.length !== 2 || point.some(value => typeof value !== 'number' || !Number.isFinite(value)))) {
+        errors.push(`${edge.id} points must contain finite coordinate pairs`);
+        continue;
+      }
+      for (let i = 1; i < points.length; i++) {
+        if (points[i][0] !== points[i - 1][0] && points[i][1] !== points[i - 1][1]) errors.push(`${edge.id} points must be orthogonal`);
+      }
+      const onBorder = (point, node) => node &&
+        (((point[0] === node.x || point[0] === node.x + node.w) && point[1] >= node.y && point[1] <= node.y + node.h) ||
+         ((point[1] === node.y || point[1] === node.y + node.h) && point[0] >= node.x && point[0] <= node.x + node.w));
+      if (!onBorder(points[0], byId.get(edge.from)) || !onBorder(points[points.length - 1], byId.get(edge.to))) errors.push(`${edge.id} points must be anchored to endpoint borders`);
     }
     return errors;
   });
@@ -674,7 +720,7 @@ function validateAtlas(ATLAS) {
         errors.push(`${id} detail must not claim unsupported optionality, necessity or exclusivity`);
       }
     }
-    const actual = edges.filter(e => Object.keys(requiredSources).includes(e.from) || Object.keys(requiredSources).includes(e.to));
+    const actual = edges.filter(e => (Object.keys(requiredSources).includes(e.from) || Object.keys(requiredSources).includes(e.to)) && !['e_home_clean1_trash', 'e_home_trash_ask'].includes(e.id));
     if (actual.length !== expected.length) errors.push('first-floor events must have only four documented local progression edges');
     for (const [id, from, to] of expected) {
       const edge = edgeById.get(id);
@@ -683,7 +729,7 @@ function validateAtlas(ATLAS) {
       }
       if (edge && (!Array.isArray(edge.src) || edge.src.length === 0)) errors.push(`${id} has no source refs`);
     }
-    if (edges.some(e => e.from === 'a_clean1' && Object.keys(requiredSources).includes(e.to))) {
+    if (edges.some(e => e.from === 'a_clean1' && Object.keys(requiredSources).includes(e.to) && e.id !== 'e_home_clean1_trash')) {
       errors.push('unrelated first-floor chores must not use unsupported CLEAN FIRST FLOOR spokes');
     }
     const uncertainty = uncertainties.find(u => u.id === 'u_home_first_floor_order');
@@ -701,8 +747,8 @@ function validateAtlas(ATLAS) {
       }
     }
     const mandatory = edgeById.get('e_home_clean1_ask');
-    if (!mandatory || mandatory.from !== 'a_clean1' || mandatory.to !== 'a_ask' || mandatory.kind !== 'traced') {
-      errors.push('the original CLEAN FIRST FLOOR → ASK TO GO UPSTAIRS sequence must remain');
+    if (!mandatory || mandatory.from !== 'a_clean1' || mandatory.to !== 'a_ask' || mandatory.kind !== 'withdrawn') {
+      errors.push('the original compressed first-floor claim must remain withdrawn at its old identity');
     }
     return errors;
   });
@@ -1169,6 +1215,8 @@ function validateAtlas(ATLAS) {
       chapters: chapters.length,
       nodes: nodes.length,
       edges: edges.length,
+      activeEdges: edges.filter(e => e.kind !== 'withdrawn').length,
+      withdrawnEdges: kindCount('withdrawn'),
       tracedEdges: kindCount('traced'),
       conditionalEdges: kindCount('conditional'),
       prerequisiteEdges: kindCount('prerequisite'),
@@ -1180,7 +1228,7 @@ function validateAtlas(ATLAS) {
       if (counts[key] !== value) errors.push(`meta.counts.${key} is ${counts[key]} but the data has ${value}`);
     }
     if (actual.nodes !== 102) errors.push(`expected 102 boxes, found ${actual.nodes}`);
-    if (actual.edges !== 93) errors.push(`expected 93 connectors, found ${actual.edges}`);
+    if (actual.edges !== 96) errors.push(`expected 96 edge records, found ${actual.edges}`);
     return errors;
   });
 
@@ -1240,6 +1288,13 @@ function validateAtlas(ATLAS) {
     const fromY = edge.fromOption == null ? a.y + a.h / 2 :
       a.y + (edge.fromOption + 0.5) * a.h / a.options.length;
     const sameCol = Math.abs((a.x + a.w / 2) - (b.x + b.w / 2)) < 26;
+    if (Array.isArray(edge.points) && edge.points.length >= 2 && edge.points.every(p => Array.isArray(p) && p.length === 2 && p.every(Number.isFinite))) {
+      return edge.points.slice(1).map((p, i) => {
+        const a = edge.points[i];
+        return a[0] === p[0] ? { v: true, x: p[0], y1: Math.min(a[1], p[1]), y2: Math.max(a[1], p[1]) } :
+          { v: false, y: p[1], x1: Math.min(a[0], p[0]), x2: Math.max(a[0], p[0]) };
+      });
+    }
     const segs = [];
     const h = (y, x1, x2) => { if (Math.abs(x2 - x1) > 0.5) segs.push({ v: false, y, x1: Math.min(x1, x2), x2: Math.max(x1, x2) }); };
     const v = (x, y1, y2) => { if (Math.abs(y2 - y1) > 0.5) segs.push({ v: true, x, y1: Math.min(y1, y2), y2: Math.max(y1, y2) }); };
@@ -1271,6 +1326,7 @@ function validateAtlas(ATLAS) {
       if (e.fromOption != null &&
           (!Array.isArray(from.options) || !Number.isInteger(e.fromOption) ||
            e.fromOption < 0 || e.fromOption >= from.options.length)) continue;
+      if (e.kind === 'withdrawn') continue;
       const segs = routeSegments(e);
       for (const n of nodes) {
         if (n.id === e.from || n.id === e.to) continue;
@@ -1311,7 +1367,8 @@ function main() {
   }
 
   const c = ATLAS.meta.counts;
-  console.log(`\nInventory: ${c.chapters} chapters, ${c.nodes} boxes, ${c.edges} connectors ` +
+  console.log(`\nInventory: ${c.chapters} chapters, ${c.nodes} boxes, ${c.edges} edge records: ` +
+    `${c.activeEdges} active connectors and ${c.withdrawnEdges} withdrawn claims ` +
     `(${c.tracedEdges} traced + ${c.conditionalEdges} conditional + ${c.prerequisiteEdges} prerequisite gates + ${c.hypothesisEdges} unresolved hypothesis + ${c.uncertainEdges} uncertain chart; ${c.crossChapterEdges} cross-chapter).`);
   console.log(`Contract: ${result.counts.conditions} conditions, ${result.counts.uncertainties} uncertainties, ${result.counts.conflicts} conflicts.`);
 

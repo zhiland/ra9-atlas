@@ -1,11 +1,19 @@
-# A New Home preparation packet — bounded draft
+# A New Home preparation packet — extraction checkpoint
 
 Prepared by isolated OpenCode on 2026-10-22; patch reviewed and corrected by
 Codex on 2026-10-23. Input: public runner checkpoint
 `7f89e88e94af535d44c1aef4c5e31662cf3ff30a` from draft PR #22.
 Output: [a-new-home.packet.json](../../packets/a-new-home.packet.json).
 
-## Scope
+Historical extraction scope below. Independent review on 2026-10-23 found two
+wrong direct traces and two wrong stage kinds. The corrected packet has eleven
+chart nodes and ten relations, using the existing trash node. Old indices 2 and 6
+are withdrawn historical claims; replacements append at 93–95. See
+[the source review](anewhome-packet-source-review.md) and
+[the compatibility decision](../adr/0001-withdrawn-edge-permalinks.md).
+The runtime correction adds no node and does not silently retarget an old link.
+
+## Original scope
 
 This packet repackages existing public prototype evidence. It adds no runtime
 content, changes no graph identity and claims no fresh source inspection.
@@ -35,6 +43,8 @@ The original patch changed only the new packet. `git apply --check` passed.
 Codex inspected it before application, then removed unused Fandom/Neoseeker
 records, restricted chart sources to Steam, and split supplementary attribution.
 The packet does not inherit approval from the Hostage packet or its code review.
+The later image review demonstrates why structural agreement with the old ATLAS
+was insufficient: both held the same incorrect direct traces.
 
 ## Validation and next gate
 

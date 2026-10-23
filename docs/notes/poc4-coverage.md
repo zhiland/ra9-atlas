@@ -1,6 +1,6 @@
 # PoC4 — multi-chapter atlas coverage and source note
 
-Date: 2026-10-19; bounded data/provenance contract, Stormy Night escape routes, the Stormy Night entry slice, eleven selected A New Home first-floor events and twelve second-floor events added 2026-10-20; the Stage 1 Hostage pilot and one bounded Public Enemy node added 2026-10-21. Scope: the static PoC4 prototype showing selected parts of
+Date: 2026-10-19; bounded data/provenance contract, Stormy Night escape routes, the Stormy Night entry slice, eleven selected A New Home first-floor events (one now also chart-reviewed) and twelve second-floor events added 2026-10-20; the Stage 1 Hostage pilot and one bounded Public Enemy node added 2026-10-21. Scope: the static PoC4 prototype showing selected parts of
 **A New Home**, **Stormy Night**, **Battle for Detroit — Kara**, the complete
 visible **The Hostage** chart, and one **Public Enemy** meeting node on one
 surface. The default [poc4-editorial.html](../../prototype/poc4-editorial.html)
@@ -22,10 +22,10 @@ verification. No game art or screenshot is embedded or redistributed.
 
 ## Provenance and reuse boundary
 
-The ten-node **A New Home** sequence and its nine links are transcribed from
+The corrected eleven-node **A New Home** selection and its ten relations are transcribed from
 the visible Steam Community guide screenshot. The labels are event names from
 that chart; this is not a copied guide-text corpus, but the selection and
-ordering remain screenshot-derived. Eleven additional first-floor events and
+ordering remain screenshot-derived. Ten additional guide-only first-floor events and
 twelve second-floor events are independently worded guide summaries, not
 screenshot transcription. Six source-stated local progressions are connected:
 four first-floor and two second-floor. Other order and requirements remain
@@ -72,7 +72,8 @@ verified in game.
 |---|---:|---|
 | Chapter regions | **5** | A New Home, Stormy Night, Battle for Detroit — Kara, The Hostage, Public Enemy (one node) |
 | Boxes (nodes) | **102** | 35 A New Home + 24 Stormy Night + 9 Kara + 33 Hostage + 1 Public Enemy |
-| Connectors (edges) | **93** | 71 traced + 8 conditional + 6 prerequisite gates + 3 unresolved hypotheses + 5 uncertain chart claims |
+| Active connectors | **94** | 72 traced + 8 conditional + 6 prerequisite gates + 3 unresolved hypotheses + 5 uncertain chart claims |
+| Historical edge records | **96** | 94 active connectors plus 2 withdrawn A New Home claims |
 | Cross-chapter connectors | **5** | Two A New Home → Stormy Night prerequisites, two Stormy Night/A New Home → Kara links, one saved-cop Hostage → Public Enemy prerequisite |
 
 ## Data/provenance contract
@@ -279,3 +280,14 @@ and the map-reference transcription supports visible structure only. The
 browser suite proves the static pages work as intended in headless Chromium;
 it does not prove completeness, gameplay accuracy, or accessibility beyond the
 sampled checks.
+
+## A New Home correction — 2026-10-23
+
+Independent [source review](anewhome-packet-source-review.md) found that the
+old selected sequence skipped TAKE OUT TRASH and used the room chore as the
+conversation origin. Both cleaning headings are stage containers. The corrected
+packet has eleven selected chart nodes and ten relations. Old edges at indices
+2 and 6 are withdrawn historical records; corrected connectors append at 93–95.
+No node, old identity, endpoint or geometry is moved. See [ADR 0001](../adr/0001-withdrawn-edge-permalinks.md).
+The active atlas has 94 connectors and retains 96 total records for compatibility.
+Earlier dated sample counts in this ledger describe their original checkpoints.

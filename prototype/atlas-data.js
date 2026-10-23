@@ -59,8 +59,10 @@ const ATLAS = {
     counts: {
       chapters: 5,
       nodes: 102,
-      edges: 93,
-      tracedEdges: 71,
+      edges: 96,
+      activeEdges: 94,
+      withdrawnEdges: 2,
+      tracedEdges: 72,
       conditionalEdges: 8,
       prerequisiteEdges: 6,
       hypothesisEdges: 3,
@@ -99,7 +101,7 @@ const ATLAS = {
       coverage: {
         status: 'partial',
         scope: 'Selected local Alice sequence, two separate guide-reported gun/window clues, and selected guide-reported first- and second-floor events.',
-        included: '35 events: 10 screenshot-transcribed events from WELCOME HOME through OPEN ALICE’S BOX; two gun/window clues; 11 first-floor events; and 12 second-floor events. The selected progressions are laundry to backyard to washer to Red Ice to Todd’s reported reaction, watch TV to blocking Todd’s view, Todd pills to the gun sighting, and Todd’s bed to Alice going to her room.',
+        included: '35 events: 11 screenshot-transcribed events from WELCOME HOME through OPEN ALICE’S BOX; two gun/window clues; 10 additional guide-only first-floor events; and 12 second-floor events. The selected progressions are laundry to backyard to washer to Red Ice to Todd’s reported reaction, watch TV to blocking Todd’s view, Todd pills to the gun sighting, and Todd’s bed to Alice going to her room.',
         omitted: 'Other chores, unresolved screenshot side links, the differing guide order and unstated requirements among separate first- and second-floor tasks, Alice’s conversation choices, the exact relationship level for the key, how the gun clue is checked by the game, and window-escape outcomes.',
         sources: ['steam', 'gamefaqs', 'powerpyxHome', 'transcript', 'neoseekerKara']
       }
@@ -172,10 +174,10 @@ const ATLAS = {
     /* ---- A New Home: selected Alice sequence (screenshot transcription) ---- */
     { id: 'a_welcome', chapter: 'home', label: 'WELCOME HOME', short: 'Welcome home', kind: 'action', x: 50, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
     { id: 'a_todd', chapter: 'home', label: 'JOIN TODD', short: 'Join Todd', kind: 'action', x: 240, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
-    { id: 'a_clean1', chapter: 'home', label: 'CLEAN FIRST FLOOR', short: 'Clean first floor', kind: 'action', x: 430, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
+    { id: 'a_clean1', chapter: 'home', label: 'CLEAN FIRST FLOOR', short: 'Clean first floor', kind: 'stage', x: 430, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
     { id: 'a_ask', chapter: 'home', label: 'ASK TO GO UPSTAIRS', short: 'Ask to go upstairs', kind: 'action', x: 620, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
     { id: 'a_go', chapter: 'home', label: 'GO UPSTAIRS', short: 'Go upstairs', kind: 'action', x: 810, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
-    { id: 'a_clean2', chapter: 'home', label: 'CLEAN SECOND FLOOR', short: 'Clean second floor', kind: 'action', x: 1000, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
+    { id: 'a_clean2', chapter: 'home', label: 'CLEAN SECOND FLOOR', short: 'Clean second floor', kind: 'stage', x: 1000, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
     { id: 'a_room', chapter: 'home', label: "CLEAN ALICE'S ROOM", short: "Clean Alice's room", kind: 'action', x: 1190, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
     { id: 'a_talk', chapter: 'home', label: 'TALK WITH ALICE', short: 'Talk with Alice', kind: 'action', x: 1380, y: 250, w: 170, h: 84, status: 'ocr', src: ['steam'] },
     { id: 'a_key', chapter: 'home', label: 'ALICE GIVES KARA A KEY', short: 'Alice gives key', kind: 'flag', x: 1570, y: 250, w: 170, h: 84, sub: 'condition level unstated', status: 'mixed', src: ['steam', 'gamefaqs', 'powerpyxHome'],
@@ -283,8 +285,8 @@ const ATLAS = {
       note: 'PowerPyx reports standing in front of the TV to annoy Todd. GameFAQs reports blocking Todd’s view after staring at the TV.' },
     { id: 'a_activate_vacuum', chapter: 'home', label: 'Activate vacuum', short: 'Activate vacuum', kind: 'action', x: 810, y: 523, w: 170, h: 54, sub: 'first-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
       note: 'Both guides report activating the vacuum robot during first-floor cleaning.' },
-    { id: 'a_take_out_trash', chapter: 'home', label: 'Take out trash', short: 'Take out trash', kind: 'action', x: 620, y: 562, w: 170, h: 54, sub: 'first-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
-      note: 'Both guides report collecting first-floor trash and taking it out. PowerPyx lists this after other first-floor steps; GameFAQs describes it first.' },
+    { id: 'a_take_out_trash', chapter: 'home', label: 'Take out trash', short: 'Take out trash', kind: 'action', x: 620, y: 562, w: 170, h: 54, sub: 'first-floor event', status: 'mixed', src: ['steam', 'powerpyxHome', 'gamefaqs'],
+      note: 'The Steam chart places TAKE OUT TRASH between the first-floor stage and asking to go upstairs. Both guides report collecting first-floor trash and taking it out. PowerPyx lists this after other first-floor steps; GameFAQs describes it first.' },
 
     /* ---- A New Home: selected second-floor activity records ---- */
     { id: 'a_clean_todd_room', chapter: 'home', label: 'Clean Todd’s room', short: 'Clean Todd’s room', kind: 'action', x: 1490, y: 346, w: 170, h: 54, sub: 'second-floor event', status: 'guide', src: ['powerpyxHome', 'gamefaqs'],
@@ -380,11 +382,16 @@ const ATLAS = {
     /* A New Home local sequence — transcribed from the Steam screenshot */
     { id: 'e_home_welcome_todd', from: 'a_welcome', to: 'a_todd', kind: 'traced', src: ['steam'] },
     { id: 'e_home_todd_clean1', from: 'a_todd', to: 'a_clean1', kind: 'traced', src: ['steam'] },
-    { id: 'e_home_clean1_ask', from: 'a_clean1', to: 'a_ask', kind: 'traced', src: ['steam'] },
+    { id: 'e_home_clean1_ask', from: 'a_clean1', to: 'a_ask', kind: 'withdrawn', src: ['steam'],
+      replacedBy: ['e_home_clean1_trash', 'e_home_trash_ask'],
+      note: 'Withdrawn on 2026-10-23: the source connector passes through TAKE OUT TRASH. The earlier direct claim compressed two pictured connectors. Use the replacement sequence below.' },
     { id: 'e_home_ask_go', from: 'a_ask', to: 'a_go', kind: 'traced', src: ['steam'] },
     { id: 'e_home_go_clean2', from: 'a_go', to: 'a_clean2', kind: 'traced', src: ['steam'] },
-    { id: 'e_home_clean2_room', from: 'a_clean2', to: 'a_room', kind: 'traced', src: ['steam'] },
-    { id: 'e_home_room_talk', from: 'a_room', to: 'a_talk', kind: 'traced', src: ['steam'] },
+    { id: 'e_home_clean2_room', from: 'a_clean2', to: 'a_room', kind: 'traced', src: ['steam'],
+      note: 'Pictured stage-to-chore branch, not a completed-stage prerequisite or a mandatory order among room tasks.' },
+    { id: 'e_home_room_talk', from: 'a_room', to: 'a_talk', kind: 'withdrawn', src: ['steam'],
+      replacedBy: ['e_home_clean2_talk'],
+      note: 'Withdrawn on 2026-10-23: the pictured conversation connector leaves CLEAN SECOND FLOOR, not the room chore. The earlier origin is preserved only for old references.' },
     { id: 'e_home_talk_key', from: 'a_talk', to: 'a_key', kind: 'conditional', label: 'reported condition: Alice trusts Kara (level unstated)', labelAt: { x: 1650, y: 230 },
       src: ['steam', 'gamefaqs', 'powerpyxHome'],
       note: 'The screenshot shows the link itself. GameFAQs says Alice trusts Kara enough to give the key but does not name a relationship level; PowerPyx lists favorable conversation choices without a threshold.' },
@@ -606,6 +613,17 @@ const ATLAS = {
     { id: 'e_hostage_cold_approach_fail', from: 'approach', fromOption: 1, to: 'fail_negotiate', kind: 'uncertain',
       src: ['steam', 'shazooHostageChart'],
       note: 'The selected Cold Approach line joins a shared negotiation bus. Its direct route to FAIL TO NEGOTIATE remains uncertain. The Shazoo image is pre-release/demo-era (2018-04-24); correspondence with the released chart is unknown. Selected choices do not establish a sufficient gameplay condition.' }
+,
+
+    /* Source-review replacements. Old indices 2 and 6 remain withdrawn records. */
+    { id: 'e_home_clean1_trash', from: 'a_clean1', to: 'a_take_out_trash', kind: 'traced', src: ['steam'],
+      note: 'Pictured connector into TAKE OUT TRASH after the first-floor stage.' },
+    { id: 'e_home_trash_ask', from: 'a_take_out_trash', to: 'a_ask', kind: 'traced', src: ['steam'],
+      points: [[790, 589], [800, 589], [800, 292], [790, 292]],
+      note: 'Pictured connector from TAKE OUT TRASH to ASK TO GO UPSTAIRS.' },
+    { id: 'e_home_clean2_talk', from: 'a_clean2', to: 'a_talk', kind: 'traced', src: ['steam'],
+      points: [[1170, 292], [1180, 292], [1180, 340], [1370, 340], [1370, 292], [1380, 292]],
+      note: 'The main conversation connector leaves the second-floor stage. This is stage progression, not a claim that the Alice-room chore alone unlocks the conversation.' }
   ],
 
   /* Conditions are plain-English groups over existing edges. They add no edge

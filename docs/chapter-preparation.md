@@ -11,7 +11,7 @@ Files:
 - [packets/hostage.packet.json](../packets/hostage.packet.json) — the real
   *The Hostage* pilot packet.
 - [packets/a-new-home.packet.json](../packets/a-new-home.packet.json) — partial
-  next-chapter draft with inherited evidence, pending independent source review.
+  reviewed selection corrected against the chart; publication gate blocked.
 - [packets/chapter-template.json](../packets/chapter-template.json) — a valid
   empty draft for another chapter.
 - [prototype/validate-chapter-packet.js](../prototype/validate-chapter-packet.js)
@@ -139,3 +139,16 @@ The [A New Home draft](notes/anewhome-packet-draft.md) exercises a partial
 chapter, same-chapter supplementary nodes, one edge-local guide condition and
 legacy-index reconciliation. `npm run validate:packet` validates both real packets.
 It does not migrate runtime ownership or approve the new packet sources.
+
+## Second packet source correction — 2026-10-23
+
+Independent image review found two wrong traces inherited by both the draft
+and runtime. The [corrected selection](notes/anewhome-packet-source-review.md)
+contains eleven nodes and ten relations, with two stage kinds and the trash
+intermediate explicitly represented. Two historical runtime traces are withdrawn
+from active topology. The packet excludes them from `chart` and records their
+old indices/replacements in `legacy.note`. [ADR 0001](adr/0001-withdrawn-edge-permalinks.md)
+explains why their old IDs and endpoints remain for permalink notices.
+The packet is `reviewed` with source approval; its publication gate is blocked.
+This repeatable correction exposed why validation against runtime cannot prove
+source accuracy. The production source format and regeneration path remain open.

@@ -16,12 +16,12 @@ bounded *Public Enemy* meeting node. See [PoC4 coverage](notes/poc4-coverage.md)
 - [x] Conditions are plain English; Meet Todd's two gates and the separate
       timing predicates stay attached to their own outcome edges.
 - [x] Every previously published node and edge ID and its array order remain;
-      each bounded expansion appends only source-attributed content without
-      changing published geometry.
+      bounded expansions append source-attributed content. Source corrections
+      may explicitly withdraw a claim while retaining its identity and geometry.
 - [x] The Stage 1 pilot keeps all 33 Hostage chart boxes, 40 visible labels and
-      all 36 pictured Steam connectors. A selected-path chart review supports
-      two exact readings and narrows one option connector. The atlas records 37
-      internal Hostage edge claims, with the extra Friendly candidate marked
+      all 36 pictured Steam connectors. Independent review supports
+      FAIL-to-JUMPS in the primary image and retains both approach origins as uncertain. The atlas records 37
+      internal Hostage edge claims, with both approach candidates marked
       uncertain. It adds only one saved-cop prerequisite into one bounded
       Public Enemy meeting node.
 - [x] Existing `?edge=N` links keep working; stable edge IDs are accepted as
@@ -35,7 +35,7 @@ bounded *Public Enemy* meeting node. See [PoC4 coverage](notes/poc4-coverage.md)
 
 ## Scope and record shape
 
-The contract covers five chapter regions, 102 nodes, 93 edges, six condition
+The contract covers five chapter regions, 102 nodes, 96 edge records (94 active connectors and two withdrawn claims), six condition
 groups, ten uncertainty records and no conflict records in
 `prototype/atlas-data.js`. The sample declares `meta.contractVersion: '1.0'`.
 
@@ -78,9 +78,9 @@ Chapter `coverage.status` values:
 | `partial` | Only the listed selected sample is present |
 | `checked-against-chart` | Every visible box, label and connector was checked against a chart; still not gameplay verification |
 
-Four sample chapters are `partial`. A New Home has a selected screenshot
-sequence plus two guide-reported clue actions, eleven selected first-floor
-events and twelve selected second-floor events. Six local progressions are
+Four sample chapters are `partial`. A New Home has eleven selected screenshot-derived nodes, including two
+stage containers and the trash action, plus two guide-reported clues, ten
+additional first-floor guide events and twelve second-floor guide events. Six local progressions are
 drawn: four first-floor and two second-floor. The two guides list the
 second-floor chores in different orders, so that difference stays an explicit
 unknown rather than a universal room-cleaning gate. Stormy Night has a selected ordered entry sequence with response
@@ -90,9 +90,9 @@ Kara has selected checkpoint and meeting branches. The *Public Enemy* region is
 a single guide-reported meeting node, not a chapter transcription.
 
 *The Hostage* is `checked-against-chart`: all 33 visible boxes, 40 labels and 36
-connectors from the Steam chart are represented. A selected-path chart review
-adds option-specific readings without claiming full topology. The atlas stores
-37 Hostage edge claims: 33 are `traced`; four are `uncertain` and drawn dashed
+connectors from the Steam chart are represented. Independent review traces FAIL-to-JUMPS in the primary Steam image. Both
+approach origins remain uncertain; the alternate image is pre-release/demo-era. The atlas stores
+37 Hostage edge claims: 32 are `traced`; five are `uncertain` and drawn dashed
 with `?` badges. `GET CLOSE
 ENOUGH` remains a chart-visible dead end. The omitted parts are recorded per
 chapter. Version and platform remain `unknown`; no transition is
@@ -239,7 +239,7 @@ structural error, not a silent caveat.
 - Hostage chart fences: all 33 PoC3 boxes retain their IDs/order and all 40
   visible labels survive. The Steam image still accounts for 36 pictured
   connectors. The atlas stores 37 edge claims after one option-specific split:
-  33 are traced and 4 remain uncertain. The Friendly candidate is not an
+  32 are traced and 5 remain uncertain. Both approach origins remain unresolved. The Friendly candidate is not an
   extra confirmed connector. The old `?edge=89` position stays fixed and its
   narrower meaning is documented. One scoped unknown record names the remaining
   uncertainty, and `GET CLOSE ENOUGH` gains no outgoing edge;
@@ -268,3 +268,30 @@ transition occurs in game.
 - The Stage 2 [chapter preparation packet](chapter-preparation.md) is a separate
   preparation gate. It does not change this runtime contract or migrate the
   runtime source of truth.
+
+## Withdrawn claims and source corrections — 2026-10-23
+
+[ADR 0001](adr/0001-withdrawn-edge-permalinks.md) keeps known-wrong claims out
+of the active graph while preserving old references. `kind: withdrawn` records
+retain their ID, endpoints and array position, require a withdrawal `note`, and
+list unique active replacement IDs in `replacedBy`. They have no live condition.
+They are absent from drawn paths, neighbour relations, chapter links and ordinary
+connection lists. A focused old permalink shows the withdrawal and replacements.
+
+The A New Home source review withdraws index 2 (`e_home_clean1_ask`, which
+skipped TAKE OUT TRASH) and index 6 (`e_home_room_talk`, which had the wrong
+origin). Appended records 93–95 represent stage→trash→ask and stage→conversation.
+The original endpoints are not silently retargeted. Both cleaning nodes are
+stages. A stage/chore relation does not establish mandatory task order.
+
+`meta.counts.edges` counts all 96 records. `activeEdges` is 94 and
+`withdrawnEdges` is 2. Kind counts sum to records: 72 traced, 8 conditional,
+6 prerequisite, 3 hypothesis, 5 uncertain and 2 withdrawn. User-facing
+connector totals and stable-world inventories count only active connectors.
+
+An optional `points` array stores authored world-coordinate pairs for a
+connector route. Points must be finite, orthogonal and anchored to their
+endpoint borders. Existing collision checks apply. These routes avoid other
+nodes without moving the existing boxes. Routes carry no gameplay semantics.
+The packet excludes the withdrawn traces from `chart` and records their migration
+in `legacy.note`. Runtime ownership and the full-product schema remain undecided.

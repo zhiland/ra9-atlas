@@ -24,14 +24,17 @@ Zoom changes the camera. The nodes and branches stay in one map world.
 
 ## Coverage and evidence
 
-The sample has **102 nodes and 93 edge claims across five chapter regions**.
+The sample has **102 nodes and 94 active connectors across five chapter regions**.
 The Hostage inventory accounts for 33 boxes, 40 labels and 36 pictured connectors.
 Its option-specific model has 37 claims: **32 traced and 5 uncertain**.
 Both approach-to-failure origins remain uncertain. The other four chapter regions are partial.
+Two old A New Home claims are withdrawn; their permalinks explain the correction.
+The data retains 96 records in total, including those two historical claims.
 
 Chart coverage, guide support, gameplay verification and interface tests are separate claims.
 No gameplay transition is verified. Uncertain links stay labeled and dashed.
-The [Hostage source review](docs/notes/hostage-packet-source-review.md) records its findings.
+The [Hostage review](docs/notes/hostage-packet-source-review.md) and
+[A New Home review](docs/notes/anewhome-packet-source-review.md) record their bounded findings.
 Source-derived publication rights remain unresolved.
 
 See [current status](docs/STATUS.md), [coverage](docs/notes/poc4-coverage.md),

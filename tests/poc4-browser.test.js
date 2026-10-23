@@ -193,7 +193,7 @@ async function runVariant(browser, variant) {
     assert(state.world && state.world.width > 0 && state.world.height > 0, 'map world must be rendered but covered');
     assert(state.canvas && state.canvas.width > 0 && state.canvas.height > 0, 'canvas must have layout under the cover');
     assert(state.nodes === 102, '102 nodes should be rendered behind the cover, got ' + state.nodes);
-    assert(state.edges === 93, '93 connectors should be rendered behind the cover, got ' + state.edges);
+    assert(state.edges === 94, '94 connectors should be rendered behind the cover, got ' + state.edges);
     assert(state.lod === null, 'the map must not carry a semantic LOD attribute');
   });
 
@@ -208,7 +208,7 @@ async function runVariant(browser, variant) {
     assert(await page.locator('#trail').isVisible(), 'history trail not visible');
     assert(!(await page.locator('#atlas-shell').getAttribute('inert')), 'shell stayed inert after consent');
     const status = await textOf(page, '#status');
-    assert(status.indexOf('5 chapters · 102 nodes · 93 connectors') !== -1, 'status line counts: ' + status);
+    assert(status.indexOf('5 chapters · 102 nodes · 94 connectors') !== -1, 'status line counts: ' + status);
     assert(status.indexOf('not in-game verified') !== -1, 'status line must keep the not-verified qualifier');
     assert(status.indexOf('version/platform unknown') === -1 && status.length <= 180,
       'primary status must stay a concise slice summary, got: ' + status);
@@ -218,7 +218,7 @@ async function runVariant(browser, variant) {
     assert(await page.locator('#overview').count() === 0, 'the card/report overview surface must stay removed');
     assert(await page.locator('.frame').count() === 5, 'five chapter frames must stay mounted');
     assert(await page.locator('[data-node]').count() === 102, '102 nodes must stay mounted');
-    assert(await page.locator('path.edge').count() === 93, '93 connectors must stay mounted');
+    assert(await page.locator('path.edge').count() === 94, '94 connectors must stay mounted');
     assert(await page.locator('[data-frame-label]').count() === 5, 'five chapter names must remain on the map');
     assert(await page.locator('[data-node-label]').count() === 102, 'every event box must keep its label');
     const chapterNav = await page.evaluate(function () {
@@ -301,7 +301,7 @@ async function runVariant(browser, variant) {
     assert(await page.locator('[data-chapter="home"]').getAttribute('aria-pressed') === 'true', 'home chapter is not active');
     const homeFrame = home.frames.filter(function (f) { return f.id === 'home'; })[0];
     assert(homeFrame && fullyInside(homeFrame.rect, home.canvas), 'focused home chapter is clipped by the canvas');
-    assert(home.nodeCount === 102 && home.edgeCount === 93, 'chapter focus must keep the whole graph mounted');
+    assert(home.nodeCount === 102 && home.edgeCount === 94, 'chapter focus must keep the whole graph mounted');
     assert(!home.horizontalOverflow, 'chapter focus introduced horizontal overflow');
 
     await page.locator('[data-chapter="kara"]').click();
@@ -314,7 +314,7 @@ async function runVariant(browser, variant) {
     const hostage = await fitSnapshot(page);
     const hostageFrame = hostage.frames.filter(function (f) { return f.id === 'hostage'; })[0];
     assert(hostageFrame && fullyInside(hostageFrame.rect, hostage.canvas), 'focused Hostage chapter is clipped by the canvas');
-    assert(hostage.nodeCount === 102 && hostage.edgeCount === 93, 'Hostage focus must keep the whole graph mounted');
+    assert(hostage.nodeCount === 102 && hostage.edgeCount === 94, 'Hostage focus must keep the whole graph mounted');
     const hostageInside = await page.evaluate(function () {
       const c = document.getElementById('canvas').getBoundingClientRect();
       const nodes = Array.from(document.querySelectorAll('[data-node]')).filter(function (node) {
@@ -387,7 +387,7 @@ async function runVariant(browser, variant) {
   await ok('The Hostage chart keeps five uncertain claims, the primary-image reading, a dead end and the saved-cop carry', async function () {
     await openChapter(page, 'hostage');
     assert(await page.locator('[data-chapter="hostage"]').getAttribute('aria-pressed') === 'true', 'Hostage chapter is not active');
-    assert(await page.locator('.node.stage').count() === 3, 'three Hostage stage containers must stay visually distinct');
+    assert(await page.locator('.node.hostage.stage').count() === 3, 'three Hostage stage containers must stay visually distinct');
     const chartBoxes = await page.evaluate(function () {
       const nodes = Array.from(document.querySelectorAll('[data-node]')).filter(function (node) {
         return ATLAS.nodes.filter(function (n) { return n.id === node.getAttribute('data-node'); })[0].chapter === 'hostage';
@@ -616,10 +616,43 @@ async function runVariant(browser, variant) {
       };
     });
     assert(separation.fatalOut === 0, 'the fatal outcome must remain terminal on the map');
-    assert(separation.mountedEdges === 93 && separation.entryEdges === 7,
+    assert(separation.mountedEdges === 94 && separation.entryEdges === 7,
       'all entry connectors must stay mounted with the map');
     assert(JSON.stringify(separation.deviantOut) === JSON.stringify(['s_go_upstairs', 's_reason_todd']),
       'deviant response connectors changed: ' + separation.deviantOut.join(','));
+  });
+
+  await ok('withdrawn legacy links show history and open each active replacement without drawing false arrows', async function () {
+    for (const index of [2, 6]) {
+      const record = await page.evaluate(function (i) {
+        const edge = ATLAS.edges[i];
+        return { to: edge.to, replacements: edge.replacedBy.map(function (id) {
+          const replacementIndex = ATLAS.edges.findIndex(function (e) { return e.id === id; });
+          return { index: replacementIndex, to: ATLAS.edges[replacementIndex].to };
+        }) };
+      }, index);
+      for (const replacement of record.replacements) {
+        await resetAtlas(page);
+        await page.evaluate(function (hash) { location.hash = hash; }, '#home/' + record.to + '?edge=' + index);
+        await page.locator('#details [data-evidence="withdrawn"]').waitFor({ state: 'visible' });
+        const historical = await textOf(page, '#details');
+        assert(historical.includes('Withdrawn claim') && historical.includes('not an active connector'),
+          'old link must identify a withdrawn historical claim');
+        assert(await page.locator('path.edge[data-edge="2"], path.edge[data-edge="6"]').count() === 0,
+          'withdrawn claims must have no SVG arrow');
+        assert(await page.locator('#details .rowlist [data-edge="' + index + '"]').count() === 0,
+          'withdrawn history must not be an ordinary node connection');
+        await page.locator('#details [data-open-edge="' + replacement.index + '"]').click();
+        await page.locator('#details [data-edge-evidence="' + replacement.index + '"]').waitFor({ state: 'visible' });
+        assert((await textOf(page, '#details')).includes('Focused connector') &&
+          !(await textOf(page, '#details')).includes('Focused cross-chapter connector'),
+          'local replacements must not be classified as cross-chapter connectors');
+        assert((await page.evaluate(function () { return location.hash; })) ===
+          '#home/' + replacement.to + '?edge=' + replacement.index, 'replacement permalink must identify its real record');
+        assert(await page.locator('path.edge.focused[data-edge="' + replacement.index + '"]').count() === 1,
+          'replacement must focus its real map path');
+      }
+    }
   });
 
   await ok('map cross-label opens the actual edge with evidence and a permalink', async function () {
@@ -940,7 +973,7 @@ async function runMobileRegression(browser) {
   await page.locator('#consent').waitFor({ state: 'visible' });
   await ok('mobile spoiler cover keeps the real map underneath', async function () {
     assert(await page.locator('[data-node]').count() === 102, 'real nodes must be mounted beneath the cover');
-    assert(await page.locator('path.edge').count() === 93, 'real edges must be mounted beneath the cover');
+    assert(await page.locator('path.edge').count() === 94, 'real edges must be mounted beneath the cover');
     assert(await page.locator('#spoiler-overlay').isVisible(), 'spoiler cover should be visible');
   });
   await page.locator('#consent').click();
@@ -967,7 +1000,7 @@ async function runMobileRegression(browser) {
     });
     assert(Math.abs(m.width-m.viewport)<=1, 'canvas width does not fit the mobile viewport');
     assert(!m.overflow, 'mobile page has horizontal overflow');
-    assert(m.nodes===102&&m.labels===102&&m.edges===93, 'mobile viewport changed graph inventory');
+    assert(m.nodes===102&&m.labels===102&&m.edges===94, 'mobile viewport changed graph inventory');
     assert(m.frames.every(function(f){return f.inside;}), 'whole-map Fit should contain all chapter regions');
     assert(m.scale>0&&m.scale<1, 'mobile fit should scale the same world map');
   });
@@ -983,7 +1016,7 @@ async function runMobileRegression(browser) {
       return { pressed:document.querySelector('[data-chapter="home"]').getAttribute('aria-pressed'), inside:frame.left>=canvas.left-1&&frame.right<=canvas.right+1&&frame.top>=canvas.top-1&&frame.bottom<=canvas.bottom+1, nodes:document.querySelectorAll('[data-node]').length, labels:document.querySelectorAll('[data-node-label]').length, edges:document.querySelectorAll('path.edge').length, camera:{a:m.a,e:m.e,f:m.f}, text:Array.from(document.querySelectorAll('[data-node-label]')).map(function(x){return x.textContent.trim();}) };
     });
     assert(focused.pressed==='true'&&focused.inside, 'mobile chapter focus did not fit its real frame');
-    assert(focused.nodes===102&&focused.labels===102&&focused.edges===93, 'chapter focus swapped or hid real graph content');
+    assert(focused.nodes===102&&focused.labels===102&&focused.edges===94, 'chapter focus swapped or hid real graph content');
     assert(focused.text.every(Boolean), 'chapter focus has an anonymous event label');
     const point=await page.evaluate(function(){const c=document.getElementById('canvas'),r=c.getBoundingClientRect();for(let y=r.top+25;y<r.bottom-25;y+=12){for(let x=r.left+25;x<r.right-25;x+=12){const el=document.elementFromPoint(x,y);if(el&&c.contains(el)&&!el.closest('button,a,input,.legend,.status,.zoom'))return{x:x,y:y};}}return null;});
     assert(point,'no clear map point for mobile pan');
@@ -1007,6 +1040,19 @@ async function runMobileRegression(browser) {
     assert(r&&r.x>=-1&&r.x+r.width<=390+1, 'details panel extends beyond the mobile viewport');
     await page.keyboard.press('Escape'); await page.locator('#details').waitFor({state:'hidden'});
     assert(pageErrors.length===0,pageErrors.join(' | '));
+  });
+  await ok('mobile legacy permalink exposes a usable withdrawal notice and replacement', async function () {
+    await page.evaluate(function () { location.hash = '#home/a_ask?edge=2'; });
+    await page.locator('#details [data-evidence="withdrawn"]').waitFor({ state: 'visible' });
+    const panel = await page.locator('#details').boundingBox();
+    assert(panel && panel.x >= -1 && panel.x + panel.width <= 391, 'withdrawal details overflow the mobile viewport');
+    assert(await page.locator('#details [data-open-edge]').count() === 2, 'both replacement steps must be available');
+    await page.locator('#details [data-open-edge="93"]').click();
+    await page.locator('#details [data-edge-evidence="93"]').waitFor({ state: 'visible' });
+    assert((await page.evaluate(function () { return location.hash; })) === '#home/a_take_out_trash?edge=93',
+      'mobile replacement must open the real trash connector');
+    assert(await page.locator('path.edge').count() === 94, 'history navigation must preserve the active graph');
+    assert(pageErrors.length === 0, pageErrors.join(' | '));
   });
   await page.close();
 }

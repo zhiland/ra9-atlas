@@ -120,7 +120,7 @@ check('published edge IDs keep their order and later slices are appended', () =>
     'e_home_rewash_red_ice', 'e_home_red_ice_enrage_todd', 'e_home_watch_tv_block_view', 'e_home_backyard_rewash_clothes',
     'e_home_pills_gun', 'e_home_todd_bed_alice_room'
   ]);
-  eq(real.edges.slice(55).map(e => e.id), [
+  eq(real.edges.slice(55, 93).map(e => e.id), [
     'e_hostage_start_allen', 'e_hostage_allen_search',
     'e_hostage_search_father', 'e_hostage_father_cause', 'e_hostage_search_name',
     'e_hostage_search_gun_case', 'e_hostage_search_cop_body', 'e_hostage_cop_body_gun',
@@ -137,12 +137,12 @@ check('published edge IDs keep their order and later slices are appended', () =>
     'e_hostage_approach_fail', 'e_hostage_fail_jumps',
     'e_hostage_save_cop_public_enemy', 'e_hostage_cold_approach_fail'
   ]);
-  eq(real.edges.length, 93);
+  eq(real.edges.length, 96);
   eq(real.edges.map(e => [e.from, e.to, e.kind]).slice(0, 55), [
     ['a_welcome', 'a_todd', 'traced'], ['a_todd', 'a_clean1', 'traced'],
-    ['a_clean1', 'a_ask', 'traced'], ['a_ask', 'a_go', 'traced'],
+    ['a_clean1', 'a_ask', 'withdrawn'], ['a_ask', 'a_go', 'traced'],
     ['a_go', 'a_clean2', 'traced'], ['a_clean2', 'a_room', 'traced'],
-    ['a_room', 'a_talk', 'traced'], ['a_talk', 'a_key', 'conditional'],
+    ['a_room', 'a_talk', 'withdrawn'], ['a_talk', 'a_key', 'conditional'],
     ['a_key', 'a_box', 'traced'], ['a_box', 'k_dialogue', 'hypothesis'],
     ['s_alive', 'k_meet', 'prerequisite'], ['k_terminal', 'k_meet', 'prerequisite'],
     ['k_meet', 'k_dialogue', 'traced'], ['k_dialogue', 'k_away', 'traced'],
@@ -173,7 +173,7 @@ check('published edge IDs keep their order and later slices are appended', () =>
     ['a_tidy_pills', 'a_gun_seen', 'traced'],
     ['a_make_todd_bed', 'a_alice_goes_room', 'traced']
   ]);
-  eq(real.edges.map(e => [e.from, e.to, e.kind]).slice(55), [
+  eq(real.edges.map(e => [e.from, e.to, e.kind]).slice(55, 93), [
     ['mission_start', 'talk_allen', 'traced'], ['talk_allen', 'stage-search', 'traced'],
     ['stage-search', 'inv_father', 'traced'], ['inv_father', 'learn_cause', 'traced'],
     ['stage-search', 'learn_name', 'traced'], ['stage-search', 'inv_gun_case', 'traced'],
@@ -330,10 +330,10 @@ check('A New Home first-floor events keep only source-supported local progressio
     assert(edge && edge.kind === 'traced' && edge.from === from && edge.to === to, id + ' must keep its local source-stated progression');
     assert(edge.src.length > 0, id + ' must cite its source');
   });
-  assert(!real.edges.some(e => e.from === 'a_clean1' && Object.keys(sources).includes(e.to)),
+  assert(!real.edges.some(e => e.from === 'a_clean1' && Object.keys(sources).includes(e.to) && e.id !== 'e_home_clean1_trash'),
     'do not invent generic first-floor context spokes');
   const mandatory = real.edges.find(e => e.id === 'e_home_clean1_ask');
-  eq([mandatory.from, mandatory.to, mandatory.kind], ['a_clean1', 'a_ask', 'traced']);
+  eq([mandatory.from, mandatory.to, mandatory.kind], ['a_clean1', 'a_ask', 'withdrawn']);
   const unknown = real.uncertainties.find(u => u.id === 'u_home_first_floor_order');
   assert(unknown && unknown.status === 'unknown', 'unresolved order and requirements must be recorded');
   Object.keys(sources).forEach(id => assert(unknown.nodes.includes(id), id + ' missing from first-floor uncertainty'));
@@ -786,6 +786,32 @@ rejects('rejects merging Hostage chart uncertainty into the saved-cop gate', d =
 rejects('rejects changing a Hostage stage container into a plain box', d => {
   d.nodes.find(n => n.id === 'stage-negotiate').kind = 'action';
 }, /hostage should have 3 stage containers/);
+
+check('source correction preserves withdrawn identities and appends exact replacement topology', () => {
+  eq(real.edges.slice(93).map(e => [e.id, e.from, e.to]), [
+    ['e_home_clean1_trash', 'a_clean1', 'a_take_out_trash'],
+    ['e_home_trash_ask', 'a_take_out_trash', 'a_ask'],
+    ['e_home_clean2_talk', 'a_clean2', 'a_talk']
+  ]);
+  eq([real.edges[2].id, real.edges[2].from, real.edges[2].to, real.edges[2].kind],
+    ['e_home_clean1_ask', 'a_clean1', 'a_ask', 'withdrawn']);
+  eq([real.edges[6].id, real.edges[6].from, real.edges[6].to, real.edges[6].kind],
+    ['e_home_room_talk', 'a_room', 'a_talk', 'withdrawn']);
+  eq(real.edges[2].replacedBy, ['e_home_clean1_trash', 'e_home_trash_ask']);
+  eq(real.edges[6].replacedBy, ['e_home_clean2_talk']);
+  eq(['a_clean1', 'a_clean2'].map(id => real.nodes.find(n => n.id === id).kind), ['stage', 'stage']);
+  eq(real.meta.counts.activeEdges, 94);
+  eq(real.meta.counts.withdrawnEdges, 2);
+});
+rejects('rejects a withdrawn claim with no reason', d => { delete d.edges[2].note; }, /withdrawal reason/);
+rejects('rejects a withdrawn claim with a dangling replacement', d => { d.edges[2].replacedBy = ['e_missing']; }, /must be an active edge/);
+rejects('rejects withdrawal cycles or replacement chains', d => { d.edges[2].replacedBy = [d.edges[6].id]; }, /must be an active edge/);
+rejects('rejects duplicate replacement references', d => { d.edges[2].replacedBy.push(d.edges[2].replacedBy[0]); }, /repeats a replacement/);
+rejects('rejects replacement metadata on an active claim', d => { d.edges[0].replacedBy = [d.edges[1].id]; }, /active but has replacedBy/);
+rejects('rejects a live condition on a withdrawn claim', d => { d.conditions[0].appliesTo = [d.edges[2].id]; }, /withdrawn but retains a live condition/);
+rejects('rejects diagonal authored paths', d => { d.edges[94].points[1][1] += 5; }, /points must be orthogonal/);
+rejects('rejects unanchored authored paths', d => { d.edges[94].points[0][0] -= 1; }, /anchored to endpoint borders/);
+rejects('rejects malformed authored paths', d => { d.edges[94].points = ['not a coordinate pair']; }, /finite coordinate pairs/);
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

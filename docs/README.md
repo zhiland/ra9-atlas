@@ -14,7 +14,10 @@ Use these documents for current work:
 | [OpenCode runner](opencode-runner.md) | Current external-agent launch procedure |
 | [Sol handoff](handoff-sol.md) | Continuation checklist; recheck its dated Git/PR snapshot |
 | [Repository review](notes/repository-review-2026-10-22.md) | Code findings, cleanup and verification |
-| [A New Home draft](notes/anewhome-packet-draft.md) | Second partial packet, inherited evidence and pending source review |
+| [A New Home extraction](notes/anewhome-packet-draft.md) | Historical second-packet draft |
+| [A New Home source review](notes/anewhome-packet-source-review.md) | Corrected partial topology and independent follow-up |
+| [A New Home implementation](notes/anewhome-correction-implementation.md) | Legacy withdrawal behavior and code-review findings |
+| [Withdrawal decision](adr/0001-withdrawn-edge-permalinks.md) | Preserve old claims without drawing false connectors |
 | [Hostage source review](notes/hostage-packet-source-review.md) | Independent evidence review and corrections |
 
 ## Historical records
