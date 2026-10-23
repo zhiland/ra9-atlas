@@ -57,7 +57,7 @@ actual edge104 selection, and preservation of the whole map on mobile widths.
 Separate review used `git diff 7053764...6111af1`. It found one stale kind
 total in the contract: 72 traced records instead of 82. The total is corrected.
 No material baseline smell or compatibility defect was found. Standards: one
-finding corrected, follow-up pending.
+finding resolved, none open. A separate follow-up confirmed `ca81a65`.
 
 ## Spec
 
@@ -73,3 +73,13 @@ Full npm passed: 20 build tests, inventory regression, 94 contract, 44 unit,
 6 Painter packet, 21 Painter runtime and 72 browser checks. Screenshots of the actual desktop and mobile-width
 UI were inspected. No Safari, physical touch, assistive technology or gameplay
 verification is claimed. No automatic merge or site deployment is authorized.
+
+## Hosted and Git checkpoint
+
+Draft [PR #30](https://github.com/zhiland/ra9-atlas/pull/30), stacked on #29,
+contains the integration. [Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/40005274436)
+passed at implementation `ca81a65`: full Node/Chromium, 18 runner tests and eight
+mocked preflight tests. Later checkpoint edits record results in documentation.
+All 318 local Markdown targets resolve. The user draft retains SHA256
+`f0a9eb2733ba7b3bcd886852dbd30fe093912f50351b1dd16a7eacae37998833`.
+No merge or deployment occurred. Native isolation remains host/version-specific.

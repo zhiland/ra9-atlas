@@ -11,7 +11,12 @@ and five traces at edges101–105. Runtime totals are 123 nodes/106 records/104
 active connectors in seven regions. All old graph objects, frames and links are
 preserved. Three detached origins remain unknown and no harassment cross-chapter
 edge is added. Source approval, partial coverage and blocked publication persist.
-Use the integration report for final review and verification results.
+Draft [PR #30](https://github.com/zhiland/ra9-atlas/pull/30) is based on #29.
+Full npm passes with 21 Painter runtime and 72 browser checks.
+[Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/40005274436) passes
+at implementation `ca81a65`, including Node/Chromium and mocked Python checks.
+Source fidelity, Standards and Spec follow-ups have no open findings. See the
+integration report for verification limits.
 
 ## Previous Painter preparation checkpoint
 
