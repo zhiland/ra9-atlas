@@ -55,14 +55,16 @@ The fixed-point review used `git diff 842f324...72c16ff`. Standards found one
 stale machine-readable unknown explanation: it still said 22 null character
 entries and mentioned only Shades. It now records 21 and both reviewed chapters,
 with their guide references. No material baseline smell was found.
-Standards: one finding corrected, follow-up pending.
+Separate follow-up confirmed the fix at `275aa1d`.
+Standards: one finding resolved, none open.
 
 ## Spec
 
 Review against [the packet plan](painter-packet-plan.md) confirmed packet/runtime
 separation and the bounded scope. It found the same stale unknown count and a
 current command description saying three packets instead of four. Both are
-corrected. Spec: two findings corrected, follow-up pending.
+corrected. Separate follow-up confirmed both at `275aa1d`.
+Spec: two findings resolved, none open.
 
 ## Verification boundaries
 
@@ -80,3 +82,17 @@ checks are repeated after provenance corrections. Graph source, identity ledger,
 generated browser data, UI and CSS are byte-identical to base `842f324`.
 The user draft retains SHA256
 `f0a9eb2733ba7b3bcd886852dbd30fe093912f50351b1dd16a7eacae37998833`.
+
+All 308 local Markdown targets resolve. No automatic merge or deployment occurred.
+
+## Hosted and Git checkpoint
+
+Draft [PR #29](https://github.com/zhiland/ra9-atlas/pull/29), stacked on #28,
+contains the preparation. [Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/40001831913)
+passed at implementation `275aa1d`: full Node/Chromium, 18 runner-boundary tests
+and 8 mocked preflight tests. Browser/system dependency installation took most
+of the 12-minute run. This does not certify native macOS isolation on other
+hosts, Safari, physical touch, assistive technology or game transitions.
+Subsequent checkpoint edits record these results in documentation only.
+No PR was merged or site deployed. Next: plan a separate bounded runtime
+integration or continue the remaining Painter chart, keeping this slice partial.

@@ -11,8 +11,12 @@ boxes, five continuous traces and three detached segments with unknown origins.
 It is a fourth source-approved partial packet, with publication blocked. No
 runtime region, graph object, geometry, generated data or legacy index changes.
 Separate guide evidence supplies Markus attribution, leaving 21 null character
-entries in the inventory. Six dedicated packet regressions are added. Final
-local/hosted verification is recorded in the source-review report.
+entries in the inventory. Six dedicated packet regressions are added.
+Draft [PR #29](https://github.com/zhiland/ra9-atlas/pull/29), based on #28,
+passed [Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/40001831913)
+at implementation `275aa1d`: full Node/Chromium and mocked Python checks.
+Independent Standards and Spec follow-ups have no open findings. Detailed
+verification remains in the source-review report.
 
 ## Authoring package checkpoint
 
