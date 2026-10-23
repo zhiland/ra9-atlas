@@ -163,7 +163,7 @@ The [source-reviewed packet](notes/shades-of-color-source-review.md) contains
 unknown instead of becoming invented edges. Its initial preparation had no ATLAS reconciliation. The later
 [integration](notes/shades-runtime-integration.md) adds exact runtime reconciliation
 with new edges appended at 96–100, without changing source interpretation. Source approval retains a
-blocked publication gate. `npm run validate:packet` includes all three packets;
+blocked publication gate. `npm run validate:packet` includes all four packets;
 `npm run test:shades` pins the source-reviewed bounds and review-required exit 2.
 
 ## Fourth packet — The Painter opening

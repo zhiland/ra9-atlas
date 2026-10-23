@@ -1576,10 +1576,12 @@
     },
     {
       "id": "unattributed-early-chart-characters",
-      "explanation": "The 22 early entries with character=null lack character attribution in the inspected index headings. Do not infer them from story knowledge. Shades of Color is separately attributed to Markus by the bounded chapter-source review.",
+      "explanation": "The 21 early entries with character=null lack character attribution in the inspected index headings. Do not infer them from story knowledge. Shades of Color and The Painter are separately attributed to Markus by bounded chapter-source reviews.",
       "sources": [
         "steam-chart-index",
-        "powerpyx-chapter-index"
+        "powerpyx-chapter-index",
+        "powerpyx-shades-guide",
+        "powerpyx-painter-guide"
       ]
     },
     {

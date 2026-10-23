@@ -51,11 +51,18 @@ approve source interpretation or publication rights.
 
 ## Standards
 
-Pending fixed-point implementation review.
+The fixed-point review used `git diff 842f324...72c16ff`. Standards found one
+stale machine-readable unknown explanation: it still said 22 null character
+entries and mentioned only Shades. It now records 21 and both reviewed chapters,
+with their guide references. No material baseline smell was found.
+Standards: one finding corrected, follow-up pending.
 
 ## Spec
 
-Pending fixed-point review against [the packet plan](painter-packet-plan.md).
+Review against [the packet plan](painter-packet-plan.md) confirmed packet/runtime
+separation and the bounded scope. It found the same stale unknown count and a
+current command description saying three packets instead of four. Both are
+corrected. Spec: two findings corrected, follow-up pending.
 
 ## Verification boundaries
 
@@ -63,3 +70,13 @@ No image is committed or published. Sources remain reference-only, publication
 blocked, platform/build unknown and gameplay unverified. The runtime graph,
 canonical JSON, generated artifact, identity ledger and geometry must remain
 byte-identical to the base. Runtime integration requires a separate package.
+
+## Local verification
+
+Full npm passed: 20 build tests, inventory regression, 94 contract, 44 unit,
+4 map, 11 stable zoom, 12 layout, 59 generic packet, 6 Shades packet,
+21 Shades runtime, 6 Painter packet and 68 browser checks. Targeted inventory
+checks are repeated after provenance corrections. Graph source, identity ledger,
+generated browser data, UI and CSS are byte-identical to base `842f324`.
+The user draft retains SHA256
+`f0a9eb2733ba7b3bcd886852dbd30fe093912f50351b1dd16a7eacae37998833`.
