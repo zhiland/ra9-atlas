@@ -62,7 +62,7 @@ check('the real PoC4 sample passes all structural checks', () => {
 
 check('the sample declares contract version 1.0 and separate coverage records', () => {
   eq(real.meta.contractVersion, '1.0');
-  eq(real.chapters.map(c => c.coverage.status), ['partial', 'partial', 'partial', 'checked-against-chart', 'partial', 'partial']);
+  eq(real.chapters.map(c => c.coverage.status), ['partial', 'partial', 'partial', 'checked-against-chart', 'partial', 'partial', 'partial']);
   real.chapters.forEach(c => {
     assert(c.coverage.scope && c.coverage.included && c.coverage.omitted, c.id + ' coverage scope/inclusion/omission missing');
     assert(c.coverage.sources.length > 0, c.id + ' coverage has no sources');
@@ -94,7 +94,7 @@ check('published node IDs keep their order and later slices are appended', () =>
     'get_close', 'deviant_jumps', 'end_failed', 'end_leapt', 'end_snipers', 'end_died',
     'end_deviant_shot', 'end_connor_shot', 'pe_meet_cop'
   ]);
-  eq(real.nodes.length, 114);
+  eq(real.nodes.length, 123);
 });
 
 check('published edge IDs keep their order and later slices are appended', () => {
@@ -137,7 +137,7 @@ check('published edge IDs keep their order and later slices are appended', () =>
     'e_hostage_approach_fail', 'e_hostage_fail_jumps',
     'e_hostage_save_cop_public_enemy', 'e_hostage_cold_approach_fail'
   ]);
-  eq(real.edges.length, 101);
+  eq(real.edges.length, 106);
   eq(real.edges.map(e => [e.from, e.to, e.kind]).slice(0, 55), [
     ['a_welcome', 'a_todd', 'traced'], ['a_todd', 'a_clean1', 'traced'],
     ['a_clean1', 'a_ask', 'withdrawn'], ['a_ask', 'a_go', 'traced'],
@@ -264,12 +264,12 @@ check('conditions keep each checkpoint timing alternative attached to its own ed
 });
 
 check('unknowns stay unknown and no source-vs-source conflict is invented', () => {
-  eq(real.uncertainties.map(u => u.status), Array(14).fill('unknown'));
+  eq(real.uncertainties.map(u => u.status), Array(18).fill('unknown'));
   eq(real.uncertainties.map(u => u.id), [
     'u_box_trigger', 'u_key_threshold', 'u_home_first_floor_order', 'u_home_second_floor_order', 'u_stormy_internal',
     'u_checkpoint_timer_11', 'u_gun_state_check', 'u_window_route_outcome',
     'u_stormy_escape_todd_state', 'u_hostage_chart_uncertain',
-    'u_sc_detached_origins', 'u_sc_order', 'u_sc_harassment', 'u_sc_build'
+    'u_sc_detached_origins', 'u_sc_order', 'u_sc_harassment', 'u_sc_build', 'u_pt_detached_origins', 'u_pt_order', 'u_pt_clothes', 'u_pt_build'
   ]);
   eq(real.conflicts, []);
   real.uncertainties.forEach(u => {
@@ -801,7 +801,7 @@ check('source correction preserves withdrawn identities and appends exact replac
   eq(real.edges[2].replacedBy, ['e_home_clean1_trash', 'e_home_trash_ask']);
   eq(real.edges[6].replacedBy, ['e_home_clean2_talk']);
   eq(['a_clean1', 'a_clean2'].map(id => real.nodes.find(n => n.id === id).kind), ['stage', 'stage']);
-  eq(real.meta.counts.activeEdges, 99);
+  eq(real.meta.counts.activeEdges, 104);
   eq(real.meta.counts.withdrawnEdges, 2);
 });
 rejects('rejects a withdrawn claim with no reason', d => { delete d.edges[2].note; }, /withdrawal reason/);

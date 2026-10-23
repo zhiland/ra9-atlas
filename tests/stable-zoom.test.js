@@ -423,7 +423,7 @@ async function findDragPoint(page) {
 }
 
 async function runRealDataset(browser) {
-  console.log('scenario real-114 stable zoom');
+  console.log('scenario real-123 stable zoom');
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const errors = [];
   page.on('pageerror', function (e) { errors.push('pageerror: ' + e.message); });
@@ -461,9 +461,9 @@ async function runRealDataset(browser) {
     assertInventoryStable(snapshots, fit.expected);
     assertInventoryStable([fit], fit.expected);
 
-    assert(fit.expected.nodeLabels.length === 114, 'fixture should keep 114 node labels');
+    assert(fit.expected.nodeLabels.length === 123, 'fixture should keep 123 node labels');
     assert(fit.expected.edgeLabels.length > 0, 'fixture should contain real edge labels');
-    assert(fit.expected.frames.length === 6, 'fixture should keep six chapter frames');
+    assert(fit.expected.frames.length === 7, 'fixture should keep seven chapter frames');
   });
 
   await ok('node labels stay inside their boxes and only the world camera matrix changes', async function () {
@@ -471,7 +471,7 @@ async function runRealDataset(browser) {
     const scales = snapshots.map(function (s) { return s.scale; });
     assert(new Set(scales).size === scales.length, 'sampled scales should all differ: ' + scales.join(', '));
     snapshots.forEach(function (s) {
-      assert(s.nodes.length === 114 && s.edges.length === 99,
+      assert(s.nodes.length === 123 && s.edges.length === 104,
         'scale ' + s.scale + ' changed mounted graph inventory');
       assert(s.nodes.every(function (n) { return n.labelInsideNode; }),
         'scale ' + s.scale + ' has a node label outside its box');

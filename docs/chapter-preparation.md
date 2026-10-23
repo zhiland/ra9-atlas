@@ -173,6 +173,6 @@ opening boxes, five continuous traces and three detached segments with unknown
 origins. Two checkpoints are stages. The later leisure/studio/painting chart is
 outside scope. Four unknown records preserve origins, ordering, clothes
 eligibility and platform/build gaps. The guide-reported harassment prerequisite
-is not a cross-chapter edge or game verification. No ATLAS reconciliation or
-legacy index is claimed. All four packet CLIs run in `validate:packet`.
-Independent source approval keeps publication blocked and runtime unchanged.
+is not a cross-chapter edge or game verification. The later [runtime integration](notes/painter-runtime-integration.md) declares
+exact reconciliation with appended indices101–105. All four packet CLIs run in `validate:packet`.
+Independent source approval keeps publication blocked.

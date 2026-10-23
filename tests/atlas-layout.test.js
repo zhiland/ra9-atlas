@@ -47,7 +47,8 @@ const EXPECTED = {
     kara: { x: 3360, y: 120, w: 1060, h: 900 },
     hostage: { x: 0, y: 1120, w: 4450, h: 1340 },
     'public-enemy': { x: 4490, y: 2200, w: 380, h: 250 },
-    'shades-of-color': { x: 30, y: 2540, w: 1900, h: 500 }
+    'shades-of-color': { x: 30, y: 2540, w: 1900, h: 500 },
+    'the-painter': { x: 2040, y: 2540, w: 1900, h: 500 }
   },
   nodes: {
     a_welcome: { x: 50, y: 250, w: 170, h: 84 },
@@ -163,7 +164,16 @@ const EXPECTED = {
     sc_store: { x: 520, y: 2610, w: 260, h: 74 },
     sc_package: { x: 950, y: 2610, w: 260, h: 74 },
     sc_protesters: { x: 1500, y: 2890, w: 260, h: 70 },
-    sc_bus: { x: 1380, y: 2610, w: 260, h: 74 }
+    sc_bus: { x: 1380, y: 2610, w: 260, h: 74 },
+    pt_arrive: { x: 2100, y: 2640, w: 240, h: 80 },
+    pt_package: { x: 2440, y: 2640, w: 250, h: 80 },
+    pt_wake: { x: 2780, y: 2640, w: 250, h: 80 },
+    pt_breakfast: { x: 3120, y: 2640, w: 250, h: 80 },
+    pt_clothes: { x: 3120, y: 2880, w: 300, h: 80 },
+    pt_birds: { x: 2440, y: 2770, w: 250, h: 80 },
+    pt_north: { x: 2100, y: 2880, w: 250, h: 80 },
+    pt_titan: { x: 2440, y: 2880, w: 250, h: 80 },
+    pt_find: { x: 3480, y: 2640, w: 280, h: 80 }
   }
 };
 
@@ -323,7 +333,7 @@ async function run(browser) {
   await openAtlas(page);
   const snapshot = await layoutSnapshot(page);
 
-  await ok('expanded canvas keeps all old frames and the new Shades region', async function () {
+  await ok('expanded canvas keeps all old frames and the new Shades and Painter regions', async function () {
     assert(snapshot.canvas.width === EXPECTED.canvas.width && snapshot.canvas.height === EXPECTED.canvas.height,
       'canvas changed to ' + snapshot.canvas.width + '×' + snapshot.canvas.height);
     Object.keys(EXPECTED.frames).forEach(function (id) {
@@ -345,10 +355,10 @@ async function run(browser) {
     assert(hostage.w >= 4400 && hostage.h >= 1300, 'The Hostage chart lost its Stage 1 fit bounds');
   });
 
-  await ok('all 114 node boxes keep the expected static world geometry', async function () {
+  await ok('all 123 node boxes keep the expected static world geometry', async function () {
     const actual = {};
     snapshot.nodes.forEach(function (node) { actual[node.id] = node.layout; });
-    assert(snapshot.nodes.length === 114, 'expected 114 node boxes, got ' + snapshot.nodes.length);
+    assert(snapshot.nodes.length === 123, 'expected 123 node boxes, got ' + snapshot.nodes.length);
     Object.keys(EXPECTED.nodes).forEach(function (id) {
       assert(actual[id], 'missing node ' + id);
       sameBox(actual[id], EXPECTED.nodes[id], 'node ' + id);
@@ -518,7 +528,7 @@ async function run(browser) {
 
   await ok('chapter focus keeps each region readable at the 1440x900 viewport', async function () {
     const scales = {};
-    const minimum = { home: 0.62, stormy: 0.62, kara: 0.62, hostage: 0.28, 'public-enemy': 0.62 };
+    const minimum = { home: 0.62, stormy: 0.62, kara: 0.62, hostage: 0.28, 'public-enemy': 0.62, 'shades-of-color': 0.65, 'the-painter': 0.65 };
     for (const id of Object.keys(minimum)) {
       await page.locator('[data-chapter="' + id + '"]').click();
       await waitFrames(page);

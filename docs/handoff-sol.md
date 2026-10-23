@@ -6,6 +6,14 @@ checkpoint, not a live status feed.
 
 ## Current continuation update — 2026-10-23
 
+The [Painter opening integration](notes/painter-runtime-integration.md) adds nine
+nodes and five traces. Runtime is 123 nodes/106 records/104 active connectors in
+seven regions. Old objects, indices, geometry and canvas stay fixed. Three
+origins remain unknown, coverage partial and publication blocked. Use STATUS and
+the report for final Git/test results. Preparation-only statements below are historical.
+
+## Previous preparation update — 2026-10-23
+
 The [Painter opening preparation](notes/painter-packet-source-review.md) is source
 approved for nine boxes and five traces. Three detached origins remain unknown.
 It is not integrated: runtime remains 114 nodes/101 records/99 active connectors.

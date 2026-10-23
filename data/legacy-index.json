@@ -115,7 +115,16 @@
     "sc_store",
     "sc_package",
     "sc_protesters",
-    "sc_bus"
+    "sc_bus",
+    "pt_arrive",
+    "pt_package",
+    "pt_wake",
+    "pt_breakfast",
+    "pt_clothes",
+    "pt_birds",
+    "pt_north",
+    "pt_titan",
+    "pt_find"
   ],
   "edges": [
     {
@@ -722,6 +731,36 @@
       "id": "e_sc_preacher_yells",
       "from": "sc_preacher",
       "to": "sc_yells",
+      "fromOption": null
+    },
+    {
+      "id": "e_pt_arrive_package",
+      "from": "pt_arrive",
+      "to": "pt_package",
+      "fromOption": null
+    },
+    {
+      "id": "e_pt_package_wake",
+      "from": "pt_package",
+      "to": "pt_wake",
+      "fromOption": null
+    },
+    {
+      "id": "e_pt_wake_breakfast",
+      "from": "pt_wake",
+      "to": "pt_breakfast",
+      "fromOption": null
+    },
+    {
+      "id": "e_pt_wake_clothes",
+      "from": "pt_wake",
+      "to": "pt_clothes",
+      "fromOption": null
+    },
+    {
+      "id": "e_pt_breakfast_find",
+      "from": "pt_breakfast",
+      "to": "pt_find",
       "fromOption": null
     }
   ]

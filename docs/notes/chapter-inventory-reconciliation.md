@@ -81,8 +81,7 @@ The initial index-only checkpoint retained 23 null character values. Separate
 [Shades](shades-of-color-source-review.md) and [Painter](painter-packet-source-review.md)
 source reviews inspect their charts and chapter guides. Explicit guide source
 records and locators support Markus attribution, leaving 21 null entries now.
-Shades has a partial runtime region. The Painter has a partial preparation packet
-and no runtime region, so its inventory coverage stays `not-added`.
-The current six runtime associations contain one checked-against-chart and five
+Shades has a partial runtime region. The reviewed Painter opening is now integrated as a partial runtime region.
+The current seven runtime associations contain one checked-against-chart and six
 partial entries. The 32 chapter rows and 39 source headings remain unchanged.
 The earlier counts in this report describe the initial checkpoint.

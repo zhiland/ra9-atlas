@@ -53,6 +53,8 @@
     powerpyxPublicEnemy: 'PowerPyx · Public Enemy',
     gamefaqsPublicEnemy: 'GameFAQs/Mogg · Public Enemy',
     steamShades: 'Steam · Shades of Color chart',
+    steamPainter: 'Steam · The Painter chart',
+    powerpyxPainter: 'PowerPyx · The Painter guide',
     powerpyxShades: 'PowerPyx · Shades of Color'
   };
 

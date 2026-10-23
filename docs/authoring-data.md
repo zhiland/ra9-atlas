@@ -59,3 +59,7 @@ The [Shades integration](notes/shades-runtime-integration.md) exercises the next
 step: explicit packet-to-graph integration, appended compatibility records,
 generated output, old-layout preservation and dedicated source fences. It adds
 no automatic packet merger and retains blocked source-derived publication gates.
+
+The [Painter opening integration](notes/painter-runtime-integration.md) repeats
+this workflow for a seventh partial region, retaining every old graph object and
+all compatibility records. Packet approval still grants no publication permission.

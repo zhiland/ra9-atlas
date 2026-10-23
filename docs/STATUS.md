@@ -4,7 +4,16 @@ Updated: 2026-10-23. Stage 1 source review is complete for the bounded Hostage
 pilot. Stage 2 preparation is implemented. Canonical JSON authoring and deterministic generation now preserve the existing sample.
 Full-product schema expansion, permalink output migration, actual game-chart census and hosting remain open.
 
-## Painter preparation checkpoint
+## Painter runtime checkpoint
+
+The [opening integration](notes/painter-runtime-integration.md) appends nine nodes
+and five traces at edges101–105. Runtime totals are 123 nodes/106 records/104
+active connectors in seven regions. All old graph objects, frames and links are
+preserved. Three detached origins remain unknown and no harassment cross-chapter
+edge is added. Source approval, partial coverage and blocked publication persist.
+Use the integration report for final review and verification results.
+
+## Previous Painter preparation checkpoint
 
 The [reviewed opening packet](notes/painter-packet-source-review.md) contains nine
 boxes, five continuous traces and three detached segments with unknown origins.
@@ -64,11 +73,11 @@ finding; a shared source-scope wording clarification is fixed. All source-derive
 
 ## Product state
 
-The static PoC4 map contains **114 nodes and 99 active connectors in six regions**.
-It retains 101 edge records, including two withdrawn claims for old references.
+The static PoC4 map contains **123 nodes and 104 active connectors in seven regions**.
+It retains 106 edge records, including two withdrawn claims for old references.
 The Hostage inventory accounts for **33 boxes, 40 labels and 36 pictured connectors**.
 Its option-specific model contains **37 claims: 32 traced and 5 uncertain**.
-Both approach-to-FAIL origins remain uncertain. The other five regions are partial.
+Both approach-to-FAIL origins remain uncertain. The other six regions are partial.
 No gameplay transition is verified. Coverage does not imply full-game completeness.
 
 The corrected [A New Home selection](notes/anewhome-packet-source-review.md) has
@@ -146,7 +155,7 @@ emulation. Safari, physical touch, assistive technology and gameplay are unverif
 
 1. Use the canonical authoring bundle and compatibility ledger for future graph edits.
    All four reviewed packets retain blocked publication gates; generation adds no approval.
-2. Plan a separate integration of the reviewed Painter opening, or prepare the
+2. Continue the remaining Painter chart or prepare the
    next bounded slice from the [partial inventory](notes/chapter-inventory-reconciliation.md).
    It reconciles 32 chapter rows and 39 source headings, not actual complete game-chart boundaries.
    Resolve character and subdivision gaps before claiming those charts complete.

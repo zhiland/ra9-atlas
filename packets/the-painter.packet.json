@@ -158,7 +158,8 @@
         "kind": "traced",
         "sources": [
           "steamPainter"
-        ]
+        ],
+        "legacyEdgeIndex": 101
       },
       {
         "id": "e_pt_package_wake",
@@ -167,7 +168,8 @@
         "kind": "traced",
         "sources": [
           "steamPainter"
-        ]
+        ],
+        "legacyEdgeIndex": 102
       },
       {
         "id": "e_pt_wake_breakfast",
@@ -176,7 +178,8 @@
         "kind": "traced",
         "sources": [
           "steamPainter"
-        ]
+        ],
+        "legacyEdgeIndex": 103
       },
       {
         "id": "e_pt_wake_clothes",
@@ -185,7 +188,8 @@
         "kind": "traced",
         "sources": [
           "steamPainter"
-        ]
+        ],
+        "legacyEdgeIndex": 104
       },
       {
         "id": "e_pt_breakfast_find",
@@ -194,7 +198,8 @@
         "kind": "traced",
         "sources": [
           "steamPainter"
-        ]
+        ],
+        "legacyEdgeIndex": 105
       }
     ]
   },
@@ -274,5 +279,16 @@
       "state": "blocked",
       "reason": "Source interpretation is independently approved for this partial opening slice. Publication rights remain unresolved and all sources are reference-only. No gameplay/build compatibility or source independence is established. Runtime integration is a separate package."
     }
+  },
+  "atlas": {
+    "source": "prototype/atlas-data.js",
+    "chapterId": "the-painter",
+    "exactChapterNodes": true,
+    "exactChapterEdges": true
+  },
+  "legacy": {
+    "canonical": "?edge=N",
+    "edgeIndexBase": "prototype/atlas-data.js edges[]",
+    "note": "Nodes append at114–122 and edges at101–105. All earlier identities, indices, endpoints and options are preserved. Runtime reconciliation does not change source approval or publication limits."
   }
 }

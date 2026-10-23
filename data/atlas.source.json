@@ -7,17 +7,17 @@
       "poc": "PoC4",
       "contractVersion": "1.0",
       "title": "ra9-atlas",
-      "subtitle": "Selected slices · A New Home → Stormy Night → Battle for Detroit (Kara) · The Hostage → Public Enemy · Shades of Color (partial chart)",
+      "subtitle": "Selected slices · A New Home → Stormy Night → Battle for Detroit (Kara) · The Hostage → Public Enemy · Shades of Color (partial chart) · The Painter (opening slice)",
       "version": "unknown",
       "platform": "unknown",
       "disclaimer": "Guide-based and screenshot-transcribed only. No transition is verified in game; game version and platform are unknown.",
       "counts": {
-        "chapters": 6,
-        "nodes": 114,
-        "edges": 101,
-        "activeEdges": 99,
+        "chapters": 7,
+        "nodes": 123,
+        "edges": 106,
+        "activeEdges": 104,
         "withdrawnEdges": 2,
-        "tracedEdges": 77,
+        "tracedEdges": 82,
         "conditionalEdges": 8,
         "prerequisiteEdges": 6,
         "hypothesisEdges": 3,
@@ -42,7 +42,9 @@
       "gamefaqsPublicEnemy": "https://gamefaqs.gamespot.com/ps4/182637-detroit-become-human/faqs/76123/public-enemy",
       "shazooHostageChart": "https://shazoo.ru/2018/04/24/64787/polnoe-prohozhdenie-detroit-become-human-zajmet-25-30-chasov",
       "steamShades": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
-      "powerpyxShades": "https://www.powerpyx.com/detroit-become-human-shades-of-color-walkthrough-100/"
+      "powerpyxShades": "https://www.powerpyx.com/detroit-become-human-shades-of-color-walkthrough-100/",
+      "steamPainter": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
+      "powerpyxPainter": "https://www.powerpyx.com/detroit-become-human-the-painter-walkthrough-100/"
     },
     "canvas": {
       "width": 4950,
@@ -192,6 +194,28 @@
           "sources": [
             "steamShades",
             "powerpyxShades"
+          ]
+        }
+      },
+      {
+        "id": "the-painter",
+        "name": "The Painter",
+        "code": "Markus · reviewed opening slice",
+        "frame": {
+          "x": 2040,
+          "y": 2540,
+          "w": 1900,
+          "h": 500
+        },
+        "desc": "Nine reviewed opening boxes and five continuous traces. Three detached icon-origin segments stay unknown. Later leisure, studio, painting and the chapter outcome are outside this partial slice.",
+        "coverage": {
+          "status": "partial",
+          "scope": "Opening through FIND SOMETHING TO DO, with birds, two magazine boxes and the clothes event.",
+          "included": "Two checkpoints, seven action/event boxes and five continuous box-to-box traces.",
+          "omitted": "Three detached icon origins, optional-event ordering, exact clothes eligibility and cross-chapter triggers, later chart branches, platform/build and gameplay verification. Publication rights remain unresolved.",
+          "sources": [
+            "steamPainter",
+            "powerpyxPainter"
           ]
         }
       }
@@ -2173,6 +2197,146 @@
           "steamShades"
         ],
         "note": "Reviewed continuous chart structure only. No transition is verified in game."
+      },
+      {
+        "id": "pt_arrive",
+        "label": "ARRIVING HOME",
+        "kind": "stage",
+        "chapter": "the-painter",
+        "x": 2100,
+        "y": 2640,
+        "w": 240,
+        "h": 80,
+        "status": "ocr",
+        "src": [
+          "steamPainter"
+        ],
+        "note": "Reviewed continuous chart structure only. No transition is verified in game.",
+        "sub": "Chapter checkpoint"
+      },
+      {
+        "id": "pt_package",
+        "label": "DROP OFF PACKAGE",
+        "kind": "action",
+        "chapter": "the-painter",
+        "x": 2440,
+        "y": 2640,
+        "w": 250,
+        "h": 80,
+        "status": "ocr",
+        "src": [
+          "steamPainter"
+        ],
+        "note": "Reviewed continuous chart structure only. No transition is verified in game."
+      },
+      {
+        "id": "pt_wake",
+        "label": "WAKE CARL",
+        "kind": "action",
+        "chapter": "the-painter",
+        "x": 2780,
+        "y": 2640,
+        "w": 250,
+        "h": 80,
+        "status": "ocr",
+        "src": [
+          "steamPainter"
+        ],
+        "note": "Reviewed continuous chart structure only. No transition is verified in game."
+      },
+      {
+        "id": "pt_breakfast",
+        "label": "SERVE BREAKFAST",
+        "kind": "action",
+        "chapter": "the-painter",
+        "x": 3120,
+        "y": 2640,
+        "w": 250,
+        "h": 80,
+        "status": "ocr",
+        "src": [
+          "steamPainter"
+        ],
+        "note": "Reviewed continuous chart structure only. No transition is verified in game."
+      },
+      {
+        "id": "pt_clothes",
+        "label": "CARL NOTICES MARKUS' CLOTHES",
+        "kind": "action",
+        "chapter": "the-painter",
+        "x": 3120,
+        "y": 2880,
+        "w": 300,
+        "h": 80,
+        "status": "ocr",
+        "src": [
+          "steamPainter"
+        ],
+        "note": "Reviewed continuous chart structure only. No transition is verified in game."
+      },
+      {
+        "id": "pt_birds",
+        "label": "ACTIVATE BIRDS",
+        "kind": "action",
+        "chapter": "the-painter",
+        "x": 2440,
+        "y": 2770,
+        "w": 250,
+        "h": 80,
+        "status": "ocr",
+        "src": [
+          "steamPainter"
+        ],
+        "note": "Origin unknown. The incoming pictured segment starts at a detached icon. Its source box and eligibility are unknown.",
+        "sub": "Origin unknown"
+      },
+      {
+        "id": "pt_north",
+        "label": "READ \"NORTH POLE RUSSIA\"",
+        "kind": "action",
+        "chapter": "the-painter",
+        "x": 2100,
+        "y": 2880,
+        "w": 250,
+        "h": 80,
+        "status": "ocr",
+        "src": [
+          "steamPainter"
+        ],
+        "note": "Origin unknown. The incoming pictured segment starts at a detached icon. Its source box and eligibility are unknown.",
+        "sub": "Origin unknown"
+      },
+      {
+        "id": "pt_titan",
+        "label": "READ \"LIFE ON TITAN\"",
+        "kind": "action",
+        "chapter": "the-painter",
+        "x": 2440,
+        "y": 2880,
+        "w": 250,
+        "h": 80,
+        "status": "ocr",
+        "src": [
+          "steamPainter"
+        ],
+        "note": "Origin unknown. The incoming pictured segment starts at a detached icon. Its source box and eligibility are unknown.",
+        "sub": "Origin unknown"
+      },
+      {
+        "id": "pt_find",
+        "label": "FIND SOMETHING TO DO",
+        "kind": "stage",
+        "chapter": "the-painter",
+        "x": 3480,
+        "y": 2640,
+        "w": 280,
+        "h": 80,
+        "status": "ocr",
+        "src": [
+          "steamPainter"
+        ],
+        "note": "Reviewed continuous chart structure only. No transition is verified in game.",
+        "sub": "Chapter checkpoint"
       }
     ],
     "edges": [
@@ -3414,6 +3578,69 @@
         "src": [
           "steamShades"
         ]
+      },
+      {
+        "id": "e_pt_arrive_package",
+        "to": "pt_package",
+        "kind": "traced",
+        "src": [
+          "steamPainter"
+        ],
+        "from": "pt_arrive"
+      },
+      {
+        "id": "e_pt_package_wake",
+        "to": "pt_wake",
+        "kind": "traced",
+        "src": [
+          "steamPainter"
+        ],
+        "from": "pt_package"
+      },
+      {
+        "id": "e_pt_wake_breakfast",
+        "to": "pt_breakfast",
+        "kind": "traced",
+        "src": [
+          "steamPainter"
+        ],
+        "from": "pt_wake"
+      },
+      {
+        "id": "e_pt_wake_clothes",
+        "to": "pt_clothes",
+        "kind": "traced",
+        "src": [
+          "steamPainter"
+        ],
+        "from": "pt_wake",
+        "points": [
+          [
+            3030,
+            2680
+          ],
+          [
+            3070,
+            2680
+          ],
+          [
+            3070,
+            2920
+          ],
+          [
+            3120,
+            2920
+          ]
+        ]
+      },
+      {
+        "id": "e_pt_breakfast_find",
+        "to": "pt_find",
+        "kind": "traced",
+        "src": [
+          "steamPainter"
+        ],
+        "from": "pt_breakfast"
       }
     ],
     "conditions": [
@@ -3801,6 +4028,61 @@
         ],
         "sources": [
           "steamShades"
+        ]
+      },
+      {
+        "id": "u_pt_detached_origins",
+        "status": "unknown",
+        "explanation": "The chart shows three detached segments sharing a detached icon near the package box rather than starting at a declared box, pointing toward pt_birds, pt_north and pt_titan. These segments are NOT invented as edges; no side-event ordering is established and their semantic meaning is unknown. The icon legend is omitted.",
+        "nodes": [
+          "pt_birds",
+          "pt_north",
+          "pt_titan"
+        ],
+        "sources": [
+          "steamPainter"
+        ]
+      },
+      {
+        "id": "u_pt_order",
+        "status": "unknown",
+        "explanation": "No side-event ordering or optional-eligibility rule is known beyond the five traced continuous box-to-box edges. The chart's boxes and the guide's list ordering do not establish a required sequence or when optional steps are eligible.",
+        "edges": [
+          "e_pt_arrive_package",
+          "e_pt_package_wake",
+          "e_pt_wake_breakfast",
+          "e_pt_wake_clothes",
+          "e_pt_breakfast_find"
+        ],
+        "sources": [
+          "steamPainter",
+          "powerpyxPainter"
+        ]
+      },
+      {
+        "id": "u_pt_clothes",
+        "status": "unknown",
+        "explanation": "The clothes branch visibly leaves the wake box and ends at a triangle beside the clothes box; its legend meaning is not interpreted as an eligibility rule. The eligibility condition and any cross-chapter trigger are unverified: PowerPyx reports earlier protester harassment as a prerequisite for Carl's comment, which is guide-reported, not game-verified. No causal edge, exact trigger or cross-chapter edge is added and source independence is not established.",
+        "nodes": [
+          "pt_clothes"
+        ],
+        "edges": [
+          "e_pt_wake_clothes"
+        ],
+        "sources": [
+          "powerpyxPainter",
+          "steamPainter"
+        ]
+      },
+      {
+        "id": "u_pt_build",
+        "status": "unknown",
+        "explanation": "The platform and game build are unknown and no gameplay verification has been performed. Transcription is chart-based only; no transition has been verified in game.",
+        "nodes": [
+          "pt_arrive"
+        ],
+        "sources": [
+          "steamPainter"
         ]
       }
     ],
@@ -4617,6 +4899,79 @@
         "unknown": "No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved.",
         "src": [
           "steamShades"
+        ]
+      },
+      "pt_arrive": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Reviewed continuous chart structure only. No transition is verified in game.",
+        "unknown": "Coverage is partial. Optional-event order, exact triggers, platform/build and gameplay remain unverified. Publication rights are unresolved.",
+        "src": [
+          "steamPainter"
+        ]
+      },
+      "pt_package": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Reviewed continuous chart structure only. No transition is verified in game.",
+        "unknown": "Coverage is partial. Optional-event order, exact triggers, platform/build and gameplay remain unverified. Publication rights are unresolved.",
+        "src": [
+          "steamPainter"
+        ]
+      },
+      "pt_wake": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Reviewed continuous chart structure only. No transition is verified in game.",
+        "unknown": "Coverage is partial. Optional-event order, exact triggers, platform/build and gameplay remain unverified. Publication rights are unresolved.",
+        "src": [
+          "steamPainter"
+        ]
+      },
+      "pt_breakfast": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Reviewed continuous chart structure only. No transition is verified in game.",
+        "unknown": "Coverage is partial. Optional-event order, exact triggers, platform/build and gameplay remain unverified. Publication rights are unresolved.",
+        "src": [
+          "steamPainter"
+        ]
+      },
+      "pt_clothes": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "The chart connects WAKE CARL to this event. PowerPyx reports earlier protester harassment as a prerequisite for the comment. That report is not verified in game and adds no cross-chapter edge.",
+        "unknown": "Coverage is partial. Optional-event order, exact triggers, platform/build and gameplay remain unverified. Publication rights are unresolved.",
+        "src": [
+          "steamPainter",
+          "powerpyxPainter"
+        ]
+      },
+      "pt_birds": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Origin unknown. The incoming pictured segment starts at a detached icon. Its source box and eligibility are unknown.",
+        "unknown": "Coverage is partial. Optional-event order, exact triggers, platform/build and gameplay remain unverified. Publication rights are unresolved.",
+        "src": [
+          "steamPainter"
+        ]
+      },
+      "pt_north": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Origin unknown. The incoming pictured segment starts at a detached icon. Its source box and eligibility are unknown.",
+        "unknown": "Coverage is partial. Optional-event order, exact triggers, platform/build and gameplay remain unverified. Publication rights are unresolved.",
+        "src": [
+          "steamPainter"
+        ]
+      },
+      "pt_titan": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Origin unknown. The incoming pictured segment starts at a detached icon. Its source box and eligibility are unknown.",
+        "unknown": "Coverage is partial. Optional-event order, exact triggers, platform/build and gameplay remain unverified. Publication rights are unresolved.",
+        "src": [
+          "steamPainter"
+        ]
+      },
+      "pt_find": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Reviewed continuous chart structure only. No transition is verified in game.",
+        "unknown": "Coverage is partial. Optional-event order, exact triggers, platform/build and gameplay remain unverified. Publication rights are unresolved.",
+        "src": [
+          "steamPainter"
         ]
       }
     }

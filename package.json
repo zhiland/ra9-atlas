@@ -12,7 +12,7 @@
     "test:layout": "node tests/atlas-layout.test.js",
     "test:browser": "node tests/poc4-browser.test.js",
     "test:packet": "node tests/chapter-packet.test.js",
-    "test": "npm run validate && npm run test:build && npm run test:inventory && npm run test:contract && npm run test:unit && npm run test:map && npm run test:stable-zoom && npm run test:layout && npm run test:packet && npm run test:shades && npm run test:shades-runtime && npm run test:painter && npm run test:browser",
+    "test": "npm run validate && npm run test:build && npm run test:inventory && npm run test:contract && npm run test:unit && npm run test:map && npm run test:stable-zoom && npm run test:layout && npm run test:packet && npm run test:shades && npm run test:shades-runtime && npm run test:painter && npm run test:painter-runtime && npm run test:browser",
     "bench:scale": "node benchmark/scale/run-benchmark.js",
     "build:data": "node tools/data/build-atlas.js",
     "check:generated": "node tools/data/build-atlas.js --check",
@@ -21,7 +21,8 @@
     "test:inventory": "node tests/chapter-inventory.test.js",
     "test:shades": "node tests/shades-packet.test.js",
     "test:shades-runtime": "node tests/shades-runtime.test.js",
-    "test:painter": "node tests/painter-packet.test.js"
+    "test:painter": "node tests/painter-packet.test.js",
+    "test:painter-runtime": "node tests/painter-runtime.test.js"
   },
   "devDependencies": {
     "playwright": "^1.64.1"

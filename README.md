@@ -24,12 +24,12 @@ Zoom changes the camera. The nodes and branches stay in one map world.
 
 ## Coverage and evidence
 
-The sample has **114 nodes and 99 active connectors across six chapter regions**.
+The sample has **123 nodes and 104 active connectors across seven chapter regions**.
 The Hostage inventory accounts for 33 boxes, 40 labels and 36 pictured connectors.
 Its option-specific model has 37 claims: **32 traced and 5 uncertain**.
-Both approach-to-failure origins remain uncertain. The other five chapter regions are partial.
+Both approach-to-failure origins remain uncertain. The other six chapter regions are partial.
 Two old A New Home claims are withdrawn; their permalinks explain the correction.
-The data retains 101 records in total, including those two historical claims.
+The data retains 106 records in total, including those two historical claims.
 
 Chart coverage, guide support, gameplay verification and interface tests are separate claims.
 No gameplay transition is verified. Uncertain links stay labeled and dashed.
@@ -37,9 +37,8 @@ The [Hostage review](docs/notes/hostage-packet-source-review.md) and
 [A New Home review](docs/notes/anewhome-packet-source-review.md) record their bounded findings.
 The [Shades of Color preparation](docs/notes/shades-of-color-source-review.md) is source-reviewed
 and integrated as a partial region. Its six detached icon origins stay unknown.
-The [Painter opening packet](docs/notes/painter-packet-source-review.md) is source-reviewed
-but not integrated: nine boxes, five traces and three detached segments with
-unknown origins. Source-derived publication rights remain unresolved.
+The [Painter opening packet](docs/notes/painter-packet-source-review.md) is integrated as a partial opening: nine boxes, five traces and three detached
+segments with unknown origins. Source-derived publication rights remain unresolved.
 
 See [current status](docs/STATUS.md), [coverage](docs/notes/poc4-coverage.md),
 [source register](docs/SOURCES.md), and [license boundaries](docs/license-boundary.md).

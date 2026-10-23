@@ -3,7 +3,7 @@
   "version": 1,
   "reconciliation": {
     "state": "partial",
-    "scope": "Reconcile metadata in two live source indices with six existing runtime regions. Chapter order follows PowerPyx numbering. Chart entries preserve Steam headings and are not a certified in-game chart census. Bounded Shades of Color and The Painter guide/chart reviews supply Markus attributions. Other chapter bodies remain outside this inventory check.",
+    "scope": "Reconcile metadata in two live source indices with seven existing runtime regions. Chapter order follows PowerPyx numbering. Chart entries preserve Steam headings and are not a certified in-game chart census. Bounded Shades of Color and The Painter guide/chart reviews supply Markus attributions. Other chapter bodies remain outside this inventory check.",
     "limitations": [
       "32 numbered chapters include Opening, which has no separate Steam chart heading.",
       "39 Steam chart/route headings are reconciled to 31 non-Opening chapters. Headings do not establish complete in-game chart cardinality.",
@@ -248,11 +248,13 @@
             {
               "source": "powerpyx-painter-guide",
               "heading": "Checkpoint: Arriving Home",
-              "location": "The clothes paragraph names Markus. Separate source review approves the partial preparation packet; no runtime region is added."
+              "location": "The clothes paragraph names Markus. The independently approved opening slice is integrated with partial runtime coverage."
             }
           ],
-          "coverage": "not-added",
-          "runtimeChapterIds": []
+          "coverage": "partial",
+          "runtimeChapterIds": [
+            "the-painter"
+          ]
         }
       ],
       "sources": [
@@ -262,7 +264,7 @@
       ],
       "notes": [
         "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
-        "Index headings do not name the character. The separately inspected chapter guide supports Markus attribution. Runtime coverage remains not-added."
+        "Index headings do not name the character. The separately inspected chapter guide supports Markus attribution. Runtime coverage remains partial."
       ]
     },
     {

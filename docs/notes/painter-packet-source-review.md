@@ -1,7 +1,9 @@
 # The Painter opening packet and independent source review
 
 Date: 2026-10-23. Base: `842f324cb67a3f86918dbbdc883d98e072894440` (PR #28).
-Scope: preparation only. No displayed graph or permalink changes.
+Historical scope: preparation only. The later [runtime integration](painter-runtime-integration.md)
+adds exact reconciliation and a partial region without changing source approval.
+Statements below describe the original preparation checkpoint.
 
 ## Acceptance
 

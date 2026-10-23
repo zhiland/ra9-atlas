@@ -105,3 +105,12 @@ review-scope metadata. The source reviewer then approved the bounded packet with
 no corrections. Six packet regressions and a sourced inventory attribution are
 added. Runtime and publication gates remain unchanged. See the
 [report](notes/painter-packet-source-review.md) for code-review and test results.
+
+## 2026-10-23 Painter opening integration
+
+OpenCode from public `7053764` produced the one-file runtime fence, passed49
+checks and stopped its server. Patch inspection and apply-check preceded use.
+Codex added canonical data, ledger, generation and regressions. A separate source
+fidelity review found zero discrepancies and verified full preservation of old
+objects. Independent Standards/Spec review and final tests are recorded in the
+[integration report](notes/painter-runtime-integration.md).

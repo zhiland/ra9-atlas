@@ -35,8 +35,8 @@ bounded *Public Enemy* meeting node. See [PoC4 coverage](notes/poc4-coverage.md)
 
 ## Scope and record shape
 
-The contract covers six chapter regions, 114 nodes, 101 edge records (99 active connectors and two withdrawn claims), six condition
-groups, fourteen uncertainty records and no conflict records in
+The contract covers seven chapter regions, 123 nodes, 106 edge records (104 active connectors and two withdrawn claims), six condition
+groups, eighteen uncertainty records and no conflict records in
 `data/atlas.source.json` and its generated `prototype/atlas-data.js` artifact.
 See [authoring ownership](authoring-data.md). The sample declares `meta.contractVersion: '1.0'`.
 
@@ -286,7 +286,7 @@ origin). Appended records 93–95 represent stage→trash→ask and stage→conv
 The original endpoints are not silently retargeted. Both cleaning nodes are
 stages. A stage/chore relation does not establish mandatory task order.
 
-`meta.counts.edges` counts all 101 records. `activeEdges` is 99 and
+`meta.counts.edges` counts all 106 records. `activeEdges` is 104 and
 `withdrawnEdges` is 2. Kind counts sum to records: 72 traced, 8 conditional,
 6 prerequisite, 3 hypothesis, 5 uncertain and 2 withdrawn. User-facing
 connector totals and stable-world inventories count only active connectors.
@@ -308,3 +308,13 @@ the new frame extends the canvas below the old regions. Coverage remains partial
 Four packet unknowns remain explicit. Six detached icon-origin segments become
 no invented edges. The [bounded validator](../prototype/validate-shades-runtime.js)
 checks this source-regression fence; it does not verify gameplay or clear rights.
+
+## The Painter opening integration
+
+The [opening integration](notes/painter-runtime-integration.md) appends nine nodes
+and five exact reviewed traces at indices101–105 beside Shades. Old graph
+objects, frames, indices and canvas stay fixed. Four unknowns retain three
+detached origins, optional ordering, clothes eligibility and build gaps. The
+[bounded fence](../prototype/validate-painter-runtime.js) rejects invented origin
+and cross-chapter edges, changed source labels, lost unknowns and eligibility
+gates. Source agreement does not verify game transitions or grant reuse rights.

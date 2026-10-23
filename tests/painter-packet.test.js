@@ -10,13 +10,16 @@ const packet = readPacket(file);
 let count = 0;
 function test(name, run) { run(); count++; console.log(`ok ${name}`); }
 
-test('bounded packet validates without runtime reconciliation or publication approval', () => {
+test('bounded packet validates with exact runtime reconciliation and blocked publication', () => {
   const result = validatePacket(packet, { atlas: require('../data/atlas.source.json').atlas });
   assert.equal(result.failed, false, result.errors.join('\n'));
   assert.equal(result.reviewReady, false);
   assert.equal(packet.coverage.status, 'partial');
-  assert.equal(packet.atlas, undefined);
-  assert.equal(packet.legacy, undefined);
+  assert.equal(packet.atlas.chapterId, 'the-painter');
+  assert.equal(packet.atlas.exactChapterNodes, true);
+  assert.equal(packet.atlas.exactChapterEdges, true);
+  assert.equal(packet.legacy.canonical, '?edge=N');
+  assert.deepEqual(packet.chart.edges.map(edge => edge.legacyEdgeIndex), [101,102,103,104,105]);
 });
 test('opening scope preserves nine exact labels and two checkpoint kinds', () => {
   assert.deepEqual(packet.chart.nodes.map(node => [node.id, node.label, node.kind]), [
@@ -43,7 +46,7 @@ test('five continuous traces include Wake to clothes without guessed optional or
     assert.equal(edge.kind, 'traced');
     assert.deepEqual(edge.sources, ['steamPainter']);
     assert.equal(edge.option, undefined);
-    assert.equal(edge.legacyEdgeIndex, undefined);
+    assert.ok(edge.legacyEdgeIndex >= 101 && edge.legacyEdgeIndex <= 105);
   }
   assert.deepEqual(packet.conditions, []);
   assert.deepEqual(packet.supplementary, []);
