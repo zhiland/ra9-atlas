@@ -56,6 +56,8 @@ and `2576a95`. The corrected runner is in draft [PR #22](https://github.com/zhil
 at `7f89e88`, based on PR #21. Runner changes are isolated from this
 source-review/cleanup package. Draft [PR #23](https://github.com/zhiland/ra9-atlas/pull/23)
 saves that package at `78d94ea`, based on #22.
+The A New Home draft is saved in [PR #24](https://github.com/zhiland/ra9-atlas/pull/24),
+implementation checkpoint `3287787`, based on #23. Its review is pending.
 No automatic merge or site publication is authorized.
 The untracked user file `docs/notes/obsidian-update-draft.md` remains unchanged
 with SHA-256 `f0a9eb2733ba7b3bcd886852dbd30fe093912f50351b1dd16a7eacae37998833`.
