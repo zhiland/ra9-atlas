@@ -485,12 +485,19 @@ async function runRealDataset(browser) {
       const result = await page.evaluate(function () {
         return Array.from(document.querySelectorAll('.node.hostage.action')).map(function (node) {
           const box = node.getBoundingClientRect();
-          const label = node.querySelector('.node-label').getBoundingClientRect();
-          return { id: node.dataset.node, inside: label.top >= box.top - .1 && label.bottom <= box.bottom + .1 };
+          const el = node.querySelector('.node-label');
+          const label = el.getBoundingClientRect();
+          const range = document.createRange(); range.selectNodeContents(el);
+          const text = range.getBoundingClientRect();
+          const sub = node.querySelector('.sub');
+          return { id: node.dataset.node,
+            inside: label.top >= box.top - .1 && label.bottom <= box.bottom + .1 && text.left >= box.left - .1 && text.right <= box.right + .1,
+            stacked: !sub || sub.getBoundingClientRect().top >= label.bottom - .1 };
+
         });
       });
       assert(result.length > 0, 'fixture must contain short Hostage actions');
-      result.forEach(function (node) { assert(node.inside, node.id + ': fallback label leaves node'); });
+      result.forEach(function (node) { assert(node.inside, node.id + ': fallback label leaves node'); assert(node.stacked, node.id + ': sublabel must stay below title'); });
     } finally { await style.evaluate(function (el) { el.remove(); }); }
   });
 

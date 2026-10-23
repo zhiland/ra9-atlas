@@ -125,7 +125,7 @@ a:hover { text-decoration: underline; }
    follows the same camera transform as every other chart element. */
 .node.hostage .node-label { font-size: 13.5px; }
 /* A fallback font can wrap short action labels onto two lines in 36px boxes. */
-.node.hostage.action { padding-top: 0; padding-bottom: 0; display: flex; align-items: center; }
+.node.hostage.action { padding-top: 0; padding-bottom: 0; display: flex; flex-direction: column; justify-content: center; align-items: stretch; }
 .node.hostage.stage { padding-top: 4px; padding-bottom: 4px; }
 .node.hostage.choice.compact .node-label { font-size: 12px; }
 .node.hostage.choice .opt { font-size: 13.5px; }
