@@ -54,11 +54,17 @@ actual edge104 selection, and preservation of the whole map on mobile widths.
 
 ## Standards
 
-Pending fixed-point implementation review.
+Separate review used `git diff 7053764...6111af1`. It found one stale kind
+total in the contract: 72 traced records instead of 82. The total is corrected.
+No material baseline smell or compatibility defect was found. Standards: one
+finding corrected, follow-up pending.
 
 ## Spec
 
-Pending fixed-point review against the acceptance above and the project spec.
+Separate review confirmed the exact approved append, full old-object
+preservation, explicit unknown origins, blocked publication and unchanged old
+readability minimums. Desktop/mobile checks cover focus, search, source citations
+and actual edge104. Spec: zero findings.
 
 ## Verification
 

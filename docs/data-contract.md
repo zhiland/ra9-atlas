@@ -287,7 +287,7 @@ The original endpoints are not silently retargeted. Both cleaning nodes are
 stages. A stage/chore relation does not establish mandatory task order.
 
 `meta.counts.edges` counts all 106 records. `activeEdges` is 104 and
-`withdrawnEdges` is 2. Kind counts sum to records: 72 traced, 8 conditional,
+`withdrawnEdges` is 2. Kind counts sum to records: 82 traced, 8 conditional,
 6 prerequisite, 3 hypothesis, 5 uncertain and 2 withdrawn. User-facing
 connector totals and stable-world inventories count only active connectors.
 

@@ -277,7 +277,7 @@
     },
     "mergeGate": {
       "state": "blocked",
-      "reason": "Source interpretation is independently approved for this partial opening slice. Publication rights remain unresolved and all sources are reference-only. No gameplay/build compatibility or source independence is established. Runtime integration is a separate package."
+      "reason": "Source interpretation is independently approved for this partial opening slice. Publication rights remain unresolved and all sources are reference-only. No gameplay/build compatibility or source independence is established. The independently reviewed opening is now integrated with exact runtime reconciliation. Publication remains blocked."
     }
   },
   "atlas": {
