@@ -63,3 +63,10 @@ The accepted external implementation contribution in this package is the CI patc
 Source-index review found no metadata discrepancy within its bounded text scope.
 Standards: 2 findings resolved. Spec: 2 findings resolved (including the shared
 staging finding). No unresolved blocker is known in the reviewed package.
+
+## Hosted workflow admission correction
+
+The first hosted attempt rejected `runner.temp` in workflow-level `env` before
+creating a job. GitHub annotation: `Unrecognized named-value: runner` at line19.
+The browser-path setting now belongs to job-level `env`, where the runner context
+is available. This workflow defect escaped the earlier local code-review pass.

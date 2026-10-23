@@ -15,9 +15,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.ref }}
   cancel-in-progress: true
 
-env:
-  PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/playwright
-
 defaults:
   run:
     shell: bash
@@ -27,6 +24,8 @@ jobs:
     name: Test
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/playwright
 
     steps:
       - name: Check out repository
