@@ -1,0 +1,1585 @@
+{
+  "format": "ra9-atlas.chapter-inventory",
+  "version": 1,
+  "reconciliation": {
+    "state": "partial",
+    "scope": "Reconcile metadata in two live source indices with five existing runtime regions. Chapter order follows PowerPyx numbering. Chart entries preserve Steam headings and are not a certified in-game chart census.",
+    "limitations": [
+      "32 numbered chapters include Opening, which has no separate Steam chart heading.",
+      "39 Steam chart/route headings are reconciled to 31 non-Opening chapters. Headings do not establish complete in-game chart cardinality.",
+      "23 early chart entries have no character attribution in the inspected index headings. Their character value is null.",
+      "On the Run has one unsplit index heading. Its possible character subdivisions remain unresolved.",
+      "No chart images, guide chapter corpora, in-game transitions or platform/build differences were inspected for this inventory.",
+      "Existing Hostage checked-against-chart status applies only to its documented visible-chart scope. Other existing runtime regions remain partial.",
+      "Source-derived metadata and title attribution do not grant publication rights under the repository MIT license."
+    ]
+  },
+  "sources": [
+    {
+      "id": "steam-chart-index",
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
+      "locator": "Guide Index, matching body headings and Credits",
+      "accessDate": "2026-10-23",
+      "accessOutcome": "Page text accessible with 39 chart/route headings. Steam also displays a removed-item notice. No images retrieved.",
+      "attribution": "StongLory. Page credits Reddit user throwawaydeviant9 for paths/screenshots and Neoseeker user Krystal109 for high-resolution images.",
+      "independenceNote": "The publisher credits external chart research and images. Independence from PowerPyx or other guides is not established."
+    },
+    {
+      "id": "powerpyx-chapter-index",
+      "url": "https://www.powerpyx.com/detroit-become-human-full-walkthrough-all-chapters/",
+      "locator": "Chapters ordered list items 1–32 and PowerPyx reply to Khrystyn dated 2018-06-03",
+      "accessDate": "2026-10-23",
+      "accessOutcome": "Index text accessible: 32 numbered rows, 36 chapter/character link occurrences and 35 unique chapter-guide targets. The separate Jericho graffiti link is excluded. No linked chapter corpus retrieved.",
+      "attribution": "PowerPyx, index dated 2018-05-24.",
+      "independenceNote": "Secondary game guide, but a primary record of its own index headings. Shared research between guides is unknown."
+    },
+    {
+      "id": "runtime-coverage-ledger",
+      "url": null,
+      "locator": "prototype/atlas-data.js chapters[]; packets/hostage.packet.json coverage; packets/a-new-home.packet.json coverage; docs/SOURCES.md",
+      "accessDate": "2026-10-23",
+      "accessOutcome": "Local runtime coverage and existing preparation packets read. These provide runtime IDs and existing scoped coverage labels only.",
+      "attribution": "ra9-atlas project. Underlying third-party source attributions remain in the cited files.",
+      "independenceNote": "Internal records reuse earlier source evidence. They are not independent confirmation of index or game facts."
+    }
+  ],
+  "chapters": [
+    {
+      "id": "the-hostage",
+      "order": 1,
+      "title": "The Hostage",
+      "charts": [
+        {
+          "id": "the-hostage-chart",
+          "character": "connor",
+          "label": "The Hostage",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index",
+            "runtime-coverage-ledger"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "The Hostage",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "The Hostage",
+              "location": "Chapters item 1"
+            },
+            {
+              "source": "runtime-coverage-ledger",
+              "heading": "The Hostage",
+              "location": "prototype/atlas-data.js chapters[id=hostage]"
+            }
+          ],
+          "coverage": "checked-against-chart",
+          "runtimeChapterIds": [
+            "hostage"
+          ]
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts."
+      ]
+    },
+    {
+      "id": "opening",
+      "order": 2,
+      "title": "Opening",
+      "charts": [],
+      "sources": [
+        "powerpyx-chapter-index"
+      ],
+      "notes": [
+        "PowerPyx item 2 shares the Hostage guide URL. Its author identifies Opening as a cutscene without tasks in the 2018-06-03 reply to Khrystyn.",
+        "Steam has no Opening chart heading. No chart entry is created. This is an index reconciliation, not direct game verification."
+      ]
+    },
+    {
+      "id": "shades-of-color",
+      "order": 3,
+      "title": "Shades of Color",
+      "charts": [
+        {
+          "id": "shades-of-color-chart",
+          "character": null,
+          "label": "Shades of Color",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Shades of Color",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Shades of Color",
+              "location": "Chapters item 3"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "a-new-home",
+      "order": 4,
+      "title": "A New Home",
+      "charts": [
+        {
+          "id": "a-new-home-chart",
+          "character": "kara",
+          "label": "A New Home",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index",
+            "runtime-coverage-ledger"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "A New Home",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "A New Home",
+              "location": "Chapters item 4"
+            },
+            {
+              "source": "runtime-coverage-ledger",
+              "heading": "A New Home",
+              "location": "prototype/atlas-data.js chapters[id=home]"
+            }
+          ],
+          "coverage": "partial",
+          "runtimeChapterIds": [
+            "home"
+          ]
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts."
+      ]
+    },
+    {
+      "id": "the-painter",
+      "order": 5,
+      "title": "The Painter",
+      "charts": [
+        {
+          "id": "the-painter-chart",
+          "character": null,
+          "label": "The Painter",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "The Painter",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "The Painter",
+              "location": "Chapters item 5"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "partners",
+      "order": 6,
+      "title": "Partners",
+      "charts": [
+        {
+          "id": "partners-chart",
+          "character": null,
+          "label": "Partners",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Partners",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Partners",
+              "location": "Chapters item 6"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "stormy-night",
+      "order": 7,
+      "title": "Stormy Night",
+      "charts": [
+        {
+          "id": "stormy-night-chart",
+          "character": "kara",
+          "label": "Stormy Night",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index",
+            "runtime-coverage-ledger"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Stormy Night",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Stormy Night",
+              "location": "Chapters item 7"
+            },
+            {
+              "source": "runtime-coverage-ledger",
+              "heading": "Stormy Night",
+              "location": "prototype/atlas-data.js chapters[id=stormy]"
+            }
+          ],
+          "coverage": "partial",
+          "runtimeChapterIds": [
+            "stormy"
+          ]
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts."
+      ]
+    },
+    {
+      "id": "broken",
+      "order": 8,
+      "title": "Broken",
+      "charts": [
+        {
+          "id": "broken-chart",
+          "character": null,
+          "label": "Broken",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Broken",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Broken",
+              "location": "Chapters item 8"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "the-interrogation",
+      "order": 9,
+      "title": "The Interrogation",
+      "charts": [
+        {
+          "id": "the-interrogation-chart",
+          "character": null,
+          "label": "The Interrogation",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "The Interrogation",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "The Interrogation",
+              "location": "Chapters item 9"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "fugitives",
+      "order": 10,
+      "title": "Fugitives",
+      "charts": [
+        {
+          "id": "fugitives-chart",
+          "character": null,
+          "label": "Fugitives",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Fugitives",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Fugitives",
+              "location": "Chapters item 10"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "from-the-dead",
+      "order": 11,
+      "title": "From the Dead",
+      "charts": [
+        {
+          "id": "from-the-dead-chart",
+          "character": null,
+          "label": "From The Dead",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "From The Dead",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "From the Dead",
+              "location": "Chapters item 11"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "waiting-for-hank",
+      "order": 12,
+      "title": "Waiting for Hank…",
+      "charts": [
+        {
+          "id": "waiting-for-hank-chart",
+          "character": null,
+          "label": "Waiting For Hank...",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Waiting For Hank...",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Waiting for Hank…",
+              "location": "Chapters item 12"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "on-the-run",
+      "order": 13,
+      "title": "On the Run",
+      "charts": [
+        {
+          "id": "on-the-run-chart",
+          "character": null,
+          "label": "On The Run",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "On The Run",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "On the Run",
+              "location": "Chapters item 13"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "jericho",
+      "order": 14,
+      "title": "Jericho",
+      "charts": [
+        {
+          "id": "jericho-chart",
+          "character": null,
+          "label": "Jericho",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Jericho",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Jericho",
+              "location": "Chapters item 14"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "the-nest",
+      "order": 15,
+      "title": "The Nest",
+      "charts": [
+        {
+          "id": "the-nest-chart",
+          "character": null,
+          "label": "The Nest",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "The Nest",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "The Nest",
+              "location": "Chapters item 15"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "time-to-decide",
+      "order": 16,
+      "title": "Time to Decide",
+      "charts": [
+        {
+          "id": "time-to-decide-chart",
+          "character": null,
+          "label": "Time To Decide",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Time To Decide",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Time to Decide",
+              "location": "Chapters item 16"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "zlatko",
+      "order": 17,
+      "title": "Zlatko",
+      "charts": [
+        {
+          "id": "zlatko-chart",
+          "character": null,
+          "label": "Zlatko",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Zlatko",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Zlatko",
+              "location": "Chapters item 17"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "russian-roulette",
+      "order": 18,
+      "title": "Russian Roulette",
+      "charts": [
+        {
+          "id": "russian-roulette-chart",
+          "character": null,
+          "label": "Russian Roulette",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Russian Roulette",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Russian Roulette",
+              "location": "Chapters item 18"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "spare-parts",
+      "order": 19,
+      "title": "Spare Parts",
+      "charts": [
+        {
+          "id": "spare-parts-chart",
+          "character": null,
+          "label": "Spare Parts",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Spare Parts",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Spare Parts",
+              "location": "Chapters item 19"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "the-eden-club",
+      "order": 20,
+      "title": "The Eden Club",
+      "charts": [
+        {
+          "id": "the-eden-club-chart",
+          "character": null,
+          "label": "The Eden Club",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "The Eden Club",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "The Eden Club",
+              "location": "Chapters item 20"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "the-pirates-cove",
+      "order": 21,
+      "title": "The Pirates’ Cove",
+      "charts": [
+        {
+          "id": "the-pirates-cove-chart",
+          "character": null,
+          "label": "The Pirates' Cove",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "The Pirates' Cove",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "The Pirates’ Cove",
+              "location": "Chapters item 21"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "the-bridge",
+      "order": 22,
+      "title": "The Bridge",
+      "charts": [
+        {
+          "id": "the-bridge-chart",
+          "character": null,
+          "label": "The Bridge",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "The Bridge",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "The Bridge",
+              "location": "Chapters item 22"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "the-stratford-tower",
+      "order": 23,
+      "title": "The Stratford Tower",
+      "charts": [
+        {
+          "id": "the-stratford-tower-chart",
+          "character": null,
+          "label": "The Stratford Tower",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "The Stratford Tower",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "The Stratford Tower",
+              "location": "Chapters item 23"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "public-enemy",
+      "order": 24,
+      "title": "Public Enemy",
+      "charts": [
+        {
+          "id": "public-enemy-chart",
+          "character": "connor",
+          "label": "Public Enemy",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index",
+            "runtime-coverage-ledger"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Public Enemy",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Public Enemy",
+              "location": "Chapters item 24"
+            },
+            {
+              "source": "runtime-coverage-ledger",
+              "heading": "Public Enemy",
+              "location": "prototype/atlas-data.js chapters[id=public-enemy]"
+            }
+          ],
+          "coverage": "partial",
+          "runtimeChapterIds": [
+            "public-enemy"
+          ]
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts."
+      ]
+    },
+    {
+      "id": "midnight-train",
+      "order": 25,
+      "title": "Midnight Train",
+      "charts": [
+        {
+          "id": "midnight-train-chart",
+          "character": null,
+          "label": "Midnight Train",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Midnight Train",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Midnight Train",
+              "location": "Chapters item 25"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "capitol-park",
+      "order": 26,
+      "title": "Capitol Park",
+      "charts": [
+        {
+          "id": "capitol-park-chart",
+          "character": null,
+          "label": "Capitol Park",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Capitol Park",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Capitol Park",
+              "location": "Chapters item 26"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "meet-kamski",
+      "order": 27,
+      "title": "Meet Kamski",
+      "charts": [
+        {
+          "id": "meet-kamski-chart",
+          "character": null,
+          "label": "Meet Kamski",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Meet Kamski",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Meet Kamski",
+              "location": "Chapters item 27"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "freedom-march",
+      "order": 28,
+      "title": "Freedom March",
+      "charts": [
+        {
+          "id": "freedom-march-chart",
+          "character": null,
+          "label": "Freedom March",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Freedom March",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Freedom March",
+              "location": "Chapters item 28"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts.",
+        "Character is not named by these index headings. Character attribution remains unresolved."
+      ]
+    },
+    {
+      "id": "last-chance-connor",
+      "order": 29,
+      "title": "Last Chance, Connor",
+      "charts": [
+        {
+          "id": "last-chance-connor-chart",
+          "character": "connor",
+          "label": "Last Chance, Connor",
+          "kind": "source-index-entry",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Last Chance, Connor",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Last Chance, Connor",
+              "location": "Chapters item 29"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "One source heading is recorded. It does not establish one in-game chart or exclude additional character charts."
+      ]
+    },
+    {
+      "id": "crossroads",
+      "order": 30,
+      "title": "Crossroads",
+      "charts": [
+        {
+          "id": "crossroads-connor",
+          "character": "connor",
+          "label": "Crossroads - Connor",
+          "kind": "character-heading",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Crossroads - Connor",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Crossroads Connor",
+              "location": "Chapters item 30"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        },
+        {
+          "id": "crossroads-kara",
+          "character": "kara",
+          "label": "Crossroads - Kara",
+          "kind": "character-heading",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Crossroads - Kara",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Crossroads Kara",
+              "location": "Chapters item 30"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        },
+        {
+          "id": "crossroads-markus",
+          "character": "markus",
+          "label": "Crossroads - Markus",
+          "kind": "character-heading",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Crossroads - Markus",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Crossroads Markus",
+              "location": "Chapters item 30"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "PowerPyx lists Kara, Connor, Markus in one numbered row. Steam lists Connor, Kara, Markus separately. The source order is not a new chronology."
+      ]
+    },
+    {
+      "id": "night-of-the-soul",
+      "order": 31,
+      "title": "Night of the Soul",
+      "charts": [
+        {
+          "id": "night-of-the-soul-connor",
+          "character": "connor",
+          "label": "Night of the Soul - Connor",
+          "kind": "character-heading",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Night of the Soul - Connor",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Night of the Soul",
+              "location": "Chapters item 31, shared page"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        },
+        {
+          "id": "night-of-the-soul-markus",
+          "character": "markus",
+          "label": "Night of the Soul - Markus",
+          "kind": "character-heading",
+          "route": null,
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Night of the Soul - Markus",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Night of the Soul",
+              "location": "Chapters item 31, shared page"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "Steam identifies two character headings. PowerPyx has one shared chapter link. The indices do not establish any additional chart."
+      ]
+    },
+    {
+      "id": "battle-for-detroit",
+      "order": 32,
+      "title": "Battle for Detroit",
+      "charts": [
+        {
+          "id": "battle-for-detroit-connor-at-the-cyberlife-tower",
+          "character": "connor",
+          "label": "Battle For Detroit - Connor at the Cyberlife Tower",
+          "kind": "character-route-heading",
+          "route": "at the Cyberlife Tower",
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Battle For Detroit - Connor at the Cyberlife Tower",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Battle for Detroit Connor",
+              "location": "Chapters item 32"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        },
+        {
+          "id": "battle-for-detroit-connor-last-mission",
+          "character": "connor",
+          "label": "Battle For Detroit - Connor's Last Mission",
+          "kind": "character-route-heading",
+          "route": "Last Mission",
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Battle For Detroit - Connor's Last Mission",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Battle for Detroit Connor",
+              "location": "Chapters item 32"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        },
+        {
+          "id": "battle-for-detroit-kara-captured",
+          "character": "kara",
+          "label": "Battle For Detroit - Kara Captured",
+          "kind": "character-route-heading",
+          "route": "Captured",
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Battle For Detroit - Kara Captured",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Battle for Detroit Kara",
+              "location": "Chapters item 32"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        },
+        {
+          "id": "battle-for-detroit-kara-leaving-detroit",
+          "character": "kara",
+          "label": "Battle For Detroit - Kara Leaving Detroit",
+          "kind": "character-route-heading",
+          "route": "Leaving Detroit",
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index",
+            "runtime-coverage-ledger"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Battle For Detroit - Kara Leaving Detroit",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Battle for Detroit Kara",
+              "location": "Chapters item 32"
+            },
+            {
+              "source": "runtime-coverage-ledger",
+              "heading": "Battle for Detroit — Kara",
+              "location": "prototype/atlas-data.js chapters[id=kara], checkpoint and bus-terminal slice"
+            }
+          ],
+          "coverage": "partial",
+          "runtimeChapterIds": [
+            "kara"
+          ]
+        },
+        {
+          "id": "battle-for-detroit-markus-demonstration",
+          "character": "markus",
+          "label": "Battle For Detroit - Markus Demonstration",
+          "kind": "character-route-heading",
+          "route": "Demonstration",
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Battle For Detroit - Markus Demonstration",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Battle for Detroit Markus",
+              "location": "Chapters item 32"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        },
+        {
+          "id": "battle-for-detroit-markus-revolution",
+          "character": "markus",
+          "label": "Battle For Detroit - Markus Revolution",
+          "kind": "character-route-heading",
+          "route": "Revolution",
+          "sources": [
+            "steam-chart-index",
+            "powerpyx-chapter-index"
+          ],
+          "locator": [
+            {
+              "source": "steam-chart-index",
+              "heading": "Battle For Detroit - Markus Revolution",
+              "location": "Guide Index and matching body heading"
+            },
+            {
+              "source": "powerpyx-chapter-index",
+              "heading": "Battle for Detroit Markus",
+              "location": "Chapters item 32"
+            }
+          ],
+          "coverage": "not-added",
+          "runtimeChapterIds": []
+        }
+      ],
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ],
+      "notes": [
+        "Three PowerPyx character pages correspond to six Steam character/route headings. These route alternatives stay within chapter 32.",
+        "The runtime Kara checkpoint and bus-terminal slice maps only to Leaving Detroit. Captured remains not-added. Route eligibility and in-game chart boundaries are not verified here."
+      ]
+    }
+  ],
+  "unknowns": [
+    {
+      "id": "in-game-chart-census",
+      "explanation": "The two indices reconcile as source metadata. They do not establish every in-game chart or route subdivision. Inspect chart identifiers or an authoritative game inventory before a complete census claim.",
+      "sources": [
+        "steam-chart-index",
+        "powerpyx-chapter-index"
+      ]
+    },
+    {
+      "id": "unattributed-early-chart-characters",
+      "explanation": "The 23 early entries with character=null lack character attribution in the inspected index headings. Do not infer them from story knowledge.",
+      "sources": [
+        "steam-chart-index",
+        "powerpyx-chapter-index"
+      ]
+    },
+    {
+      "id": "on-the-run-subdivision",
+      "explanation": "Both indices use one On the Run heading. Separate character-chart cardinality remains unresolved.",
+      "sources": [
+        "steam-chart-index",
+        "powerpyx-chapter-index"
+      ]
+    },
+    {
+      "id": "opening-chart-status",
+      "explanation": "PowerPyx calls Opening a cutscene without tasks and Steam omits it. This supports the empty charts array only within index scope, not a game observation.",
+      "sources": [
+        "powerpyx-chapter-index",
+        "steam-chart-index"
+      ]
+    },
+    {
+      "id": "route-boundaries-and-eligibility",
+      "explanation": "The finale has six Steam route headings under three PowerPyx character links. Exact in-game chart boundaries and route prerequisites are outside this inventory.",
+      "sources": [
+        "steam-chart-index",
+        "powerpyx-chapter-index"
+      ]
+    },
+    {
+      "id": "publication-rights",
+      "explanation": "No new permission or reuse license was established. Metadata collection does not clear third-party chart images, expression or guide arrangement for publication.",
+      "sources": [
+        "steam-chart-index",
+        "powerpyx-chapter-index",
+        "runtime-coverage-ledger"
+      ]
+    }
+  ]
+}

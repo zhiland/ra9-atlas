@@ -7,6 +7,10 @@ Use these documents for current work:
 | [STATUS](STATUS.md) | Current checkpoint, verification results and next package |
 | [Specification](spec.md) | Approved product requirements and acceptance boundaries |
 | [Roadmap](ROADMAP.md) | Stage order and completion gates |
+| [Authoring package review](notes/authoring-pipeline-review.md) | Separate code/source review and execution boundary |
+| [Canonical authoring](authoring-data.md) | Versioned JSON, identity ledger and deterministic generation |
+| [Chapter inventory](notes/chapter-inventory-reconciliation.md) | Partial source-index reconciliation and explicit gaps |
+| [CI](ci.md) | Hosted checks and verification boundaries |
 | [Data contract](data-contract.md) | Bounded runtime sample contract |
 | [Chapter preparation](chapter-preparation.md) | Packet extraction, validation, source review and merge gate |
 | [Source register](SOURCES.md) | Evidence provenance and access limitations |

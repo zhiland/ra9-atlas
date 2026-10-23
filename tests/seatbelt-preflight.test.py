@@ -68,12 +68,19 @@ class PreflightSetupTests(unittest.TestCase):
 
     def test_no_sandbox_launch_is_a_failure_not_a_denial_pass(self):
         failed = subprocess.CompletedProcess([], 1, stdout="", stderr="sandbox_apply: Operation not permitted")
-        with patch.object(preflight.platform, "system", return_value="Darwin"), \
-             patch.object(preflight.subprocess, "run", return_value=failed), \
+        # Exercise the macOS failure branch without requiring /private/tmp on Linux.
+        scratch = self.root / "synthetic-preflight"
+        scratch.mkdir()
+        with patch.object(preflight.tempfile, "mkdtemp", return_value=str(scratch)), \
+             patch.object(preflight.platform, "system", return_value="Darwin"), \
+             patch.object(preflight.subprocess, "run", return_value=failed) as launch, \
              patch.object(preflight.socket, "socket") as socket_factory:
             socket_factory.return_value.__enter__.return_value.getsockname.return_value = ("127.0.0.1", 12345)
             with self.assertRaisesRegex(RuntimeError, "failed before completion"):
                 preflight.run_preflight()
+        launch.assert_called_once()
+        self.assertEqual(launch.call_args.args[0][0], "/usr/bin/sandbox-exec")
+        self.assertTrue((scratch / "offline.sb").is_file())
 
     def test_other_platform_cannot_report_a_pass(self):
         with patch.object(preflight.platform, "system", return_value="Linux"):

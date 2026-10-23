@@ -7,7 +7,7 @@ The goal is a complete, source-audited guide. The current application is a parti
 
 ## Try the prototype
 
-Use Node.js 20 or later and npm for development. Python 3 can serve the static files.
+Use Node.js 22 or later and npm for development. Python 3 can serve the static files.
 From the repository root:
 
 ```sh
@@ -45,6 +45,7 @@ See [current status](docs/STATUS.md), [coverage](docs/notes/poc4-coverage.md),
 ```sh
 npm ci
 npx playwright install chromium
+npm run build:data # after reviewed graph edits
 npm test
 ```
 
@@ -52,6 +53,10 @@ The suite validates data and preparation packets, then checks graph behavior,
 layout and desktop/mobile-width Chromium interactions. Browser tests need permission
 for a localhost server. Viewport emulation does not certify Safari, physical touch,
 assistive technology or gameplay accuracy.
+
+Graph edits belong in [the authoring bundle](docs/authoring-data.md). Generation preserves the existing graph and legacy links.
+The [chapter inventory](docs/notes/chapter-inventory-reconciliation.md) records source headings and explicit gaps; it is not a complete game-chart census.
+[CI](docs/ci.md) runs deterministic checks on pull requests; source approval and publication remain separate.
 
 Useful focused checks:
 
@@ -72,7 +77,9 @@ the pinned macOS runtime in [its guide](docs/opencode-runner.md).
 
 | Path | Purpose |
 | --- | --- |
-| `prototype/atlas-data.js` | Current runtime graph and evidence metadata |
+| `data/atlas.source.json`, `data/legacy-index.json` | Canonical authoring bundle and published identity ledger |
+| `prototype/atlas-data.js` | Deterministic generated browser graph |
+| `data/chapter-inventory.json` | Partial reconciliation of 32 chapter rows and 39 source headings |
 | `prototype/atlas-app.js`, `atlas-core.js`, `atlas.css` | Shared map UI, navigation and styling |
 | `packets/` | Chapter preparation documents, separate from runtime ownership |
 | `tests/` | Data, interaction and isolation regressions |

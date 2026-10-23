@@ -4,7 +4,15 @@ Prepared: 2026-10-22 from chapter-preparation commit `26c6e19`. Recheck the
 branch and PR state at the start of the next work package; this document is a
 checkpoint, not a live status feed.
 
-## Current continuation update — 2026-10-22
+## Current continuation update — 2026-10-23
+
+The authoring/CI/inventory package moves graph editing to `data/atlas.source.json`,
+with `data/legacy-index.json` preserving published identities and generated browser JS.
+Read [authoring workflow](authoring-data.md), [CI](ci.md) and the
+[partial inventory](notes/chapter-inventory-reconciliation.md). Older runtime-owned
+statements below are historical. No merge, source-rights approval or deployment is implied.
+
+## Previous continuation update — 2026-10-22
 
 Read [STATUS](STATUS.md) and the [repository review](notes/repository-review-2026-10-22.md)
 first. The earlier source-review-pending statements below are historical.

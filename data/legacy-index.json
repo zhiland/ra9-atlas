@@ -1,0 +1,686 @@
+{
+  "format": "ra9-atlas.legacy-index",
+  "version": 1,
+  "nodes": [
+    "a_welcome",
+    "a_todd",
+    "a_clean1",
+    "a_ask",
+    "a_go",
+    "a_clean2",
+    "a_room",
+    "a_talk",
+    "a_key",
+    "a_box",
+    "a_gun_seen",
+    "a_window_open",
+    "s_alive",
+    "s_dead",
+    "s_take_gun",
+    "s_gun_struggle",
+    "s_kara_shoots_todd",
+    "s_alice_shoots_todd",
+    "s_gun_carried",
+    "s_window_open",
+    "k_terminal",
+    "k_meet",
+    "k_dialogue",
+    "k_away",
+    "k_check",
+    "k_goodbye",
+    "k_checkpoint",
+    "k_detour",
+    "k_late_bus",
+    "s_reach_alice",
+    "s_run_away",
+    "s_hide_corridor",
+    "s_todd_passes",
+    "s_front_backyard_escape",
+    "s_lock_room",
+    "s_window_go_out",
+    "s_window_qte",
+    "s_window_reach_bus",
+    "s_todd_orders_stay",
+    "s_alice_runs_upstairs",
+    "s_deviant",
+    "s_fatal_todd_kills",
+    "s_go_upstairs",
+    "s_reason_todd",
+    "s_todd_upstairs_first",
+    "a_read_android_power",
+    "a_read_connecting_dots",
+    "a_wash_dishes",
+    "a_take_laundry_backyard",
+    "a_rewash_clothes",
+    "a_find_red_ice",
+    "a_enrage_todd",
+    "a_watch_todd_tv",
+    "a_block_todd_view",
+    "a_activate_vacuum",
+    "a_take_out_trash",
+    "a_clean_todd_room",
+    "a_tidy_pills",
+    "a_make_todd_bed",
+    "a_alice_goes_room",
+    "a_clean_toilet",
+    "a_arrange_bathroom_bottles",
+    "a_store_bathroom_clothes",
+    "a_mop_bathroom",
+    "a_read_android_qb",
+    "a_read_putting_price",
+    "a_read_alice_floor_book",
+    "a_read_alice_shelf_books",
+    "mission_start",
+    "fish",
+    "talk_allen",
+    "stage-search",
+    "inv_father",
+    "learn_cause",
+    "learn_name",
+    "inv_gun_case",
+    "inv_cop_body",
+    "cops_gun",
+    "wasted_time",
+    "go_outside",
+    "swat_injured",
+    "stage-confront",
+    "stage-negotiate",
+    "approach",
+    "helicopter",
+    "gun_talk",
+    "wounded_cop",
+    "fail_negotiate",
+    "honest_deviant",
+    "lie_deviant",
+    "trust",
+    "sacrifice_self",
+    "use_gun",
+    "get_close",
+    "deviant_jumps",
+    "end_failed",
+    "end_leapt",
+    "end_snipers",
+    "end_died",
+    "end_deviant_shot",
+    "end_connor_shot",
+    "pe_meet_cop"
+  ],
+  "edges": [
+    {
+      "id": "e_home_welcome_todd",
+      "from": "a_welcome",
+      "to": "a_todd",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_todd_clean1",
+      "from": "a_todd",
+      "to": "a_clean1",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_clean1_ask",
+      "from": "a_clean1",
+      "to": "a_ask",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_ask_go",
+      "from": "a_ask",
+      "to": "a_go",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_go_clean2",
+      "from": "a_go",
+      "to": "a_clean2",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_clean2_room",
+      "from": "a_clean2",
+      "to": "a_room",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_room_talk",
+      "from": "a_room",
+      "to": "a_talk",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_talk_key",
+      "from": "a_talk",
+      "to": "a_key",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_key_box",
+      "from": "a_key",
+      "to": "a_box",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_box_kara_dialogue_hypothesis",
+      "from": "a_box",
+      "to": "k_dialogue",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_alive_meet",
+      "from": "s_alive",
+      "to": "k_meet",
+      "fromOption": null
+    },
+    {
+      "id": "e_kara_terminal_meet",
+      "from": "k_terminal",
+      "to": "k_meet",
+      "fromOption": null
+    },
+    {
+      "id": "e_kara_meet_dialogue",
+      "from": "k_meet",
+      "to": "k_dialogue",
+      "fromOption": null
+    },
+    {
+      "id": "e_kara_dialogue_away",
+      "from": "k_dialogue",
+      "to": "k_away",
+      "fromOption": 0
+    },
+    {
+      "id": "e_kara_dialogue_check",
+      "from": "k_dialogue",
+      "to": "k_check",
+      "fromOption": 1
+    },
+    {
+      "id": "e_kara_away_goodbye",
+      "from": "k_away",
+      "to": "k_goodbye",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_go_gun_seen",
+      "from": "a_go",
+      "to": "a_gun_seen",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_room_window",
+      "from": "a_room",
+      "to": "a_window_open",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_gun_stormy_take",
+      "from": "a_gun_seen",
+      "to": "s_take_gun",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_window_stormy_route",
+      "from": "a_window_open",
+      "to": "s_window_open",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_take_gun_struggle",
+      "from": "s_take_gun",
+      "to": "s_gun_struggle",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_struggle_kara_shoots",
+      "from": "s_gun_struggle",
+      "to": "s_kara_shoots_todd",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_struggle_alice_shoots",
+      "from": "s_gun_struggle",
+      "to": "s_alice_shoots_todd",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_kara_gun_carried",
+      "from": "s_kara_shoots_todd",
+      "to": "s_gun_carried",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_kara_dead",
+      "from": "s_kara_shoots_todd",
+      "to": "s_dead",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_alice_dead",
+      "from": "s_alice_shoots_todd",
+      "to": "s_dead",
+      "fromOption": null
+    },
+    {
+      "id": "e_kara_checkpoint_detour",
+      "from": "k_checkpoint",
+      "to": "k_detour",
+      "fromOption": 0
+    },
+    {
+      "id": "e_kara_checkpoint_terminal",
+      "from": "k_checkpoint",
+      "to": "k_terminal",
+      "fromOption": 1
+    },
+    {
+      "id": "e_kara_detour_late",
+      "from": "k_detour",
+      "to": "k_late_bus",
+      "fromOption": null
+    },
+    {
+      "id": "e_kara_detour_terminal",
+      "from": "k_detour",
+      "to": "k_terminal",
+      "fromOption": null
+    },
+    {
+      "id": "e_kara_late_terminal",
+      "from": "k_late_bus",
+      "to": "k_terminal",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_reach_run_away",
+      "from": "s_reach_alice",
+      "to": "s_run_away",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_run_hide",
+      "from": "s_run_away",
+      "to": "s_hide_corridor",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_hide_todd_passes",
+      "from": "s_hide_corridor",
+      "to": "s_todd_passes",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_todd_passes_front_backyard",
+      "from": "s_todd_passes",
+      "to": "s_front_backyard_escape",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_front_backyard_alive",
+      "from": "s_front_backyard_escape",
+      "to": "s_alive",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_reach_lock_room",
+      "from": "s_reach_alice",
+      "to": "s_lock_room",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_window_go_out_access",
+      "from": "s_window_open",
+      "to": "s_window_go_out",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_lock_go_out",
+      "from": "s_lock_room",
+      "to": "s_window_go_out",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_go_out_qte",
+      "from": "s_window_go_out",
+      "to": "s_window_qte",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_qte_bus",
+      "from": "s_window_qte",
+      "to": "s_window_reach_bus",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_window_bus_alive",
+      "from": "s_window_reach_bus",
+      "to": "s_alive",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_todd_orders_alice_upstairs",
+      "from": "s_todd_orders_stay",
+      "to": "s_alice_runs_upstairs",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_alice_upstairs_stay_still",
+      "from": "s_alice_runs_upstairs",
+      "to": "s_fatal_todd_kills",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_alice_upstairs_deviant",
+      "from": "s_alice_runs_upstairs",
+      "to": "s_deviant",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_deviant_go_upstairs",
+      "from": "s_deviant",
+      "to": "s_go_upstairs",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_go_upstairs_reach_alice",
+      "from": "s_go_upstairs",
+      "to": "s_reach_alice",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_deviant_reason",
+      "from": "s_deviant",
+      "to": "s_reason_todd",
+      "fromOption": null
+    },
+    {
+      "id": "e_stormy_reason_knocked",
+      "from": "s_reason_todd",
+      "to": "s_todd_upstairs_first",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_rewash_red_ice",
+      "from": "a_rewash_clothes",
+      "to": "a_find_red_ice",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_red_ice_enrage_todd",
+      "from": "a_find_red_ice",
+      "to": "a_enrage_todd",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_watch_tv_block_view",
+      "from": "a_watch_todd_tv",
+      "to": "a_block_todd_view",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_backyard_rewash_clothes",
+      "from": "a_take_laundry_backyard",
+      "to": "a_rewash_clothes",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_pills_gun",
+      "from": "a_tidy_pills",
+      "to": "a_gun_seen",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_todd_bed_alice_room",
+      "from": "a_make_todd_bed",
+      "to": "a_alice_goes_room",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_start_allen",
+      "from": "mission_start",
+      "to": "talk_allen",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_allen_search",
+      "from": "talk_allen",
+      "to": "stage-search",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_search_father",
+      "from": "stage-search",
+      "to": "inv_father",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_father_cause",
+      "from": "inv_father",
+      "to": "learn_cause",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_search_name",
+      "from": "stage-search",
+      "to": "learn_name",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_search_gun_case",
+      "from": "stage-search",
+      "to": "inv_gun_case",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_search_cop_body",
+      "from": "stage-search",
+      "to": "inv_cop_body",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_cop_body_gun",
+      "from": "inv_cop_body",
+      "to": "cops_gun",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_search_wasted",
+      "from": "stage-search",
+      "to": "wasted_time",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_search_outside",
+      "from": "stage-search",
+      "to": "go_outside",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_wasted_confront",
+      "from": "wasted_time",
+      "to": "stage-confront",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_outside_confront",
+      "from": "go_outside",
+      "to": "stage-confront",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_confront_negotiate",
+      "from": "stage-confront",
+      "to": "stage-negotiate",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_negotiate_approach",
+      "from": "stage-negotiate",
+      "to": "approach",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_negotiate_helicopter",
+      "from": "stage-negotiate",
+      "to": "helicopter",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_negotiate_gun_talk",
+      "from": "stage-negotiate",
+      "to": "gun_talk",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_negotiate_wounded_cop",
+      "from": "stage-negotiate",
+      "to": "wounded_cop",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_negotiate_honest",
+      "from": "stage-negotiate",
+      "to": "honest_deviant",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_negotiate_lie",
+      "from": "stage-negotiate",
+      "to": "lie_deviant",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_negotiate_sacrifice",
+      "from": "stage-negotiate",
+      "to": "sacrifice_self",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_negotiate_use_gun",
+      "from": "stage-negotiate",
+      "to": "use_gun",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_negotiate_get_close",
+      "from": "stage-negotiate",
+      "to": "get_close",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_lie_trust",
+      "from": "lie_deviant",
+      "to": "trust",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_honest_jumps",
+      "from": "honest_deviant",
+      "to": "deviant_jumps",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_trust_fail_jumps",
+      "from": "trust",
+      "to": "deviant_jumps",
+      "fromOption": 0
+    },
+    {
+      "id": "e_hostage_trust_build_snipers",
+      "from": "trust",
+      "to": "end_snipers",
+      "fromOption": 1
+    },
+    {
+      "id": "e_hostage_jumps_failed",
+      "from": "deviant_jumps",
+      "to": "end_failed",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_jumps_leapt",
+      "from": "deviant_jumps",
+      "to": "end_leapt",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_sacrifice_died",
+      "from": "sacrifice_self",
+      "to": "end_died",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_gun_deviant_shot",
+      "from": "use_gun",
+      "to": "end_deviant_shot",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_gun_connor_shot",
+      "from": "use_gun",
+      "to": "end_connor_shot",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_start_fish",
+      "from": "mission_start",
+      "to": "fish",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_search_swat",
+      "from": "stage-search",
+      "to": "swat_injured",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_negotiate_fail",
+      "from": "stage-negotiate",
+      "to": "fail_negotiate",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_approach_fail",
+      "from": "approach",
+      "to": "fail_negotiate",
+      "fromOption": 0
+    },
+    {
+      "id": "e_hostage_fail_jumps",
+      "from": "fail_negotiate",
+      "to": "deviant_jumps",
+      "fromOption": null
+    },
+    {
+      "id": "e_hostage_save_cop_public_enemy",
+      "from": "wounded_cop",
+      "to": "pe_meet_cop",
+      "fromOption": 1
+    },
+    {
+      "id": "e_hostage_cold_approach_fail",
+      "from": "approach",
+      "to": "fail_negotiate",
+      "fromOption": 1
+    },
+    {
+      "id": "e_home_clean1_trash",
+      "from": "a_clean1",
+      "to": "a_take_out_trash",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_trash_ask",
+      "from": "a_take_out_trash",
+      "to": "a_ask",
+      "fromOption": null
+    },
+    {
+      "id": "e_home_clean2_talk",
+      "from": "a_clean2",
+      "to": "a_talk",
+      "fromOption": null
+    }
+  ]
+}

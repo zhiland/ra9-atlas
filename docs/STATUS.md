@@ -1,8 +1,8 @@
 # rA9 Atlas — current checkpoint
 
 Updated: 2026-10-23. Stage 1 source review is complete for the bounded Hostage
-pilot. Stage 2 preparation is implemented. Production schema, runtime ownership,
-permalink migration, full chart inventory and hosting remain open.
+pilot. Stage 2 preparation is implemented. Canonical JSON authoring and deterministic generation now preserve the existing sample.
+Full-product schema expansion, permalink output migration, actual game-chart census and hosting remain open.
 
 ## Product state
 
@@ -86,13 +86,13 @@ emulation. Safari, physical touch, assistive technology and gameplay are unverif
 
 ## Next bounded work
 
-1. Both bounded packets now have independent source approval and blocked
-   publication gates. Use the two reviewed samples to decide canonical data
-   ownership and reproducible generation before expanding content.
-2. Preserve the withdrawal ledger and `?edge=N` compatibility when designing
-   the production format. The current graph is still runtime-owned.
-3. Reconcile the chapter/character-chart inventory before larger content batches.
-4. Resolve source-derived publication boundaries before opening the merge/release gate.
+1. Use the canonical authoring bundle and compatibility ledger for future graph edits.
+   Both reviewed packets retain blocked publication gates; generation adds no approval.
+2. Start the next bounded source packet from the [partial inventory](notes/chapter-inventory-reconciliation.md).
+   It reconciles 32 chapter rows and 39 source headings, not actual complete game-chart boundaries.
+   Resolve character and subdivision gaps before claiming those charts complete.
+3. Preserve withdrawal history and `?edge=N` behavior when extending the sample-specific validator.
+4. Resolve source-derived publication boundaries and select hosting before release.
 
 Check shared account capacity before each package. Below 20% remaining, preserve
 progress and defer a large package. Raw logs and downloaded evidence stay local.

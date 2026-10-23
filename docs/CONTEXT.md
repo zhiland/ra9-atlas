@@ -19,3 +19,8 @@ _Avoid_: game, playthrough simulator.
 
 **Withdrawn edge claim**: a historical relationship that review rejected or replaced. It remains identifiable for old references but is not part of the active event graph.
 _Avoid_: uncertain connector, hidden branch.
+
+**Authoring bundle**: the canonical collection of atlas claims, evidence references, layout and historical identities used to prepare an application dataset.
+_Avoid_: independently verified dataset, automatic source approval.
+
+**Compatibility ledger**: the record of published identities and their meanings, retained so existing references cannot silently select a different claim.

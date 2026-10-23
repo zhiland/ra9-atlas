@@ -37,7 +37,8 @@ bounded *Public Enemy* meeting node. See [PoC4 coverage](notes/poc4-coverage.md)
 
 The contract covers five chapter regions, 102 nodes, 96 edge records (94 active connectors and two withdrawn claims), six condition
 groups, ten uncertainty records and no conflict records in
-`prototype/atlas-data.js`. The sample declares `meta.contractVersion: '1.0'`.
+`data/atlas.source.json` and its generated `prototype/atlas-data.js` artifact.
+See [authoring ownership](authoring-data.md). The sample declares `meta.contractVersion: '1.0'`.
 
 | Record | Required fields |
 |---|---|
@@ -267,7 +268,8 @@ transition occurs in game.
 - Stored evidence status describes source basis, not gameplay verification.
 - The Stage 2 [chapter preparation packet](chapter-preparation.md) is a separate
   preparation gate. It does not change this runtime contract or migrate the
-  runtime source of truth.
+  runtime source of truth by itself. [ADR 0002](adr/0002-canonical-atlas-source.md)
+  separately moves graph authoring into a versioned JSON bundle.
 
 ## Withdrawn claims and source corrections — 2026-10-23
 
