@@ -132,7 +132,7 @@ emulation. Safari, physical touch, assistive technology and gameplay are unverif
 
 1. Use the canonical authoring bundle and compatibility ledger for future graph edits.
    All three reviewed packets retain blocked publication gates; generation adds no approval.
-2. Continue bounded source packets from the [partial inventory](notes/chapter-inventory-reconciliation.md).
+2. Prepare [The Painter packet](notes/painter-packet-plan.md) from the [partial inventory](notes/chapter-inventory-reconciliation.md).
    It reconciles 32 chapter rows and 39 source headings, not actual complete game-chart boundaries.
    Resolve character and subdivision gaps before claiming those charts complete.
 3. Preserve withdrawal history and `?edge=N` behavior when extending the sample-specific validator.
