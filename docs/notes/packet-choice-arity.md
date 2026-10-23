@@ -29,7 +29,7 @@ All 49 boundary checks passed and its private server stopped. Codex inspected
 the patch and ran `git apply --check` before applying it. The version is threaded
 to chart and supplementary nodes, with no mutable global version state.
 
-Eighteen synthetic regressions cover default/version compatibility, 2/3/4-row
+Nineteen synthetic regressions cover default/version compatibility, 2/3/4-row
 groups, malformed choices, option zero/last index, invalid indices, external
 choices, exact runtime reconciliation and the blocked CLI review gate. The new
 suite failed before the change on unsupported 1.1, then passed after it. No new
@@ -37,12 +37,25 @@ gameplay claim or leisure packet is published.
 
 ## Standards
 
-Pending fixed-point review.
+Review at `git diff bee077d...446ff29` found one conflicting guide statement
+that still called 1.0 the only version. It now identifies 1.0 as the default and
+requires explicit 1.1 selection. No implementation or material smell finding.
+A separate follow-up confirmed the wording fix.
+Standards: one documentation finding resolved, none open.
 
 ## Spec
 
-Pending review against the acceptance above.
+Review found a missing options comparison for supplementary external nodes
+during optional ATLAS reconciliation. A new fixture reproduced the bypass with
+changed labels/order in 1.0 and an added third option in 1.1. Codex added the same
+full-array comparison used for chart nodes. Matching external choices still pass.
+The regression failed before the fix and passed after it.
+Spec: one finding corrected, follow-up pending.
 
 ## Full verification
 
-Pending full npm and hosted CI.
+Full npm passed: existing 20 build, inventory, 94 contract, 44 unit, 4 map,
+11 zoom, 12 layout, 59 packet, 6 Shades packet, 21 Shades runtime, 6 Painter
+packet, 21 Painter runtime and 72 browser checks, plus 19 new arity regressions.
+Existing packets, data and runtime are byte-identical to base `bee077d`.
+Hosted CI is pending.

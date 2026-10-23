@@ -56,7 +56,8 @@ evidence-preparation document, not a second graph.
 - `review` records the independent source review and merge gate separately from
   automated structural validation.
 
-The packet version is `1.0`. `packetStatus` is `draft`, `prepared` or `reviewed`.
+The default packet version is `1.0`. Select `1.1` explicitly for multi-option
+preparation choices. `packetStatus` is `draft`, `prepared` or `reviewed`.
 A `reviewed` packet with approved independent review and a ready merge gate can
 be review-ready when coverage is `partial` or `checked-against-chart`. Partial
 coverage must retain its explicit scope, included items and omissions. The gate

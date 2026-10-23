@@ -706,6 +706,7 @@ function validatePacket(packet, options) {
       }
       if (actual.label !== node.label) errors.push(`${owner} label differs from ATLAS: "${actual.label}"`);
       if (actual.kind !== node.kind) errors.push(`${owner} kind differs from ATLAS: "${actual.kind}"`);
+      if (!sameJson(actual.options || null, node.options || null)) errors.push(`${owner} options differ from ATLAS`);
       if (node.chapter && actual.chapter !== node.chapter) {
         errors.push(`${owner} chapter differs from ATLAS: "${actual.chapter}"`);
       }

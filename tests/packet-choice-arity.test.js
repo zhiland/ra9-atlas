@@ -60,6 +60,20 @@ test('version 1.1 does not bypass exact runtime reconciliation',()=>{
   p.chart.nodes.find(n=>n.kind==='choice').options.push('Unsupported new option');
   const r=validatePacket(p,{atlas});assert.equal(r.failed,true);assert.match(r.errors.join('\n'),/options differ from ATLAS/);
 });
+test('supplementary runtime reconciliation compares complete option labels and order',()=>{
+  for (const version of ['1.0','1.1']) {
+    const p=structuredClone(require('../packets/the-painter.packet.json'));p.packetVersion=version;
+    const fish=atlas.nodes.find(n=>n.id==='fish');
+    const node={id:fish.id,label:fish.label,kind:fish.kind,chapter:fish.chapter,options:[...fish.options]};
+    p.supplementary=[{id:'synthetic-external',basis:'guide-reported',summary:'Synthetic reconciliation fixture.',sources:[p.sources[0].id],externalNodes:[node],edges:[]}];
+    assert.equal(validatePacket(p,{atlas}).failed,false);
+    for(const options of [[...fish.options].reverse(),['Different','Labels'],...(version==='1.1'?[['A','B','C']]:[])]) {
+      node.options=options;const result=validatePacket(p,{atlas});
+      assert.equal(result.failed,true,'external choices bypassed runtime reconciliation');
+      assert.match(result.errors.join('\n'),/external node.*options differ from ATLAS/);
+    }
+  }
+});
 test('CLI accepts a 1.1 preparation fixture but does not approve its review gate',()=>{
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ra9-choice-arity-'));
   try {
