@@ -6,6 +6,15 @@ checkpoint, not a live status feed.
 
 ## Current continuation update — 2026-10-23
 
+The [Shades runtime integration](notes/shades-runtime-integration.md) appends the
+approved 12-node/5-edge slice below the old frames. Runtime totals are 114 nodes,
+101 edge records and 99 active connectors in six regions. Packet/runtime
+reconciliation is exact; coverage remains partial and publication blocked.
+No detached-origin or Painter consequence edge is inferred. Use STATUS for final
+Git/test results. The following preparation-only statements are historical.
+
+## Previous preparation update — 2026-10-23
+
 Draft [PR #27](https://github.com/zhiland/ra9-atlas/pull/27) saves the third [preparation packet](notes/shades-of-color-source-review.md) covers
 Shades of Color: 12 boxes, 5 continuous connectors, 6 detached segments left unknown.
 Independent source review approves the partial interpretation; publication is blocked.

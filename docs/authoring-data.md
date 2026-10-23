@@ -44,7 +44,7 @@ without writing. It is part of normal validation and CI.
 4. Generate, validate and inspect the resulting diff. Run appropriate tests.
 5. Keep publication/merge decisions separate from source and structural checks.
 
-The two existing reviewed packets remain separate preparation documents. They
+The three reviewed packets remain separate preparation documents. They
 are not blindly merged into the authoring bundle. Most other chapter regions
 remain partial and unreviewed as complete charts. The existing validator has
 sample-specific content and layout fences; a new content batch must extend
@@ -53,3 +53,9 @@ those fences through review instead of disabling them to obtain a passing build.
 A future source-format version must include an explicit migration and preserve
 legacy link behavior. Stable edge IDs already work as input aliases. Changing
 canonical output from `?edge=N` is a separate decision.
+
+
+The [Shades integration](notes/shades-runtime-integration.md) exercises the next
+step: explicit packet-to-graph integration, appended compatibility records,
+generated output, old-layout preservation and dedicated source fences. It adds
+no automatic packet merger and retains blocked source-derived publication gates.

@@ -31,7 +31,7 @@ const expectedEdges = [
 let count = 0;
 function test(name, run) { run(); count++; console.log(`ok ${name}`); }
 test('reviewed source packet passes generic structural validation', () => {
-  const result = validatePacket(packet);
+  const result = validatePacket(packet, { atlas: require('../data/atlas.source.json').atlas });
   assert.equal(result.failed, false, result.errors.join('\n'));
   assert.equal(result.reviewReady, false);
 });
@@ -51,11 +51,13 @@ test('detached icon fragments retain unknown origins instead of invented stage e
   assert.match(unknown.explanation, /six|6/i);
   assert.match(unknown.explanation, /five|5/i);
 });
-test('no runtime, legacy, conditions or guide-derived topology is introduced', () => {
-  assert.equal(packet.atlas, undefined); assert.equal(packet.legacy, undefined);
+test('runtime reconciliation appends identities without guide-derived topology', () => {
+  assert.equal(packet.atlas.chapterId, 'shades-of-color');
+  assert.equal(packet.atlas.exactChapterNodes, true); assert.equal(packet.atlas.exactChapterEdges, true);
+  assert.equal(packet.legacy.canonical, '?edge=N');
   assert.deepEqual(packet.conditions, []); assert.deepEqual(packet.supplementary, []);
   assert.equal(packet.coverage.status, 'partial');
-  assert.ok(packet.chart.edges.every(edge => edge.legacyEdgeIndex === undefined));
+  assert.deepEqual(packet.chart.edges.map(edge => edge.legacyEdgeIndex), [96, 97, 98, 99, 100]);
   assert.ok(packet.sources.every(source => source.rights.state === 'reference-only'));
 });
 test('source approval remains separate from publication and review-required CLI', () => {

@@ -22,7 +22,7 @@
       "Icon legend semantics: legend meanings are not interpreted or packaged.",
       "Unshown branches, cross-chapter claims and the cross-chapter edge to Carl's later comment in The Painter: guide list ordering does not support chart connections; no cross-chapter edge or exact trigger is modeled.",
       "Harassment causal edge: the exact proximity/eligibility and the later Painter consequence are unverified; no causal edge is added.",
-      "Percentages and any completion claims: partial coverage does not claim complete gameplay or added runtime.",
+      "Percentages and any completion claims: partial coverage does not claim complete gameplay. The reviewed slice is integrated separately into the runtime.",
       "Source images: no image content is reproduced or packaged.",
       "Gameplay verification, platform and game version: no transition is verified in game and the build is unknown.",
       "Publication rights: all sources remain reference-only; no reuse license, clearance or permission is asserted, and publication clearance is omitted."
@@ -173,7 +173,8 @@
         "kind": "traced",
         "sources": [
           "steamShades"
-        ]
+        ],
+        "legacyEdgeIndex": 96
       },
       {
         "id": "e_sc_store_package",
@@ -182,7 +183,8 @@
         "kind": "traced",
         "sources": [
           "steamShades"
-        ]
+        ],
+        "legacyEdgeIndex": 97
       },
       {
         "id": "e_sc_package_bus",
@@ -191,7 +193,8 @@
         "kind": "traced",
         "sources": [
           "steamShades"
-        ]
+        ],
+        "legacyEdgeIndex": 98
       },
       {
         "id": "e_sc_vendor_push",
@@ -200,7 +203,8 @@
         "kind": "traced",
         "sources": [
           "steamShades"
-        ]
+        ],
+        "legacyEdgeIndex": 99
       },
       {
         "id": "e_sc_preacher_yells",
@@ -209,7 +213,8 @@
         "kind": "traced",
         "sources": [
           "steamShades"
-        ]
+        ],
+        "legacyEdgeIndex": 100
       }
     ]
   },
@@ -288,7 +293,18 @@
     },
     "mergeGate": {
       "state": "blocked",
-      "reason": "Independent source interpretation is approved for the stated partial packet. Publication rights for source-derived material remain unresolved; runtime integration and gameplay verification are not established. Source approval does not open this gate."
+      "reason": "The independently approved partial slice is integrated and structurally reconciled to the runtime. Publication rights for source-derived material remain unresolved. No gameplay verification or permission is established; publication remains blocked."
     }
+  },
+  "atlas": {
+    "source": "prototype/atlas-data.js",
+    "chapterId": "shades-of-color",
+    "exactChapterNodes": true,
+    "exactChapterEdges": true
+  },
+  "legacy": {
+    "canonical": "?edge=N",
+    "edgeIndexBase": "prototype/atlas-data.js edges[]",
+    "note": "The twelve nodes append at102–113; the five edges append at96–100. Every pre-existing identity, endpoint, option and index is preserved. Two withdrawn old claims remain historical records."
   }
 }

@@ -5,17 +5,17 @@ const ATLAS = {
     "poc": "PoC4",
     "contractVersion": "1.0",
     "title": "ra9-atlas",
-    "subtitle": "Selected slices · A New Home → Stormy Night → Battle for Detroit (Kara) · The Hostage → Public Enemy",
+    "subtitle": "Selected slices · A New Home → Stormy Night → Battle for Detroit (Kara) · The Hostage → Public Enemy · Shades of Color (partial chart)",
     "version": "unknown",
     "platform": "unknown",
     "disclaimer": "Guide-based and screenshot-transcribed only. No transition is verified in game; game version and platform are unknown.",
     "counts": {
-      "chapters": 5,
-      "nodes": 102,
-      "edges": 96,
-      "activeEdges": 94,
+      "chapters": 6,
+      "nodes": 114,
+      "edges": 101,
+      "activeEdges": 99,
       "withdrawnEdges": 2,
-      "tracedEdges": 72,
+      "tracedEdges": 77,
       "conditionalEdges": 8,
       "prerequisiteEdges": 6,
       "hypothesisEdges": 3,
@@ -38,11 +38,13 @@ const ATLAS = {
     "powerpyxHostage": "https://www.powerpyx.com/detroit-become-human-the-hostage-opening-walkthrough-100/",
     "powerpyxPublicEnemy": "https://www.powerpyx.com/detroit-become-human-public-enemy-walkthrough-100/",
     "gamefaqsPublicEnemy": "https://gamefaqs.gamespot.com/ps4/182637-detroit-become-human/faqs/76123/public-enemy",
-    "shazooHostageChart": "https://shazoo.ru/2018/04/24/64787/polnoe-prohozhdenie-detroit-become-human-zajmet-25-30-chasov"
+    "shazooHostageChart": "https://shazoo.ru/2018/04/24/64787/polnoe-prohozhdenie-detroit-become-human-zajmet-25-30-chasov",
+    "steamShades": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
+    "powerpyxShades": "https://www.powerpyx.com/detroit-become-human-shades-of-color-walkthrough-100/"
   },
   "canvas": {
     "width": 4950,
-    "height": 2500
+    "height": 3100
   },
   "chapters": [
     {
@@ -166,6 +168,28 @@ const ATLAS = {
           "powerpyxHostage",
           "powerpyxPublicEnemy",
           "gamefaqsPublicEnemy"
+        ]
+      }
+    },
+    {
+      "id": "shades-of-color",
+      "name": "Shades of Color",
+      "code": "Markus · reviewed chart slice",
+      "frame": {
+        "x": 30,
+        "y": 2540,
+        "w": 1900,
+        "h": 500
+      },
+      "desc": "Twelve source-reviewed chart boxes and five continuously pictured connectors. Six detached icon-origin segments are omitted from the graph because their source-box semantics are unresolved. The chapter stays partial; no side-event order, harassment eligibility or later Painter edge is asserted.",
+      "coverage": {
+        "status": "partial",
+        "scope": "Twelve visible boxes and five continuous box-to-box connectors from the reviewed preparation packet.",
+        "included": "One checkpoint, ten action/event boxes and one outcome. Main paint-store/package/bus chain, vendor-to-push and preacher-to-yells only.",
+        "omitted": "Six detached segments from five icons have unknown source boxes. No invented checkpoint-to-side-event or protesters-to-bus edge, universal task order, exact harassment trigger, Painter consequence edge, platform/build or gameplay verification. Source-derived publication rights remain unresolved.",
+        "sources": [
+          "steamShades",
+          "powerpyxShades"
         ]
       }
     }
@@ -1960,6 +1984,193 @@ const ATLAS = {
         "gamefaqsPublicEnemy"
       ],
       "note": "PowerPyx Public Enemy lists “Saved During ‘The Hostage’” and “Meet Cop From Hostage Situation”. This node records the meeting only; no rescue, death or later branch is drawn."
+    },
+    {
+      "id": "sc_park",
+      "label": "WALKING IN THE PARK",
+      "kind": "stage",
+      "chapter": "shades-of-color",
+      "x": 90,
+      "y": 2610,
+      "w": 240,
+      "h": 74,
+      "status": "ocr",
+      "src": [
+        "steamShades"
+      ],
+      "sub": "Chapter checkpoint",
+      "note": "Reviewed continuous chart structure only. No transition is verified in game."
+    },
+    {
+      "id": "sc_secret",
+      "label": "READ \"SECRET OF ANDROIDS\"",
+      "kind": "action",
+      "chapter": "shades-of-color",
+      "x": 90,
+      "y": 2890,
+      "w": 240,
+      "h": 70,
+      "status": "ocr",
+      "src": [
+        "steamShades"
+      ],
+      "sub": "Origin unknown",
+      "note": "The pictured incoming segment starts at a detached icon. Its source box is unknown; no checkpoint prerequisite is drawn."
+    },
+    {
+      "id": "sc_climate",
+      "label": "READ \"CLIMATE CHANGE-UP\"",
+      "kind": "action",
+      "chapter": "shades-of-color",
+      "x": 400,
+      "y": 2890,
+      "w": 260,
+      "h": 70,
+      "status": "ocr",
+      "src": [
+        "steamShades"
+      ],
+      "sub": "Origin unknown",
+      "note": "The pictured incoming segment starts at a detached icon. Its source box is unknown; no checkpoint prerequisite is drawn."
+    },
+    {
+      "id": "sc_vendor",
+      "label": "STARE AT HOT DOG VENDOR",
+      "kind": "action",
+      "chapter": "shades-of-color",
+      "x": 450,
+      "y": 2740,
+      "w": 260,
+      "h": 70,
+      "status": "ocr",
+      "src": [
+        "steamShades"
+      ],
+      "sub": "Origin unknown",
+      "note": "The pictured incoming segment starts at a detached icon. Its source box is unknown; no checkpoint prerequisite is drawn."
+    },
+    {
+      "id": "sc_pushed",
+      "label": "HOT DOG VENDOR PUSHES MARKUS",
+      "kind": "action",
+      "chapter": "shades-of-color",
+      "x": 850,
+      "y": 2740,
+      "w": 260,
+      "h": 70,
+      "status": "ocr",
+      "src": [
+        "steamShades"
+      ],
+      "note": "Reviewed continuous chart structure only. No transition is verified in game."
+    },
+    {
+      "id": "sc_busker",
+      "label": "LISTEN TO BUSKER",
+      "kind": "action",
+      "chapter": "shades-of-color",
+      "x": 1290,
+      "y": 2740,
+      "w": 260,
+      "h": 70,
+      "status": "ocr",
+      "src": [
+        "steamShades"
+      ],
+      "sub": "Origin unknown",
+      "note": "The pictured incoming segment starts at a detached icon. Its source box is unknown; no checkpoint prerequisite is drawn."
+    },
+    {
+      "id": "sc_preacher",
+      "label": "WATCH PREACHER",
+      "kind": "action",
+      "chapter": "shades-of-color",
+      "x": 750,
+      "y": 2890,
+      "w": 260,
+      "h": 70,
+      "status": "ocr",
+      "src": [
+        "steamShades"
+      ],
+      "sub": "Origin unknown",
+      "note": "The pictured incoming segment starts at a detached icon. Its source box is unknown; no checkpoint prerequisite is drawn."
+    },
+    {
+      "id": "sc_yells",
+      "label": "PREACHER YELLS AT MARKUS",
+      "kind": "action",
+      "chapter": "shades-of-color",
+      "x": 1110,
+      "y": 2890,
+      "w": 260,
+      "h": 70,
+      "status": "ocr",
+      "src": [
+        "steamShades"
+      ],
+      "note": "Reviewed continuous chart structure only. No transition is verified in game."
+    },
+    {
+      "id": "sc_store",
+      "label": "VISIT PAINTS STORE",
+      "kind": "action",
+      "chapter": "shades-of-color",
+      "x": 520,
+      "y": 2610,
+      "w": 260,
+      "h": 74,
+      "status": "ocr",
+      "src": [
+        "steamShades"
+      ],
+      "note": "Reviewed continuous chart structure only. No transition is verified in game."
+    },
+    {
+      "id": "sc_package",
+      "label": "COLLECT PACKAGE",
+      "kind": "action",
+      "chapter": "shades-of-color",
+      "x": 950,
+      "y": 2610,
+      "w": 260,
+      "h": 74,
+      "status": "ocr",
+      "src": [
+        "steamShades"
+      ],
+      "note": "Reviewed continuous chart structure only. No transition is verified in game."
+    },
+    {
+      "id": "sc_protesters",
+      "label": "PROTESTERS HARASS MARKUS",
+      "kind": "action",
+      "chapter": "shades-of-color",
+      "x": 1500,
+      "y": 2890,
+      "w": 260,
+      "h": 70,
+      "status": "ocr",
+      "src": [
+        "steamShades"
+      ],
+      "sub": "Origin unknown",
+      "note": "The pictured incoming segment starts at a detached icon. Its source box is unknown; no checkpoint prerequisite is drawn."
+    },
+    {
+      "id": "sc_bus",
+      "label": "MARKUS TOOK THE BUS",
+      "kind": "outcome",
+      "chapter": "shades-of-color",
+      "x": 1380,
+      "y": 2610,
+      "w": 260,
+      "h": 74,
+      "status": "ocr",
+      "src": [
+        "steamShades"
+      ],
+      "note": "Reviewed continuous chart structure only. No transition is verified in game."
     }
   ],
   "edges": [
@@ -3156,6 +3367,51 @@ const ATLAS = {
         ]
       ],
       "note": "The main conversation connector leaves the second-floor stage. This is stage progression, not a claim that the Alice-room chore alone unlocks the conversation."
+    },
+    {
+      "id": "e_sc_park_store",
+      "from": "sc_park",
+      "to": "sc_store",
+      "kind": "traced",
+      "src": [
+        "steamShades"
+      ]
+    },
+    {
+      "id": "e_sc_store_package",
+      "from": "sc_store",
+      "to": "sc_package",
+      "kind": "traced",
+      "src": [
+        "steamShades"
+      ]
+    },
+    {
+      "id": "e_sc_package_bus",
+      "from": "sc_package",
+      "to": "sc_bus",
+      "kind": "traced",
+      "src": [
+        "steamShades"
+      ]
+    },
+    {
+      "id": "e_sc_vendor_push",
+      "from": "sc_vendor",
+      "to": "sc_pushed",
+      "kind": "traced",
+      "src": [
+        "steamShades"
+      ]
+    },
+    {
+      "id": "e_sc_preacher_yells",
+      "from": "sc_preacher",
+      "to": "sc_yells",
+      "kind": "traced",
+      "src": [
+        "steamShades"
+      ]
     }
   ],
   "conditions": [
@@ -3488,6 +3744,61 @@ const ATLAS = {
       "sources": [
         "steam",
         "shazooHostageChart"
+      ]
+    },
+    {
+      "id": "u_sc_detached_origins",
+      "status": "unknown",
+      "explanation": "The chart shows six detached segments starting at five icons rather than the declared boxes (the magazine icon is shared), pointing toward sc_secret, sc_climate, sc_vendor, sc_busker, sc_preacher and sc_protesters. These segments are NOT invented as edges; their semantic meaning is unknown and the icon legend is omitted.",
+      "nodes": [
+        "sc_secret",
+        "sc_climate",
+        "sc_vendor",
+        "sc_busker",
+        "sc_preacher",
+        "sc_protesters"
+      ],
+      "sources": [
+        "steamShades"
+      ]
+    },
+    {
+      "id": "u_sc_order",
+      "status": "unknown",
+      "explanation": "No universal ordering or optional-eligibility rule is known beyond the five traced continuous box-to-box edges. The chart's boxes and the guide's list ordering do not establish a required sequence or which optional steps are eligible when.",
+      "edges": [
+        "e_sc_park_store",
+        "e_sc_store_package",
+        "e_sc_package_bus",
+        "e_sc_vendor_push",
+        "e_sc_preacher_yells"
+      ],
+      "sources": [
+        "steamShades",
+        "powerpyxShades"
+      ]
+    },
+    {
+      "id": "u_sc_harassment",
+      "status": "unknown",
+      "explanation": "The exact proximity/eligibility for PROTESTERS HARASS MARKUS and any later Carl comment consequence in The Painter are unverified. PowerPyx reports harassment potentially avoidable by distance and a later Carl comment in The Painter; no causal edge is added and source independence is not established.",
+      "nodes": [
+        "sc_protesters"
+      ],
+      "sources": [
+        "powerpyxShades",
+        "steamShades"
+      ]
+    },
+    {
+      "id": "u_sc_build",
+      "status": "unknown",
+      "explanation": "The platform and game build are unknown and no gameplay verification has been performed. Transcription is chart-based only; no transition has been verified in game.",
+      "nodes": [
+        "sc_park"
+      ],
+      "sources": [
+        "steamShades"
       ]
     }
   ],
@@ -4207,6 +4518,103 @@ const ATLAS = {
         "powerpyxPublicEnemy",
         "gamefaqsPublicEnemy",
         "powerpyxHostage"
+      ]
+    },
+    "sc_park": {
+      "status": "Screenshot transcription · structure only",
+      "summary": "Reviewed continuous chart structure only. No transition is verified in game.",
+      "unknown": "No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved.",
+      "src": [
+        "steamShades"
+      ]
+    },
+    "sc_secret": {
+      "status": "Screenshot transcription · structure only",
+      "summary": "The pictured incoming segment starts at a detached icon. Its source box is unknown; no checkpoint prerequisite is drawn.",
+      "unknown": "The origin of the detached icon segment is unknown. No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved.",
+      "src": [
+        "steamShades"
+      ]
+    },
+    "sc_climate": {
+      "status": "Screenshot transcription · structure only",
+      "summary": "The pictured incoming segment starts at a detached icon. Its source box is unknown; no checkpoint prerequisite is drawn.",
+      "unknown": "The origin of the detached icon segment is unknown. No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved.",
+      "src": [
+        "steamShades"
+      ]
+    },
+    "sc_vendor": {
+      "status": "Screenshot transcription · structure only",
+      "summary": "The pictured incoming segment starts at a detached icon. Its source box is unknown; no checkpoint prerequisite is drawn.",
+      "unknown": "The origin of the detached icon segment is unknown. No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved.",
+      "src": [
+        "steamShades"
+      ]
+    },
+    "sc_pushed": {
+      "status": "Screenshot transcription · structure only",
+      "summary": "Reviewed continuous chart structure only. No transition is verified in game.",
+      "unknown": "No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved.",
+      "src": [
+        "steamShades"
+      ]
+    },
+    "sc_busker": {
+      "status": "Screenshot transcription · structure only",
+      "summary": "The pictured incoming segment starts at a detached icon. Its source box is unknown; no checkpoint prerequisite is drawn.",
+      "unknown": "The origin of the detached icon segment is unknown. No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved.",
+      "src": [
+        "steamShades"
+      ]
+    },
+    "sc_preacher": {
+      "status": "Screenshot transcription · structure only",
+      "summary": "The pictured incoming segment starts at a detached icon. Its source box is unknown; no checkpoint prerequisite is drawn.",
+      "unknown": "The origin of the detached icon segment is unknown. No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved.",
+      "src": [
+        "steamShades"
+      ]
+    },
+    "sc_yells": {
+      "status": "Screenshot transcription · structure only",
+      "summary": "Reviewed continuous chart structure only. No transition is verified in game.",
+      "unknown": "No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved.",
+      "src": [
+        "steamShades"
+      ]
+    },
+    "sc_store": {
+      "status": "Screenshot transcription · structure only",
+      "summary": "Reviewed continuous chart structure only. No transition is verified in game.",
+      "unknown": "No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved.",
+      "src": [
+        "steamShades"
+      ]
+    },
+    "sc_package": {
+      "status": "Screenshot transcription · structure only",
+      "summary": "Reviewed continuous chart structure only. No transition is verified in game.",
+      "unknown": "No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved.",
+      "src": [
+        "steamShades"
+      ]
+    },
+    "sc_protesters": {
+      "status": "Screenshot transcription · structure only",
+      "summary": "The pictured incoming segment starts at a detached icon. Its source box is unknown; no checkpoint prerequisite is drawn.",
+      "unknown": "The origin of the detached icon segment is unknown. No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved. PowerPyx reports potentially avoidable harassment and a later Carl comment; exact triggers and the later consequence are unverified. No causal edge is drawn.",
+      "src": [
+        "steamShades",
+        "powerpyxShades"
+      ]
+    },
+    "sc_bus": {
+      "status": "Screenshot transcription · structure only",
+      "summary": "Reviewed continuous chart structure only. No transition is verified in game.",
+      "unknown": "No universal side-task order, game build or gameplay verification is established. Coverage is partial; publication rights remain unresolved.",
+      "src": [
+        "steamShades"
       ]
     }
   }

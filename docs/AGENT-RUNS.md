@@ -74,3 +74,14 @@ Separate Standards and Spec reviewers found no implementation defect; their shar
 provenance wording clarification was applied. See [the source and implementation
 report](notes/shades-of-color-source-review.md). Publication remains blocked;
 no runtime integration, merge or deployment was performed.
+
+
+## 2026-10-23 Shades runtime integration
+
+Two combined external jobs timed out safely. Single-file retries passed 49 checks
+with servers stopped. The reviewed UI patch was accepted; a proposed validator
+with incorrect schema assumptions was rejected. Codex implemented the correct
+bounded fence and 21 regressions. Separate source follow-up found one detail
+citation omission, fixed and regression-tested. Standards found no defect; Spec
+requested mobile appended-link coverage and corrected inventory wording, both
+closed. See [the integration report](notes/shades-runtime-integration.md).

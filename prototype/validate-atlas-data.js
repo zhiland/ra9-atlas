@@ -14,6 +14,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { shadesRuntimeErrors } = require('./validate-shades-runtime');
 
 const dataFile = path.join(__dirname, 'atlas-data.js');
 const CLAIM_STATUSES = new Set(['ocr', 'guide', 'user', 'unresolved', 'mixed']);
@@ -1227,10 +1228,12 @@ function validateAtlas(ATLAS) {
     for (const [key, value] of Object.entries(actual)) {
       if (counts[key] !== value) errors.push(`meta.counts.${key} is ${counts[key]} but the data has ${value}`);
     }
-    if (actual.nodes !== 102) errors.push(`expected 102 boxes, found ${actual.nodes}`);
-    if (actual.edges !== 96) errors.push(`expected 96 edge records, found ${actual.edges}`);
+    if (actual.nodes !== 114) errors.push(`expected 114 boxes, found ${actual.nodes}`);
+    if (actual.edges !== 101) errors.push(`expected 101 edge records, found ${actual.edges}`);
     return errors;
   });
+
+  check('reviewed Shades slice preserves unknown origins and exact topology', () => shadesRuntimeErrors(ATLAS));
 
   /* ---------- 7. Layout ---------- */
   const overlap = (a, b) =>

@@ -61,7 +61,7 @@ a:hover { text-decoration: underline; }
 .brand strong { font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
 .brand span { display: block; color: var(--muted); font-size: 11px; }
 .chapters { display: flex; flex: 1 1 680px; flex-wrap: wrap; gap: 4px; overflow: visible; min-width: 0; }
-.chapter { padding: 6px 10px; border: 1px solid transparent; border-radius: 6px; color: var(--muted); white-space: nowrap; text-align: left; font-size: 12px; line-height: 1.25; max-width: 230px; }
+.chapter { padding: 6px 10px; border: 1px solid transparent; border-radius: 6px; color: var(--muted); white-space: nowrap; text-align: left; font-size: 12px; line-height: 1.25; max-width: 220px; }
 .chapter:hover { background: var(--chip); color: var(--text); }
 .chapter.active { border-color: var(--accent); color: var(--text); background: var(--chip); }
 .chapter small { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; color: var(--muted); font-size: 10px; white-space: normal; }

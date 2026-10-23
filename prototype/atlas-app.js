@@ -50,7 +50,9 @@
     gamerGuides: 'Gamer Guides · Battle for Detroit — Kara',
     powerpyxHostage: 'PowerPyx · The Hostage / Opening',
     powerpyxPublicEnemy: 'PowerPyx · Public Enemy',
-    gamefaqsPublicEnemy: 'GameFAQs/Mogg · Public Enemy'
+    gamefaqsPublicEnemy: 'GameFAQs/Mogg · Public Enemy',
+    steamShades: 'Steam · Shades of Color chart',
+    powerpyxShades: 'PowerPyx · Shades of Color'
   };
 
   var nodeChapter = {};
@@ -154,12 +156,19 @@
   }
 
   function coverHtml() {
+    var count = D.chapters.length;
+    var words = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven'];
+    var countWord = words[count] || String(count);
+    var names = D.chapters.map(function (c) { return '<strong>' + esc(c.name) + '</strong>'; });
+    var nameList = names.length > 1
+      ? names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1]
+      : (names[0] || 'no regions');
     return '<div class="cover" id="spoiler-overlay" role="dialog" aria-modal="true" aria-labelledby="spoiler-title">' +
       '<div class="cover-box">' +
       '<div class="eyebrow">ra9-atlas · PoC4 · selected multi-chapter slice</div>' +
       '<h1 id="spoiler-title">Full spoilers ahead</h1>' +
       '<p>This map reveals choices and outcomes from <em>Detroit: Become Human</em>, including late-game Todd and Kara branches and a saved-cop meeting in Public Enemy.</p>' +
-      '<p>Five selected chapter regions are shown: <strong>A New Home</strong>, <strong>Stormy Night</strong>, <strong>Battle for Detroit — Kara</strong>, <strong>The Hostage</strong> and one bounded <strong>Public Enemy</strong> meeting node. They are guide-based and screenshot-transcribed only; no transition is verified in game. Game version and platform are unknown.</p>' +
+      '<p>' + countWord + ' selected chapter region' + (count === 1 ? ' is' : 's are') + ' shown: ' + nameList + '. They are guide-based and screenshot-transcribed only; no transition is verified in game. Game version and platform are unknown. Chart coverage is partial and scoped to these selected regions only, not the whole game.</p>' +
       '<button class="primary" id="consent">Reveal atlas map</button>' +
       '</div></div>';
   }

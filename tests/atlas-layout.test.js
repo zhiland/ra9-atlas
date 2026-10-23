@@ -40,13 +40,14 @@ const MIME = {
 };
 
 const EXPECTED = {
-  canvas: { width: 4950, height: 2500 },
+  canvas: { width: 4950, height: 3100 },
   frames: {
     home: { x: 30, y: 120, w: 1930, h: 530 },
     stormy: { x: 2000, y: 120, w: 1320, h: 860 },
     kara: { x: 3360, y: 120, w: 1060, h: 900 },
     hostage: { x: 0, y: 1120, w: 4450, h: 1340 },
-    'public-enemy': { x: 4490, y: 2200, w: 380, h: 250 }
+    'public-enemy': { x: 4490, y: 2200, w: 380, h: 250 },
+    'shades-of-color': { x: 30, y: 2540, w: 1900, h: 500 }
   },
   nodes: {
     a_welcome: { x: 50, y: 250, w: 170, h: 84 },
@@ -150,7 +151,19 @@ const EXPECTED = {
     end_died: { x: 4045, y: 1890, w: 320, h: 56 },
     end_deviant_shot: { x: 4045, y: 2090, w: 320, h: 56 },
     end_connor_shot: { x: 4045, y: 2290, w: 320, h: 56 },
-    pe_meet_cop: { x: 4520, y: 2320, w: 320, h: 84 }
+    pe_meet_cop: { x: 4520, y: 2320, w: 320, h: 84 },
+    sc_park: { x: 90, y: 2610, w: 240, h: 74 },
+    sc_secret: { x: 90, y: 2890, w: 240, h: 70 },
+    sc_climate: { x: 400, y: 2890, w: 260, h: 70 },
+    sc_vendor: { x: 450, y: 2740, w: 260, h: 70 },
+    sc_pushed: { x: 850, y: 2740, w: 260, h: 70 },
+    sc_busker: { x: 1290, y: 2740, w: 260, h: 70 },
+    sc_preacher: { x: 750, y: 2890, w: 260, h: 70 },
+    sc_yells: { x: 1110, y: 2890, w: 260, h: 70 },
+    sc_store: { x: 520, y: 2610, w: 260, h: 74 },
+    sc_package: { x: 950, y: 2610, w: 260, h: 74 },
+    sc_protesters: { x: 1500, y: 2890, w: 260, h: 70 },
+    sc_bus: { x: 1380, y: 2610, w: 260, h: 74 }
   }
 };
 
@@ -310,7 +323,7 @@ async function run(browser) {
   await openAtlas(page);
   const snapshot = await layoutSnapshot(page);
 
-  await ok('canvas and five chapter frames keep the Stage 1 bounds', async function () {
+  await ok('expanded canvas keeps all old frames and the new Shades region', async function () {
     assert(snapshot.canvas.width === EXPECTED.canvas.width && snapshot.canvas.height === EXPECTED.canvas.height,
       'canvas changed to ' + snapshot.canvas.width + '×' + snapshot.canvas.height);
     Object.keys(EXPECTED.frames).forEach(function (id) {
@@ -332,10 +345,10 @@ async function run(browser) {
     assert(hostage.w >= 4400 && hostage.h >= 1300, 'The Hostage chart lost its Stage 1 fit bounds');
   });
 
-  await ok('all 102 node boxes keep the expected static world geometry', async function () {
+  await ok('all 114 node boxes keep the expected static world geometry', async function () {
     const actual = {};
     snapshot.nodes.forEach(function (node) { actual[node.id] = node.layout; });
-    assert(snapshot.nodes.length === 102, 'expected 102 node boxes, got ' + snapshot.nodes.length);
+    assert(snapshot.nodes.length === 114, 'expected 114 node boxes, got ' + snapshot.nodes.length);
     Object.keys(EXPECTED.nodes).forEach(function (id) {
       assert(actual[id], 'missing node ' + id);
       sameBox(actual[id], EXPECTED.nodes[id], 'node ' + id);

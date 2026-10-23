@@ -35,8 +35,8 @@ bounded *Public Enemy* meeting node. See [PoC4 coverage](notes/poc4-coverage.md)
 
 ## Scope and record shape
 
-The contract covers five chapter regions, 102 nodes, 96 edge records (94 active connectors and two withdrawn claims), six condition
-groups, ten uncertainty records and no conflict records in
+The contract covers six chapter regions, 114 nodes, 101 edge records (99 active connectors and two withdrawn claims), six condition
+groups, fourteen uncertainty records and no conflict records in
 `data/atlas.source.json` and its generated `prototype/atlas-data.js` artifact.
 See [authoring ownership](authoring-data.md). The sample declares `meta.contractVersion: '1.0'`.
 
@@ -286,7 +286,7 @@ origin). Appended records 93–95 represent stage→trash→ask and stage→conv
 The original endpoints are not silently retargeted. Both cleaning nodes are
 stages. A stage/chore relation does not establish mandatory task order.
 
-`meta.counts.edges` counts all 96 records. `activeEdges` is 94 and
+`meta.counts.edges` counts all 101 records. `activeEdges` is 99 and
 `withdrawnEdges` is 2. Kind counts sum to records: 72 traced, 8 conditional,
 6 prerequisite, 3 hypothesis, 5 uncertain and 2 withdrawn. User-facing
 connector totals and stable-world inventories count only active connectors.
@@ -297,3 +297,14 @@ endpoint borders. Existing collision checks apply. These routes avoid other
 nodes without moving the existing boxes. Routes carry no gameplay semantics.
 The packet excludes the withdrawn traces from `chart` and records their migration
 in `legacy.note`. Runtime ownership and the full-product schema remain undecided.
+
+
+## Shades of Color bounded integration
+
+The [integration checkpoint](notes/shades-runtime-integration.md) appends twelve
+source-reviewed nodes and five traced edges. The old 102 nodes, 96 records and all
+existing indices/coordinates remain fixed. The new edges occupy indices 96–100;
+the new frame extends the canvas below the old regions. Coverage remains partial.
+Four packet unknowns remain explicit. Six detached icon-origin segments become
+no invented edges. The [bounded validator](../prototype/validate-shades-runtime.js)
+checks this source-regression fence; it does not verify gameplay or clear rights.

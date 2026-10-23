@@ -62,7 +62,7 @@ check('the real PoC4 sample passes all structural checks', () => {
 
 check('the sample declares contract version 1.0 and separate coverage records', () => {
   eq(real.meta.contractVersion, '1.0');
-  eq(real.chapters.map(c => c.coverage.status), ['partial', 'partial', 'partial', 'checked-against-chart', 'partial']);
+  eq(real.chapters.map(c => c.coverage.status), ['partial', 'partial', 'partial', 'checked-against-chart', 'partial', 'partial']);
   real.chapters.forEach(c => {
     assert(c.coverage.scope && c.coverage.included && c.coverage.omitted, c.id + ' coverage scope/inclusion/omission missing');
     assert(c.coverage.sources.length > 0, c.id + ' coverage has no sources');
@@ -86,7 +86,7 @@ check('published node IDs keep their order and later slices are appended', () =>
     'a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom', 'a_read_android_qb',
     'a_read_putting_price', 'a_read_alice_floor_book', 'a_read_alice_shelf_books'
   ]);
-  eq(real.nodes.slice(68).map(n => n.id), [
+  eq(real.nodes.slice(68, 102).map(n => n.id), [
     'mission_start', 'fish', 'talk_allen', 'stage-search', 'inv_father', 'learn_cause', 'learn_name',
     'inv_gun_case', 'inv_cop_body', 'cops_gun', 'wasted_time', 'go_outside', 'swat_injured',
     'stage-confront', 'stage-negotiate', 'approach', 'helicopter', 'gun_talk', 'wounded_cop',
@@ -94,7 +94,7 @@ check('published node IDs keep their order and later slices are appended', () =>
     'get_close', 'deviant_jumps', 'end_failed', 'end_leapt', 'end_snipers', 'end_died',
     'end_deviant_shot', 'end_connor_shot', 'pe_meet_cop'
   ]);
-  eq(real.nodes.length, 102);
+  eq(real.nodes.length, 114);
 });
 
 check('published edge IDs keep their order and later slices are appended', () => {
@@ -137,7 +137,7 @@ check('published edge IDs keep their order and later slices are appended', () =>
     'e_hostage_approach_fail', 'e_hostage_fail_jumps',
     'e_hostage_save_cop_public_enemy', 'e_hostage_cold_approach_fail'
   ]);
-  eq(real.edges.length, 96);
+  eq(real.edges.length, 101);
   eq(real.edges.map(e => [e.from, e.to, e.kind]).slice(0, 55), [
     ['a_welcome', 'a_todd', 'traced'], ['a_todd', 'a_clean1', 'traced'],
     ['a_clean1', 'a_ask', 'withdrawn'], ['a_ask', 'a_go', 'traced'],
@@ -264,11 +264,12 @@ check('conditions keep each checkpoint timing alternative attached to its own ed
 });
 
 check('unknowns stay unknown and no source-vs-source conflict is invented', () => {
-  eq(real.uncertainties.map(u => u.status), ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown']);
+  eq(real.uncertainties.map(u => u.status), Array(14).fill('unknown'));
   eq(real.uncertainties.map(u => u.id), [
     'u_box_trigger', 'u_key_threshold', 'u_home_first_floor_order', 'u_home_second_floor_order', 'u_stormy_internal',
     'u_checkpoint_timer_11', 'u_gun_state_check', 'u_window_route_outcome',
-    'u_stormy_escape_todd_state', 'u_hostage_chart_uncertain'
+    'u_stormy_escape_todd_state', 'u_hostage_chart_uncertain',
+    'u_sc_detached_origins', 'u_sc_order', 'u_sc_harassment', 'u_sc_build'
   ]);
   eq(real.conflicts, []);
   real.uncertainties.forEach(u => {
@@ -788,7 +789,7 @@ rejects('rejects changing a Hostage stage container into a plain box', d => {
 }, /hostage should have 3 stage containers/);
 
 check('source correction preserves withdrawn identities and appends exact replacement topology', () => {
-  eq(real.edges.slice(93).map(e => [e.id, e.from, e.to]), [
+  eq(real.edges.slice(93, 96).map(e => [e.id, e.from, e.to]), [
     ['e_home_clean1_trash', 'a_clean1', 'a_take_out_trash'],
     ['e_home_trash_ask', 'a_take_out_trash', 'a_ask'],
     ['e_home_clean2_talk', 'a_clean2', 'a_talk']
@@ -800,7 +801,7 @@ check('source correction preserves withdrawn identities and appends exact replac
   eq(real.edges[2].replacedBy, ['e_home_clean1_trash', 'e_home_trash_ask']);
   eq(real.edges[6].replacedBy, ['e_home_clean2_talk']);
   eq(['a_clean1', 'a_clean2'].map(id => real.nodes.find(n => n.id === id).kind), ['stage', 'stage']);
-  eq(real.meta.counts.activeEdges, 94);
+  eq(real.meta.counts.activeEdges, 99);
   eq(real.meta.counts.withdrawnEdges, 2);
 });
 rejects('rejects a withdrawn claim with no reason', d => { delete d.edges[2].note; }, /withdrawal reason/);

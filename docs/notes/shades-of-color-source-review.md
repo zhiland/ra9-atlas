@@ -1,7 +1,10 @@
 # Shades of Color preparation and independent source review
 
 Date: 2026-10-23. Base: `8fb831301b78f5f54bf32d7a23a87f6d4a457b04` (PR #26).
-Scope: the third preparation packet, not runtime integration or publication.
+Historical scope: the third preparation checkpoint, before runtime integration.
+The later [integration](shades-runtime-integration.md) appends the approved slice
+and adds exact packet/runtime reconciliation; it does not change source approval
+or open the publication gate. Statements below describe the original checkpoint.
 
 ## Acceptance and result
 

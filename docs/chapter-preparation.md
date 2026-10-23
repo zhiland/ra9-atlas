@@ -160,7 +160,8 @@ and generation without changing this source-review boundary.
 
 The [source-reviewed packet](notes/shades-of-color-source-review.md) contains
 12 chart boxes and 5 continuous box-to-box edges. Six icon-origin segments remain
-unknown instead of becoming invented edges. The packet has no ATLAS reconciliation
-because the chapter is absent from the runtime graph. Source approval retains a
+unknown instead of becoming invented edges. Its initial preparation had no ATLAS reconciliation. The later
+[integration](notes/shades-runtime-integration.md) adds exact runtime reconciliation
+with new edges appended at 96–100, without changing source interpretation. Source approval retains a
 blocked publication gate. `npm run validate:packet` includes all three packets;
 `npm run test:shades` pins the source-reviewed bounds and review-required exit 2.

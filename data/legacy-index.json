@@ -103,7 +103,19 @@
     "end_died",
     "end_deviant_shot",
     "end_connor_shot",
-    "pe_meet_cop"
+    "pe_meet_cop",
+    "sc_park",
+    "sc_secret",
+    "sc_climate",
+    "sc_vendor",
+    "sc_pushed",
+    "sc_busker",
+    "sc_preacher",
+    "sc_yells",
+    "sc_store",
+    "sc_package",
+    "sc_protesters",
+    "sc_bus"
   ],
   "edges": [
     {
@@ -680,6 +692,36 @@
       "id": "e_home_clean2_talk",
       "from": "a_clean2",
       "to": "a_talk",
+      "fromOption": null
+    },
+    {
+      "id": "e_sc_park_store",
+      "from": "sc_park",
+      "to": "sc_store",
+      "fromOption": null
+    },
+    {
+      "id": "e_sc_store_package",
+      "from": "sc_store",
+      "to": "sc_package",
+      "fromOption": null
+    },
+    {
+      "id": "e_sc_package_bus",
+      "from": "sc_package",
+      "to": "sc_bus",
+      "fromOption": null
+    },
+    {
+      "id": "e_sc_vendor_push",
+      "from": "sc_vendor",
+      "to": "sc_pushed",
+      "fromOption": null
+    },
+    {
+      "id": "e_sc_preacher_yells",
+      "from": "sc_preacher",
+      "to": "sc_yells",
       "fromOption": null
     }
   ]

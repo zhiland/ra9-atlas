@@ -18,7 +18,15 @@ verified on Ubuntu. [CI run](https://github.com/zhiland/ra9-atlas/actions/runs/3
 passed all Node/Chromium and Python steps at implementation commit `593b589`.
 See [package review](notes/authoring-pipeline-review.md). No PR was merged or site deployed.
 
-## Third preparation packet
+## Shades runtime integration checkpoint
+
+The [reviewed integration](notes/shades-runtime-integration.md) appends 12 nodes
+and 5 edges in a sixth region, with 21 dedicated runtime regressions. Old graph
+objects, geometry and indices are preserved; all source/publication limits remain.
+Full local npm passes, including 21 runtime regressions and 66 browser checks.
+Independent Standards and Spec reviews have no open findings.
+
+## Previous third preparation packet checkpoint
 
 Draft [PR #27](https://github.com/zhiland/ra9-atlas/pull/27), based on PR #26,
 saves implementation `380c09b`. Its [Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/39952003660)
@@ -27,8 +35,8 @@ passed all Node/Chromium and Python steps.
 The [Shades of Color source review](notes/shades-of-color-source-review.md) approves
 12 visible boxes and 5 continuous box-to-box connectors for a partial preparation
 packet. Six segments from five detached icons retain unknown source-box semantics.
-No side-event ordering or later Painter edge is invented. Runtime coverage stays
-`not-added`; the browser graph remains 102 nodes and 96 records in five regions.
+No side-event ordering or later Painter edge is invented. At that preparation checkpoint runtime coverage was `not-added`; the later
+integration now maps the slice as `partial`.
 The inventory now identifies Markus through the separately reviewed chapter guide,
 leaving 22 null character entries. Six new packet regressions and the full npm
 suite pass. Independent Standards and Spec reviews have no open implementation
@@ -36,11 +44,11 @@ finding; a shared source-scope wording clarification is fixed. All source-derive
 
 ## Product state
 
-The static PoC4 map contains **102 nodes and 94 active connectors in five regions**.
-It retains 96 edge records, including two withdrawn claims for old references.
+The static PoC4 map contains **114 nodes and 99 active connectors in six regions**.
+It retains 101 edge records, including two withdrawn claims for old references.
 The Hostage inventory accounts for **33 boxes, 40 labels and 36 pictured connectors**.
 Its option-specific model contains **37 claims: 32 traced and 5 uncertain**.
-Both approach-to-FAIL origins remain uncertain. The other four regions are partial.
+Both approach-to-FAIL origins remain uncertain. The other five regions are partial.
 No gameplay transition is verified. Coverage does not imply full-game completeness.
 
 The corrected [A New Home selection](notes/anewhome-packet-source-review.md) has
