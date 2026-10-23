@@ -95,3 +95,11 @@ then releases the queue. It failed before the fix and passes after it. External
 edge 96 navigation and browser Back pass in the same regression. The full local
 suite now passes all 68 browser checks. A separate Standards follow-up found no
 open issue in the fix. No source data or graph identity changed.
+
+## Hosted checkpoint
+
+Draft [PR #28](https://github.com/zhiland/ra9-atlas/pull/28) is stacked on #27.
+[Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/39965328709) passed at
+implementation `06add2b`: full Node/Chromium suite, 18 runner-boundary tests and
+8 mocked preflight tests. Native macOS isolation remains host/version-specific.
+The user draft retains its original SHA-256; no merge or deployment occurred.

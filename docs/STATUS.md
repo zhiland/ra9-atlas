@@ -27,7 +27,9 @@ Full local npm passes, including 21 runtime regressions and 68 browser checks.
 Draft [PR #28](https://github.com/zhiland/ra9-atlas/pull/28) contains the integration.
 Its first hosted run exposed a delayed hash-event race after mobile Escape; a
 deterministic regression reproduced it, and the navigation handler is corrected.
-Hosted verification of the correction is pending.
+[Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/39965328709)
+passes at implementation `06add2b`, including Node/Chromium, 18 runner tests and
+8 mocked preflight tests. This does not certify native macOS isolation.
 Independent Standards and Spec reviews have no open findings.
 
 ## Previous third preparation packet checkpoint
@@ -129,7 +131,7 @@ emulation. Safari, physical touch, assistive technology and gameplay are unverif
 ## Next bounded work
 
 1. Use the canonical authoring bundle and compatibility ledger for future graph edits.
-   Both reviewed packets retain blocked publication gates; generation adds no approval.
+   All three reviewed packets retain blocked publication gates; generation adds no approval.
 2. Continue bounded source packets from the [partial inventory](notes/chapter-inventory-reconciliation.md).
    It reconciles 32 chapter rows and 39 source headings, not actual complete game-chart boundaries.
    Resolve character and subdivision gaps before claiming those charts complete.
