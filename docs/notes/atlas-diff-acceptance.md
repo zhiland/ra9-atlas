@@ -32,13 +32,13 @@ missing test-file final newline and corrected a spelling error.
 
 ## Trusted validation
 
--57 semantic-diff tests passed, including canonical comparison, ordering,
+- 57 semantic-diff tests passed, including canonical comparison, ordering,
 provenance/withdrawal changes, deep JSON semantics, invalid/sparse/duplicate IDs,
 frozen inputs, no shared references, HTML/table escaping, both ledger failures,
 unknown-field refusal and read-only behavior.
--Full local npm test passed, including browser suites and all earlier checks.
--git diff --check passed. User-local draft hash remains unchanged.
--Runner/config transport correction separately passed67 Python regressions,
+- Full local npm test passed, including browser suites and all earlier checks.
+- git diff --check passed. User-local draft hash remains unchanged.
+- Runner/config transport correction separately passed67 Python regressions,
 independent review, native delayed-header A/B and53 live provider checks.
 
 The host correction disables native header/overall deadlines only for explicit
