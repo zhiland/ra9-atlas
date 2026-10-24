@@ -4,6 +4,7 @@ Use these documents for current work:
 
 | Document | Authority and scope |
 | --- | --- |
+| [Current coverage](notes/poc4-coverage.md) | Runtime inventory, per-region scope and verification limits |
 | [STATUS](STATUS.md) | Current checkpoint, verification results and next package |
 | [Specification](spec.md) | Approved product requirements and acceptance boundaries |
 | [Roadmap](ROADMAP.md) | Stage order and completion gates |
@@ -36,6 +37,7 @@ Use these documents for current work:
 
 ## Historical records
 
+[Earlier coverage](notes/poc4-coverage-2026-10-21.md),
 [PREPARATION-PLAN](PREPARATION-PLAN.md), [PoC4 plan](poc4-plan.md), and
 [PoC4 execution checklist](poc4-execution-checklist.md) retain their original stage checkpoints.
 They do not override the current specification, roadmap or status.
