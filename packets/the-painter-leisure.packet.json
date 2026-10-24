@@ -305,7 +305,7 @@
     },
     "mergeGate": {
       "state": "blocked",
-      "reason": "The partial source interpretation is independently approved. Publication rights, research independence, game behavior and platform/build remain unverified. Runtime integration is a separate package."
+      "reason": "The partial source interpretation is independently approved. Publication rights, research independence, game behavior and platform/build remain unverified. The reviewed slice now has exact bounded runtime reconciliation. Publication remains blocked."
     }
   },
   "atlas": {

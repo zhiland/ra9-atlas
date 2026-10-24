@@ -32,16 +32,31 @@ run, paid fallback or new source interpretation is part of this integration.
 
 ## Standards
 
-Pending fixed-point review.
+Initial Standards review found one stale traced-edge count in the contract.
+The count is corrected from82 to89. No code or compatibility finding remains.
+A documentation follow-up is pending.
 
 ## Spec
 
-Pending acceptance review.
+Spec review at `a43ef23`: zero findings. Independent object comparison and
+21 dedicated runtime regressions passed. Full browser verification is recorded below.
 
 ## Source fidelity
 
-Pending comparison with the approved packet and frozen base.
+Separate source fidelity review at `a43ef23`: approved with zero findings.
+All13rows,7edges,4unknowns and frozen old objects match the approved packet
+and base. Approval covers source fidelity only.
 
 ## Verification
 
-Pending.
+Full npm passes:21 new leisure runtime regressions,14 row-layout unit checks,
+6 synthetic row-group browser fixtures and76 main browser scenarios, including
+new real-content checks in three themes and390px mobile width. Frozen prefixes
+cover nodes, edges, details, conditions, unknowns and six other chapter objects.
+Both Painter packet CLIs reconcile their exact subsets. Existing numeric links,
+including edge104, remain exercised beside new106/108/112 links.
+
+A local1440x900 Chromium render was visually inspected. All13rows fit. The
+chapter navigation caption was shortened to preserve existing desktop focus
+readability thresholds. The Painter frame fits at67% without moving old nodes.
+Source agreement is not gameplay, build compatibility or publication approval.
