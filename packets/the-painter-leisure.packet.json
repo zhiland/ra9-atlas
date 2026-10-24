@@ -1,0 +1,304 @@
+{
+  "kind": "ra9-atlas.chapter-preparation.packet",
+  "packetVersion": "1.1",
+  "packetStatus": "reviewed",
+  "packetId": "the-painter-leisure-packet",
+  "chapter": {
+    "id": "the-painter",
+    "title": "The Painter"
+  },
+  "coverage": {
+    "status": "partial",
+    "scope": "FIND SOMETHING TO DO through TAKE CARL TO THE STUDIO: six graph objects, four bracketed row groups containing thirteen rows, and seven visible relationships.",
+    "included": [
+      "One shared checkpoint, four row groups and one action. Group labels are editorial descriptions, not source captions.",
+      "Thirteen exact source rows in 3/3/3/4 groups. Three outgoing activity edges identify their actual row index.",
+      "Three common exits leave whole brackets. No per-row exit or direct control over chess results is inferred."
+    ],
+    "omitted": [
+      "All opening nodes except the shared boundary checkpoint, later studio/painting tasks and chapter outcome.",
+      "Replay counts, percentages, simultaneous completion, exclusivity, exact eligibility and current-patch mechanics.",
+      "No gameplay verification, source independence, platform/build, reuse permission or publication clearance.",
+      "No runtime/legacy reconciliation. This does not add six new map nodes. Source images remain outside Git."
+    ],
+    "sources": [
+      "steamPainterLeisure",
+      "powerpyxPainterLeisure"
+    ]
+  },
+  "sources": [
+    {
+      "id": "steamPainterLeisure",
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
+      "class": "chart-image",
+      "role": "Basis for grouped row labels and seven continuous relationships in the selected leisure slice.",
+      "locator": "The Painter leisure portion of wide image https://images.steamusercontent.com/ugc/1469813569888642618/46A96B75406313591FE214D6DBC3CE7E88EC33F0/ 7271x1056 SHA256 1380647c97e77c8b8e3330afa4b1b1bb73c21e0d44fc5b04969ce43ac9a3b0aa. Alternate https://images.steamusercontent.com/ugc/1333579200343348861/1195404B68995CE7A56984FD24294F79A366F6E3/ 1920x1080 SHA256 b8a5fbeb6f50c2ae84b21749d3193f6f679ea385f8bd308491a757925230afb7 confirms groups but crops Studio. Wide chart supplies common exits.",
+      "access": [
+        {
+          "date": "2026-10-24",
+          "actor": "extraction worker",
+          "outcome": "not-accessed",
+          "note": "The controlled OpenCode attempt received provider HTTP429/free quota exhaustion before generation. It accessed no source page or image and produced no accepted patch."
+        },
+        {
+          "date": "2026-10-24",
+          "actor": "Codex extraction parent",
+          "outcome": "inspected",
+          "note": "Live source page and applicable local chart images inspected. Codex authored this packet from the prepared public note after the worker quota failure. No gameplay or rights clearance."
+        },
+        {
+          "date": "2026-10-24",
+          "actor": "Separate Codex painter_source_review agent",
+          "outcome": "inspected",
+          "note": "Independently inspected applicable images and live pages, derived the bounded graph, then compared the packet. No gameplay or rights approval."
+        }
+      ],
+      "attribution": "Steam Community guide “Detroit: Become Human | 100% Chapter Flowcharts” by StongLory; the guide credits Reddit user /u/throwawaydeviant9 for original paths/screenshots and Neoseeker’s Krystal109 for high-resolution flowchart images.",
+      "rights": {
+        "state": "reference-only",
+        "note": "Steam marks the item removed although the page and embedded images remain accessible. Evidence only; no image, text or chart-derived expression is cleared for reuse or publication."
+      }
+    },
+    {
+      "id": "powerpyxPainterLeisure",
+      "url": "https://www.powerpyx.com/detroit-become-human-the-painter-walkthrough-100/",
+      "class": "supplementary-guide",
+      "role": "Supplementary activity-list context. No replay, completion or exact game-mechanic claim is adopted.",
+      "locator": "Checkpoint: Find Something To Do, activity lists and Take Carl to the Studio. The later painting discussion and its reader patch disagreement are outside scope.",
+      "access": [
+        {
+          "date": "2026-10-24",
+          "actor": "extraction worker",
+          "outcome": "not-accessed",
+          "note": "The controlled OpenCode attempt received provider HTTP429/free quota exhaustion before generation. It accessed no source page or image and produced no accepted patch."
+        },
+        {
+          "date": "2026-10-24",
+          "actor": "Codex extraction parent",
+          "outcome": "inspected",
+          "note": "Live source page and applicable local chart images inspected. Codex authored this packet from the prepared public note after the worker quota failure. No gameplay or rights clearance."
+        },
+        {
+          "date": "2026-10-24",
+          "actor": "Separate Codex painter_source_review agent",
+          "outcome": "inspected",
+          "note": "Independently inspected applicable images and live pages, derived the bounded graph, then compared the packet. No gameplay or rights approval."
+        }
+      ],
+      "attribution": "PowerPyx, Detroit: Become Human — The Painter walkthrough.",
+      "rights": {
+        "state": "reference-only",
+        "note": "No reuse license identified; cite independently worded facts only. No guide text, image or chart expression is cleared for reuse or publication."
+      }
+    }
+  ],
+  "chart": {
+    "basis": "chart-transcribed",
+    "sources": [
+      "steamPainterLeisure"
+    ],
+    "nodes": [
+      {
+        "id": "pt_find",
+        "label": "FIND SOMETHING TO DO",
+        "kind": "stage"
+      },
+      {
+        "id": "pt_activity",
+        "label": "Activity row group",
+        "kind": "choice",
+        "options": [
+          "PLAY CHESS",
+          "READ BOOK",
+          "PLAY PIANO"
+        ]
+      },
+      {
+        "id": "pt_chess",
+        "label": "Chess result row group",
+        "kind": "choice",
+        "options": [
+          "WIN",
+          "LOSE",
+          "DRAW"
+        ]
+      },
+      {
+        "id": "pt_book",
+        "label": "Book row group",
+        "kind": "choice",
+        "options": [
+          "THE REPUBLIC BY PLATO",
+          "TRAGEDIES OF WILLIAM SHAKESPEARE",
+          "ODES BY JOHN KEATS"
+        ]
+      },
+      {
+        "id": "pt_piano",
+        "label": "Piano variation row group",
+        "kind": "choice",
+        "options": [
+          "MELANCHOLIC",
+          "HOPEFUL",
+          "INTIMATE",
+          "ENIGMATIC"
+        ]
+      },
+      {
+        "id": "pt_studio",
+        "label": "TAKE CARL TO THE STUDIO",
+        "kind": "action"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e_pt_find_activity",
+        "from": "pt_find",
+        "to": "pt_activity",
+        "kind": "traced",
+        "sources": [
+          "steamPainterLeisure"
+        ]
+      },
+      {
+        "id": "e_pt_activity_chess",
+        "from": "pt_activity",
+        "to": "pt_chess",
+        "kind": "traced",
+        "sources": [
+          "steamPainterLeisure"
+        ],
+        "fromOption": 0
+      },
+      {
+        "id": "e_pt_activity_book",
+        "from": "pt_activity",
+        "to": "pt_book",
+        "kind": "traced",
+        "sources": [
+          "steamPainterLeisure"
+        ],
+        "fromOption": 1
+      },
+      {
+        "id": "e_pt_activity_piano",
+        "from": "pt_activity",
+        "to": "pt_piano",
+        "kind": "traced",
+        "sources": [
+          "steamPainterLeisure"
+        ],
+        "fromOption": 2
+      },
+      {
+        "id": "e_pt_chess_studio",
+        "from": "pt_chess",
+        "to": "pt_studio",
+        "kind": "traced",
+        "sources": [
+          "steamPainterLeisure"
+        ]
+      },
+      {
+        "id": "e_pt_book_studio",
+        "from": "pt_book",
+        "to": "pt_studio",
+        "kind": "traced",
+        "sources": [
+          "steamPainterLeisure"
+        ]
+      },
+      {
+        "id": "e_pt_piano_studio",
+        "from": "pt_piano",
+        "to": "pt_studio",
+        "kind": "traced",
+        "sources": [
+          "steamPainterLeisure"
+        ]
+      }
+    ]
+  },
+  "supplementary": [],
+  "conditions": [],
+  "unknowns": [
+    {
+      "id": "u_ptl_group_semantics",
+      "status": "unknown",
+      "explanation": "Rows are visible activity, result or variation groups. Editorial group labels and the choice kind do not prove direct player control, selectable eligibility or exclusivity.",
+      "nodes": [
+        "pt_activity",
+        "pt_chess",
+        "pt_book",
+        "pt_piano"
+      ],
+      "edges": [],
+      "sources": [
+        "steamPainterLeisure",
+        "powerpyxPainterLeisure"
+      ]
+    },
+    {
+      "id": "u_ptl_common_exit",
+      "status": "unknown",
+      "explanation": "The three exits leave outer brackets. They do not establish separate per-row transitions, an AND requirement, all-rows completion or exact game progression. No exit is cloned per variant.",
+      "nodes": [
+        "pt_chess",
+        "pt_book",
+        "pt_piano",
+        "pt_studio"
+      ],
+      "edges": [
+        "e_pt_chess_studio",
+        "e_pt_book_studio",
+        "e_pt_piano_studio"
+      ],
+      "sources": [
+        "steamPainterLeisure"
+      ]
+    },
+    {
+      "id": "u_ptl_completion",
+      "status": "unknown",
+      "explanation": "Replay counts, automatic completion and current-patch rules from guide prose are not adopted. A later painting reader disagreement cannot resolve leisure behavior.",
+      "nodes": [
+        "pt_activity",
+        "pt_chess",
+        "pt_book",
+        "pt_piano"
+      ],
+      "edges": [],
+      "sources": [
+        "powerpyxPainterLeisure",
+        "steamPainterLeisure"
+      ]
+    },
+    {
+      "id": "u_ptl_build",
+      "status": "unknown",
+      "explanation": "The source chart platform/build and game behavior are unverified. No transition is game-verified.",
+      "nodes": [
+        "pt_find"
+      ],
+      "edges": [],
+      "sources": [
+        "steamPainterLeisure"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "review": {
+    "independent": {
+      "required": true,
+      "state": "approved",
+      "reviewer": "Separate Codex painter_source_review agent",
+      "date": "2026-10-24",
+      "scope": "Six graph objects, thirteen grouped rows, seven connectors and all source/unknown boundaries in the leisure slice.",
+      "notes": "The reviewer derived the counts before packet creation, then compared all six graph objects, thirteen exact rows, seven connections, four unknowns and source access. Approved bounded source interpretation with zero corrections. See docs/notes/painter-leisure-review.md."
+    },
+    "mergeGate": {
+      "state": "blocked",
+      "reason": "The partial source interpretation is independently approved. Publication rights, research independence, game behavior and platform/build remain unverified. Runtime integration is a separate package."
+    }
+  }
+}

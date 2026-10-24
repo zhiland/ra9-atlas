@@ -1,8 +1,18 @@
 # rA9 Atlas — current checkpoint
 
-Updated: 2026-10-23. Stage 1 source review is complete for the bounded Hostage
+Updated: 2026-10-24. Stage 1 source review is complete for the bounded Hostage
 pilot. Stage 2 preparation is implemented. Canonical JSON authoring and deterministic generation now preserve the existing sample.
 Full-product schema expansion, permalink output migration, actual game-chart census and hosting remain open.
+
+## Painter leisure preparation checkpoint
+
+The [reviewed leisure packet](notes/painter-leisure-review.md) uses explicit1.1:
+six graph objects, thirteen grouped rows and seven traced relationships. Three
+common exits leave brackets without per-row indices or invented completion rules.
+Four unknowns retain semantics and game/build limits. Publication stays blocked.
+The shared checkpoint is not a new runtime node. The displayed atlas remains
+123 nodes/106 records/104 active connectors across seven regions. Current runtime
+support remains binary; source preparation is not runtime approval.
 
 ## Preparation choice-version checkpoint
 
@@ -10,7 +20,7 @@ Full-product schema expansion, permalink output migration, actual game-chart cen
 options during preparation. Default creation and existing 1.0 packets stay
 binary. Runtime is unchanged and remains binary. Exact runtime reconciliation,
 source review and publication gates are not relaxed. This prerequisite does not
-create or approve a Painter leisure packet. [PR #31](https://github.com/zhiland/ra9-atlas/pull/31) passes Ubuntu CI at `911b5ff`, including 19 new regressions. Both review follow-ups are closed. Next: prepare the Painter leisure slice as explicit 1.1 after separate source inspection/review. The remaining 20% window is reserved; do not launch that package before capacity is available.
+create or approve a Painter leisure packet. [PR #31](https://github.com/zhiland/ra9-atlas/pull/31) passes Ubuntu CI at `911b5ff`, including 19 new regressions. Both review follow-ups are closed. Next: prepare the Painter leisure slice as explicit 1.1 after separate source inspection/review. That earlier capacity checkpoint is historical; the leisure source package is now prepared after reset.
 
 ## Painter runtime checkpoint
 
@@ -167,7 +177,7 @@ emulation. Safari, physical touch, assistive technology and gameplay are unverif
 ## Next bounded work
 
 1. Use the canonical authoring bundle and compatibility ledger for future graph edits.
-   All four reviewed packets retain blocked publication gates; generation adds no approval.
+   All five reviewed packets retain blocked publication gates; generation adds no approval.
 2. Continue the remaining Painter chart or prepare the
    next bounded slice from the [partial inventory](notes/chapter-inventory-reconciliation.md).
    It reconciles 32 chapter rows and 39 source headings, not actual complete game-chart boundaries.

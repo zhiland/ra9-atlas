@@ -38,7 +38,9 @@ The [Hostage review](docs/notes/hostage-packet-source-review.md) and
 The [Shades of Color preparation](docs/notes/shades-of-color-source-review.md) is source-reviewed
 and integrated as a partial region. Its six detached icon origins stay unknown.
 The [Painter opening packet](docs/notes/painter-packet-source-review.md) is integrated as a partial opening: nine boxes, five traces and three detached
-segments with unknown origins. Source-derived publication rights remain unresolved.
+segments with unknown origins. A separate [Painter leisure packet](docs/notes/painter-leisure-review.md) prepares
+13 grouped rows and seven chart relationships. It is not integrated. Source-derived
+publication rights remain unresolved.
 
 See [current status](docs/STATUS.md), [coverage](docs/notes/poc4-coverage.md),
 [source register](docs/SOURCES.md), and [license boundaries](docs/license-boundary.md).

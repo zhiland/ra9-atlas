@@ -174,7 +174,7 @@ The [source-reviewed packet](notes/shades-of-color-source-review.md) contains
 unknown instead of becoming invented edges. Its initial preparation had no ATLAS reconciliation. The later
 [integration](notes/shades-runtime-integration.md) adds exact runtime reconciliation
 with new edges appended at 96–100, without changing source interpretation. Source approval retains a
-blocked publication gate. `npm run validate:packet` includes all four packets;
+blocked publication gate. `npm run validate:packet` includes all five packets;
 `npm run test:shades` pins the source-reviewed bounds and review-required exit 2.
 
 ## Fourth packet — The Painter opening
@@ -185,5 +185,14 @@ origins. Two checkpoints are stages. The later leisure/studio/painting chart is
 outside scope. Four unknown records preserve origins, ordering, clothes
 eligibility and platform/build gaps. The guide-reported harassment prerequisite
 is not a cross-chapter edge or game verification. The later [runtime integration](notes/painter-runtime-integration.md) declares
-exact reconciliation with appended indices101–105. All four packet CLIs run in `validate:packet`.
+exact reconciliation with appended indices101–105. All five packet CLIs run in `validate:packet`.
 Independent source approval keeps publication blocked.
+
+## Fifth packet — Painter leisure
+
+The [reviewed leisure packet](notes/painter-leisure-review.md) is explicit1.1 and
+includes the shared checkpoint, four row groups and the studio action. Thirteen
+rows retain source order. Seven connections distinguish activity rows from the
+three common bracket exits. Editorial group labels do not assert player agency.
+No runtime reconciliation or legacy index is claimed, and publication stays
+blocked. The original opening packet and displayed map are unchanged.

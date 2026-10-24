@@ -122,3 +122,11 @@ passed49 checks and stopped its server. Patch inspection/apply-check preceded us
 Codex added18 synthetic regressions and version documentation. Existing packets,
 map data and runtime remain unchanged. Final review/CI results are in the
 [version report](notes/packet-choice-arity.md).
+
+## 2026-10-24 Painter leisure source preparation
+
+A separate reviewer derived six objects, thirteen grouped rows and seven traces
+before seeing a packet. Controlled OpenCode from public `b1f4f5c` stopped safely
+after provider HTTP429/free quota exhaustion. No patch or paid fallback was used.
+Codex prepared the packet, and the reviewer approved it with zero corrections.
+No runtime change occurs. See [report](notes/painter-leisure-review.md).
