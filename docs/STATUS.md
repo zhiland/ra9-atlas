@@ -31,6 +31,17 @@ Contributor failed price admission. Use the [runner guide](opencode-runner.md)
 and [model matrix](notes/model-provider-options.md). Work is reviewed and tested
 on the trusted host; no automatic merge or deployment is authorized.
 
+## Semantic diff tooling checkpoint
+
+The [semantic diff](authoring-data.md#semantic-atlas-diff) compares two validated
+source/ledger pairs in JSON or Markdown, including provenance fields, relative
+ordering and retained legacy-index movements. Report v1 rejects unsupported
+atlas sections. All57 regressions and the full local npm suite pass. Independent
+Standards/Spec review has no open findings. Canonical data and runtime are
+unchanged. The implementation was recovered from partial worker exports and
+verified on the trusted host; silent native-client exits remain an open tooling
+limitation. See the [acceptance and cost evidence](notes/atlas-diff-acceptance.md).
+
 ## Structural coverage tooling checkpoint
 
 The [structural report](authoring-data.md#structural-coverage-report) adds

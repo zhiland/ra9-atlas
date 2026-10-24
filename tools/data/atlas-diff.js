@@ -9,6 +9,9 @@ const id = value => typeof value === 'string' && value.length > 0;
 
 const ARRAY_COLLECTIONS = ['chapters', 'nodes', 'edges', 'conditions', 'uncertainties', 'conflicts'];
 const OBJECT_COLLECTIONS = ['refs', 'detail', 'meta', 'canvas'];
+const ATLAS_FIELDS = new Set([...ARRAY_COLLECTIONS, ...OBJECT_COLLECTIONS]);
+/* Singular label for duplicate-ID messages ("uncertainties" -> "uncertainty"). */
+const SINGULAR = { chapters: 'chapter', nodes: 'node', edges: 'edge', conditions: 'condition', uncertainties: 'uncertainty', conflicts: 'conflict' };
 const INDEXED_COLLECTIONS = ['nodes', 'edges'];
 const VALUE_CHANGED = '(value changed)';
 
@@ -57,6 +60,9 @@ function changedFields(before, after) {
    structural failure. */
 function validateAtlas(atlas, side) {
   if (!object(atlas)) throw new Error(`${side}: expected an object`);
+  for (const key of Object.keys(atlas)) {
+    if (!ATLAS_FIELDS.has(key)) throw new Error(`${side}.${key}: unsupported atlas field`);
+  }
   for (const key of ARRAY_COLLECTIONS) {
     const list = atlas[key];
     if (!Array.isArray(list)) throw new Error(`${side}.${key}: expected an array`);
@@ -69,7 +75,7 @@ function validateAtlas(atlas, side) {
     list.forEach((entry, i) => {
       if (!object(entry)) throw new Error(`${side}.${key}[${i}]: expected an object`);
       if (!id(entry.id)) throw new Error(`${side}.${key}[${i}].id: expected a nonempty string`);
-      if (seen.has(entry.id)) throw new Error(`${side}.${key}[${i}].id: duplicate ${key.slice(0, -1)} id "${entry.id}"`);
+      if (seen.has(entry.id)) throw new Error(`${side}.${key}[${i}].id: duplicate ${SINGULAR[key]} id "${entry.id}"`);
       seen.add(entry.id);
     });
   }
@@ -285,7 +291,7 @@ function renderMarkdown(report) {
     '- `reordered` compares only IDs common to both arrays: additions, removals and appends alone are never reordering.',
     '- `legacyIndexChanges` lists retained node and edge IDs whose array positions moved; `?edge=N` permalinks address array indices, so a moved index is reported as an observation without judging either snapshot.',
     `- \`${VALUE_CHANGED}\` marks a whole-value replacement, including a value type change, where no record field names can be listed.`,
-    '- Neither snapshot is preferred: the diff makes no approval, compatibility, gameplay or release-readness claim.'
+    '- Neither snapshot is preferred: the diff makes no approval, compatibility, gameplay or release-readiness claim.'
   );
   return `${lines.join('\n')}\n`;
 }
