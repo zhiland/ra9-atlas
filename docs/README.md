@@ -26,6 +26,7 @@ Use these documents for current work:
 | [Source register](SOURCES.md) | Evidence provenance and access limitations |
 | [License boundary](license-boundary.md) | Original MIT work and excluded material |
 | [OpenCode runner](opencode-runner.md) | Current external-agent launch procedure |
+| [Model provider options](notes/model-provider-options.md) | Tested free/low-cost routes, price ceilings and verification limits |
 | [Sol handoff](handoff-sol.md) | Continuation checklist; recheck its dated Git/PR snapshot |
 | [Repository review](notes/repository-review-2026-10-22.md) | Code findings, cleanup and verification |
 | [A New Home extraction](notes/anewhome-packet-draft.md) | Historical second-packet draft |

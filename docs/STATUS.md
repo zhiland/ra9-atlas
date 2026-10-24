@@ -4,6 +4,18 @@ Updated: 2026-10-24. Stage 1 source review is complete for the bounded Hostage
 pilot. Stage 2 preparation is implemented. Canonical JSON authoring and deterministic generation now preserve the existing sample.
 Full-product schema expansion, permalink output migration, actual game-chart census and hosting remain open.
 
+## Model route checkpoint
+
+Nous StepFun Free and OpenRouter Flint Free, North Mini Code Free and DeepSeek
+V4.1 Flash each passed 53 synthetic isolation/native-tool checks on this host.
+OpenRouter uses the owner-approved host-only key and explicit price/run guards.
+MiMo completed tools but failed the bounded test; Contributor did not pass price
+admission. Both implementation review axes have zero open findings. North Mini
+Code passed a 51-check public task and produced the reviewed
+[next Painter checklist](notes/painter-next-slice-outline.md). Flint's public task
+failed safely; North is the primary free route. See the
+[model matrix](notes/model-provider-options.md). Hosted CI is pending.
+
 ## Coverage documentation checkpoint
 
 [Draft PR #35](https://github.com/zhiland/ra9-atlas/pull/35) refreshes the current

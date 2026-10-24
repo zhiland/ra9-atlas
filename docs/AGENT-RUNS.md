@@ -1,6 +1,19 @@
 # ra9-atlas — agent run log
 
-Updated: 2026-10-23. These are bounded runs, not continuously active agents.
+Updated: 2026-10-24. These are bounded runs, not continuously active agents.
+
+## Controlled provider checkpoint — 2026-10-24
+
+North Mini Code Free passed a 53-check synthetic run and a 51-check public
+repository task at base `2e59e5b`. Its sole checklist patch was reviewed, checked
+with `git apply --check`, applied and clarified by Codex. API cost was zero.
+North is the primary free route; Nous StepFun Free is a verified free reserve.
+DeepSeek V4.1 Flash passed 53 checks through OpenRouter with explicit budget
+controls. Flint passed the synthetic test but failed the public task safely.
+MiMo completed tools but failed the bounded exact-output test. Contributor was
+rejected before inference for an unpriced extra fee. Both independent review
+axes closed their findings. See the [full matrix](notes/model-provider-options.md).
+No runtime graph change, merge, deployment or dedicated DeepSeek key setup.
 
 | Run | Model / effort | Task | Result |
 |---|---|---|---|

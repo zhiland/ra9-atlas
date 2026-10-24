@@ -154,10 +154,12 @@ def public_archive(repository, commit):
 
 
 class InferenceRelay:
-    """Only POST chat completions to one fixed HTTPS upstream and one free model."""
-    def __init__(self):
+    """Only POST chat completions through one explicitly admitted provider route."""
+    def __init__(self, route=None):
         self.enabled = False
         self.records = []
+        self.route = route
+        self.model = route.model if route is not None else FREE_MODEL
         relay = self
 
         class Handler(BaseHTTPRequestHandler):
@@ -174,9 +176,32 @@ class InferenceRelay:
                         return
                     body = self.rfile.read(length)
                     value = json.loads(body)
+                    if not isinstance(value, dict) or not isinstance(value.get('tools', []), list):
+                        self.send_error(400)
+                        return
+                    if any(not isinstance(t, dict) or not isinstance(t.get('function', {}), dict)
+                           or not isinstance(t.get('function', {}).get('name', ''), str)
+                           for t in value.get('tools', [])):
+                        self.send_error(400)
+                        return
                     exposed = {tool.get("function", {}).get("name", "") for tool in value.get("tools", [])}
-                    if value.get("model") != FREE_MODEL or not relay.enabled or "execute" in exposed:
+                    if value.get("model") != relay.model or not relay.enabled or "execute" in exposed:
                         self.send_error(403)
+                        return
+                    if relay.route is not None:
+                        try:
+                            status, content_type, data = relay.route.complete(value)
+                        except ValueError:
+                            self.send_error(403, 'Controlled inference route rejected request')
+                            relay.records.append({"model": relay.model, "status": "route-rejected"})
+                            return
+                        relay.records.append({"model": relay.model, "status": status,
+                                              "requestBytes": length, "tools": sorted(exposed)})
+                        # Stop SDK retries/fallback on an unavailable free route.
+                        self.send_response(200 if status == 200 else 403)
+                        self.send_header('Content-Type', content_type)
+                        self.end_headers()
+                        self.wfile.write(data)
                         return
                     remote = http.client.HTTPSConnection("opencode.ai", timeout=90)
                     try:
@@ -201,7 +226,7 @@ class InferenceRelay:
                     finally:
                         remote.close()
                 except (OSError, ValueError, http.client.HTTPException):
-                    relay.records.append({"model": FREE_MODEL, "status": "relay-error"})
+                    relay.records.append({"model": relay.model, "status": "relay-error"})
                     self.close_connection = True
 
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
@@ -232,7 +257,7 @@ def candidate_profile(workspace, ports):
     return result
 
 
-def configuration(relay_port, canary_directory):
+def configuration(relay_port, canary_directory, route=None):
     config = {
         "$schema": "https://opencode.ai/config.json", "update": "disable",
         "snapshots": False, "formatter": False,
@@ -255,6 +280,10 @@ def configuration(relay_port, canary_directory):
               for kind in ["mcp", "plugin", "skill"]],
         ],
     }
+    if route is not None:
+        config['model'] = route.provider_id + '/' + route.alias
+        config['providers'] = {route.provider_id: route.settings(relay_port)}
+        config['policies'][1]['resource'] = route.provider_id
     # These inert, fabricated integrations must be blocked before execution.
     config["plugins"] = [str(canary_directory / "plugin.mjs")]
     config["mcp"] = {"servers": {"runner-canary": {"type": "local", "command": [
@@ -316,7 +345,12 @@ def patch_text(before, after):
 
 
 class IsolatedRun:
-    def __init__(self):
+    def __init__(self, route=None):
+        self.route = route
+        self.provider_id = route.provider_id if route is not None else 'opencode'
+        self.model_alias = route.alias if route is not None else FREE_MODEL
+        if route is not None:
+            route.prepare()  # Public catalog only. No inference or credentials.
         for path, digest in [(BINARY, BINARY_SHA256), (RIPGREP, RIPGREP_SHA256), (PCRE, PCRE_SHA256)]:
             if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
                 raise RuntimeError("Pinned runtime changed. Review and revalidate: " + str(path))
@@ -349,7 +383,7 @@ class IsolatedRun:
             'import os,sys\nfrom pathlib import Path\n'
             'os.environ["DYLD_LIBRARY_PATH"]=str(Path(__file__).parent/"lib")\n'
             'os.execv(sys.argv[1],sys.argv[1:])\n')
-        self.relay = InferenceRelay()
+        self.relay = InferenceRelay(route)
         with socket.socket() as reservation:
             reservation.bind(("127.0.0.1", 0))
             self.port = reservation.getsockname()[1]
@@ -368,14 +402,15 @@ class IsolatedRun:
         skill.mkdir(parents=True)
         (skill / "SKILL.md").write_text(
             '---\nname: runner-canary\ndescription: Synthetic integration admission probe.\n---\nSynthetic fixture only.\n')
-        self.config.write_text(json.dumps(configuration(self.relay.port, self.canaries), indent=2))
+        self.config.write_text(json.dumps(configuration(self.relay.port, self.canaries, route), indent=2))
         self.config_bytes = self.config.read_bytes()
         self.password = secrets.token_urlsafe(32)
         self.env["OPENCODE_PASSWORD"] = self.password
         self.process = None
         self.log = None
         self.report = {"binarySHA256": BINARY_SHA256, "ripgrepSHA256": RIPGREP_SHA256,
-                       "pcreSHA256": PCRE_SHA256, "checks": [], "network": "fixed inference relay only"}
+                       "pcreSHA256": PCRE_SHA256, "checks": [], "network": "fixed inference relay only",
+                       "provider": self.provider_id, "model": self.relay.model}
 
     def command(self, args, cwd=None, timeout=240):
         return subprocess.run([*self.prefix(), str(self.binary), *args],
@@ -433,6 +468,19 @@ class IsolatedRun:
         self.check("sibling canary intact", canary.read_text() == "FABRICATED_SIBLING_CANARY\n")
         self.check("sibling write absent", not (sibling / "new.txt").exists())
         (self.workspace / "escape").unlink()
+        if self.route is not None:
+            # Probe a fabricated file beside the credential store, never its secrets.
+            with self.route.credential_canary() as credential_canary:
+                code = ('import os,sys\np=sys.argv[1]\n'
+                        'actions=[lambda:open(p).read(),lambda:os.listdir(os.path.dirname(p)),lambda:open(p+".new","w")]\n'
+                        'for action in actions:\n'
+                        ' try: action()\n'
+                        ' except PermissionError: continue\n'
+                        ' else: sys.exit(1)\n')
+                denied = subprocess.run(['/usr/bin/sandbox-exec', '-f', str(self.profile), PYTHON,
+                    '-I', '-B', '-c', code, str(credential_canary)], cwd=self.workspace,
+                    env=env, close_fds=True, stdin=subprocess.DEVNULL, capture_output=True, timeout=10)
+                self.check(getattr(self.route, 'boundary_label', 'Nous auth-store read/list/write denied'), denied.returncode == 0)
 
     def start(self):
         self.boundary_checks()
@@ -463,8 +511,8 @@ class IsolatedRun:
         plugins = wait_for_policy(self.api)
         self.check("native policy plugin active", True)
         self.check("external plugins absent", all(p["source"]["type"] == "builtin" for p in plugins))
-        expected = configuration(self.relay.port, self.canaries)
-        expected["model"] = {"providerID": "opencode", "model": FREE_MODEL}
+        expected = configuration(self.relay.port, self.canaries, self.route)
+        expected["model"] = {"providerID": self.provider_id, "model": self.model_alias}
         # Config parses plugin shorthand into operations. Validate every other
         # setting exactly, plus the single source path and unchanged source bytes.
         expected.pop("plugins")
@@ -477,9 +525,15 @@ class IsolatedRun:
         self.check("skills absent", not self.api("/api/skill")["data"])
         self.check("configured plugin blocked before import", not (self.canaries / "plugin-started").exists())
         self.check("configured MCP command blocked", not (self.canaries / "mcp-started").exists())
-        model = next(m for m in self.api("/api/model")["data"] if m["id"] == FREE_MODEL)
+        model = next(m for m in self.api("/api/model")["data"] if m["id"] == self.model_alias)
         self.check("effective model uses relay", model["settings"]["baseURL"] == "http://127.0.0.1:%d/v1" % self.relay.port)
-        self.check("catalog model is free", all(c["input"] == 0 and c["output"] == 0 for c in model["cost"]))
+        if self.route is not None and self.provider_id == 'ra9-openrouter':
+            expected_cost = self.route.settings(self.relay.port)['models'][self.model_alias]['cost']
+            self.check('catalog model matches admitted price', bool(model['cost']) and
+                       all(c['input'] == expected_cost['input'] and c['output'] == expected_cost['output']
+                           for c in model['cost']))
+        else:
+            self.check("catalog model is free", all(c["input"] == 0 and c["output"] == 0 for c in model["cost"]))
         sid = self.api("/api/session", {"title": "Runner policy gate", "location": {"directory": str(self.project)}})["data"]["id"]
         for action, expected in [("read", "allow"), ("edit", "allow"), ("glob", "allow"), ("grep", "allow"),
                                  ("shell", "deny"), ("external_directory", "deny"), ("execute", "deny"),
@@ -487,12 +541,14 @@ class IsolatedRun:
             effect = self.api("/api/session/%s/permission" % sid,
                               {"action": action, "resources": ["synthetic-public"]})["data"]["effect"]
             self.check("native %s = %s" % (action, expected), effect == expected)
+        if self.route is not None:
+            self.check(getattr(self.route, 'readiness_label', 'Nous dedicated login available'), self.route.ready())
 
     def run_prompt(self, prompt):
         self.relay.enabled = True
         try:
             result = self.command(["run", "--server", "http://127.0.0.1:%d" % self.port,
-                                   "--model", "opencode/" + FREE_MODEL, "--format", "json",
+                                   "--model", self.provider_id + '/' + self.model_alias, "--format", "json",
                                    "--title", "Isolated public task", "--auto", "--", prompt])
         finally:
             self.relay.enabled = False
@@ -522,6 +578,8 @@ class IsolatedRun:
             self.log.close()
         self.relay.close()
         self.report["relay"] = self.relay.records
+        if self.route is not None and hasattr(self.route, 'summary'):
+            self.report['spendControl'] = self.route.summary()
         self.report["serverStopped"] = self.process is None or self.process.poll() is not None
         (self.root / "report.json").write_text(json.dumps(self.report, indent=2) + "\n")
 
@@ -529,13 +587,32 @@ class IsolatedRun:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="mode", required=True)
-    sub.add_parser("self-test", help="Run synthetic isolation, native policy, and free-provider probes")
+    self_test = sub.add_parser("self-test", help="Run synthetic isolation, native policy, and provider probes")
     run = sub.add_parser("run", help="Run against an anonymously verified public commit")
     run.add_argument("--repository", type=Path, required=True)
     run.add_argument("--commit", required=True)
     run.add_argument("--prompt", required=True)
+    for command in (self_test, run):
+        command.add_argument('--provider', choices=('opencode', 'nous-free', 'openrouter'), default='opencode')
+        command.add_argument('--free-model', help='Explicit admitted Nous free route; never used for GLM')
+        command.add_argument('--model', help='Explicit allowlisted OpenRouter model')
+        command.add_argument('--max-cost-usd', default='0', help='Conservative per-run OpenRouter reservation, max 0.10')
+        command.add_argument('--allow-public-training', action='store_true', help='Permit Contributor processing of admitted public data')
     args = parser.parse_args()
-    instance = IsolatedRun()
+    route = None
+    if args.provider == 'openrouter':
+        if args.free_model or not args.model:
+            parser.error('--provider openrouter requires --model and forbids --free-model')
+        from openrouter_provider import OpenRouterProvider
+        route = OpenRouterProvider(args.model, args.max_cost_usd, args.allow_public_training)
+    elif args.model or args.max_cost_usd != '0' or args.allow_public_training:
+        parser.error('OpenRouter model/budget/training flags require --provider openrouter')
+    elif args.provider == 'nous-free':
+        from nous_free_provider import NousFreeProvider, DEFAULT_MODEL
+        route = NousFreeProvider(args.free_model or DEFAULT_MODEL)
+    elif args.free_model is not None:
+        parser.error('--free-model requires --provider nous-free')
+    instance = IsolatedRun(route)
     print("Scratch: " + str(instance.root), flush=True)
     try:
         instance.start()
@@ -543,7 +620,9 @@ def main():
             (instance.project / "public.txt").write_text("PUBLIC_CANARY\n")
             output = instance.run_prompt('Use glob to find *.txt. Use grep to find PUBLIC_CANARY. '
                                          'Read public.txt with the read tool. Create result.txt containing exactly '
-                                         'ISOLATED_PROVIDER_OK followed by a newline. Use the write tool. Then reply DONE.')
+                                         'ISOLATED_PROVIDER_OK followed by a newline. Use the write tool. '
+                                         'Use only glob, grep, read and write; shell is denied. '
+                                         'After the write succeeds, reply DONE without further tool calls.')
             completed = {event["part"]["tool"] for event in map(json.loads, output.splitlines())
                          if event.get("type") == "tool_use" and event["part"]["state"]["status"] == "completed"}
             instance.check("read/search/write tool executions completed", {"read", "write", "glob", "grep"}.issubset(completed))

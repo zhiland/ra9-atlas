@@ -38,6 +38,48 @@ checkpoint through the normal PR workflow before using it as another base.
 
 ## Boundary and controls
 
+### Additional opt-in routes — 2026-10-24
+
+The default remains OpenCode GLM Free. The same runner now supports Nous and
+OpenRouter through the existing relay port; the OS profile does not expand.
+These routes have completed synthetic checks on this host. See the
+[model matrix](notes/model-provider-options.md) for per-model results and limits.
+Independent implementation review is recorded there before repository admission.
+
+```sh
+# Connected dedicated Nous profile; uses only its trusted credential adapter.
+/usr/bin/python3 -B tools/isolation/opencode_runner.py self-test \
+  --provider nous-free --free-model stepfun/step-3.7-flash:free
+
+# Owner-approved ~/.env stays outside the worker. No environment file is sourced.
+/usr/bin/python3 -B tools/isolation/opencode_runner.py self-test \
+  --provider openrouter --model recursive/flint-v1.0:free
+
+# Explicit paid opt-in with a conservative per-run reservation in USD.
+/usr/bin/python3 -B tools/isolation/opencode_runner.py self-test \
+  --provider openrouter --model deepseek/deepseek-v4.1-flash --max-cost-usd 0.02
+```
+
+The same provider flags apply to `run`, with its normal public repository and
+commit admission. No credential or endpoint flag is exposed to the model.
+OpenRouter requests have fixed price filters, no model/provider fallback, a
+2048-token completion cap, six-call cap and 64KiB request cap. Catalog prices
+and tool support are checked before every request. Paid calls consume a
+conservative reservation even if they fail. This estimate is not an account
+billing cap or a proven tokenizer bound. Use an account/key spending limit for
+a provider-enforced total ceiling. Free routes retain zero price filters.
+Contributor training requires a separate explicit opt-in and remains excluded
+while its extra declared charges cannot pass admission.
+
+Tokens remain in the trusted host relay/credential helper. OpenCode receives
+only the loopback URL and a public placeholder. Synthetic read/list/write probes
+check denial at each credential directory. Nous uses a separate auth profile;
+the Hermes agent, chats and settings do not run or change. Neither route uses
+the generic Hermes proxy. Streaming responses are buffered to a bounded 16MiB
+before forwarding. Missing auth, quota, price changes or failed gates stop work.
+
+### Shared OS boundary
+
 - A fresh scratch directory holds HOME, all XDG home directories, TMPDIR, a
   copied executable and the prepared public tree. Children receive an explicit
   environment, `/dev/null` input, and closed inherited descriptors. There are
