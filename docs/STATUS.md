@@ -12,7 +12,9 @@ now has128 nodes/113 records/111 active connectors across seven partial/accounte
 regions. Four groups show13 source rows. Common exits retain no option index.
 All old nodes, edges and links stay exact. Only the Painter frame and canvas
 grow downward. Production declares runtime1.1. Four new unknowns and blocked
-publication remain. Final review and CI results are recorded in the report.
+publication remain. Draft [PR #34](https://github.com/zhiland/ra9-atlas/pull/34)
+passes Ubuntu CI at `aa8cce9`, including21 new runtime and76 browser checks.
+Source fidelity, Standards and Spec reviews have zero open findings.
 
 ## Previous runtime row-group support checkpoint
 

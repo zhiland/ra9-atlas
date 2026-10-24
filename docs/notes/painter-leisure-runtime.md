@@ -34,7 +34,7 @@ run, paid fallback or new source interpretation is part of this integration.
 
 Initial Standards review found one stale traced-edge count in the contract.
 The count is corrected from82 to89. No code or compatibility finding remains.
-A documentation follow-up is pending.
+The follow-up at `aa8cce9` closed it. Standards: zero open findings.
 
 ## Spec
 
@@ -60,3 +60,11 @@ A local1440x900 Chromium render was visually inspected. All13rows fit. The
 chapter navigation caption was shortened to preserve existing desktop focus
 readability thresholds. The Painter frame fits at67% without moving old nodes.
 Source agreement is not gameplay, build compatibility or publication approval.
+
+[Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/40068942464)
+passed at `aa8cce9`, including the full Node/Chromium suite,18 runner tests
+and8 mocked preflight tests. The earlier `a43ef23` run was superseded and
+cancelled after the documentation correction. It was not a test failure.
+Draft [PR #34](https://github.com/zhiland/ra9-atlas/pull/34) remains unmerged.
+Native isolation, Safari, physical touch, assistive technology and gameplay
+remain outside this verification.
