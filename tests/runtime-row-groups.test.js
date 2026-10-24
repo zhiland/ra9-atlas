@@ -50,4 +50,34 @@ test('authored paths cannot point at a different row while claiming an option in
  const y=R.anchorY(n,3);e.points=[[220,y],[230,y],[230,292],[240,292]];assert.equal(errors(a),'');
  e.points=[[220,260],[230,260],[230,292],[240,292]];assert.match(errors(a),/authored start must match its source row center/);
 });
+test('overlapping columns use an outside corridor above and below',()=>{
+ const a=group();
+ for(const y of [-200,300]){
+  const b={x:50,y,w:170,h:84};
+  const points=R.routePoints(a,b,{fromOption:2});
+  assert.equal(points[0][1],R.anchorY(a,2));
+  assert.equal(points[1][0],Math.max(a.x+a.w,b.x+b.w)+24);
+ }
+ const b={x:125,y:-200,w:170,h:84};a.x=50;
+ assert.equal(R.routePoints(a,b,{fromOption:1})[1][0],26);
+ assert.equal(R.routePoints(a,b,{fromOption:1,via:0})[1][0],0);
+ assert.throws(()=>R.routePoints(a,b,{fromOption:1,via:172.5}),/outside corridor/);
+});
+test('separated columns use their gap and preserve legacy routing',()=>{
+ const a=group();
+ for(const x of [-400,500]){
+  const b={x,y:300,w:170,h:84};const points=R.routePoints(a,b,{fromOption:0});
+  assert.equal(points[1][0],x<0?(a.x+x+b.w)/2:(a.x+a.w+x)/2);
+  assert.throws(()=>R.routePoints(a,b,{fromOption:0,via:NaN}),/finite/);
+ }
+ assert.equal(R.routePoints({...a,rowGroup:false},{},{fromOption:0}),null);
+ assert.equal(R.routePoints(a,{},{}),null);
+});
+test('authored row paths cannot hide inside an endpoint or use malformed points',()=>{
+ const a=group(),b={x:500,y:300,w:170,h:84},y=R.anchorY(a,0);
+ for(const points of [[[330,y],[200,y],[200,342],[500,342]],[[330,y],[400,y],[400,342],[600,342],[500,342]]])
+  assert.throws(()=>R.routePoints(a,b,{fromOption:0,points}),/endpoint interior/);
+ for(const points of [[],[[330,y],[NaN,342]],[[330,y],[500,342]]])
+  assert.throws(()=>R.routePoints(a,b,{fromOption:0,points}),RangeError);
+});
 console.log(`${count} runtime row-group tests passed`);

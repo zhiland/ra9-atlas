@@ -26,8 +26,12 @@ function data(options){const a=structuredClone(real);a.meta.contractVersion='1.1
     const n=document.querySelector('[data-node="a_welcome"]'),row=n.querySelector('[data-row-index="'+index+'"]'),nr=n.getBoundingClientRect(),rr=row.getBoundingClientRect();
     const scale=new DOMMatrixReadOnly(getComputedStyle(document.getElementById('world')).transform).a;
     const range=document.createRange();range.selectNodeContents(row);const tr=range.getBoundingClientRect();
-    return {anchor:document.querySelector('path[data-edge-id="e_home_welcome_todd"]').getPointAtLength(0).y,rowY:400+(rr.top+rr.height/2-nr.top)/scale,text:row.textContent,contained:tr.left>=rr.left-1&&tr.right<=rr.right+1&&tr.top>=rr.top-1&&tr.bottom<=rr.bottom+1};
+    const edge=document.querySelector('path[data-edge-id="e_home_welcome_todd"]'),a=ATLAS.nodes[0],b=ATLAS.nodes[1];
+    const inside=(point,box)=>point.x>box.x+.01&&point.x<box.x+box.w-.01&&point.y>box.y+.01&&point.y<box.y+box.h-.01;
+    let hidden=false;for(let length=1;length<edge.getTotalLength();length+=3){const point=edge.getPointAtLength(length);if(inside(point,a)||inside(point,b)){hidden=true;break;}}
+    return {hidden,anchor:edge.getPointAtLength(0).y,rowY:400+(rr.top+rr.height/2-nr.top)/scale,text:row.textContent,contained:tr.left>=rr.left-1&&tr.right<=rr.right+1&&tr.top>=rr.top-1&&tr.bottom<=rr.bottom+1};
    },i);
+   assert.equal(measured.hidden,false,'row path passes through an endpoint interior');
    assert.ok(Math.abs(measured.anchor-R.anchorY(node,i))<.01,'SVG anchor differs from module');
    assert.ok(Math.abs(measured.rowY-measured.anchor)<.1,'SVG anchor misses rendered row center');assert.equal(measured.text,options[i]);assert.ok(measured.contained,'full row text leaves its row');
   }

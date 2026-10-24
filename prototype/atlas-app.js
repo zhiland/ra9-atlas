@@ -213,13 +213,14 @@
 
   /* ---------- orthogonal routing (mirrored by prototype/validate-atlas-data.js) ---------- */
   function pathFor(e) {
-    if (e.points) return e.points.map(function (point, index) {
+    var a = byId[e.from], b = byId[e.to];
+    var points = Rows.routePoints(a, b, e) || e.points;
+    if (points) return points.map(function (point, index) {
       return (index ? 'L ' : 'M ') + point[0] + ' ' + point[1];
     }).join(' ');
-    var a = byId[e.from], b = byId[e.to];
     var fromY = e.fromOption == null ? a.y + a.h / 2 :
       Rows.anchorY(a, e.fromOption);
-    var sameCol = Math.abs((a.x + a.w / 2) - (b.x + b.w / 2)) < 26 && !(a.rowGroup === true && e.fromOption != null);
+    var sameCol = Math.abs((a.x + a.w / 2) - (b.x + b.w / 2)) < 26;
     if (sameCol) {
       var cx = a.x + a.w / 2, dx = b.x + b.w / 2;
       return b.y > a.y

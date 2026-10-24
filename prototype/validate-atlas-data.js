@@ -213,10 +213,17 @@ function validateAtlas(ATLAS) {
         (((point[0] === node.x || point[0] === node.x + node.w) && point[1] >= node.y && point[1] <= node.y + node.h) ||
          ((point[1] === node.y || point[1] === node.y + node.h) && point[0] >= node.x && point[0] <= node.x + node.w));
       if (!onBorder(points[0], byId.get(edge.from)) || !onBorder(points[points.length - 1], byId.get(edge.to))) errors.push(`${edge.id} points must be anchored to endpoint borders`);
-      const from = byId.get(edge.from);
-      if (from && from.rowGroup === true && Array.isArray(from.options) && Number.isInteger(edge.fromOption) && edge.fromOption >= 0 && edge.fromOption < from.options.length && !RowLayout.errors(from, meta.contractVersion).length) {
-        if (Math.abs(points[0][1] - RowLayout.anchorY(from, edge.fromOption)) > 0.01) errors.push(`${edge.id} authored start must match its source row center`);
-      }
+    }
+    return errors;
+  });
+
+  check('row-group option routes remain visible outside endpoint interiors', () => {
+    const errors = [];
+    for (const edge of edges) {
+      const from = byId.get(edge.from), to = byId.get(edge.to);
+      if (!from || !to || from.rowGroup !== true || edge.fromOption == null || RowLayout.errors(from, meta.contractVersion).length) continue;
+      try { RowLayout.routePoints(from, to, edge); }
+      catch (error) { errors.push(`${edge.id} ${error.message}`); }
     }
     return errors;
   });
@@ -1292,12 +1299,15 @@ function validateAtlas(ATLAS) {
      Mirrors the renderer's router in prototype/atlas-app.js. */
   function routeSegments(edge) {
     const a = byId.get(edge.from), b = byId.get(edge.to);
+    let points;
+    try { points = RowLayout.routePoints(a, b, edge) || edge.points; }
+    catch (_) { return []; } // The row-group route check reports malformed paths.
     const fromY = edge.fromOption == null ? a.y + a.h / 2 :
       RowLayout.anchorY(a, edge.fromOption);
-    const sameCol = Math.abs((a.x + a.w / 2) - (b.x + b.w / 2)) < 26 && !(a.rowGroup === true && edge.fromOption != null);
-    if (Array.isArray(edge.points) && edge.points.length >= 2 && edge.points.every(p => Array.isArray(p) && p.length === 2 && p.every(Number.isFinite))) {
-      return edge.points.slice(1).map((p, i) => {
-        const a = edge.points[i];
+    const sameCol = Math.abs((a.x + a.w / 2) - (b.x + b.w / 2)) < 26;
+    if (Array.isArray(points) && points.length >= 2 && points.every(p => Array.isArray(p) && p.length === 2 && p.every(Number.isFinite))) {
+      return points.slice(1).map((p, i) => {
+        const a = points[i];
         return a[0] === p[0] ? { v: true, x: p[0], y1: Math.min(a[1], p[1]), y2: Math.max(a[1], p[1]) } :
           { v: false, y: p[1], x1: Math.min(a[0], p[0]), x2: Math.max(a[0], p[0]) };
       });

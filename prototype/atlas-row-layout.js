@@ -31,6 +31,49 @@ var ATLAS_ROW_LAYOUT = (function () {
     var row = layout(node).rows[index];
     return row.y + row.h / 2;
   }
-  return { errors: errors, layout: layout, anchorY: anchorY };
+  function routePoints(from, to, edge) {
+    if (from.rowGroup !== true || edge.fromOption == null) return null;
+    var sy = anchorY(from, edge.fromOption), ty = to.y + to.h / 2;
+    var points = edge.points;
+    if (points == null) {
+      var sx, tx, lane;
+      if (to.x >= from.x + from.w) {
+        sx = from.x + from.w; tx = to.x; lane = (sx + tx) / 2;
+      } else if (to.x + to.w <= from.x) {
+        sx = from.x; tx = to.x + to.w; lane = (sx + tx) / 2;
+      } else {
+        var left = Math.min(from.x, to.x) - 24;
+        var right = Math.max(from.x + from.w, to.x + to.w) + 24;
+        lane = edge.via != null ? edge.via : left >= 0 ? left : right;
+        if (lane <= Math.min(from.x, to.x)) { sx = from.x; tx = to.x; }
+        else if (lane >= Math.max(from.x + from.w, to.x + to.w)) { sx = from.x + from.w; tx = to.x + to.w; }
+        else throw new RangeError('row-group via must use an outside corridor');
+      }
+      if (edge.via != null) lane = edge.via;
+      points = [[sx, sy], [lane, sy], [lane, ty], [tx, ty]];
+    }
+    if (!Array.isArray(points) || points.length < 2 || points.some(function (p) {
+      return !Array.isArray(p) || p.length !== 2 || !p.every(Number.isFinite);
+    })) throw new RangeError('row-group path must contain finite coordinate pairs');
+    if (Math.abs(points[0][1] - sy) > 0.01) throw new RangeError('authored start must match its source row center');
+    function onBorder(p, n) {
+      return ((p[0] === n.x || p[0] === n.x + n.w) && p[1] >= n.y && p[1] <= n.y + n.h) ||
+        ((p[1] === n.y || p[1] === n.y + n.h) && p[0] >= n.x && p[0] <= n.x + n.w);
+    }
+    if (!onBorder(points[0], from) || !onBorder(points[points.length - 1], to)) throw new RangeError('row-group path must use endpoint borders');
+    for (var i = 1; i < points.length; i++) {
+      var a = points[i - 1], b = points[i];
+      if (a[0] !== b[0] && a[1] !== b[1]) throw new RangeError('row-group path must be orthogonal');
+      [from, to].forEach(function (n) {
+        var inset = 1e-6;
+        var crosses = a[0] === b[0]
+          ? a[0] > n.x + inset && a[0] < n.x + n.w - inset && Math.max(a[1], b[1]) > n.y + inset && Math.min(a[1], b[1]) < n.y + n.h - inset
+          : a[1] > n.y + inset && a[1] < n.y + n.h - inset && Math.max(a[0], b[0]) > n.x + inset && Math.min(a[0], b[0]) < n.x + n.w - inset;
+        if (crosses) throw new RangeError('row-group path crosses an endpoint interior');
+      });
+    }
+    return points;
+  }
+  return { errors: errors, layout: layout, anchorY: anchorY, routePoints: routePoints };
 })();
 if (typeof module === 'object' && module.exports) module.exports = ATLAS_ROW_LAYOUT;
