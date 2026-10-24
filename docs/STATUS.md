@@ -6,16 +6,30 @@ Full-product schema expansion, permalink output migration, actual game-chart cen
 
 ## Model route checkpoint
 
-Nous StepFun Free and OpenRouter Flint Free, North Mini Code Free and DeepSeek
-V4.1 Flash each passed 53 synthetic isolation/native-tool checks on this host.
-OpenRouter uses the owner-approved host-only key and explicit price/run guards.
-MiMo completed tools but failed the bounded test; Contributor did not pass price
-admission. Both implementation review axes have zero open findings. North Mini
-Code passed a 51-check public task and produced the reviewed
-[next Painter checklist](notes/painter-next-slice-outline.md). Flint's public task
-failed safely; North is the primary free route. See the
-[model matrix](notes/model-provider-options.md). Ubuntu CI40095626510 passes at
-implementation commit `a47533a`. Draft PR36 remains unmerged.
+The owner-selected implementation route is isolated OpenRouter MiMo2.6Flash
+with reasoning enabled. Its working mode permits remaining account credit,
+without a local call, duration or reservation ceiling. Host-only credentials,
+fresh price admission, transport limits and OS isolation remain mandatory.
+Implementation checkpoint `f15bd02` passed Ubuntu CI40114452650 in draft
+[PR #37](https://github.com/zhiland/ra9-atlas/pull/37). The repeated synthetic
+fixture passed53/53 checks; the original missing-terminal-newline probe remains
+a historical result, not a claim of universal output correctness.
+
+North Mini Code Free has a reviewed public task; Nous StepFun Free is a free
+reserve and DeepSeek V4.1 Flash a paid reserve. Flint failed a public task safely;
+Contributor failed price admission. Use the [runner guide](opencode-runner.md)
+and [model matrix](notes/model-provider-options.md). Work is reviewed and tested
+on the trusted host; no automatic merge or deployment is authorized.
+
+## Structural coverage tooling checkpoint
+
+The [structural report](authoring-data.md#structural-coverage-report) adds
+read-only JSON/Markdown inventory, source/ledger validation and43 regressions.
+MiMo implemented the complete package and one batch of review corrections;
+Codex reviewed both patches and ran trusted tests. Initial full `npm test`
+passed; final coverage tests and structural validation passed. Source data,
+ledger identities, browser runtime and publication gates remain unchanged.
+See the [implementation evidence](notes/mimo-coverage-task.md).
 
 ## Coverage documentation checkpoint
 

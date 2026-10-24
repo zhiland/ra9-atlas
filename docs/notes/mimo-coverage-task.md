@@ -9,7 +9,9 @@ Acceptance: [coverage-report-plan.md](coverage-report-plan.md).
 
 MiMo completed the five authorized files: a pure report builder and JSON/Markdown
 CLI, regression tests, npm scripts, authoring instructions and documentation
-index. The exact exported patch applied cleanly without implementation edits.
+index. The initial exported patch applied cleanly. One complete MiMo follow-up
+resolved the review findings; both exported patches were accepted without
+Codex implementation edits.
 Canonical source, ledger and browser runtime remain unchanged.
 
 The report observes 7 regions,128 nodes,113 edge records,111 active edges,
@@ -21,13 +23,16 @@ source approval, gameplay correctness, completeness or publication permission.
 
 - Complete export: `partial:false`,51/51 runner checks passed; server stopped.
 - Full patch scope reviewed before execution; `git apply --check` passed.
-- All29 new coverage-report tests passed as part of successful `npm test`.
+- Initial29 coverage-report tests passed as part of successful `npm test`.
+- Final43 coverage-report tests and full structural validation passed after
+  the follow-up; browser/runtime files remained unchanged.
 - Full browser suite:76 passed,0 failed;6 row-group browser checks also passed.
 - JSON and Markdown commands returned the expected canonical totals.
 - `git diff --check` passed. User's unrelated local draft was preserved.
-- Standards review:0 findings. Spec review found three P3 cases: sparse-array
+- Standards review:0 findings. Spec initially found three P3 cases: sparse-array
   validation, literal HTML in Markdown cells, and a truly empty-region fixture.
-  A single MiMo follow-up will resolve them before acceptance.
+  One MiMo follow-up fixed all three; independent Spec review confirmed closure
+  with no new findings in the limited diff.
 
 ## API evidence
 
@@ -41,3 +46,14 @@ Working mode used the owner-authorized remaining-account policy without local
 request, duration or reservation caps. Transport/isolation/model capacity limits
 remained. No paid fallback, top-up, automatic merge or deployment occurred.
 Raw diagnostics remain temporary local files and are not published with this note.
+
+## Follow-up and combined cost
+
+The follow-up passed51/51 runner checks with a complete two-file export and
+confirmed server shutdown. It used14 completions and cost USD0.012055032.
+Combined implementation and review-fix API cost: **USD0.044560196**
+(about4.456cents),39 completions. Reasoning was enabled in both runs.
+
+Final hosted CI is associated with the reviewable coverage-report PR; no merge
+or deployment is part of acceptance. The source/gameplay/publication limits
+above continue to apply.

@@ -9,13 +9,20 @@ const id = value => typeof value === 'string' && value.length > 0;
 
 const NOTE = 'Structural inventory only: these counts observe the committed source structure. They are not source approval, gameplay verification, completeness evidence, or publication permission. Conditions and uncertainties are reported as totals only, never attributed to chapters.';
 
-/* Pure structural coverage inventory. Validates arrays and identities, rejects
-   duplicate chapter/node/edge IDs and unknown chapter or endpoint references,
-   and never mutates the input. Counts are observations, not approval. */
+/* Pure structural coverage inventory. Validates dense arrays and identities,
+   rejects sparse-array holes, duplicate chapter/node/edge IDs and unknown
+   chapter or endpoint references, and never mutates the input. Counts are
+   observations, not approval. */
 function buildCoverageReport(atlas) {
   if (!object(atlas)) throw new Error('atlas: expected an object');
   for (const key of ['chapters', 'nodes', 'edges', 'conditions', 'uncertainties', 'conflicts']) {
-    if (!Array.isArray(atlas[key])) throw new Error(`atlas.${key}: expected an array`);
+    const list = atlas[key];
+    if (!Array.isArray(list)) throw new Error(`atlas.${key}: expected an array`);
+    // forEach skips holes while `.length` still counts them, so a sparse array
+    // would silently undercount entries; every index must be a present element.
+    for (let i = 0; i < list.length; i++) {
+      if (!(i in list)) throw new Error(`${key}[${i}]: expected an object, found a sparse array hole`);
+    }
   }
   const chapters = atlas.chapters;
   const chapterIds = new Set();
@@ -119,11 +126,16 @@ function buildCoverageReport(atlas) {
 }
 
 /* Deterministic Markdown rendering. Table cells escape backslashes and pipes,
-   and turn CR/LF line breaks into <br>, so declared text cannot break layout. */
+   escape HTML-significant characters (&, <, >) so declared text can never
+   introduce raw markup, and only then turn CR/LF line breaks into the
+   reporter's own <br>, so declared text cannot break layout. */
 function renderMarkdown(report) {
   const cell = value => String(value)
     .replace(/\\/g, '\\\\')
     .replace(/\|/g, '\\|')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
     .replace(/\r\n|\r|\n/g, '<br>');
   const lines = [
     '# Atlas structural coverage report',

@@ -22,7 +22,8 @@ const makeFixture = () => ({
   chapters: [
     { id: 'alpha', name: 'Alpha', coverage: { status: 'partial', scope: 'Alpha | slice\nsecond line' } },
     { id: 'beta', name: 'Beta', coverage: { status: 'checked-against-chart', scope: 'Beta fixture scope.' } },
-    { id: 'gamma', name: 'Gamma', coverage: { status: 'partial', scope: 'Zero-edge chapter.' } }
+    { id: 'gamma', name: 'Gamma', coverage: { status: 'partial', scope: 'Zero-edge chapter.' } },
+    { id: 'omega', name: 'Omega', coverage: { status: 'partial', scope: 'Truly empty region: no nodes and no edges.' } }
   ],
   nodes: [
     { id: 'a1', chapter: 'alpha' },
@@ -50,7 +51,7 @@ test('fixture report: versioned envelope, totals and source-order rows', () => {
     format: 'ra9-atlas.coverage-report',
     version: 1,
     totals: {
-      regions: 3,
+      regions: 4,
       nodes: 5,
       edgeRecords: 6,
       activeEdges: 4,
@@ -82,6 +83,13 @@ test('fixture report: versioned envelope, totals and source-order rows', () => {
         nodes: 1, internalActiveEdges: 0,
         outgoingCrossChapterActiveEdges: 0, incomingCrossChapterActiveEdges: 0,
         withdrawnEdges: 0
+      },
+      {
+        id: 'omega', name: 'Omega',
+        coverage: { status: 'partial', scope: 'Truly empty region: no nodes and no edges.' },
+        nodes: 0, internalActiveEdges: 0,
+        outgoingCrossChapterActiveEdges: 0, incomingCrossChapterActiveEdges: 0,
+        withdrawnEdges: 0
       }
     ],
     note: NOTE
@@ -106,6 +114,28 @@ test('cross-chapter and withdrawn records never inflate internal counts', () => 
   assert.equal(rows.reduce((n, row) => n + row.withdrawnEdges, 0), totals.withdrawnEdges);
 });
 
+test('truly empty region keeps its row in source order with every counter zero', () => {
+  const atlas = makeFixture();
+  // Gamma is only a zero-edge chapter (it still owns node g1); omega is the
+  // truly empty region: no nodes and no edges at all.
+  assert.ok(atlas.nodes.some(node => node.chapter === 'gamma'));
+  assert.ok(!atlas.nodes.some(node => node.chapter === 'omega'));
+  assert.ok(!atlas.edges.some(edge => edge.from === 'omega' || edge.to === 'omega'));
+  const report = buildCoverageReport(atlas);
+  assert.deepEqual(report.chapters.map(row => row.id), ['alpha', 'beta', 'gamma', 'omega']);
+  assert.equal(report.totals.regions, 4);
+  const empty = report.chapters[3];
+  assert.equal(empty.id, 'omega');
+  assert.deepEqual(
+    [empty.nodes, empty.internalActiveEdges, empty.outgoingCrossChapterActiveEdges, empty.incomingCrossChapterActiveEdges, empty.withdrawnEdges],
+    [0, 0, 0, 0, 0]
+  );
+  assert.equal(report.chapters[2].nodes, 1);
+  // The zero row is also retained in the rendered table.
+  const markdown = renderMarkdown(report);
+  assert.ok(markdown.includes('| Omega | omega | partial | Truly empty region: no nodes and no edges. | 0 | 0 | 0 | 0 | 0 |'));
+});
+
 test('does not mutate its input', () => {
   const atlas = makeFixture();
   const before = structuredClone(atlas);
@@ -126,11 +156,58 @@ for (const [name, mutate, expected] of [
   ['unknown edge to', atlas => { atlas.edges[2].to = 'missing2'; }, /edges\[2\]\.to: unknown node "missing2"/],
   ['non-string edge kind', atlas => { atlas.edges[0].kind = 7; }, /edges\[0\]\.kind/],
   ['missing chapter coverage', atlas => { delete atlas.chapters[0].coverage; }, /coverage/],
-  ['duplicate uncertainty id', atlas => { atlas.uncertainties.push({ id: 'u_alpha' }); }, /duplicate uncertainties id/]
+  ['duplicate uncertainty id', atlas => { atlas.uncertainties.push({ id: 'u_alpha' }); }, /duplicate uncertainties id/],
+  ['undefined chapter entry', atlas => { atlas.chapters[0] = undefined; }, /chapters\[0\]: expected an object/],
+  ['undefined node entry', atlas => { atlas.nodes[1] = undefined; }, /nodes\[1\]: expected an object/],
+  ['nonobject node entry', atlas => { atlas.nodes[2] = 42; }, /nodes\[2\]: expected an object/],
+  ['null edge entry', atlas => { atlas.edges[0] = null; }, /edges\[0\]: expected an object/]
 ]) test(`reject ${name}`, () => {
   const atlas = makeFixture();
   const target = mutate(atlas);
   assert.throws(() => buildCoverageReport(target === undefined ? atlas : target), expected);
+});
+
+for (const key of ['chapters', 'nodes', 'edges', 'conditions', 'uncertainties', 'conflicts']) {
+  test(`reject sparse-array hole in ${key}`, () => {
+    const atlas = makeFixture();
+    atlas[key] = new Array(1);
+    assert.throws(
+      () => buildCoverageReport(atlas),
+      new RegExp(`${key}\\[0\\]: expected an object, found a sparse array hole`)
+    );
+  });
+}
+
+test('reject holes sitting between valid entries', () => {
+  const atlas = makeFixture();
+  const nodes = new Array(5);
+  nodes[0] = { id: 'a1', chapter: 'alpha' };
+  nodes[2] = { id: 'b1', chapter: 'beta' };
+  nodes[4] = { id: 'g1', chapter: 'gamma' };
+  atlas.nodes = nodes;
+  assert.throws(() => buildCoverageReport(atlas), /nodes\[1\]: expected an object, found a sparse array hole/);
+});
+
+test('reject mixed holes across input arrays', () => {
+  const holeInEdges = makeFixture();
+  delete holeInEdges.edges[4];
+  assert.throws(() => buildCoverageReport(holeInEdges), /edges\[4\]: expected an object, found a sparse array hole/);
+  const holeInChapters = makeFixture();
+  delete holeInChapters.chapters[1];
+  assert.throws(() => buildCoverageReport(holeInChapters), /chapters\[1\]: expected an object, found a sparse array hole/);
+  const holesInSeveralArrays = makeFixture();
+  delete holesInSeveralArrays.conditions[0];
+  holesInSeveralArrays.uncertainties = new Array(1);
+  holesInSeveralArrays.conflicts = new Array(2);
+  // Validation order reports the first offending array: conditions before
+  // uncertainties and conflicts.
+  assert.throws(() => buildCoverageReport(holesInSeveralArrays), /conditions\[0\]: expected an object, found a sparse array hole/);
+  const holeOnlyInConflicts = makeFixture();
+  holeOnlyInConflicts.conflicts = new Array(2);
+  assert.throws(() => buildCoverageReport(holeOnlyInConflicts), /conflicts\[0\]: expected an object, found a sparse array hole/);
+  const holeOnlyInUncertainties = makeFixture();
+  holeOnlyInUncertainties.uncertainties = new Array(1);
+  assert.throws(() => buildCoverageReport(holeOnlyInUncertainties), /uncertainties\[0\]: expected an object, found a sparse array hole/);
 });
 
 const canonicalTotals = {
@@ -196,13 +273,31 @@ test('markdown escapes pipes and newlines in declared text', () => {
   const markdown = renderMarkdown(buildCoverageReport(makeFixture()));
   assert.ok(markdown.includes('Alpha \\| slice<br>second line'));
   assert.ok(!markdown.includes('Alpha | slice\nsecond'));
-  assert.match(markdown, /\| Regions \| 3 \|/);
+  assert.match(markdown, /\| Regions \| 4 \|/);
   assert.match(markdown, /\| Nodes \| 5 \|/);
   assert.match(markdown, /\| Active internal edges \| 2 \|/);
   assert.match(markdown, /\| Active cross-chapter edges \| 2 \|/);
   assert.match(markdown, /## Verification limits/);
   assert.match(markdown, /Structural inventory only/);
   assert.ok(markdown.endsWith('\n'));
+});
+
+test('markdown keeps hostile declared text literal: HTML escaped, pipes and lines intact', () => {
+  const atlas = makeFixture();
+  atlas.chapters[0].name = '<script>Alpha & Omega</script>';
+  atlas.chapters[1].coverage.scope = 'use &lt;tag&gt; &amp; entities\r\nsecond line | pipe \\ path';
+  const markdown = renderMarkdown(buildCoverageReport(atlas));
+  // Hostile chapter name: every input <, > and & is escaped before the row.
+  assert.ok(markdown.includes('| &lt;script&gt;Alpha &amp; Omega&lt;/script&gt; | alpha |'));
+  // Hostile scope: entities stay literal text, CRLF still becomes our <br>,
+  // and pipe/backslash escaping is unchanged.
+  assert.ok(markdown.includes('use &amp;lt;tag&amp;gt; &amp;amp; entities<br>second line \\| pipe \\\\ path'));
+  // Once the reporter's own <br> tags are removed, no raw input markup remains.
+  const stripped = markdown.replace(/<br>/g, '');
+  assert.ok(!stripped.includes('<'));
+  assert.ok(!stripped.includes('>'));
+  // Unchanged declared text keeps the existing pipe/newline behavior.
+  assert.ok(markdown.includes('Alpha \\| slice<br>second line'));
 });
 
 test('requiring the module has no CLI side effects', () => {
