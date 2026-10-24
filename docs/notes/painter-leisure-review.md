@@ -44,12 +44,22 @@ recorded separately. Raw images stay outside Git.
 
 ## Standards
 
-Pending fixed-point review.
+Review used `git diff 031309c...ed00495`. No actionable documented-standard
+breach or material baseline smell was found. Access/authorship, explicit editorial
+group labels, common exits and blocked publication are consistent. Standards: zero findings.
 
 ## Spec
 
-Pending review against acceptance and the prepared input.
+Review against acceptance and the prepared input found no missing requirement
+or scope creep. Shared checkpoint, row indices, common exits, four unknowns and
+absent runtime/legacy reconciliation match the spec. Spec: zero findings.
 
 ## Verification
 
-Pending packet checks and full npm. No merge or deployment is authorized.
+Full npm passed, including six new leisure packet regressions and 72 browser
+checks. Existing data, runtime, ledger and four older packets are byte-identical
+to the base. Source, Standards and Spec reviews have no open findings.
+No merge or deployment is authorized. [Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/40067282285) passed
+at implementation `ed00495`, including all Node/Chromium and mocked Python
+checks. Draft [PR #32](https://github.com/zhiland/ra9-atlas/pull/32) is stacked
+on #31. Later checkpoint edits record documentation only.

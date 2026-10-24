@@ -12,7 +12,9 @@ common exits leave brackets without per-row indices or invented completion rules
 Four unknowns retain semantics and game/build limits. Publication stays blocked.
 The shared checkpoint is not a new runtime node. The displayed atlas remains
 123 nodes/106 records/104 active connectors across seven regions. Current runtime
-support remains binary; source preparation is not runtime approval.
+support remains binary; source preparation is not runtime approval. Draft
+[PR #32](https://github.com/zhiland/ra9-atlas/pull/32) passed Ubuntu CI at
+`ed00495`. Source, Standards and Spec reviews have no open findings.
 
 ## Preparation choice-version checkpoint
 
