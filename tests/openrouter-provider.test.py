@@ -243,6 +243,22 @@ class OpenRouterTests(unittest.TestCase):
         self.assertNotIn(str(router.KEY_FILE), json.dumps(config))
         self.assertEqual(config['providers']['ra9-openrouter']['settings']['apiKey'], 'public')
 
+    def test_working_mode_disables_client_deadlines_for_buffered_reasoning(self):
+        provider = router.OpenRouterProvider(MODEL, '0', long_run=True)
+        with patch.object(router, 'metadata', return_value=row()):
+            provider.prepare()
+        config = runner.configuration(12345, Path('/synthetic'), provider)
+        transport = config['providers']['ra9-openrouter']['settings']
+        # The pinned native client otherwise waits only 300000ms for headers.
+        # The bounded relay sends headers only after its full upstream response.
+        self.assertIs(transport.get('headerTimeout'), False)
+        self.assertIs(transport.get('timeout'), False)
+        probe = router.OpenRouterProvider(MODEL, '0.02')
+        probe.metadata = row()
+        bounded = runner.configuration(12345, Path('/synthetic'), probe)
+        self.assertNotIn('headerTimeout', bounded['providers']['ra9-openrouter']['settings'])
+        self.assertNotIn('timeout', bounded['providers']['ra9-openrouter']['settings'])
+
     def test_transport_refuses_redirects_and_other_routes(self):
         connection = Mock(); response = connection.getresponse.return_value
         response.status = 302; response.read.return_value = b''

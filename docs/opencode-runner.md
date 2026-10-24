@@ -85,6 +85,11 @@ remaining account credit. It has no local call count, run duration or reservatio
 ceiling. Catalog output/context capacities replace probe token caps, and reasoning
 is explicitly enabled. Account-credit queries and unchanged quote/price guards
 run before each completion. No top-up, fallback or automatic retry is performed.
+The pinned native client also has `headerTimeout:false` and `timeout:false`
+in working mode: its default300000ms header deadline otherwise races the
+buffered relay during long reasoning. Probe deadlines remain unchanged.
+The host performs no automatic retry; OpenCode can retry transport failures,
+so this setting removes the demonstrated header-timeout retry loop.
 The technical relay framing and socket-idle bounds remain. Numeric progress is
 printed after completions. If a public task stops early, the stopped workspace
 still exports a clearly marked partial patch for review. All isolation and

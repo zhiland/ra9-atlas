@@ -12,6 +12,7 @@ Use these documents for current work:
 | [Authoring package review](notes/authoring-pipeline-review.md) | Separate code/source review and execution boundary |
 | [Canonical authoring](authoring-data.md) | Versioned JSON, identity ledger and deterministic generation |
 | [Structural coverage report](authoring-data.md#structural-coverage-report) | Read-only coverage CLI, deterministic totals, commands and evidence limits |
+| [Semantic atlas diff](authoring-data.md#semantic-atlas-diff) | Read-only two-snapshot structural diff, ordering, legacy indices and limits |
 | [Painter leisure runtime](notes/painter-leisure-runtime.md) | Exact bounded integration, frozen old graph and grouped-row checks |
 | [Painter leisure review](notes/painter-leisure-review.md) | Grouped-row preparation, seven traces and source/gate limits |
 | [Domain language](../CONTEXT.md) | Row groups and common exits without inferred player agency |

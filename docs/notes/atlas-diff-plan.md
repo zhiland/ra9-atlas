@@ -1,0 +1,25 @@
+# Semantic atlas diff implementation
+
+Date: 2026-10-24. Public implementation base: `df6d3fedd9ae929f8bebf95dea9f6ec08ca97480`.
+Assigned to isolated MiMo working mode.
+
+Implement one complete Stage2 authoring/review package: a read-only semantic atlas diff. The roadmap requires batches to be generated, reviewed, validated and diffed without losing provenance or silently changing identity. Existing coverage report counts one snapshot; this new tool compares two independently validated snapshots. Read docs/authoring-data.md, docs/data-contract.md, tools/data/build-atlas.js and the coverage reporter/tests for local style. Only public repository content is admitted. Work to completion; Codex will review the whole patch and execute tests. Native file tools only; shell and integrations are unavailable.
+
+Allowed changes ONLY:
+- tools/data/atlas-diff.js (new)
+- tests/atlas-diff.test.js (new)
+- package.json
+- docs/authoring-data.md
+- docs/README.md
+
+No data, ledger, prototype/runtime, runner, source-claim, URL or evidence-status changes. No dependencies.
+
+Export a pure buildAtlasDiff(beforeAtlas, afterAtlas) function and renderMarkdown(report); imports have no CLI side effects. Atlas here is the inner source.atlas object. Support the six keyed arrays chapters,nodes,edges,conditions,uncertainties,conflicts; refs/detail are key-object maps, meta/canvas are objects. Validate all required collection/map types, dense array entries and nonempty string IDs, rejecting duplicates within each array; errors identify side, collection and index. Tests can use small representative atlases; the CLI uses compileSource for full source/ledger validation. Never mutate either input or return references into them.
+
+Report format='ra9-atlas.semantic-diff',version=1, deterministic and free of timestamps/absolute paths. For each six-array collection, provide added IDs, removed IDs, changed entries [{id,fields:[top-level changed field names]}], and reordered:boolean. Define reordered by relative order of IDs COMMON to both arrays, so append/add/remove alone does not count as reordering. For refs and detail, provide added/removed keys and changed entries with key + changed field names where both values are records; use an explicit value-change marker if a value type changes. For meta/canvas, list changed top-level fields. Compare nested JSON values deeply: object key insertion order is irrelevant, array value order matters, absent fields differ from null. Use stable lexical sorting (not locale-sensitive) for identifiers, keys and field lists in output. Include legacyIndexChanges.nodes and .edges: [{id,before,after}] for retained IDs whose array indices moved, sorted by ID. Add hasChanges covering every added/removed/changed/reordered/index-change case. Do not decide which version is true or approved; no inferred gameplay/source/coverage/publication claims. A clear note states structural differences only, not approval, compatibility permission, gameplay verification or release readiness.
+
+CLI requires all four explicit flags --before-source PATH --before-ledger PATH --after-source PATH --after-ledger PATH. Optional --markdown; reject unknown flags, missing values or missing required flags. Read both source envelopes/ledgers, call compileSource on EACH before diffing inner atlas. Never eval generated JS. Default stdout JSON; Markdown gives readable sections for every collection, metadata/reference/detail changes, legacy index movements and limits. Escape &<> and table pipes/backslashes/newlines safely; own <br> is permitted. Valid equal or changed inputs both exit0; invalid/missing JSON/files/ledger mismatches exit nonzero with no report stdout. Never rewrite any input, generated artifact or default report file.
+
+Tests must be meaningful: small two-snapshot fixture with simultaneous additions/removals, changed provenance/coverage/withdrawal fields, nested object-key reorder equivalence, nested array reorder differences, absent-vs-null, duplicate/invalid/sparse IDs, no mutation/deep frozen inputs, deterministic lexical ordering, node/edge index moves, insertion without relative reorder and actual relative reorder, identical current canonical source yielding hasChanges:false, JSON/Markdown CLI, required/unknown/missing flags, missing/bad JSON and stale BEFORE as well as AFTER ledgers, no writes and import side effects. Validate Markdown escaping with declared hostile values. Use temporary fixture files only in tests, clean them afterward.
+
+Add npm scripts diff:atlas, diff:atlas:md, test:diff; include test:diff in npm test without disturbing existing scripts. Document the schema, ordering and legacy-index meaning, example four-file commands, exit behavior, validation/read-only boundaries; add a docs index entry. Tests and docs belong to the same package. Finish with a concise summary, test commands for Codex and honest uncertainties. Do not claim you ran tests. Finish when accepted scope is implemented; no unrelated refactor or artificial time-filling.

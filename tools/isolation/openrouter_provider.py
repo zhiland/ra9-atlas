@@ -170,6 +170,10 @@ class OpenRouterProvider:
             'input': float(Decimal(prices['prompt']) * 1000000),
             'output': float(Decimal(prices['completion']) * 1000000)}
         if self.long_run:
+            # The relay buffers bounded upstream output before sending headers.
+            # Native OpenCode defaults to a 300s header deadline and retries on
+            # that timeout, even while a reasoning response is still arriving.
+            settings['settings'].update({'headerTimeout': False, 'timeout': False})
             settings['models'][self.alias]['limit'] = {
                 'context': self.metadata['context_length'], 'output': self.output_limit}
         return settings
