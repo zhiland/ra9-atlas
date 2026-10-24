@@ -14,7 +14,8 @@ admission. Both implementation review axes have zero open findings. North Mini
 Code passed a 51-check public task and produced the reviewed
 [next Painter checklist](notes/painter-next-slice-outline.md). Flint's public task
 failed safely; North is the primary free route. See the
-[model matrix](notes/model-provider-options.md). Hosted CI is pending.
+[model matrix](notes/model-provider-options.md). Ubuntu CI40095626510 passes at
+implementation commit `a47533a`. Draft PR36 remains unmerged.
 
 ## Coverage documentation checkpoint
 

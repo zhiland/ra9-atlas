@@ -112,7 +112,11 @@ API cost USD0, one exported checklist and confirmed server shutdown. Base
 the patch and checked `git apply --check` before application, then clarified
 that four unknowns refer to Painter leisure rather than the entire atlas.
 The [next-slice checklist](painter-next-slice-outline.md) does not claim fresh
-source inspection. Runtime data remain unchanged. Hosted CI is pending.
+source inspection. Runtime data remain unchanged.
+[Ubuntu CI40095626510](https://github.com/zhiland/ra9-atlas/actions/runs/40095626510)
+passed at implementation commit `a47533a`, including the full Node/browser suite
+and all Python checks. Draft [PR36](https://github.com/zhiland/ra9-atlas/pull/36)
+remains unmerged. Subsequent checkpoint edits record verification only.
 
 ## Sources
 
