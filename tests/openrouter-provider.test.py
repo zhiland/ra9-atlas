@@ -15,7 +15,8 @@ MODEL = 'xiaomi/mimo-v2.6-flash'
 
 def row(model=MODEL):
     return {'id': model, 'context_length': 1050000,
-            'supported_parameters': ['tools', 'max_tokens'],
+            'supported_parameters': ['tools', 'max_tokens', 'reasoning'],
+            'top_provider': {'max_completion_tokens': 131072},
             'pricing': {'prompt': '0.00000014', 'completion': '0.00000028', 'input_cache_read': '0.000000014'}}
 
 
@@ -25,6 +26,77 @@ def request():
 
 
 class OpenRouterTests(unittest.TestCase):
+    def test_self_test_rejects_crlf_instead_of_normalizing_it(self):
+        for output, valid in ((runner.SELF_TEST_CONTENT.encode(), True),
+                              (runner.SELF_TEST_CONTENT.replace('\n', '\r\n').encode(), False)):
+            with tempfile.TemporaryDirectory() as directory:
+                instance = Mock(root=Path(directory), project=Path(directory), report={})
+                events = [json.dumps({'type': 'tool_use', 'part': {'tool': name, 'state': {'status': 'completed'}}})
+                          for name in ('read', 'write', 'glob', 'grep')]
+                def run_prompt(_prompt):
+                    (instance.project / 'result.txt').write_bytes(output)
+                    return '\n'.join(events)
+                def check(name, passed):
+                    if not passed: raise RuntimeError(name)
+                instance.run_prompt.side_effect = run_prompt
+                instance.check.side_effect = check
+                with patch.object(runner, 'IsolatedRun', return_value=instance), patch.object(sys, 'argv', ['runner', 'self-test']):
+                    if valid: self.assertEqual(runner.main(), 0)
+                    else:
+                        with self.assertRaisesRegex(RuntimeError, 'real model read/edit'): runner.main()
+
+    def test_long_run_is_explicit_mimo_only_and_forces_reasoning(self):
+        with self.assertRaises(ValueError): router.OpenRouterProvider(MODEL, '1')
+        with self.assertRaises(ValueError): router.OpenRouterProvider('deepseek/deepseek-v4.1-flash', '1', long_run=True)
+        with self.assertRaises(ValueError): router.OpenRouterProvider(MODEL, '0.01', long_run=True)
+        provider = router.OpenRouterProvider(MODEL, long_run=True)
+        self.assertEqual((provider.request_limit, provider.budget, provider.body_limit), (None, None, 8 * 1024 * 1024))
+        value = request(); value['reasoning'] = {'enabled': False}; value['max_tokens'] = 2048
+        with patch.object(router, 'metadata', return_value=row()), patch.object(router, 'account_balance', return_value=router.Decimal('1')), patch.object(router, 'exchange', return_value=(200, 'application/json', b'{}')) as network:
+            provider.prepare()
+            provider.requests = 125
+            provider.reserved = router.Decimal('99')
+            provider.complete(value)
+        payload = json.loads(network.call_args.args[2])
+        self.assertEqual(payload['reasoning'], {'enabled': True})
+        self.assertEqual(payload['max_tokens'], 131072)
+        self.assertEqual(provider.requests, 126)
+        self.assertIsNone(provider.summary()['runBudgetUSD'])
+        self.assertEqual(network.call_args.kwargs['timeout'], 300)
+        self.assertFalse(payload['provider']['allow_fallbacks'])
+
+    def test_long_run_stops_on_account_exhaustion_without_paid_post(self):
+        provider = router.OpenRouterProvider(MODEL, long_run=True)
+        with patch.object(router, 'metadata', return_value=row()), patch.object(router, 'account_balance', return_value=router.Decimal(0)), patch.object(router, 'exchange') as network:
+            provider.prepare()
+            with self.assertRaises(ValueError): provider.complete(request())
+        network.assert_not_called()
+        self.assertEqual(provider.stop_reason, 'account_exhausted')
+        self.assertEqual(provider.requests, 0)
+
+    def test_account_balance_is_numeric_only_and_fail_closed(self):
+        for credits, usage, expected in ((1.5, .5, '1.0'), (1, 2, '0')):
+            raw = json.dumps({'data': {'total_credits': credits, 'total_usage': usage}}).encode()
+            with patch.object(router, 'exchange', return_value=(200, 'application/json', raw)):
+                self.assertEqual(router.account_balance(), router.Decimal(expected))
+        for document in ({}, {'data': None}, {'data': {'total_credits': True, 'total_usage': 0}},
+                         {'data': {'total_credits': 'NaN', 'total_usage': 0}}):
+            with patch.object(router, 'exchange', return_value=(200, 'application/json', json.dumps(document).encode())):
+                with self.assertRaises(ValueError): router.account_balance()
+
+    def test_partial_patch_export_retains_changes_without_claiming_success(self):
+        with tempfile.TemporaryDirectory() as directory:
+            instance = object.__new__(runner.IsolatedRun)
+            instance.root = Path(directory); instance.project = instance.root / 'project'; instance.project.mkdir()
+            instance.report = {'passed': False}
+            before = runner.audit_tree(instance.project)
+            (instance.project / 'work.txt').write_text('PUBLIC_PARTIAL\n')
+            instance.export_patch(before, 'a' * 40, partial=True)
+            self.assertTrue(instance.report['partial'])
+            self.assertFalse(instance.report['passed'])
+            self.assertEqual(instance.report['changedFiles'], ['work.txt'])
+            self.assertIn('+PUBLIC_PARTIAL', (instance.root / 'changes.patch').read_text())
+
     def test_malformed_catalog_envelopes_fail_closed_with_value_error(self):
         for document in (None, [], {'data': None}, {'data': [None]}, {'data': ['model']}):
             with patch.object(router, 'exchange', return_value=(200, 'application/json', json.dumps(document).encode())):

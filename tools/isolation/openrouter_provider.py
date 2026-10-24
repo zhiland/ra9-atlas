@@ -17,6 +17,31 @@ KEY_FILE = Path.home() / '.env'
 MAX_INPUT_PRICE = Decimal('0.20')  # USD per million tokens
 MAX_OUTPUT_PRICE = Decimal('1.00')
 OUTPUT_TOKENS = 2048
+MAX_REQUEST = 8 * 1024 * 1024  # Matches the canonical relay's framing bound.
+
+
+def account_balance():
+    """Return only the remaining credit amount, not account identifiers."""
+    status, _, data = exchange('GET', '/api/v1/credits', authenticated=True)
+    if status != 200:
+        raise ValueError('OpenRouter balance check unavailable')
+    try:
+        value = json.loads(data)['data']
+        amounts = [value['total_credits'], value['total_usage']]
+        numbers = [Decimal(str(v)) for v in amounts]
+        if any(isinstance(v, bool) for v in amounts) or any(not n.is_finite() or n < 0 for n in numbers):
+            raise ValueError('Invalid credit amount')
+        return max(Decimal(0), numbers[0] - numbers[1])
+    except (KeyError, TypeError, InvalidOperation, ValueError):
+        raise ValueError('OpenRouter balance response invalid') from None
+
+
+def output_capacity(row):
+    top = row.get('top_provider')
+    value = top.get('max_completion_tokens') if isinstance(top, dict) else None
+    if type(value) is not int or not 0 < value <= row['context_length']:
+        raise ValueError('Explicit model completion capacity required')
+    return value
 
 
 def read_key():
@@ -38,14 +63,14 @@ def read_key():
     return key
 
 
-def exchange(method, path, body=None, authenticated=False):
+def exchange(method, path, body=None, authenticated=False, timeout=90):
     if (method, path) not in (('GET', '/api/v1/models'), ('GET', '/api/v1/key'),
                              ('GET', '/api/v1/credits'), ('POST', '/api/v1/chat/completions')):
         raise ValueError('Forbidden OpenRouter endpoint')
     headers = {'Content-Type': 'application/json', 'User-Agent': 'ra9-atlas-controlled-runner/1'}
     if authenticated:
         headers['Authorization'] = 'Bearer ' + read_key()
-    connection = http.client.HTTPSConnection('openrouter.ai', timeout=90)
+    connection = http.client.HTTPSConnection('openrouter.ai', timeout=timeout)
     try:
         connection.request(method, path, body=body, headers=headers)
         response = connection.getresponse()
@@ -99,16 +124,23 @@ class OpenRouterProvider:
     boundary_label = 'OpenRouter credential-directory read/list/write denied'
     readiness_label = 'OpenRouter host credential available'
 
-    def __init__(self, model, budget='0', allow_training=False):
+    def __init__(self, model, budget='0', allow_training=False, long_run=False):
         if model not in MODELS:
             raise ValueError('Unsupported OpenRouter model')
         if model == 'meta/muse-spark-1.3-contributor' and not allow_training:
             raise ValueError('Contributor route requires explicit public-data training opt-in')
         self.model, self.metadata = model, None
         self.allow_training = allow_training
-        self.budget = Decimal(budget)
-        if not self.budget.is_finite() or not 0 <= self.budget <= Decimal('0.10'):
-            raise ValueError('Run budget must be between USD0 and USD0.10')
+        if long_run and model != 'xiaomi/mimo-v2.6-flash':
+            raise ValueError('Long run is admitted only for MiMo')
+        self.long_run = long_run
+        self.request_limit = None if long_run else 6
+        self.output_limit = None if long_run else OUTPUT_TOKENS
+        self.body_limit = MAX_REQUEST if long_run else 65536
+        amount = Decimal(budget)
+        if not amount.is_finite() or not 0 <= amount <= Decimal('0.10') or (long_run and amount != 0):
+            raise ValueError('Run budget exceeds the explicitly selected mode ceiling')
+        self.budget = None if long_run else amount
         self.reserved = Decimal(0)
         self.requests = 0
         self.stop_reason = None
@@ -116,11 +148,17 @@ class OpenRouterProvider:
         self.reported_cost = Decimal(0)
         self.cost_reports = 0
         self.reported_tokens = {'prompt_tokens': 0, 'completion_tokens': 0}
+        self.reasoning_tokens = 0
+        self.reasoning_reports = 0
         self.lock = threading.Lock()
 
     def prepare(self):
         self.metadata = metadata(self.model)
-        if not self.model.endswith(':free') and self.budget == 0:
+        if self.long_run:
+            if 'reasoning' not in self.metadata['supported_parameters']:
+                raise ValueError('Reasoning support required for autonomous MiMo')
+            self.output_limit = output_capacity(self.metadata)
+        elif not self.model.endswith(':free') and self.budget == 0:
             raise ValueError('Paid OpenRouter route requires explicit run budget')
 
     def settings(self, relay_port):
@@ -131,6 +169,9 @@ class OpenRouterProvider:
         settings['models'][self.alias]['cost'] = {
             'input': float(Decimal(prices['prompt']) * 1000000),
             'output': float(Decimal(prices['completion']) * 1000000)}
+        if self.long_run:
+            settings['models'][self.alias]['limit'] = {
+                'context': self.metadata['context_length'], 'output': self.output_limit}
         return settings
 
     def ready(self):
@@ -155,11 +196,22 @@ class OpenRouterProvider:
         if any(t.get('type') != 'function' for t in value.get('tools', [])):
             raise ValueError('OpenRouter server-side tools are forbidden')
         row = metadata(self.model)  # Revalidate prices before every completion.
+        if self.long_run:
+            if self.output_limit is None:
+                raise ValueError('Autonomous MiMo must pass preparation first')
+            if 'reasoning' not in row['supported_parameters'] or output_capacity(row) < self.output_limit:
+                raise ValueError('MiMo reasoning/capacity admission changed')
+            if account_balance() <= 0:
+                with self.lock:
+                    self.stop_reason = 'account_exhausted'
+                raise ValueError('OpenRouter account balance exhausted')
         request = dict(value)
         requested_output = request.pop('max_completion_tokens', request.pop('max_tokens', OUTPUT_TOKENS))
         if type(requested_output) is not int or requested_output <= 0:
             raise ValueError('Invalid OpenRouter output limit')
-        request['max_tokens'] = min(requested_output, OUTPUT_TOKENS)
+        request['max_tokens'] = self.output_limit if self.long_run else min(requested_output, OUTPUT_TOKENS)
+        if self.long_run:
+            request['reasoning'] = {'enabled': True}
         request['provider'] = {'allow_fallbacks': False, 'require_parameters': True,
             'data_collection': 'allow' if self.allow_training else 'deny',
             'max_price': {'prompt': float(Decimal(row['pricing']['prompt']) * 1000000),
@@ -169,7 +221,7 @@ class OpenRouterProvider:
             request['provider']['max_price'].update(prompt=0, completion=0)
         request['usage'] = {'include': True}
         body = json.dumps(request, ensure_ascii=True).encode()
-        if len(body) > 65536:
+        if len(body) > self.body_limit:
             raise ValueError('OpenRouter request exceeds bounded probe size')
         # Conservative reservation, not a provider-enforced account billing cap.
         # Reserve twice the serialized byte count plus 2048 framing tokens.
@@ -178,15 +230,16 @@ class OpenRouterProvider:
                        + request['max_tokens'] * Decimal(row['pricing']['completion']))
         with self.lock:
             # Split guards so the host report records which limit stopped the run.
-            if self.requests >= 6:
+            if self.request_limit is not None and self.requests >= self.request_limit:
                 self.stop_reason = 'request_limit'
                 raise ValueError('OpenRouter probe request/budget limit reached')
-            if self.reserved + reservation > self.budget:
+            if self.budget is not None and self.reserved + reservation > self.budget:
                 self.stop_reason = 'budget_exhausted'
                 raise ValueError('OpenRouter probe request/budget limit reached')
             self.requests += 1
             self.reserved += reservation  # Never refund failed or interrupted requests.
-        status, content_type, data = exchange('POST', '/api/v1/chat/completions', body, authenticated=True)
+        status, content_type, data = exchange('POST', '/api/v1/chat/completions', body, authenticated=True,
+                                             timeout=300 if self.long_run else 90)
         if status != 200:
             data = json.dumps({'error': {'message': 'Controlled inference refused: HTTP %s' % status}}).encode()
             content_type = 'application/json'
@@ -195,6 +248,11 @@ class OpenRouterProvider:
             raise ValueError('Unexpected OpenRouter response framing')
         if status == 200:
             self.record_usage(content_type, data)
+        elif status == 402:
+            with self.lock:
+                self.stop_reason = 'account_exhausted'
+        if self.long_run:
+            print(json.dumps({'event': 'provider_usage', **self.summary()}), flush=True)
         return status, content_type, data
 
     def record_usage(self, content_type, data):
@@ -226,11 +284,21 @@ class OpenRouterProvider:
             for field in self.reported_tokens:
                 if type(usage.get(field)) is int and usage[field] >= 0:
                     self.reported_tokens[field] += usage[field]
+            details = usage.get('completion_tokens_details')
+            reasoning = details.get('reasoning_tokens') if isinstance(details, dict) else None
+            if type(reasoning) is int and reasoning >= 0:
+                self.reasoning_tokens += reasoning
+                self.reasoning_reports += 1
 
     def summary(self):
         return {'requestCount': self.requests, 'reservedUSD': str(self.reserved),
                 'stopReason': self.stop_reason,
-                'runBudgetUSD': str(self.budget), 'trainingOptIn': self.allow_training,
+                'longRun': self.long_run, 'requestLimit': self.request_limit,
+                'outputLimit': self.output_limit, 'reasoningRequested': self.long_run,
+                'runBudgetUSD': None if self.budget is None else str(self.budget),
+                'spendPolicy': 'account_balance' if self.long_run else 'run_reservation',
+                'trainingOptIn': self.allow_training,
                 'usageReports': self.usage_reports, 'costReports': self.cost_reports,
                 'apiReportedCostUSD': str(self.reported_cost) if self.cost_reports else None,
-                'apiReportedTokens': dict(self.reported_tokens)}
+                'apiReportedTokens': dict(self.reported_tokens),
+                'apiReportedReasoningTokens': self.reasoning_tokens if self.reasoning_reports else None}

@@ -42,5 +42,7 @@ All 15 OpenRouter, 18 baseline runner and 19 Nous regressions pass, as does
 
 This is a successful small code task. It supports using MiMo for bounded,
 reviewed changes; it does not prove superiority over other models or close the
-separate synthetic missing-final-newline finding. Hosted CI for this patch is
-pending. No merge or deployment.
+separate synthetic missing-final-newline finding.
+[Hosted CI40097299957](https://github.com/zhiland/ra9-atlas/actions/runs/40097299957)
+passed at `84a9447`, including the full Node/browser suite and Python regressions.
+No merge or deployment.

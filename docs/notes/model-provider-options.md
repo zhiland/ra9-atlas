@@ -111,6 +111,11 @@ than the free models or five times cheaper per solved task. The MiMo probes used
 the same model/version with different budget limits, not an old/new model pair.
 Use an explicit run budget for paid routes. Do not probe quotas repeatedly.
 
+The owner later authorized an explicit MiMo [working mode](mimo-long-run.md)
+using the remaining OpenRouter balance instead of a local per-run reservation,
+request-count or elapsed-time ceiling. This is separate from bounded probes;
+reasoning is explicitly enabled and all OS/credential/price gates remain.
+
 The [first MiMo code task](mimo-first-code-task.md) then passed all 51 public-run
 checks. Its two-file patch was accepted without implementation corrections;
 15 OpenRouter,18 runner and19 Nous tests pass. Four requests cost

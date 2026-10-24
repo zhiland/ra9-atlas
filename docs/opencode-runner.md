@@ -71,6 +71,25 @@ a provider-enforced total ceiling. Free routes retain zero price filters.
 Contributor training requires a separate explicit opt-in and remains excluded
 while its extra declared charges cannot pass admission.
 
+The owner-authorized MiMo working mode is a separate explicit opt-in:
+
+```sh
+/usr/bin/python3 -B tools/isolation/opencode_runner.py run \
+  --provider openrouter --model xiaomi/mimo-v2.6-flash --long-run \
+  --repository /Users/andrew/Documents/Detroit --commit PUBLIC_FULL_SHA \
+  --prompt 'Prepared public implementation task'
+```
+
+Do not combine `--long-run` with `--max-cost-usd`. This mode may spend the
+remaining account credit. It has no local call count, run duration or reservation
+ceiling. Catalog output/context capacities replace probe token caps, and reasoning
+is explicitly enabled. Account-credit queries and unchanged quote/price guards
+run before each completion. No top-up, fallback or automatic retry is performed.
+The technical relay framing and socket-idle bounds remain. Numeric progress is
+printed after completions. If a public task stops early, the stopped workspace
+still exports a clearly marked partial patch for review. All isolation and
+publication gates remain; see [working-mode acceptance](notes/mimo-long-run.md).
+
 Tokens remain in the trusted host relay/credential helper. OpenCode receives
 only the loopback URL and a public placeholder. Synthetic read/list/write probes
 check denial at each credential directory. Nous uses a separate auth profile;

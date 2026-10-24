@@ -35,6 +35,17 @@ def credential_adapter(base=nous.BASE_URL):
 
 
 class FreeProviderTests(unittest.TestCase):
+    def test_route_transport_failure_returns_nonretryable_scrubbed403(self):
+        route = Mock(model=nous.DEFAULT_MODEL)
+        route.complete.side_effect = OSError('PRIVATE_TRANSPORT_DETAIL')
+        relay = runner.InferenceRelay(route); self.addCleanup(relay.close); relay.enabled = True
+        connection = HTTPConnection('127.0.0.1', relay.port, timeout=2)
+        connection.request('POST', '/v1/chat/completions', body=json.dumps(request()))
+        response = connection.getresponse(); body = response.read(); connection.close()
+        self.assertEqual(response.status, 403)
+        self.assertNotIn(b'PRIVATE_TRANSPORT_DETAIL', body)
+        route.complete.assert_called_once()
+
     def test_malformed_tool_names_return_controlled400_without_provider_call(self):
         route = Mock(model=nous.DEFAULT_MODEL)
         relay = runner.InferenceRelay(route); self.addCleanup(relay.close); relay.enabled = True

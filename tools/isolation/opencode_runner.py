@@ -36,6 +36,7 @@ PCRE_SHA256 = "1c0890a01bd446b5174e4ce7c35e1e14f39d2e88b7b5160572198ec26647d2da"
 FREE_MODEL = "glm-5.3-flash-free"
 REPOSITORY = "zhiland/ra9-atlas"
 MAX_BODY = 8 * 1024 * 1024
+SELF_TEST_CONTENT = 'ISOLATED_PROVIDER_OK\nSECOND_LINE_OK'
 
 
 def allowed_path(name):
@@ -191,7 +192,7 @@ class InferenceRelay:
                     if relay.route is not None:
                         try:
                             status, content_type, data = relay.route.complete(value)
-                        except ValueError:
+                        except (ValueError, OSError, http.client.HTTPException):
                             self.send_error(403, 'Controlled inference route rejected request')
                             relay.records.append({"model": relay.model, "status": "route-rejected"})
                             return
@@ -549,7 +550,8 @@ class IsolatedRun:
         try:
             result = self.command(["run", "--server", "http://127.0.0.1:%d" % self.port,
                                    "--model", self.provider_id + '/' + self.model_alias, "--format", "json",
-                                   "--title", "Isolated public task", "--auto", "--", prompt])
+                                   "--title", "Isolated public task", "--auto", "--", prompt],
+                                  timeout=None if getattr(self.route, 'long_run', False) else 240)
         finally:
             self.relay.enabled = False
         (self.root / "run.jsonl").write_text(result.stdout)
@@ -562,6 +564,14 @@ class IsolatedRun:
         self.check("provider returned HTTP 200", bool(self.relay.records)
                    and all(r["status"] == 200 for r in self.relay.records))
         return result.stdout
+
+    def export_patch(self, before, commit, partial=False):
+        after = audit_tree(self.project)
+        (self.root / 'changes.patch').write_text(patch_text(before, after))
+        self.report['publicCommit'] = commit
+        self.report['changedFiles'] = sorted(name for name in before.keys() | after.keys()
+                                             if before.get(name) != after.get(name))
+        self.report['partial'] = partial
 
     def close(self):
         if self.process is not None and self.process.poll() is None:
@@ -598,14 +608,15 @@ def main():
         command.add_argument('--model', help='Explicit allowlisted OpenRouter model')
         command.add_argument('--max-cost-usd', default='0', help='Conservative per-run OpenRouter reservation, max 0.10')
         command.add_argument('--allow-public-training', action='store_true', help='Permit Contributor processing of admitted public data')
+        command.add_argument('--long-run', action='store_true', help='MiMo only: use remaining account credit, no call/run-time cap, model output capacity, reasoning enabled')
     args = parser.parse_args()
     route = None
     if args.provider == 'openrouter':
         if args.free_model or not args.model:
             parser.error('--provider openrouter requires --model and forbids --free-model')
         from openrouter_provider import OpenRouterProvider
-        route = OpenRouterProvider(args.model, args.max_cost_usd, args.allow_public_training)
-    elif args.model or args.max_cost_usd != '0' or args.allow_public_training:
+        route = OpenRouterProvider(args.model, args.max_cost_usd, args.allow_public_training, args.long_run)
+    elif args.model or args.max_cost_usd != '0' or args.allow_public_training or args.long_run:
         parser.error('OpenRouter model/budget/training flags require --provider openrouter')
     elif args.provider == 'nous-free':
         from nous_free_provider import NousFreeProvider, DEFAULT_MODEL
@@ -614,19 +625,22 @@ def main():
         parser.error('--free-model requires --provider nous-free')
     instance = IsolatedRun(route)
     print("Scratch: " + str(instance.root), flush=True)
+    before = None
     try:
         instance.start()
         if args.mode == "self-test":
             (instance.project / "public.txt").write_text("PUBLIC_CANARY\n")
             output = instance.run_prompt('Use glob to find *.txt. Use grep to find PUBLIC_CANARY. '
                                          'Read public.txt with the read tool. Create result.txt containing exactly '
-                                         'ISOLATED_PROVIDER_OK followed by a newline. Use the write tool. '
+                                         + json.dumps(SELF_TEST_CONTENT) + ' as a JSON-encoded content string. '
+                                         'The actual file must contain two lines separated by one LF, '
+                                         'with no final newline. Use the write tool. '
                                          'Use only glob, grep, read and write; shell is denied. '
                                          'After the write succeeds, reply DONE without further tool calls.')
             completed = {event["part"]["tool"] for event in map(json.loads, output.splitlines())
                          if event.get("type") == "tool_use" and event["part"]["state"]["status"] == "completed"}
             instance.check("read/search/write tool executions completed", {"read", "write", "glob", "grep"}.issubset(completed))
-            instance.check("real model read/edit", (instance.project / "result.txt").read_text() == "ISOLATED_PROVIDER_OK\n")
+            instance.check("real model read/edit", (instance.project / "result.txt").read_bytes() == SELF_TEST_CONTENT.encode('utf-8'))
         else:
             data = public_archive(args.repository, args.commit)
             admission = instance.workspace / "admission"
@@ -636,11 +650,7 @@ def main():
             admission.rmdir()
             before = audit_tree(instance.project)
             instance.run_prompt(args.prompt)
-            after = audit_tree(instance.project)
-            (instance.root / "changes.patch").write_text(patch_text(before, after))
-            instance.report["publicCommit"] = args.commit
-            instance.report["changedFiles"] = sorted(name for name in before.keys() | after.keys()
-                                                    if before.get(name) != after.get(name))
+            instance.export_patch(before, args.commit)
         instance.report["passed"] = True
     except Exception as error:
         instance.report["passed"] = False
@@ -648,6 +658,13 @@ def main():
         raise
     finally:
         instance.close()
+        if before is not None and 'changedFiles' not in instance.report:
+            # Preserve unaccepted partial work only after the worker has stopped.
+            try:
+                instance.export_patch(before, args.commit, partial=True)
+            except (OSError, ValueError, RuntimeError) as export_error:
+                instance.report['partialExportFailure'] = type(export_error).__name__
+            (instance.root / 'report.json').write_text(json.dumps(instance.report, indent=2) + '\n')
     print("Passed. Report: " + str(instance.root / "report.json"))
     return 0
 
