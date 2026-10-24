@@ -9,7 +9,7 @@ function test(name,run){run();count++;console.log(`ok ${name}`);}
 function candidate(){const a=structuredClone(atlas);a.meta.contractVersion='1.1';Object.assign(a.nodes[0],{kind:'choice',rowGroup:true,options:['A','B','C','D'],h:180});return a;}
 function errors(a){return validateAtlas(a).checks.flatMap(c=>c.errors).join('\n');}
 test('legacy option anchors preserve every existing binary row exactly',()=>{
- for(const n of atlas.nodes.filter(n=>n.kind==='choice'))for(let i=0;i<n.options.length;i++)assert.equal(R.anchorY(n,i),n.y+(i+.5)*n.h/n.options.length);
+ for(const n of atlas.nodes.filter(n=>n.kind==='choice'&&!n.rowGroup))for(let i=0;i<n.options.length;i++)assert.equal(R.anchorY(n,i),n.y+(i+.5)*n.h/n.options.length);
  assert.equal(R.layout(atlas.nodes[0]),null);
 });
 test('three and four rows divide the inner box below a fixed heading',()=>{
@@ -22,8 +22,8 @@ test('three and four rows divide the inner box below a fixed heading',()=>{
 test('invalid option indices cannot create guessed row anchors',()=>{
  for(const i of [-1,1.5,4,'2'])assert.throws(()=>R.anchorY(group(),i),RangeError);
 });
-test('legacy metadata and explicit 1.1 both validate existing atlas data',()=>{
- assert.equal(errors(atlas),'');const a=structuredClone(atlas);a.meta.contractVersion='1.1';assert.equal(errors(a),'');
+test('production1.1 validates and legacy binary shape remains supported in1.0',()=>{
+ assert.equal(errors(atlas),'');for(const n of atlas.nodes.filter(n=>n.kind==='choice'&&!n.rowGroup))assert.deepEqual(R.errors(n,'1.0'),[]);
 });
 test('explicit 1.1 group fixture passes the whole atlas validator',()=>{assert.equal(errors(candidate()),'');});
 test('binary 1.0 and unflagged legacy choices cannot silently become multi-row',()=>{

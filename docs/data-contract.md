@@ -35,10 +35,10 @@ bounded *Public Enemy* meeting node. See [PoC4 coverage](notes/poc4-coverage.md)
 
 ## Scope and record shape
 
-The contract covers seven chapter regions, 123 nodes, 106 edge records (104 active connectors and two withdrawn claims), six condition
-groups, eighteen uncertainty records and no conflict records in
+The contract covers seven chapter regions, 128 nodes, 113 edge records (111 active connectors and two withdrawn claims), six condition
+groups, twenty-two uncertainty records and no conflict records in
 `data/atlas.source.json` and its generated `prototype/atlas-data.js` artifact.
-See [authoring ownership](authoring-data.md). The sample declares `meta.contractVersion: '1.0'`.
+See [authoring ownership](authoring-data.md). The sample declares `meta.contractVersion: '1.1'`.
 
 | Record | Required fields |
 |---|---|
@@ -286,7 +286,7 @@ origin). Appended records 93–95 represent stage→trash→ask and stage→conv
 The original endpoints are not silently retargeted. Both cleaning nodes are
 stages. A stage/chore relation does not establish mandatory task order.
 
-`meta.counts.edges` counts all 106 records. `activeEdges` is 104 and
+`meta.counts.edges` counts all 113 records. `activeEdges` is 111 and
 `withdrawnEdges` is 2. Kind counts sum to records: 82 traced, 8 conditional,
 6 prerequisite, 3 hypothesis, 5 uncertain and 2 withdrawn. User-facing
 connector totals and stable-world inventories count only active connectors.
@@ -321,7 +321,8 @@ gates. Source agreement does not verify game transitions or grant reuse rights.
 
 ## Opt-in runtime contract 1.1 source row groups
 
-Current production data still declares 1.0. Runtime validation also accepts 1.1.
+Production data declares 1.1 for the four reviewed Painter leisure groups.
+The row-layout module retains the binary1.0 shape checks.
 Only a choice node with `rowGroup: true` opts into two or more unique nonempty
 string rows. Unflagged choices retain exactly two options and the old layout,
 even in 1.1. New groups require a 24px heading, two 1px borders and at least32px

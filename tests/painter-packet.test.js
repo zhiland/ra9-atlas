@@ -16,8 +16,8 @@ test('bounded packet validates with exact runtime reconciliation and blocked pub
   assert.equal(result.reviewReady, false);
   assert.equal(packet.coverage.status, 'partial');
   assert.equal(packet.atlas.chapterId, 'the-painter');
-  assert.equal(packet.atlas.exactChapterNodes, true);
-  assert.equal(packet.atlas.exactChapterEdges, true);
+  assert.equal(packet.atlas.exactChapterNodes, false);
+  assert.equal(packet.atlas.exactChapterEdges, false);
   assert.equal(packet.legacy.canonical, '?edge=N');
   assert.deepEqual(packet.chart.edges.map(edge => edge.legacyEdgeIndex), [101,102,103,104,105]);
 });

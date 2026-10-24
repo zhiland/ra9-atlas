@@ -42,7 +42,7 @@ function data(options){const a=structuredClone(real);a.meta.contractVersion='1.1
   assert.deepEqual(await page.locator('#details .opt-list li').allTextContents(),options);assert.equal(await page.locator('#details .opt-list b').count(),0);
   await page.evaluate(()=>{ATLAS.edges[0].fromOption=ATLAS.nodes[0].options.length-1;location.hash='#home/a_todd?edge=0';});
   await page.locator('#details [data-edge-evidence="0"]').waitFor({state:'visible'});assert.equal(await page.locator('path.edge.focused[data-edge-id="e_home_welcome_todd"]').count(),1);
-  assert.equal(await page.locator('[data-node]').count(),123);assert.deepEqual(errors,[]);
+  assert.equal(await page.locator('[data-node]').count(),128);assert.deepEqual(errors,[]);
   console.log(`ok ${variant} ${viewport.width}px: rows, anchors, common exit, search, evidence and escaping`);count++;await page.close();
  }
  console.log(`${count} runtime row-group browser tests passed`);

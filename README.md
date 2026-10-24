@@ -24,12 +24,12 @@ Zoom changes the camera. The nodes and branches stay in one map world.
 
 ## Coverage and evidence
 
-The sample has **123 nodes and 104 active connectors across seven chapter regions**.
+The sample has **128 nodes and 111 active connectors across seven chapter regions**.
 The Hostage inventory accounts for 33 boxes, 40 labels and 36 pictured connectors.
 Its option-specific model has 37 claims: **32 traced and 5 uncertain**.
 Both approach-to-failure origins remain uncertain. The other six chapter regions are partial.
 Two old A New Home claims are withdrawn; their permalinks explain the correction.
-The data retains 106 records in total, including those two historical claims.
+The data retains 113 records in total, including those two historical claims.
 
 Chart coverage, guide support, gameplay verification and interface tests are separate claims.
 No gameplay transition is verified. Uncertain links stay labeled and dashed.
@@ -38,8 +38,10 @@ The [Hostage review](docs/notes/hostage-packet-source-review.md) and
 The [Shades of Color preparation](docs/notes/shades-of-color-source-review.md) is source-reviewed
 and integrated as a partial region. Its six detached icon origins stay unknown.
 The [Painter opening packet](docs/notes/painter-packet-source-review.md) is integrated as a partial opening: nine boxes, five traces and three detached
-segments with unknown origins. A separate [Painter leisure packet](docs/notes/painter-leisure-review.md) prepares
-13 grouped rows and seven chart relationships. It is not integrated. Source-derived
+segments with unknown origins. A separate [Painter leisure packet](docs/notes/painter-leisure-review.md) is
+[integrated](docs/notes/painter-leisure-runtime.md) with five new nodes,
+13 grouped rows and seven chart relationships. Group captions describe source
+rows and do not assert direct player control. Source-derived
 publication rights remain unresolved.
 
 See [current status](docs/STATUS.md), [coverage](docs/notes/poc4-coverage.md),

@@ -9,6 +9,7 @@ Use these documents for current work:
 | [Roadmap](ROADMAP.md) | Stage order and completion gates |
 | [Authoring package review](notes/authoring-pipeline-review.md) | Separate code/source review and execution boundary |
 | [Canonical authoring](authoring-data.md) | Versioned JSON, identity ledger and deterministic generation |
+| [Painter leisure runtime](notes/painter-leisure-runtime.md) | Exact bounded integration, frozen old graph and grouped-row checks |
 | [Painter leisure review](notes/painter-leisure-review.md) | Grouped-row preparation, seven traces and source/gate limits |
 | [Domain language](../CONTEXT.md) | Row groups and common exits without inferred player agency |
 | [Painter runtime integration](notes/painter-runtime-integration.md) | Appended opening region, compatibility and source fences |

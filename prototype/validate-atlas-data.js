@@ -15,6 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const { shadesRuntimeErrors } = require('./validate-shades-runtime');
+const { painterLeisureRuntimeErrors } = require('./validate-painter-leisure-runtime');
 const { painterRuntimeErrors } = require('./validate-painter-runtime');
 const RowLayout = require('./atlas-row-layout');
 
@@ -1237,12 +1238,14 @@ function validateAtlas(ATLAS) {
     for (const [key, value] of Object.entries(actual)) {
       if (counts[key] !== value) errors.push(`meta.counts.${key} is ${counts[key]} but the data has ${value}`);
     }
-    if (actual.nodes !== 123) errors.push(`expected 123 boxes, found ${actual.nodes}`);
-    if (actual.edges !== 106) errors.push(`expected 106 edge records, found ${actual.edges}`);
+    if (actual.nodes !== 128) errors.push(`expected 128 boxes, found ${actual.nodes}`);
+    if (actual.edges !== 113) errors.push(`expected 113 edge records, found ${actual.edges}`);
     return errors;
   });
 
   check('reviewed Shades slice preserves unknown origins and exact topology', () => shadesRuntimeErrors(ATLAS));
+
+  check('reviewed Painter leisure preserves row groups and common exits', () => painterLeisureRuntimeErrors(ATLAS));
 
   check('reviewed Painter opening preserves unknown origins and exact topology', () => painterRuntimeErrors(ATLAS));
 

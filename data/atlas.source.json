@@ -5,19 +5,19 @@
     "meta": {
       "project": "ra9-atlas",
       "poc": "PoC4",
-      "contractVersion": "1.0",
+      "contractVersion": "1.1",
       "title": "ra9-atlas",
-      "subtitle": "Selected slices · A New Home → Stormy Night → Battle for Detroit (Kara) · The Hostage → Public Enemy · Shades of Color (partial chart) · The Painter (opening slice)",
+      "subtitle": "Selected slices · A New Home → Stormy Night → Battle for Detroit (Kara) · The Hostage → Public Enemy · Shades of Color (partial chart) · The Painter (opening + leisure slice)",
       "version": "unknown",
       "platform": "unknown",
       "disclaimer": "Guide-based and screenshot-transcribed only. No transition is verified in game; game version and platform are unknown.",
       "counts": {
         "chapters": 7,
-        "nodes": 123,
-        "edges": 106,
-        "activeEdges": 104,
+        "nodes": 128,
+        "edges": 113,
+        "activeEdges": 111,
         "withdrawnEdges": 2,
-        "tracedEdges": 82,
+        "tracedEdges": 89,
         "conditionalEdges": 8,
         "prerequisiteEdges": 6,
         "hypothesisEdges": 3,
@@ -44,11 +44,13 @@
       "steamShades": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
       "powerpyxShades": "https://www.powerpyx.com/detroit-become-human-shades-of-color-walkthrough-100/",
       "steamPainter": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
-      "powerpyxPainter": "https://www.powerpyx.com/detroit-become-human-the-painter-walkthrough-100/"
+      "powerpyxPainter": "https://www.powerpyx.com/detroit-become-human-the-painter-walkthrough-100/",
+      "steamPainterLeisure": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
+      "powerpyxPainterLeisure": "https://www.powerpyx.com/detroit-become-human-the-painter-walkthrough-100/"
     },
     "canvas": {
       "width": 4950,
-      "height": 3100
+      "height": 3450
     },
     "chapters": [
       {
@@ -200,22 +202,24 @@
       {
         "id": "the-painter",
         "name": "The Painter",
-        "code": "Markus · reviewed opening slice",
+        "code": "Markus · opening + leisure",
         "frame": {
           "x": 2040,
           "y": 2540,
           "w": 1900,
-          "h": 500
+          "h": 850
         },
-        "desc": "Nine reviewed opening boxes and five continuous traces. Three detached icon-origin segments stay unknown. Later leisure, studio, painting and the chapter outcome are outside this partial slice.",
+        "desc": "Fourteen reviewed graph objects, thirteen grouped rows and twelve continuous relationships. Three detached opening origins remain unknown. Later painting and the chapter outcome remain outside this partial slice.",
         "coverage": {
           "status": "partial",
-          "scope": "Opening through FIND SOMETHING TO DO, with birds, two magazine boxes and the clothes event.",
-          "included": "Two checkpoints, seven action/event boxes and five continuous box-to-box traces.",
-          "omitted": "Three detached icon origins, optional-event ordering, exact clothes eligibility and cross-chapter triggers, later chart branches, platform/build and gameplay verification. Publication rights remain unresolved.",
+          "scope": "Opening through TAKE CARL TO THE STUDIO, including the four leisure row groups.",
+          "included": "Fourteen graph objects, thirteen grouped rows and twelve continuous relationships.",
+          "omitted": "Three detached opening origins, optional-event ordering, exact eligibility and group semantics, replay/completion rules, later painting, chapter outcome, platform/build and gameplay. Publication rights remain unresolved.",
           "sources": [
             "steamPainter",
-            "powerpyxPainter"
+            "powerpyxPainter",
+            "steamPainterLeisure",
+            "powerpyxPainterLeisure"
           ]
         }
       }
@@ -2337,6 +2341,106 @@
         ],
         "note": "Reviewed continuous chart structure only. No transition is verified in game.",
         "sub": "Chapter checkpoint"
+      },
+      {
+        "id": "pt_activity",
+        "label": "Activity row group",
+        "kind": "choice",
+        "options": [
+          "PLAY CHESS",
+          "READ BOOK",
+          "PLAY PIANO"
+        ],
+        "chapter": "the-painter",
+        "x": 2100,
+        "y": 3100,
+        "w": 320,
+        "h": 200,
+        "status": "ocr",
+        "src": [
+          "steamPainterLeisure"
+        ],
+        "note": "Reviewed source chart structure. Group labels are editorial. No direct player agency or gameplay verification is asserted.",
+        "rowGroup": true
+      },
+      {
+        "id": "pt_chess",
+        "label": "Chess result row group",
+        "kind": "choice",
+        "options": [
+          "WIN",
+          "LOSE",
+          "DRAW"
+        ],
+        "chapter": "the-painter",
+        "x": 2470,
+        "y": 3070,
+        "w": 320,
+        "h": 160,
+        "status": "ocr",
+        "src": [
+          "steamPainterLeisure"
+        ],
+        "note": "Reviewed source chart structure. Group labels are editorial. No direct player agency or gameplay verification is asserted.",
+        "rowGroup": true
+      },
+      {
+        "id": "pt_book",
+        "label": "Book row group",
+        "kind": "choice",
+        "options": [
+          "THE REPUBLIC BY PLATO",
+          "TRAGEDIES OF WILLIAM SHAKESPEARE",
+          "ODES BY JOHN KEATS"
+        ],
+        "chapter": "the-painter",
+        "x": 2820,
+        "y": 3070,
+        "w": 400,
+        "h": 200,
+        "status": "ocr",
+        "src": [
+          "steamPainterLeisure"
+        ],
+        "note": "Reviewed source chart structure. Group labels are editorial. No direct player agency or gameplay verification is asserted.",
+        "rowGroup": true
+      },
+      {
+        "id": "pt_piano",
+        "label": "Piano variation row group",
+        "kind": "choice",
+        "options": [
+          "MELANCHOLIC",
+          "HOPEFUL",
+          "INTIMATE",
+          "ENIGMATIC"
+        ],
+        "chapter": "the-painter",
+        "x": 3250,
+        "y": 3070,
+        "w": 320,
+        "h": 190,
+        "status": "ocr",
+        "src": [
+          "steamPainterLeisure"
+        ],
+        "note": "Reviewed source chart structure. Group labels are editorial. No direct player agency or gameplay verification is asserted.",
+        "rowGroup": true
+      },
+      {
+        "id": "pt_studio",
+        "label": "TAKE CARL TO THE STUDIO",
+        "kind": "action",
+        "chapter": "the-painter",
+        "x": 3610,
+        "y": 3120,
+        "w": 240,
+        "h": 80,
+        "status": "ocr",
+        "src": [
+          "steamPainterLeisure"
+        ],
+        "note": "Reviewed source chart structure. Group labels are editorial. No direct player agency or gameplay verification is asserted."
       }
     ],
     "edges": [
@@ -3641,6 +3745,223 @@
           "steamPainter"
         ],
         "from": "pt_breakfast"
+      },
+      {
+        "id": "e_pt_find_activity",
+        "from": "pt_find",
+        "to": "pt_activity",
+        "kind": "traced",
+        "src": [
+          "steamPainterLeisure"
+        ],
+        "note": "Continuous source-chart relationship only. A bracket exit does not establish per-row completion or eligibility.",
+        "points": [
+          [
+            3760,
+            2680
+          ],
+          [
+            3900,
+            2680
+          ],
+          [
+            3900,
+            3010
+          ],
+          [
+            2080,
+            3010
+          ],
+          [
+            2080,
+            3200
+          ],
+          [
+            2100,
+            3200
+          ]
+        ]
+      },
+      {
+        "id": "e_pt_activity_chess",
+        "from": "pt_activity",
+        "to": "pt_chess",
+        "kind": "traced",
+        "fromOption": 0,
+        "src": [
+          "steamPainterLeisure"
+        ],
+        "note": "Continuous source-chart relationship only. A bracket exit does not establish per-row completion or eligibility."
+      },
+      {
+        "id": "e_pt_activity_book",
+        "from": "pt_activity",
+        "to": "pt_book",
+        "kind": "traced",
+        "fromOption": 1,
+        "src": [
+          "steamPainterLeisure"
+        ],
+        "note": "Continuous source-chart relationship only. A bracket exit does not establish per-row completion or eligibility.",
+        "points": [
+          [
+            2420,
+            3212
+          ],
+          [
+            2440,
+            3212
+          ],
+          [
+            2440,
+            3040
+          ],
+          [
+            2800,
+            3040
+          ],
+          [
+            2800,
+            3170
+          ],
+          [
+            2820,
+            3170
+          ]
+        ]
+      },
+      {
+        "id": "e_pt_activity_piano",
+        "from": "pt_activity",
+        "to": "pt_piano",
+        "kind": "traced",
+        "fromOption": 2,
+        "src": [
+          "steamPainterLeisure"
+        ],
+        "note": "Continuous source-chart relationship only. A bracket exit does not establish per-row completion or eligibility.",
+        "points": [
+          [
+            2420,
+            3270
+          ],
+          [
+            2450,
+            3270
+          ],
+          [
+            2450,
+            3020
+          ],
+          [
+            3230,
+            3020
+          ],
+          [
+            3230,
+            3165
+          ],
+          [
+            3250,
+            3165
+          ]
+        ]
+      },
+      {
+        "id": "e_pt_chess_studio",
+        "from": "pt_chess",
+        "to": "pt_studio",
+        "kind": "traced",
+        "src": [
+          "steamPainterLeisure"
+        ],
+        "note": "Continuous source-chart relationship only. A bracket exit does not establish per-row completion or eligibility.",
+        "points": [
+          [
+            2630,
+            3230
+          ],
+          [
+            2630,
+            3320
+          ],
+          [
+            3590,
+            3320
+          ],
+          [
+            3590,
+            3160
+          ],
+          [
+            3610,
+            3160
+          ]
+        ]
+      },
+      {
+        "id": "e_pt_book_studio",
+        "from": "pt_book",
+        "to": "pt_studio",
+        "kind": "traced",
+        "src": [
+          "steamPainterLeisure"
+        ],
+        "note": "Continuous source-chart relationship only. A bracket exit does not establish per-row completion or eligibility.",
+        "points": [
+          [
+            3020,
+            3270
+          ],
+          [
+            3020,
+            3340
+          ],
+          [
+            3595,
+            3340
+          ],
+          [
+            3595,
+            3160
+          ],
+          [
+            3610,
+            3160
+          ]
+        ]
+      },
+      {
+        "id": "e_pt_piano_studio",
+        "from": "pt_piano",
+        "to": "pt_studio",
+        "kind": "traced",
+        "src": [
+          "steamPainterLeisure"
+        ],
+        "note": "Continuous source-chart relationship only. A bracket exit does not establish per-row completion or eligibility.",
+        "points": [
+          [
+            3410,
+            3260
+          ],
+          [
+            3410,
+            3360
+          ],
+          [
+            3600,
+            3360
+          ],
+          [
+            3600,
+            3160
+          ],
+          [
+            3610,
+            3160
+          ]
+        ]
       }
     ],
     "conditions": [
@@ -4083,6 +4404,66 @@
         ],
         "sources": [
           "steamPainter"
+        ]
+      },
+      {
+        "id": "u_ptl_group_semantics",
+        "status": "unknown",
+        "explanation": "Rows are visible activity, result or variation groups. Editorial group labels and the choice kind do not prove direct player control, selectable eligibility or exclusivity.",
+        "nodes": [
+          "pt_activity",
+          "pt_chess",
+          "pt_book",
+          "pt_piano"
+        ],
+        "sources": [
+          "steamPainterLeisure",
+          "powerpyxPainterLeisure"
+        ]
+      },
+      {
+        "id": "u_ptl_common_exit",
+        "status": "unknown",
+        "explanation": "The three exits leave outer brackets. They do not establish separate per-row transitions, an AND requirement, all-rows completion or exact game progression. No exit is cloned per variant.",
+        "nodes": [
+          "pt_chess",
+          "pt_book",
+          "pt_piano",
+          "pt_studio"
+        ],
+        "edges": [
+          "e_pt_chess_studio",
+          "e_pt_book_studio",
+          "e_pt_piano_studio"
+        ],
+        "sources": [
+          "steamPainterLeisure"
+        ]
+      },
+      {
+        "id": "u_ptl_completion",
+        "status": "unknown",
+        "explanation": "Replay counts, automatic completion and current-patch rules from guide prose are not adopted. A later painting reader disagreement cannot resolve leisure behavior.",
+        "nodes": [
+          "pt_activity",
+          "pt_chess",
+          "pt_book",
+          "pt_piano"
+        ],
+        "sources": [
+          "powerpyxPainterLeisure",
+          "steamPainterLeisure"
+        ]
+      },
+      {
+        "id": "u_ptl_build",
+        "status": "unknown",
+        "explanation": "The source chart platform/build and game behavior are unverified. No transition is game-verified.",
+        "nodes": [
+          "pt_find"
+        ],
+        "sources": [
+          "steamPainterLeisure"
         ]
       }
     ],
@@ -4972,6 +5353,51 @@
         "unknown": "Coverage is partial. Optional-event order, exact triggers, platform/build and gameplay remain unverified. Publication rights are unresolved.",
         "src": [
           "steamPainter"
+        ]
+      },
+      "pt_activity": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Reviewed source chart structure. Group labels are editorial. No direct player agency or gameplay verification is asserted.",
+        "unknown": "Partial coverage. Eligibility, group semantics, common exit mechanics, completion, platform/build and gameplay remain unknown. Publication rights are unresolved.",
+        "src": [
+          "steamPainterLeisure",
+          "powerpyxPainterLeisure"
+        ]
+      },
+      "pt_chess": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Reviewed source chart structure. Group labels are editorial. No direct player agency or gameplay verification is asserted.",
+        "unknown": "Partial coverage. Eligibility, group semantics, common exit mechanics, completion, platform/build and gameplay remain unknown. Publication rights are unresolved.",
+        "src": [
+          "steamPainterLeisure",
+          "powerpyxPainterLeisure"
+        ]
+      },
+      "pt_book": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Reviewed source chart structure. Group labels are editorial. No direct player agency or gameplay verification is asserted.",
+        "unknown": "Partial coverage. Eligibility, group semantics, common exit mechanics, completion, platform/build and gameplay remain unknown. Publication rights are unresolved.",
+        "src": [
+          "steamPainterLeisure",
+          "powerpyxPainterLeisure"
+        ]
+      },
+      "pt_piano": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Reviewed source chart structure. Group labels are editorial. No direct player agency or gameplay verification is asserted.",
+        "unknown": "Partial coverage. Eligibility, group semantics, common exit mechanics, completion, platform/build and gameplay remain unknown. Publication rights are unresolved.",
+        "src": [
+          "steamPainterLeisure",
+          "powerpyxPainterLeisure"
+        ]
+      },
+      "pt_studio": {
+        "status": "Screenshot transcription · structure only",
+        "summary": "Reviewed source chart structure. Group labels are editorial. No direct player agency or gameplay verification is asserted.",
+        "unknown": "Partial coverage. Eligibility, group semantics, common exit mechanics, completion, platform/build and gameplay remain unknown. Publication rights are unresolved.",
+        "src": [
+          "steamPainterLeisure",
+          "powerpyxPainterLeisure"
         ]
       }
     }

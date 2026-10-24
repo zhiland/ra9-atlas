@@ -22,15 +22,15 @@ test('published identity and index prefixes are frozen at PR29 base', () => {
   assert.equal(atlas.edges[2].kind, 'withdrawn'); assert.equal(atlas.edges[6].kind, 'withdrawn');
 });
 test('new nodes and edges append in reviewed packet order', () => {
-  assert.deepEqual(atlas.nodes.slice(114).map(n => n.id), packet.chart.nodes.map(n => n.id));
-  assert.deepEqual(atlas.edges.slice(101).map(e => e.id), packet.chart.edges.map(e => e.id));
+  assert.deepEqual(atlas.nodes.slice(114,123).map(n => n.id), packet.chart.nodes.map(n => n.id));
+  assert.deepEqual(atlas.edges.slice(101,106).map(e => e.id), packet.chart.edges.map(e => e.id));
   assert.deepEqual(packet.chart.edges.map(e => e.legacyEdgeIndex), [101,102,103,104,105]);
-  assert.equal(atlas.meta.counts.activeEdges, 104); assert.equal(atlas.meta.counts.chapters, 7);
+  assert.equal(atlas.meta.counts.activeEdges, 111); assert.equal(atlas.meta.counts.chapters, 7);
 });
 test('source unknowns and guide citation survive integration without new claims', () => {
   const expected = clone(packet.unknowns);
   for (const record of expected) for (const key of ['nodes','edges']) if (!record[key]?.length) delete record[key];
-  assert.deepEqual(atlas.uncertainties.slice(14), expected);
+  assert.deepEqual(atlas.uncertainties.slice(14,18), expected);
   assert.ok(atlas.detail.pt_clothes.src.includes('powerpyxPainter'));
   assert.equal(packet.review.mergeGate.state, 'blocked');
 });

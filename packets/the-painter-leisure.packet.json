@@ -19,7 +19,7 @@
       "All opening nodes except the shared boundary checkpoint, later studio/painting tasks and chapter outcome.",
       "Replay counts, percentages, simultaneous completion, exclusivity, exact eligibility and current-patch mechanics.",
       "No gameplay verification, source independence, platform/build, reuse permission or publication clearance.",
-      "No runtime/legacy reconciliation. This does not add six new map nodes. Source images remain outside Git."
+      "Runtime integration adds five nodes and reuses the boundary checkpoint. Raw source images remain outside Git."
     ],
     "sources": [
       "steamPainterLeisure",
@@ -158,7 +158,8 @@
         "kind": "traced",
         "sources": [
           "steamPainterLeisure"
-        ]
+        ],
+        "legacyEdgeIndex": 106
       },
       {
         "id": "e_pt_activity_chess",
@@ -168,7 +169,8 @@
         "sources": [
           "steamPainterLeisure"
         ],
-        "fromOption": 0
+        "fromOption": 0,
+        "legacyEdgeIndex": 107
       },
       {
         "id": "e_pt_activity_book",
@@ -178,7 +180,8 @@
         "sources": [
           "steamPainterLeisure"
         ],
-        "fromOption": 1
+        "fromOption": 1,
+        "legacyEdgeIndex": 108
       },
       {
         "id": "e_pt_activity_piano",
@@ -188,7 +191,8 @@
         "sources": [
           "steamPainterLeisure"
         ],
-        "fromOption": 2
+        "fromOption": 2,
+        "legacyEdgeIndex": 109
       },
       {
         "id": "e_pt_chess_studio",
@@ -197,7 +201,8 @@
         "kind": "traced",
         "sources": [
           "steamPainterLeisure"
-        ]
+        ],
+        "legacyEdgeIndex": 110
       },
       {
         "id": "e_pt_book_studio",
@@ -206,7 +211,8 @@
         "kind": "traced",
         "sources": [
           "steamPainterLeisure"
-        ]
+        ],
+        "legacyEdgeIndex": 111
       },
       {
         "id": "e_pt_piano_studio",
@@ -215,7 +221,8 @@
         "kind": "traced",
         "sources": [
           "steamPainterLeisure"
-        ]
+        ],
+        "legacyEdgeIndex": 112
       }
     ]
   },
@@ -300,5 +307,16 @@
       "state": "blocked",
       "reason": "The partial source interpretation is independently approved. Publication rights, research independence, game behavior and platform/build remain unverified. Runtime integration is a separate package."
     }
+  },
+  "atlas": {
+    "source": "prototype/atlas-data.js",
+    "chapterId": "the-painter",
+    "exactChapterNodes": false,
+    "exactChapterEdges": false
+  },
+  "legacy": {
+    "canonical": "?edge=N",
+    "edgeIndexBase": "prototype/atlas-data.js edges[]",
+    "note": "Shared pt_find is reused. Five nodes append at123–127 and seven edges at106–112. Earlier identities, endpoints, indices and options remain frozen. Both packets reconcile bounded subsets; runtime fences enforce their exact union."
   }
 }

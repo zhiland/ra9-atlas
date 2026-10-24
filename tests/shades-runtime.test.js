@@ -25,7 +25,7 @@ test('new nodes and edges append in reviewed packet order', () => {
   assert.deepEqual(atlas.nodes.slice(102, 114).map(n => n.id), packet.chart.nodes.map(n => n.id));
   assert.deepEqual(atlas.edges.slice(96, 101).map(e => e.id), packet.chart.edges.map(e => e.id));
   assert.deepEqual(packet.chart.edges.map(e => e.legacyEdgeIndex), [96,97,98,99,100]);
-  assert.equal(atlas.meta.counts.activeEdges, 104); assert.equal(atlas.meta.counts.chapters, 7);
+  assert.equal(atlas.meta.counts.activeEdges, 111); assert.equal(atlas.meta.counts.chapters, 7);
 });
 test('source unknowns and guide citation survive integration without new claims', () => {
   const expected = clone(packet.unknowns);

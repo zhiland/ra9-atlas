@@ -4,7 +4,17 @@ Updated: 2026-10-24. Stage 1 source review is complete for the bounded Hostage
 pilot. Stage 2 preparation is implemented. Canonical JSON authoring and deterministic generation now preserve the existing sample.
 Full-product schema expansion, permalink output migration, actual game-chart census and hosting remain open.
 
-## Runtime row-group support checkpoint
+## Painter leisure runtime checkpoint
+
+The [leisure integration](notes/painter-leisure-runtime.md) reuses the boundary
+checkpoint and appends five nodes and seven relationships at106–112. The atlas
+now has128 nodes/113 records/111 active connectors across seven partial/accounted
+regions. Four groups show13 source rows. Common exits retain no option index.
+All old nodes, edges and links stay exact. Only the Painter frame and canvas
+grow downward. Production declares runtime1.1. Four new unknowns and blocked
+publication remain. Final review and CI results are recorded in the report.
+
+## Previous runtime row-group support checkpoint
 
 [Runtime contract 1.1](notes/runtime-row-groups.md) adds explicit source row-group
 support with shared heading/row/anchor geometry. Production data remains 1.0 and
@@ -109,8 +119,8 @@ finding; a shared source-scope wording clarification is fixed. All source-derive
 
 ## Product state
 
-The static PoC4 map contains **123 nodes and 104 active connectors in seven regions**.
-It retains 106 edge records, including two withdrawn claims for old references.
+The static PoC4 map contains **128 nodes and 111 active connectors in seven regions**.
+It retains 113 edge records, including two withdrawn claims for old references.
 The Hostage inventory accounts for **33 boxes, 40 labels and 36 pictured connectors**.
 Its option-specific model contains **37 claims: 32 traced and 5 uncertain**.
 Both approach-to-FAIL origins remain uncertain. The other six regions are partial.

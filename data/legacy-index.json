@@ -124,7 +124,12 @@
     "pt_birds",
     "pt_north",
     "pt_titan",
-    "pt_find"
+    "pt_find",
+    "pt_activity",
+    "pt_chess",
+    "pt_book",
+    "pt_piano",
+    "pt_studio"
   ],
   "edges": [
     {
@@ -761,6 +766,48 @@
       "id": "e_pt_breakfast_find",
       "from": "pt_breakfast",
       "to": "pt_find",
+      "fromOption": null
+    },
+    {
+      "id": "e_pt_find_activity",
+      "from": "pt_find",
+      "to": "pt_activity",
+      "fromOption": null
+    },
+    {
+      "id": "e_pt_activity_chess",
+      "from": "pt_activity",
+      "to": "pt_chess",
+      "fromOption": 0
+    },
+    {
+      "id": "e_pt_activity_book",
+      "from": "pt_activity",
+      "to": "pt_book",
+      "fromOption": 1
+    },
+    {
+      "id": "e_pt_activity_piano",
+      "from": "pt_activity",
+      "to": "pt_piano",
+      "fromOption": 2
+    },
+    {
+      "id": "e_pt_chess_studio",
+      "from": "pt_chess",
+      "to": "pt_studio",
+      "fromOption": null
+    },
+    {
+      "id": "e_pt_book_studio",
+      "from": "pt_book",
+      "to": "pt_studio",
+      "fromOption": null
+    },
+    {
+      "id": "e_pt_piano_studio",
+      "from": "pt_piano",
+      "to": "pt_studio",
       "fromOption": null
     }
   ]

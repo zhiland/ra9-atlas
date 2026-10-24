@@ -28,7 +28,7 @@ Existing packets and default draft creation use 1.0, with exactly two options
 per choice. Preparation version 1.1 permits two or more unique nonempty string
 options in both chart and supplementary nodes. Select 1.1 explicitly in the
 packet JSON. Its zero-based edge indices still address the declared option array.
-Unsupported versions fail. Production data remains binary. The separate runtime 1.1 opt-in uses explicit
+Unsupported versions fail. Production data uses four reviewed Painter row groups. Runtime1.1 uses explicit
 source row groups; a valid preparation packet does not enable that flag, change
 production data or bypass exact ATLAS reconciliation. See [acceptance and checks](notes/packet-choice-arity.md).
 
@@ -194,5 +194,7 @@ The [reviewed leisure packet](notes/painter-leisure-review.md) is explicit1.1 an
 includes the shared checkpoint, four row groups and the studio action. Thirteen
 rows retain source order. Seven connections distinguish activity rows from the
 three common bracket exits. Editorial group labels do not assert player agency.
-No runtime reconciliation or legacy index is claimed, and publication stays
-blocked. The original opening packet and displayed map are unchanged.
+The [runtime integration](notes/painter-leisure-runtime.md) reuses the checkpoint
+and appends five nodes and seven edges at106–112. Both Painter packets reconcile
+bounded subsets. Separate runtime fences enforce their exact union. Source
+interpretation is unchanged and publication remains blocked.

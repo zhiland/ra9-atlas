@@ -40,7 +40,7 @@ const MIME = {
 };
 
 const EXPECTED = {
-  canvas: { width: 4950, height: 3100 },
+  canvas: { width: 4950, height: 3450 },
   frames: {
     home: { x: 30, y: 120, w: 1930, h: 530 },
     stormy: { x: 2000, y: 120, w: 1320, h: 860 },
@@ -48,7 +48,7 @@ const EXPECTED = {
     hostage: { x: 0, y: 1120, w: 4450, h: 1340 },
     'public-enemy': { x: 4490, y: 2200, w: 380, h: 250 },
     'shades-of-color': { x: 30, y: 2540, w: 1900, h: 500 },
-    'the-painter': { x: 2040, y: 2540, w: 1900, h: 500 }
+    'the-painter': { x: 2040, y: 2540, w: 1900, h: 850 }
   },
   nodes: {
     a_welcome: { x: 50, y: 250, w: 170, h: 84 },
@@ -173,7 +173,12 @@ const EXPECTED = {
     pt_birds: { x: 2440, y: 2770, w: 250, h: 80 },
     pt_north: { x: 2100, y: 2880, w: 250, h: 80 },
     pt_titan: { x: 2440, y: 2880, w: 250, h: 80 },
-    pt_find: { x: 3480, y: 2640, w: 280, h: 80 }
+    pt_find: { x: 3480, y: 2640, w: 280, h: 80 },
+    pt_activity: { x:2100,y:3100,w:320,h:200 },
+    pt_chess: { x:2470,y:3070,w:320,h:160 },
+    pt_book: { x:2820,y:3070,w:400,h:200 },
+    pt_piano: { x:3250,y:3070,w:320,h:190 },
+    pt_studio: { x:3610,y:3120,w:240,h:80 }
   }
 };
 
@@ -355,10 +360,10 @@ async function run(browser) {
     assert(hostage.w >= 4400 && hostage.h >= 1300, 'The Hostage chart lost its Stage 1 fit bounds');
   });
 
-  await ok('all 123 node boxes keep the expected static world geometry', async function () {
+  await ok('all 128 node boxes keep the expected static world geometry', async function () {
     const actual = {};
     snapshot.nodes.forEach(function (node) { actual[node.id] = node.layout; });
-    assert(snapshot.nodes.length === 123, 'expected 123 node boxes, got ' + snapshot.nodes.length);
+    assert(snapshot.nodes.length === 128, 'expected 128 node boxes, got ' + snapshot.nodes.length);
     Object.keys(EXPECTED.nodes).forEach(function (id) {
       assert(actual[id], 'missing node ' + id);
       sameBox(actual[id], EXPECTED.nodes[id], 'node ' + id);

@@ -36,16 +36,18 @@ function painterRuntimeErrors(atlas) {
   const nodes = records(atlas.nodes);
   const byId = new Map(nodes.map(n => [n.id, n]));
   const chapterNodes = nodes.filter(n => n.chapter === 'the-painter');
-  if (chapterNodes.length !== NODES.length) errors.push('Painter must retain exactly nine nodes');
+  const leisureIds = ['pt_activity','pt_chess','pt_book','pt_piano','pt_studio'];
+  if (chapterNodes.length !== NODES.length + leisureIds.length || chapterNodes.some(n => !NODES.some(row => row[0] === n.id) && !leisureIds.includes(n.id))) errors.push('Painter must retain exactly the reviewed opening and leisure nodes');
   for (const [id, label, kind] of NODES) {
     const node = byId.get(id);
     if (!node || node.chapter !== 'the-painter' || node.label !== label || node.kind !== kind || node.status !== 'ocr' || !includes(node.src, 'steamPainter')) {
       errors.push(`Painter node ${id} must retain its reviewed label, kind, chart status and source`);
     }
   }
-  const ids = new Set([...NODES.map(n => n[0]), ...chapterNodes.map(n => n.id)]);
+  const ids = new Set(NODES.map(n => n[0]));
   const touching = records(atlas.edges).filter(e => ids.has(e.from) || ids.has(e.to));
-  if (touching.length !== EDGES.length) errors.push('Painter must retain exactly five reviewed connectors; no detached or cross-chapter edges');
+  const bridge = touching.filter(e => e.id === 'e_pt_find_activity' && e.from === 'pt_find' && e.to === 'pt_activity');
+  if (touching.length !== EDGES.length + 1 || bridge.length !== 1) errors.push('Painter must retain five opening connectors and one approved leisure bridge');
   for (const [id, from, to] of EDGES) {
     const edge = touching.find(e => e.id === id);
     if (!edge || edge.from !== from || edge.to !== to || edge.kind !== 'traced' || edge.fromOption != null || !includes(edge.src, 'steamPainter')) {
@@ -53,7 +55,7 @@ function painterRuntimeErrors(atlas) {
     }
   }
   const allowed = new Set(EDGES.map(e => e[0]));
-  for (const edge of touching) if (!allowed.has(edge.id)) errors.push(`Unexpected Painter edge ${edge.id}`);
+  for (const edge of touching) if (!allowed.has(edge.id) && !bridge.includes(edge)) errors.push(`Unexpected Painter edge ${edge.id}`);
   for (const condition of records(atlas.conditions)) {
     if (list(condition.appliesTo).some(id => allowed.has(id))) errors.push('Painter reviewed edges must not acquire eligibility conditions');
   }

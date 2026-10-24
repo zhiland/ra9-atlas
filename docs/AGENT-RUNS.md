@@ -137,3 +137,10 @@ Codex implemented explicit opt-in runtime1.1 geometry and validation after the
 free OpenCode route quota failure. No additional external run or paid fallback
 is used. Eleven unit/contract and six synthetic browser scenarios cover the
 new representation and legacy compatibility. See [report](notes/runtime-row-groups.md).
+
+## 2026-10-24 Painter leisure runtime integration
+
+Codex integrates the reviewed packet after runtime row-group support. Five nodes
+and seven relationships append. All old graph objects remain frozen. Separate
+source fidelity, Standards and Spec checks are required. No external model run
+or paid fallback is used. See [report](notes/painter-leisure-runtime.md).

@@ -7,10 +7,10 @@ const file = path.resolve(__dirname, '../packets/the-painter-leisure.packet.json
 const packet = readPacket(file);
 let count=0;
 function test(name,run){run();count++;console.log(`ok ${name}`);}
-test('reviewed 1.1 leisure preparation validates without runtime reconciliation',()=>{
- const r=validatePacket(packet);assert.equal(r.failed,false,r.errors.join('\n'));
+test('reviewed 1.1 leisure preparation reconciles its bounded runtime subset',()=>{
+ const r=validatePacket(packet,{atlas:require('../data/atlas.source.json').atlas});assert.equal(r.failed,false,r.errors.join('\n'));
  assert.equal(r.reviewReady,false);assert.equal(packet.packetVersion,'1.1');
- assert.equal(packet.atlas,undefined);assert.equal(packet.legacy,undefined);assert.equal(packet.coverage.status,'partial');
+ assert.equal(packet.atlas.exactChapterNodes,false);assert.equal(packet.atlas.exactChapterEdges,false);assert.equal(packet.coverage.status,'partial');
 });
 test('six graph objects preserve stage, action and four descriptive row groups',()=>{
  assert.deepEqual(packet.chart.nodes.map(n=>[n.id,n.label,n.kind]),[
@@ -30,7 +30,7 @@ test('seven traced relationships retain row-specific entries and common bracket 
  ['e_pt_activity_book','pt_activity','pt_book',1],['e_pt_activity_piano','pt_activity','pt_piano',2],
  ['e_pt_chess_studio','pt_chess','pt_studio',null],['e_pt_book_studio','pt_book','pt_studio',null],
  ['e_pt_piano_studio','pt_piano','pt_studio',null]]);
- assert.ok(packet.chart.edges.every(e=>e.kind==='traced'&&e.sources.includes('steamPainterLeisure')&&e.legacyEdgeIndex===undefined));
+ assert.ok(packet.chart.edges.every(e=>e.kind==='traced'&&e.sources.includes('steamPainterLeisure')&&e.legacyEdgeIndex>=106));
 });
 test('group semantics, completion and build unknowns remain sourced without new mechanics',()=>{
  assert.deepEqual(packet.unknowns.map(u=>u.id),['u_ptl_group_semantics','u_ptl_common_exit','u_ptl_completion','u_ptl_build']);

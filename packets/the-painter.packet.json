@@ -283,8 +283,8 @@
   "atlas": {
     "source": "prototype/atlas-data.js",
     "chapterId": "the-painter",
-    "exactChapterNodes": true,
-    "exactChapterEdges": true
+    "exactChapterNodes": false,
+    "exactChapterEdges": false
   },
   "legacy": {
     "canonical": "?edge=N",
