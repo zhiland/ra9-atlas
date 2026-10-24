@@ -1,9 +1,12 @@
 # The Hostage — PoC3 coverage and inventory
 
-Date: 2026-10-18. Scope: the standalone PoC3 prototype for one full chapter,
-*The Hostage*. Files: [hostage-poc3.html](../../prototype/hostage-poc3.html),
+Date: 2026-10-18; PoC4 Stage 1 integration added 2026-10-21. Scope: the
+standalone PoC3 prototype for one full chapter, *The Hostage*, and its
+append-only integration into the PoC4 atlas. Files:
+[hostage-poc3.html](../../prototype/hostage-poc3.html),
 [hostage-data.js](../../prototype/hostage-data.js),
-[validate-hostage-data.js](../../prototype/validate-hostage-data.js).
+[validate-hostage-data.js](../../prototype/validate-hostage-data.js); PoC4 data
+in [atlas-data.js](../../prototype/atlas-data.js).
 
 This note reconciles the graph against the source screenshot and states what is
 certain versus uncertain. It is a structure/UI record, **not** in-game verification.
@@ -134,6 +137,62 @@ NEGOTIATE WITH DEVIANT → GET CLOSE ENOUGH   (dead end — see below)
 in the screenshot. No link was invented; the node carries a note and the validator
 fails if an outgoing edge is later added without evidence.
 
+## PoC4 Stage 1 integration (2026-10-21)
+
+The PoC4 atlas now includes all 33 PoC3 boxes in a separate `hostage` chapter
+region, preserving the PoC3 IDs and relative placement with the published
+atlas geometry unchanged (`x + 5`, `y + 1150`). All 40 visible labels remain
+searchable: the seven two-row choices keep their exact combined PoC3 label in
+data and details, with a compact in-box heading plus both option rows to fit the
+original 64px box heights. The three stage containers use a distinct `stage`
+node kind; `MISSION START` maps to an action with a start sublabel and the six
+endings map to outcomes.
+
+The PoC3 reference inventory remains 36 pictured connectors. The PoC4 map keeps
+their order and adds an explicit option-specific split. A 48%-complete
+selected-path chart in the Shazoo article was inspected on 2026-10-21 by an
+independent source reviewer. Article lines 64–65 introduce the diagram. The
+image is hosted at
+`https://cdn.shazoo.ru/255202_rAFsabVh4Q_41663243971_12ae17c3f7_o.jpg`.
+The selected blue path traces COLD APPROACH → FAIL TO NEGOTIATE → DEVIANT JUMPS
+WITH EMMA. This supports chart readings only. It does not verify gameplay or
+show the full chart. The image and article text are not copied into the product.
+
+Independent review on 2026-10-22 corrected the earlier selected-path reading.
+The Shazoo article is pre-release/demo-era (2018-04-24), and both approach
+lines join a shared negotiation bus. Selected events do not establish a direct
+Cold-to-FAIL connector. The atlas retains 37 claims: **32 traced and 5 uncertain**.
+`e_hostage_cold_approach_fail` remains at index 92 but is now uncertain.
+`e_hostage_approach_fail` remains the narrowed Friendly candidate at index 89.
+The extra candidate is not a newly confirmed connector in the 36-connector image.
+`e_hostage_fail_jumps` remains traced at index 90 because the independent reviewer
+followed its continuous connector in the full Steam image itself. It no longer
+depends on alternate-build equivalence. The unknown record includes both approach
+origins and the pre-release build boundary. `GET CLOSE ENOUGH` remains open-ended.
+See [the source-review report](hostage-packet-source-review.md) for visual locators,
+access outcomes, correction approval and the separate blocked publication gate.
+
+One cross-chapter prerequisite is added:
+`wounded_cop` option index 1 (`SAVE WOUNDED COP`) → `pe_meet_cop` (`Meet Cop
+From Hostage Situation`) in a one-node `public-enemy` region. It is labelled
+`prerequisite: saved wounded cop in The Hostage`, cites PowerPyx *The Hostage*
+and *Public Enemy*, and is governed by the `SINGLE` condition
+`cond_hostage_save_cop_meet`. The executor’s GameFAQs/Mogg Public Enemy request
+returned HTTP 403. A separate reviewer accessed the page on 2026-10-21 and
+confirmed §192 reports that the officer Connor saved in the first chapter later
+stops him and thanks him. The access outcomes are recorded separately; matching
+guide reports are not gameplay verification or proof of independent research.
+No consequence for `LEAVE WOUNDED COP` is modelled in this slice; later cop
+rescue/kill outcomes are omitted. The carry is guide-reported, not
+gameplay-verified; matching guides
+are not independent verification.
+
+The atlas therefore reports 5 chapter regions, 102 nodes and 93 edges, with
+*The Hostage* as `checked-against-chart` and *Public Enemy* as `partial`. The
+existing 68 nodes and 55 edges keep their IDs, order and world geometry. See the
+[PoC4 coverage ledger](poc4-coverage.md), [data contract](../data-contract.md),
+and [source register](../SOURCES.md).
+
 ## What is deliberately not claimed
 
 - No label or connector is marked "in-game verified"; version/platform stay `unknown`.
@@ -154,6 +213,19 @@ fails if an outgoing edge is later added without evidence.
 - `node --check prototype/hostage-data.js` — syntax OK.
 - `node --check prototype/validate-hostage-data.js` — syntax OK.
 - Inline renderer script extracted from `hostage-poc3.html` and passed `node --check`.
+- `node prototype/validate-atlas-data.js` — Stage 1 checks: 33 Hostage boxes in
+  PoC3 order, 40 unique labels, 7 two-row choices, 3 stage containers, 6
+  outcomes, 36 pictured connectors (37 mapped claims: 33 traced + 4 uncertain), dead-end
+  `GET CLOSE ENOUGH`, layout containment, and the exact saved-cop
+  option/target/kind/condition/source fence. All checks pass.
+- `node tests/atlas-data-contract.test.js` — 84/84, including malformed fixtures
+  for an outgoing `GET CLOSE ENOUGH`, moved saved-cop option, retargeted or
+  weakened prerequisite, outgoing Public Enemy content, removed condition, and
+  a LEAVE consequence.
+- Browser suite — 58/58 across three palettes and mobile emulation, including
+  four dashed uncertain claims and `?` badges, the selected-path readings, the dead end, and saved-cop
+  navigation/evidence over localhost. Temporary whole-atlas and Hostage-fit
+  screenshots were captured under `/private/tmp/`.
 
 ## Limitations
 

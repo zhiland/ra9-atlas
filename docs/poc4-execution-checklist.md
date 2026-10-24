@@ -1,5 +1,8 @@
 # PoC4 execution checklist
 
+Historical checkpoint. For current requirements and work order, use [the specification](spec.md), [roadmap](ROADMAP.md), and [status](STATUS.md).
+The statements below describe the original package, not the current repository state.
+
 Status: PoC4 implementation and bounded content slices complete; focused review and checks recorded in [STATUS.md](STATUS.md) and [PoC4 coverage](notes/poc4-coverage.md). Current checked graph: 45 nodes, 49 edges. This historical checklist records the original implementation boundaries; later notes record the added Stormy Night routes and ordered entry sequence.
 
 ## Steps
@@ -28,7 +31,7 @@ Status: PoC4 implementation and bounded content slices complete; focused review 
 
 ## Verification record
 
-Historical record: implementation completed 2026-10-18; updated 2026-10-19 with source-license audit, arrow connectors, neutral-gray default, and the test results at that time. Counts below describe the initial slice; the current 45-node/49-edge inventory and test totals are in [PoC4 coverage](notes/poc4-coverage.md) and [STATUS](../STATUS.md).
+Historical record: implementation completed 2026-10-18; updated 2026-10-19 with source-license audit, arrow connectors, neutral-gray default, and the test results at that time. Counts below describe the initial slice; the current 45-node/49-edge inventory and test totals are in [PoC4 coverage](notes/poc4-coverage.md) and [STATUS](STATUS.md).
 
 **Passed**
 

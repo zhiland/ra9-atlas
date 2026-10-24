@@ -13,7 +13,7 @@ Open `prototype/navigation-mockup.html` locally. Accept the spoiler warning. Sel
 | R1 navigation | Select chapter, open event, return with chapter selected | Node harness exercised chapter selection, event opening, in-page Back, browser Back, and return to overview. URL fragment and rendered state matched after each transition. | Static pass; browser acceptance pending |
 | R2 navigation | Follow D2 in both directions without promoting conditional outcomes to guarantees | Reducer followed `alice-box` → `meet-todd` → back. Each link has an evidence badge; Todd outcomes are separate and depend on later dialogue. | Static pass; browser acceptance pending |
 | D1 | Keep finding, lying, and using gun separate | Fixture has distinct `gun-find` → `gun-answer` → `gun-use` events and a truth/drop branch. | Fixture check pass |
-| D2 | Preserve uncertain exact trigger | Fixture labels the box/photo/dialogue trigger unresolved and Neutral key claim single-source. | Fixture check pass |
+| D2 | Preserve uncertain exact trigger | Fixture labels the box/photo/dialogue trigger unresolved. Its former "Neutral or higher" key claim was later removed after full-text review; current data says the exact relationship level is unstated. | Historical fixture check superseded |
 | D3 | Preserve both detour branches and unknown equality | Fixture shows `<11`, `>11`, and `=11:00 unknown` as separate claims, plus Supersoluce unclarity. | Fixture check pass |
 | Evidence | Every claim and event link has a status; references resolve to URLs | Static script checked all link targets, claim statuses, and referenced URLs. JavaScript syntax check passed. | Static pass |
 

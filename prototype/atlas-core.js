@@ -10,6 +10,9 @@
      selected  — node id with details open, or null.
      edge      — index into data.edges for a focused cross-chapter connector, or null.
                  Links may name the edge by array index (?edge=N) or stable id.
+                 Withdrawn edges (historical claims) keep their original array
+                 indices and stay resolvable for legacy permalinks, but the
+                 isActiveEdge helper marks them as not active connectors.
      trail     — most-recent-first selection history (ids), max 8, deduped.
      query     — current search text.
 
@@ -67,9 +70,19 @@ var ATLAS_CORE = (function () {
     return null;
   }
 
+  /* Withdrawn claims stay in the ATLAS array for their original index and
+     hash links, but they are not active map connectors. Shared so every
+     renderer agrees on that distinction; edges without a kind (or synthetic
+     fixtures without the kind at all) stay active. */
+  function isActiveEdge(edge) {
+    return !!edge && edge.kind !== 'withdrawn';
+  }
+
   var api = {
     MAX_TRAIL: MAX_TRAIL,
     MIN_SCALE: MIN_SCALE,
+    isActiveEdge: isActiveEdge,
+    resolveEdgeIndex: resolveEdgeIndex,
 
     createState: function () {
       return { consented: false, chapter: 'all', selected: null, edge: null, trail: [], query: '' };
@@ -218,7 +231,9 @@ var ATLAS_CORE = (function () {
       };
     },
 
-    /* Groups only actual edges that cross a chapter boundary. */
+    /* Groups only actual edges that cross a chapter boundary. Withdrawn
+       claims keep their array positions but are not graph connectors, so
+       they never form chapter links. */
     crossChapterLinks: function (data) {
       var chapterOf = {};
       var chapterIndex = {};
@@ -227,6 +242,7 @@ var ATLAS_CORE = (function () {
       var groups = {};
       var order = [];
       data.edges.forEach(function (edge, index) {
+        if (!isActiveEdge(edge)) return;
         var fromChapter = chapterOf[edge.from];
         var toChapter = chapterOf[edge.to];
         if (!fromChapter || !toChapter || fromChapter === toChapter) return;

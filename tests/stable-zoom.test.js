@@ -219,8 +219,22 @@ async function snapshot(page) {
       };
     });
 
+    const choiceOptions = Array.prototype.slice.call(document.querySelectorAll('.node.choice')).reduce(function (all, node) {
+      return all.concat(Array.prototype.slice.call(node.querySelectorAll('.opt')).map(function (el, index) {
+        const label = Array.prototype.slice.call(el.childNodes).filter(function (child) {
+          return child.nodeType === 3;
+        }).map(function (child) { return child.nodeValue; }).join('');
+        return { nodeId: node.getAttribute('data-node'), index: index, text: text(label), visible: visible(el) };
+      }));
+    }, []);
+
     const expected = {
-      nodeLabels: ATLAS.nodes.map(function (n) { return { id: n.id, text: text(n.label) }; }),
+      nodeLabels: ATLAS.nodes.map(function (n) { return { id: n.id, text: text(n.heading || n.label) }; }),
+      choiceOptions: ATLAS.nodes.filter(function (n) { return n.kind === 'choice'; }).reduce(function (all, n) {
+        return all.concat(n.options.map(function (option, index) {
+          return { nodeId: n.id, index: index, text: text(option) };
+        }));
+      }, []),
       edgeLabels: ATLAS.edges.map(function (e, index) {
         return e.label ? { index: index, id: edgeKey(e, index), text: text(e.label) } : null;
       }).filter(Boolean),
@@ -235,6 +249,7 @@ async function snapshot(page) {
       canvas: { left: cr.left, top: cr.top, right: cr.right, bottom: cr.bottom, width: cr.width, height: cr.height },
       zoomLabel: document.getElementById('zoomLabel') ? text(document.getElementById('zoomLabel').textContent) : '',
       nodes: nodes,
+      choiceOptions: choiceOptions,
       edges: edges,
       edgeLabels: edgeLabels,
       frames: frames,
@@ -267,6 +282,8 @@ function assertSameKeys(a, b, label) {
 
 function assertInventoryStable(snapshots, expected) {
   const expectedNodeLabels = indexBy(expected.nodeLabels, 'id');
+  const expectedChoiceOptions = {};
+  expected.choiceOptions.forEach(function (item) { expectedChoiceOptions[item.nodeId + ':' + item.index] = item; });
   const expectedEdgeLabels = {};
   expected.edgeLabels.forEach(function (item) { expectedEdgeLabels[item.id] = item; });
   const expectedFrames = indexBy(expected.frames, 'id');
@@ -289,6 +306,16 @@ function assertInventoryStable(snapshots, expected) {
       at + ': duplicate or missing node ids (' + Object.keys(nodes).length + ')');
     assert(Object.keys(labels).length === Object.keys(expectedNodeLabels).length,
       at + ': expected one mounted node label per node, got ' + Object.keys(labels).length);
+    const choiceOptions = {};
+    s.choiceOptions.forEach(function (item) { choiceOptions[item.nodeId + ':' + item.index] = item; });
+    assert(Object.keys(choiceOptions).length === Object.keys(expectedChoiceOptions).length,
+      at + ': choice option rows changed to ' + Object.keys(choiceOptions).length +
+      ' from ' + Object.keys(expectedChoiceOptions).length);
+    Object.keys(expectedChoiceOptions).forEach(function (key) {
+      assert(choiceOptions[key] && choiceOptions[key].text === expectedChoiceOptions[key].text,
+        at + ': choice option text changed for ' + key);
+      assert(choiceOptions[key].visible, at + ': choice option ' + key + ' is hidden by zoom state');
+    });
     assert(Object.keys(edges).length === first.edges.length,
       at + ': edge path count changed to ' + Object.keys(edges).length + ' from ' + first.edges.length);
     assert(Object.keys(edgeLabels).length === Object.keys(expectedEdgeLabels).length,
@@ -396,7 +423,7 @@ async function findDragPoint(page) {
 }
 
 async function runRealDataset(browser) {
-  console.log('scenario real-56 stable zoom');
+  console.log('scenario real-128 stable zoom');
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const errors = [];
   page.on('pageerror', function (e) { errors.push('pageerror: ' + e.message); });
@@ -434,9 +461,9 @@ async function runRealDataset(browser) {
     assertInventoryStable(snapshots, fit.expected);
     assertInventoryStable([fit], fit.expected);
 
-    assert(fit.expected.nodeLabels.length === 56, 'fixture should keep 56 node labels');
+    assert(fit.expected.nodeLabels.length === 128, 'fixture should keep 128 node labels');
     assert(fit.expected.edgeLabels.length > 0, 'fixture should contain real edge labels');
-    assert(fit.expected.frames.length === 3, 'fixture should keep three chapter frames');
+    assert(fit.expected.frames.length === 7, 'fixture should keep seven chapter frames');
   });
 
   await ok('node labels stay inside their boxes and only the world camera matrix changes', async function () {
@@ -444,11 +471,34 @@ async function runRealDataset(browser) {
     const scales = snapshots.map(function (s) { return s.scale; });
     assert(new Set(scales).size === scales.length, 'sampled scales should all differ: ' + scales.join(', '));
     snapshots.forEach(function (s) {
-      assert(s.nodes.length === 56 && s.edges.length === 53,
+      assert(s.nodes.length === 128 && s.edges.length === 111,
         'scale ' + s.scale + ' changed mounted graph inventory');
       assert(s.nodes.every(function (n) { return n.labelInsideNode; }),
         'scale ' + s.scale + ' has a node label outside its box');
     });
+  });
+
+  await ok('short Hostage actions contain two-line labels with a wide fallback font', async function () {
+    const style = await page.addStyleTag({ content: '.node.hostage.action { font-family: monospace; }' });
+    try {
+      await waitFrames(page);
+      const result = await page.evaluate(function () {
+        return Array.from(document.querySelectorAll('.node.hostage.action')).map(function (node) {
+          const box = node.getBoundingClientRect();
+          const el = node.querySelector('.node-label');
+          const label = el.getBoundingClientRect();
+          const range = document.createRange(); range.selectNodeContents(el);
+          const text = range.getBoundingClientRect();
+          const sub = node.querySelector('.sub');
+          return { id: node.dataset.node,
+            inside: label.top >= box.top - .1 && label.bottom <= box.bottom + .1 && text.left >= box.left - .1 && text.right <= box.right + .1,
+            stacked: !sub || sub.getBoundingClientRect().top >= label.bottom - .1 };
+
+        });
+      });
+      assert(result.length > 0, 'fixture must contain short Hostage actions');
+      result.forEach(function (node) { assert(node.inside, node.id + ': fallback label leaves node'); assert(node.stacked, node.id + ': sublabel must stay below title'); });
+    } finally { await style.evaluate(function (el) { el.remove(); }); }
   });
 
   await ok('pan changes translation only and fit restores the whole stable chart', async function () {

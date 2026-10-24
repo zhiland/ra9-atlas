@@ -60,9 +60,9 @@ check('the real PoC4 sample passes all structural checks', () => {
   assert(!result.failed, errors.join('\n        '));
 });
 
-check('the sample declares contract version 1.0 and separate coverage records', () => {
-  eq(real.meta.contractVersion, '1.0');
-  eq(real.chapters.map(c => c.coverage.status), ['partial', 'partial', 'partial']);
+check('the sample declares contract version 1.1 and separate coverage records', () => {
+  eq(real.meta.contractVersion, '1.1');
+  eq(real.chapters.map(c => c.coverage.status), ['partial', 'partial', 'partial', 'checked-against-chart', 'partial', 'partial', 'partial']);
   real.chapters.forEach(c => {
     assert(c.coverage.scope && c.coverage.included && c.coverage.omitted, c.id + ' coverage scope/inclusion/omission missing');
     assert(c.coverage.sources.length > 0, c.id + ' coverage has no sources');
@@ -70,7 +70,7 @@ check('the sample declares contract version 1.0 and separate coverage records', 
 });
 
 check('published node IDs keep their order and later slices are appended', () => {
-  eq(real.nodes.map(n => n.id), [
+  eq(real.nodes.slice(0, 68).map(n => n.id), [
     'a_welcome', 'a_todd', 'a_clean1', 'a_ask', 'a_go', 'a_clean2', 'a_room', 'a_talk', 'a_key', 'a_box',
     'a_gun_seen', 'a_window_open',
     's_alive', 's_dead', 's_take_gun', 's_gun_struggle', 's_kara_shoots_todd',
@@ -81,13 +81,24 @@ check('published node IDs keep their order and later slices are appended', () =>
     's_lock_room', 's_window_go_out', 's_window_qte', 's_window_reach_bus',
     's_todd_orders_stay', 's_alice_runs_upstairs', 's_deviant', 's_fatal_todd_kills', 's_go_upstairs', 's_reason_todd', 's_todd_upstairs_first',
     'a_read_android_power', 'a_read_connecting_dots', 'a_wash_dishes', 'a_take_laundry_backyard',
-    'a_rewash_clothes', 'a_find_red_ice', 'a_enrage_todd', 'a_watch_todd_tv', 'a_block_todd_view', 'a_activate_vacuum', 'a_take_out_trash'
+    'a_rewash_clothes', 'a_find_red_ice', 'a_enrage_todd', 'a_watch_todd_tv', 'a_block_todd_view', 'a_activate_vacuum', 'a_take_out_trash',
+    'a_clean_todd_room', 'a_tidy_pills', 'a_make_todd_bed', 'a_alice_goes_room', 'a_clean_toilet',
+    'a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom', 'a_read_android_qb',
+    'a_read_putting_price', 'a_read_alice_floor_book', 'a_read_alice_shelf_books'
   ]);
-  eq(real.nodes.length, 56);
+  eq(real.nodes.slice(68, 102).map(n => n.id), [
+    'mission_start', 'fish', 'talk_allen', 'stage-search', 'inv_father', 'learn_cause', 'learn_name',
+    'inv_gun_case', 'inv_cop_body', 'cops_gun', 'wasted_time', 'go_outside', 'swat_injured',
+    'stage-confront', 'stage-negotiate', 'approach', 'helicopter', 'gun_talk', 'wounded_cop',
+    'fail_negotiate', 'honest_deviant', 'lie_deviant', 'trust', 'sacrifice_self', 'use_gun',
+    'get_close', 'deviant_jumps', 'end_failed', 'end_leapt', 'end_snipers', 'end_died',
+    'end_deviant_shot', 'end_connor_shot', 'pe_meet_cop'
+  ]);
+  eq(real.nodes.length, 128);
 });
 
 check('published edge IDs keep their order and later slices are appended', () => {
-  eq(real.edges.map(e => e.id), [
+  eq(real.edges.slice(0, 55).map(e => e.id), [
     'e_home_welcome_todd', 'e_home_todd_clean1', 'e_home_clean1_ask', 'e_home_ask_go',
     'e_home_go_clean2', 'e_home_clean2_room', 'e_home_room_talk', 'e_home_talk_key',
     'e_home_key_box', 'e_home_box_kara_dialogue_hypothesis', 'e_stormy_alive_meet',
@@ -106,14 +117,32 @@ check('published edge IDs keep their order and later slices are appended', () =>
     'e_stormy_todd_orders_alice_upstairs', 'e_stormy_alice_upstairs_stay_still',
     'e_stormy_alice_upstairs_deviant', 'e_stormy_deviant_go_upstairs',
     'e_stormy_go_upstairs_reach_alice', 'e_stormy_deviant_reason', 'e_stormy_reason_knocked',
-    'e_home_rewash_red_ice', 'e_home_red_ice_enrage_todd', 'e_home_watch_tv_block_view', 'e_home_backyard_rewash_clothes'
+    'e_home_rewash_red_ice', 'e_home_red_ice_enrage_todd', 'e_home_watch_tv_block_view', 'e_home_backyard_rewash_clothes',
+    'e_home_pills_gun', 'e_home_todd_bed_alice_room'
   ]);
-  eq(real.edges.length, 53);
-  eq(real.edges.map(e => [e.from, e.to, e.kind]), [
+  eq(real.edges.slice(55, 93).map(e => e.id), [
+    'e_hostage_start_allen', 'e_hostage_allen_search',
+    'e_hostage_search_father', 'e_hostage_father_cause', 'e_hostage_search_name',
+    'e_hostage_search_gun_case', 'e_hostage_search_cop_body', 'e_hostage_cop_body_gun',
+    'e_hostage_search_wasted', 'e_hostage_search_outside', 'e_hostage_wasted_confront',
+    'e_hostage_outside_confront', 'e_hostage_confront_negotiate',
+    'e_hostage_negotiate_approach', 'e_hostage_negotiate_helicopter',
+    'e_hostage_negotiate_gun_talk', 'e_hostage_negotiate_wounded_cop',
+    'e_hostage_negotiate_honest', 'e_hostage_negotiate_lie', 'e_hostage_negotiate_sacrifice',
+    'e_hostage_negotiate_use_gun', 'e_hostage_negotiate_get_close',
+    'e_hostage_lie_trust', 'e_hostage_honest_jumps', 'e_hostage_trust_fail_jumps',
+    'e_hostage_trust_build_snipers', 'e_hostage_jumps_failed', 'e_hostage_jumps_leapt',
+    'e_hostage_sacrifice_died', 'e_hostage_gun_deviant_shot', 'e_hostage_gun_connor_shot',
+    'e_hostage_start_fish', 'e_hostage_search_swat', 'e_hostage_negotiate_fail',
+    'e_hostage_approach_fail', 'e_hostage_fail_jumps',
+    'e_hostage_save_cop_public_enemy', 'e_hostage_cold_approach_fail'
+  ]);
+  eq(real.edges.length, 113);
+  eq(real.edges.map(e => [e.from, e.to, e.kind]).slice(0, 55), [
     ['a_welcome', 'a_todd', 'traced'], ['a_todd', 'a_clean1', 'traced'],
-    ['a_clean1', 'a_ask', 'traced'], ['a_ask', 'a_go', 'traced'],
+    ['a_clean1', 'a_ask', 'withdrawn'], ['a_ask', 'a_go', 'traced'],
     ['a_go', 'a_clean2', 'traced'], ['a_clean2', 'a_room', 'traced'],
-    ['a_room', 'a_talk', 'traced'], ['a_talk', 'a_key', 'conditional'],
+    ['a_room', 'a_talk', 'withdrawn'], ['a_talk', 'a_key', 'conditional'],
     ['a_key', 'a_box', 'traced'], ['a_box', 'k_dialogue', 'hypothesis'],
     ['s_alive', 'k_meet', 'prerequisite'], ['k_terminal', 'k_meet', 'prerequisite'],
     ['k_meet', 'k_dialogue', 'traced'], ['k_dialogue', 'k_away', 'traced'],
@@ -140,7 +169,32 @@ check('published edge IDs keep their order and later slices are appended', () =>
     ['a_rewash_clothes', 'a_find_red_ice', 'traced'],
     ['a_find_red_ice', 'a_enrage_todd', 'traced'],
     ['a_watch_todd_tv', 'a_block_todd_view', 'traced'],
-    ['a_take_laundry_backyard', 'a_rewash_clothes', 'traced']
+    ['a_take_laundry_backyard', 'a_rewash_clothes', 'traced'],
+    ['a_tidy_pills', 'a_gun_seen', 'traced'],
+    ['a_make_todd_bed', 'a_alice_goes_room', 'traced']
+  ]);
+  eq(real.edges.map(e => [e.from, e.to, e.kind]).slice(55, 93), [
+    ['mission_start', 'talk_allen', 'traced'], ['talk_allen', 'stage-search', 'traced'],
+    ['stage-search', 'inv_father', 'traced'], ['inv_father', 'learn_cause', 'traced'],
+    ['stage-search', 'learn_name', 'traced'], ['stage-search', 'inv_gun_case', 'traced'],
+    ['stage-search', 'inv_cop_body', 'traced'], ['inv_cop_body', 'cops_gun', 'traced'],
+    ['stage-search', 'wasted_time', 'traced'], ['stage-search', 'go_outside', 'traced'],
+    ['wasted_time', 'stage-confront', 'traced'], ['go_outside', 'stage-confront', 'traced'],
+    ['stage-confront', 'stage-negotiate', 'traced'],
+    ['stage-negotiate', 'approach', 'traced'], ['stage-negotiate', 'helicopter', 'traced'],
+    ['stage-negotiate', 'gun_talk', 'traced'], ['stage-negotiate', 'wounded_cop', 'traced'],
+    ['stage-negotiate', 'honest_deviant', 'traced'], ['stage-negotiate', 'lie_deviant', 'traced'],
+    ['stage-negotiate', 'sacrifice_self', 'traced'], ['stage-negotiate', 'use_gun', 'traced'],
+    ['stage-negotiate', 'get_close', 'traced'],
+    ['lie_deviant', 'trust', 'traced'], ['honest_deviant', 'deviant_jumps', 'traced'],
+    ['trust', 'deviant_jumps', 'traced'], ['trust', 'end_snipers', 'traced'],
+    ['deviant_jumps', 'end_failed', 'traced'], ['deviant_jumps', 'end_leapt', 'traced'],
+    ['sacrifice_self', 'end_died', 'traced'], ['use_gun', 'end_deviant_shot', 'traced'],
+    ['use_gun', 'end_connor_shot', 'traced'],
+    ['mission_start', 'fish', 'uncertain'], ['stage-search', 'swat_injured', 'uncertain'],
+    ['stage-negotiate', 'fail_negotiate', 'uncertain'], ['approach', 'fail_negotiate', 'uncertain'],
+    ['fail_negotiate', 'deviant_jumps', 'traced'],
+    ['wounded_cop', 'pe_meet_cop', 'prerequisite'], ['approach', 'fail_negotiate', 'uncertain']
   ]);
 });
 
@@ -186,7 +240,8 @@ check('conditions keep each checkpoint timing alternative attached to its own ed
     ['cond_meet_todd_access', 'AND'],
     ['cond_checkpoint_detour_late', 'AND'],
     ['cond_checkpoint_detour_ontime', 'AND'],
-    ['cond_window_qte_success', 'SINGLE']
+    ['cond_window_qte_success', 'SINGLE'],
+    ['cond_hostage_save_cop_meet', 'SINGLE']
   ]);
   const meet = real.conditions.find(c => c.id === 'cond_meet_todd_access');
   eq(meet.appliesTo, ['e_stormy_alive_meet', 'e_kara_terminal_meet']);
@@ -209,11 +264,12 @@ check('conditions keep each checkpoint timing alternative attached to its own ed
 });
 
 check('unknowns stay unknown and no source-vs-source conflict is invented', () => {
-  eq(real.uncertainties.map(u => u.status), ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown']);
+  eq(real.uncertainties.map(u => u.status), Array(22).fill('unknown'));
   eq(real.uncertainties.map(u => u.id), [
-    'u_box_trigger', 'u_key_threshold', 'u_home_first_floor_order', 'u_stormy_internal',
+    'u_box_trigger', 'u_key_threshold', 'u_home_first_floor_order', 'u_home_second_floor_order', 'u_stormy_internal',
     'u_checkpoint_timer_11', 'u_gun_state_check', 'u_window_route_outcome',
-    'u_stormy_escape_todd_state'
+    'u_stormy_escape_todd_state', 'u_hostage_chart_uncertain',
+    'u_sc_detached_origins', 'u_sc_order', 'u_sc_harassment', 'u_sc_build', 'u_pt_detached_origins', 'u_pt_order', 'u_pt_clothes', 'u_pt_build', 'u_ptl_group_semantics', 'u_ptl_common_exit', 'u_ptl_completion', 'u_ptl_build'
   ]);
   eq(real.conflicts, []);
   real.uncertainties.forEach(u => {
@@ -275,14 +331,106 @@ check('A New Home first-floor events keep only source-supported local progressio
     assert(edge && edge.kind === 'traced' && edge.from === from && edge.to === to, id + ' must keep its local source-stated progression');
     assert(edge.src.length > 0, id + ' must cite its source');
   });
-  assert(!real.edges.some(e => e.from === 'a_clean1' && Object.keys(sources).includes(e.to)),
+  assert(!real.edges.some(e => e.from === 'a_clean1' && Object.keys(sources).includes(e.to) && e.id !== 'e_home_clean1_trash'),
     'do not invent generic first-floor context spokes');
   const mandatory = real.edges.find(e => e.id === 'e_home_clean1_ask');
-  eq([mandatory.from, mandatory.to, mandatory.kind], ['a_clean1', 'a_ask', 'traced']);
+  eq([mandatory.from, mandatory.to, mandatory.kind], ['a_clean1', 'a_ask', 'withdrawn']);
   const unknown = real.uncertainties.find(u => u.id === 'u_home_first_floor_order');
   assert(unknown && unknown.status === 'unknown', 'unresolved order and requirements must be recorded');
   Object.keys(sources).forEach(id => assert(unknown.nodes.includes(id), id + ' missing from first-floor uncertainty'));
   ['e_home_backyard_rewash_clothes', 'e_home_rewash_red_ice', 'e_home_red_ice_enrage_todd', 'e_home_watch_tv_block_view'].forEach(id => assert(unknown.edges.includes(id), id + ' missing from first-floor uncertainty'));
+});
+
+check('A New Home second-floor expansion appends twelve guide-reported events with scoped sources', () => {
+  const byId = new Map(real.nodes.map(n => [n.id, n]));
+  const ids = [
+    'a_clean_todd_room', 'a_tidy_pills', 'a_make_todd_bed', 'a_alice_goes_room',
+    'a_clean_toilet', 'a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom',
+    'a_read_android_qb', 'a_read_putting_price', 'a_read_alice_floor_book', 'a_read_alice_shelf_books'
+  ];
+  eq(real.nodes.slice(56, 68).map(n => n.id), ids, 'the 12 second-floor events must be appended in order');
+  const sources = {
+    a_clean_todd_room: ['powerpyxHome', 'gamefaqs'],
+    a_tidy_pills: ['powerpyxHome', 'gamefaqs'],
+    a_make_todd_bed: ['powerpyxHome', 'gamefaqs'],
+    a_alice_goes_room: ['powerpyxHome', 'gamefaqs'],
+    a_clean_toilet: ['powerpyxHome', 'gamefaqs'],
+    a_arrange_bathroom_bottles: ['powerpyxHome', 'gamefaqs'],
+    a_store_bathroom_clothes: ['powerpyxHome', 'gamefaqs'],
+    a_mop_bathroom: ['powerpyxHome', 'gamefaqs'],
+    a_read_android_qb: ['powerpyxHome'],
+    a_read_putting_price: ['powerpyxHome'],
+    a_read_alice_floor_book: ['powerpyxHome', 'gamefaqs'],
+    a_read_alice_shelf_books: ['powerpyxHome']
+  };
+  ids.forEach(id => {
+    const node = byId.get(id);
+    assert(node && node.chapter === 'home' && node.kind === 'action', id + ' must be an A New Home action event');
+    eq(node.src, sources[id], id + ' source attribution');
+    assert(/second-floor/i.test(node.sub || ''), id + ' must identify its second-floor context');
+    assert(!/\b(optional (activity|event|action|branch)|is mandatory|must be completed|are exclusive|mutually exclusive)\b/i.test(node.note || ''),
+      id + ' must not claim unsupported optionality or necessity');
+  });
+  assert(/PowerPyx-only/i.test(byId.get('a_read_android_qb').note) && /PowerPyx-only/i.test(byId.get('a_read_putting_price').note),
+    'the two exact Todd-room magazine titles must stay PowerPyx-only');
+});
+
+check('the two second-floor relation edges keep exact semantics and source attribution', () => {
+  const ids = ['a_clean_todd_room', 'a_tidy_pills', 'a_make_todd_bed', 'a_alice_goes_room', 'a_clean_toilet',
+    'a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom', 'a_read_android_qb',
+    'a_read_putting_price', 'a_read_alice_floor_book', 'a_read_alice_shelf_books'];
+  const touching = real.edges.filter(e => ids.includes(e.from) || ids.includes(e.to));
+  eq(touching.map(e => [e.id, e.from, e.to, e.kind, e.src]), [
+    ['e_home_pills_gun', 'a_tidy_pills', 'a_gun_seen', 'traced', ['gamefaqs']],
+    ['e_home_todd_bed_alice_room', 'a_make_todd_bed', 'a_alice_goes_room', 'traced', ['powerpyxHome', 'gamefaqs']]
+  ]);
+  eq(real.edges.slice(53, 55).map(e => e.id), ['e_home_pills_gun', 'e_home_todd_bed_alice_room'],
+    'the two new relations must stay appended after the prior second-floor slice');
+  const pills = real.edges.find(e => e.id === 'e_home_pills_gun');
+  assert(/reported sequence/i.test(pills.note) && /not an eligibility requirement/i.test(pills.note),
+    'the pills-to-gun link must be a reported sequence, not an eligibility requirement');
+  assert(/pill bottle/i.test(pills.note) && /GameFAQs/i.test(pills.note), 'the pills-to-gun link must state the GameFAQs pill-bottle sequence');
+  const bed = real.edges.find(e => e.id === 'e_home_todd_bed_alice_room');
+  assert(/reported sequence/i.test(bed.note) && /not an eligibility requirement/i.test(bed.note),
+    'the bed-to-Alice-room link must be a reported sequence, not an eligibility requirement');
+  assert(!real.conditions.some(c => c.appliesTo.some(id => ['e_home_pills_gun', 'e_home_todd_bed_alice_room'].includes(id))),
+    'second-floor sequence edges must not inherit later requirements');
+});
+
+check('second-floor guide order is recorded without universal room prerequisites or a Talk AND gate', () => {
+  const ids = ['a_clean_todd_room', 'a_tidy_pills', 'a_make_todd_bed', 'a_alice_goes_room', 'a_clean_toilet',
+    'a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom', 'a_read_android_qb',
+    'a_read_putting_price', 'a_read_alice_floor_book', 'a_read_alice_shelf_books'];
+  const uncertainty = real.uncertainties.find(u => u.id === 'u_home_second_floor_order');
+  assert(uncertainty && uncertainty.status === 'unknown', 'the differing second-floor guide orders must stay unknown');
+  ids.concat('a_talk').forEach(id => assert(uncertainty.nodes.includes(id), id + ' missing from second-floor order uncertainty'));
+  ['e_home_pills_gun', 'e_home_todd_bed_alice_room'].forEach(id => assert(uncertainty.edges.includes(id), id + ' missing from second-floor order uncertainty'));
+  assert(/different orders/i.test(uncertainty.explanation), 'the uncertainty must record the source-specific order difference');
+  assert(/not universal|not.*AND gate/i.test(uncertainty.explanation), 'the uncertainty must not encode a universal room-cleaning gate');
+  assert(!real.edges.some(e => ids.includes(e.from) && ['a_talk', 'a_clean2', 'a_room'].includes(e.to)),
+    'second-floor events must not become generic prerequisites or spokes');
+  const talkConditions = real.conditions.filter(c => c.appliesTo.includes('e_home_talk_key'));
+  eq(talkConditions.map(c => [c.id, c.operator]), [['cond_key_relationship', 'SINGLE']]);
+  assert(!real.conditions.some(c => c.appliesTo.includes('e_home_room_talk') && c.operator === 'AND'),
+    'Talk with Alice must not gain a universal AND room-cleaning condition');
+});
+
+check('the unsupported exact Alice-key relationship level stays removed', () => {
+  assert(!/Neutral/i.test(JSON.stringify(real)), 'the atlas data must not claim a Neutral relationship level');
+  const key = real.nodes.find(n => n.id === 'a_key');
+  const detail = real.detail.a_key;
+  const condition = real.conditions.find(c => c.id === 'cond_key_relationship');
+  const uncertainty = real.uncertainties.find(u => u.id === 'u_key_threshold');
+  const text = [key.note, key.sub, detail.status, detail.summary, detail.unknown, condition.summary,
+    condition.requirements.join(' '), uncertainty.explanation].join(' ');
+  assert(!/\b(Neutral|Warm|Distant)\b/i.test(text), 'no named or exact relationship level may be claimed');
+  assert(/not state|does not state|unstated|not named|exact relationship level/i.test(text),
+    'the key text must say the exact relationship level is unknown');
+  eq([condition.id, condition.operator, condition.appliesTo, condition.requirements.length],
+    ['cond_key_relationship', 'SINGLE', ['e_home_talk_key'], 1]);
+  const keyBox = real.edges.find(e => e.id === 'e_home_key_box');
+  eq([keyBox.from, keyBox.to, keyBox.kind], ['a_key', 'a_box', 'traced']);
+  assert(uncertainty && uncertainty.status === 'unknown', 'u_key_threshold must stay unknown');
 });
 
 check('gun and window expansion keeps possession, outcomes and route limits separate', () => {
@@ -363,10 +511,95 @@ check('the two successful non-gun escape routes stay separate and Todd links sta
     'Todd-state unknown must explain the missing state and the inference');
 });
 
+check('The Hostage chart preserves its 36 pictured connectors and maps 37 explicit edge claims', () => {
+  const hostage = real.chapters.find(c => c.id === 'hostage');
+  assert(hostage && hostage.coverage.status === 'checked-against-chart', 'Hostage must stay checked against the full chart');
+  eq(hostage.frame, { x: 0, y: 1120, w: 4450, h: 1340 });
+  const nodes = real.nodes.filter(n => n.chapter === 'hostage');
+  eq(nodes.length, 33);
+  eq(nodes.filter(n => n.kind === 'stage').map(n => n.label),
+    ['SEARCH FOR CLUES', 'CONFRONT DEVIANT OUTSIDE', 'NEGOTIATE WITH DEVIANT']);
+  eq(nodes.filter(n => n.kind === 'choice').length, 7);
+  eq(nodes.filter(n => n.kind === 'choice').flatMap(n => n.options).length, 14);
+  eq(nodes.filter(n => n.kind === 'outcome').map(n => n.label), [
+    'CONNOR FAILED TO REACH DEVIANT IN TIME', 'CONNOR LEAPT FOR EMMA AND FELL',
+    'SNIPERS SHOT DEVIANT', 'CONNOR DIED PROTECTING EMMA',
+    'DEVIANT SHOT CONNOR', 'CONNOR SHOT DEVIANT'
+  ]);
+  const visible = nodes.flatMap(n => n.kind === 'choice' ? n.options : [n.label]);
+  eq(visible.length, 40);
+  eq(new Set(visible).size, 40);
+  ['MISSION START', 'SAVE FISH', 'LEAVE FISH', 'TALK TO CAPT. ALLEN', 'SEARCH FOR CLUES',
+    "INVESTIGATE FATHER'S BODY", 'LEARN CAUSE OF INCIDENT', "LEARN DEVIANT'S NAME",
+    'INVESTIGATE GUN CASE', "INVESTIGATE COP'S BODY", "TAKE COP'S GUN", "LEAVE COP'S GUN",
+    'WASTED TOO MUCH TIME', 'GO OUTSIDE', 'SWAT INJURED', 'CONFRONT DEVIANT OUTSIDE',
+    'NEGOTIATE WITH DEVIANT', 'FRIENDLY APPROACH', 'COLD APPROACH',
+    'REFUSE TO DISMISS HELICOPTER', 'DISMISS HELICOPTER', 'BE HONEST ABOUT GUN',
+    'LIE ABOUT GUN', 'LEAVE WOUNDED COP', 'SAVE WOUNDED COP', 'FAIL TO NEGOTIATE',
+    'BE HONEST WITH DEVIANT', 'LIE TO DEVIANT', 'FAIL TO BUILD TRUST', 'BUILD TRUST',
+    'SACRIFICE SELF', 'USE GUN', 'GET CLOSE ENOUGH', 'DEVIANT JUMPS WITH EMMA'
+  ].forEach(label => assert(visible.includes(label), 'missing Hostage label ' + label));
+  const chartEdges = real.edges.filter(e => {
+    const from = real.nodes.find(n => n.id === e.from), to = real.nodes.find(n => n.id === e.to);
+    return from.chapter === 'hostage' && to.chapter === 'hostage';
+  });
+  eq(hostage.coverage.visibleConnectorCount, 36);
+  eq(hostage.coverage.modeledEdgeClaimCount, 37);
+  eq(chartEdges.length, 37);
+  eq(chartEdges.filter(e => e.kind === 'traced').length, 32);
+  eq(chartEdges.filter(e => e.kind === 'uncertain').length, 5);
+  const friendly = chartEdges.find(e => e.id === 'e_hostage_approach_fail');
+  const cold = chartEdges.find(e => e.id === 'e_hostage_cold_approach_fail');
+  const jumps = chartEdges.find(e => e.id === 'e_hostage_fail_jumps');
+  eq([friendly.fromOption, friendly.kind, real.edges.indexOf(friendly)], [0, 'uncertain', 89]);
+  eq([cold.fromOption, cold.kind, real.edges.indexOf(cold)], [1, 'uncertain', 92]);
+  eq([jumps.kind, real.edges.indexOf(jumps)], ['traced', 90]);
+  assert(/narrowed.*Friendly/i.test(friendly.note), 'old edge index 89 must state its narrowed Friendly meaning');
+  assert(/selected.*Cold Approach/i.test(cold.note), 'new edge must remain scoped to the selected Cold path');
+  assert(/full Steam chart/i.test(jumps.note) && /not gameplay verification/i.test(jumps.note),
+    'resolved FAIL→Jumps must stay a chart-image reading, not a gameplay claim');
+  assert(chartEdges.some(e => e.from === 'approach' && e.fromOption === 0 && e.to === 'fail_negotiate') &&
+    chartEdges.some(e => e.from === 'approach' && e.fromOption === 1 && e.to === 'fail_negotiate'),
+    'option-specific links to one target must remain separate claims');
+  assert(chartEdges.filter(e => e.kind === 'uncertain').every(e => e.note), 'uncertain connectors need notes');
+  eq(real.edges.filter(e => e.from === 'get_close'), []);
+  const unknown = real.uncertainties.find(u => u.id === 'u_hostage_chart_uncertain');
+  assert(unknown && unknown.status === 'unknown', 'Hostage chart uncertainty must stay explicit');
+  eq(unknown.edges, chartEdges.filter(e => e.kind === 'uncertain').map(e => e.id));
+  assert(/chart-transcription uncertainty/i.test(unknown.explanation), 'chart uncertainty should be scoped to the screenshot');
+  assert(!unknown.edges.includes('e_hostage_save_cop_public_enemy'), 'chart uncertainty must not include the saved-cop gate');
+});
+
+check('the saved-cop Public Enemy carry is one guide-supported prerequisite and no leave consequence', () => {
+  const pe = real.chapters.find(c => c.id === 'public-enemy');
+  assert(pe && pe.coverage.status === 'partial', 'Public Enemy must stay a partial one-node region');
+  const enemyNodes = real.nodes.filter(n => n.chapter === 'public-enemy');
+  eq(enemyNodes.map(n => n.id), ['pe_meet_cop']);
+  eq(enemyNodes[0].label, 'Meet Cop From Hostage Situation');
+  const gate = real.edges.find(e => e.id === 'e_hostage_save_cop_public_enemy');
+  assert(gate, 'saved-cop cross edge missing');
+  eq([gate.from, gate.to, gate.fromOption, gate.kind], ['wounded_cop', 'pe_meet_cop', 1, 'prerequisite']);
+  assert(gate.src.includes('powerpyxHostage') && gate.src.includes('powerpyxPublicEnemy'), 'saved-cop edge needs both PowerPyx references');
+  assert(/guide-reported, not gameplay-verified/i.test(gate.note), 'saved-cop edge must state the evidence limit');
+  eq(real.edges.filter(e => e.from === 'pe_meet_cop'), []);
+  eq(real.edges.filter(e => e.from === 'wounded_cop').map(e => [e.fromOption, e.to]), [[1, 'pe_meet_cop']]);
+  const condition = real.conditions.find(c => c.id === 'cond_hostage_save_cop_meet');
+  eq([condition.operator, condition.appliesTo, condition.requirements],
+    ['SINGLE', ['e_hostage_save_cop_public_enemy'], ['SAVE WOUNDED COP was chosen in The Hostage.']]);
+  assert(!real.conditions.some(c => c.id !== 'cond_hostage_save_cop_meet' && c.appliesTo.includes('e_hostage_save_cop_public_enemy')),
+    'the saved-cop edge must not inherit another condition');
+  assert(!/cop (dies|is killed)|rescue/i.test(gate.label || ''), 'the saved-cop edge must not add later cop outcomes');
+});
+
 console.log('atlas-data.js — malformed fixtures');
 rejects('rejects duplicate node IDs', d => { d.nodes[1].id = d.nodes[0].id; }, /duplicate node id/);
 rejects('rejects duplicate chapter IDs', d => { d.chapters[1].id = d.chapters[0].id; }, /duplicate chapter id/);
 rejects('rejects duplicate edge IDs', d => { d.edges[1].id = d.edges[0].id; }, /duplicate edge id/);
+rejects('rejects duplicate directed choice-option edges', d => {
+  const duplicate = JSON.parse(JSON.stringify(d.edges.find(e => e.id === 'e_hostage_cold_approach_fail')));
+  duplicate.id = 'e_fixture_duplicate_cold';
+  d.edges.push(duplicate);
+}, /duplicate edge approach#1->fail_negotiate/);
 rejects('rejects duplicate condition IDs', d => { d.conditions[1].id = d.conditions[0].id; }, /duplicate condition id/);
 rejects('rejects an edge with a dangling target endpoint', d => { d.edges[0].to = 'missing_node'; }, /edge to "missing_node" has no node/);
 rejects('rejects a node with no source references', d => { d.nodes[0].src = []; }, /node "a_welcome" has no src keys/);
@@ -455,6 +688,10 @@ rejects('rejects a duplicate first-floor event ID', d => {
   node.id = 'a_take_out_trash';
 }, /duplicate node id "a_take_out_trash"/);
 
+rejects('rejects Hostage coverage that omits saved-cop carry sources', d => {
+  d.chapters.find(c => c.id === 'hostage').coverage.sources = ['steam', 'powerpyxHostage'];
+}, /hostage coverage must include the chart\/carry source "powerpyxPublicEnemy"/);
+
 rejects('rejects removing the laundry to Red Ice progression', d => {
   d.edges = d.edges.filter(e => e.id !== 'e_home_rewash_red_ice');
 }, /u_home_first_floor_order.*missing edge|A New Home first-floor events|e_home_rewash_red_ice must preserve/);
@@ -470,6 +707,112 @@ rejects('rejects claiming that first-floor chores are optional', d => {
 rejects('rejects removing the first-floor ordering uncertainty', d => {
   d.uncertainties = d.uncertainties.filter(u => u.id !== 'u_home_first_floor_order');
 }, /u_home_first_floor_order must remain explicit/);
+
+rejects('rejects removing a second-floor event', d => {
+  d.nodes = d.nodes.filter(n => n.id !== 'a_mop_bathroom');
+}, /a_mop_bathroom must be an A New Home action event/);
+
+rejects('rejects an inferred second-floor chore spoke', d => {
+  d.edges.push({ id: 'e_fixture_second_floor_spoke', from: 'a_make_todd_bed', to: 'a_clean_todd_room', kind: 'traced', src: ['powerpyxHome'] });
+}, /second-floor events must have exactly two local relation edges/);
+
+rejects('rejects a second-floor chore becoming a universal Talk with Alice prerequisite', d => {
+  d.edges.push({ id: 'e_fixture_second_floor_talk', from: 'a_mop_bathroom', to: 'a_talk', kind: 'traced', src: ['powerpyxHome'] });
+}, /must not become universal prerequisites for Talk with Alice|must have exactly two local relation edges/);
+
+rejects('rejects changing the pills-to-gun source to a guide that does not state the sequence', d => {
+  d.edges.find(e => e.id === 'e_home_pills_gun').src = ['powerpyxHome'];
+}, /e_home_pills_gun must keep its source attribution/);
+
+rejects('rejects presenting the pills-to-gun report as a prerequisite', d => {
+  d.edges.find(e => e.id === 'e_home_pills_gun').kind = 'prerequisite';
+}, /e_home_pills_gun must preserve its reported local sequence/);
+
+rejects('rejects removing the second-floor order uncertainty', d => {
+  d.uncertainties = d.uncertainties.filter(u => u.id !== 'u_home_second_floor_order');
+}, /u_home_second_floor_order must remain explicit/);
+
+rejects('rejects a universal AND condition for Talk with Alice', d => {
+  const condition = d.conditions.find(c => c.id === 'cond_key_relationship');
+  condition.operator = 'AND';
+  condition.requirements = ['Clean Todd’s room.', 'Alice trusts Kara enough to give the key.'];
+}, /cond_key_relationship must stay SINGLE/);
+
+rejects('rejects restoring an exact Neutral relationship level', d => {
+  const condition = d.conditions.find(c => c.id === 'cond_key_relationship');
+  condition.requirements = ['Reported relationship level: Neutral or higher.'];
+}, /must not claim a named or exact relationship level/);
+
+rejects('rejects removing the key-to-box relation', d => {
+  d.edges = d.edges.filter(e => e.id !== 'e_home_key_box');
+}, /e_home_key_box must stay the traced a_key → a_box relation/);
+
+rejects('rejects giving GET CLOSE ENOUGH an outgoing resolution', d => {
+  d.edges.push({ id: 'e_fixture_get_close', from: 'get_close', to: 'end_connor_shot', kind: 'traced', src: ['steam'] });
+}, /GET CLOSE ENOUGH must stay a no-outgoing-edge endpoint/);
+
+rejects('rejects moving the saved-cop gate off the SAVE option', d => {
+  d.edges.find(e => e.id === 'e_hostage_save_cop_public_enemy').fromOption = 0;
+}, /saved-cop edge must leave the SAVE WOUNDED COP option/);
+
+rejects('rejects retargeting the saved-cop prerequisite', d => {
+  d.edges.find(e => e.id === 'e_hostage_save_cop_public_enemy').to = 'end_connor_shot';
+}, /saved-cop edge must target pe_meet_cop|missing documented cross-chapter edge/);
+
+rejects('rejects weakening the saved-cop prerequisite to a traced link', d => {
+  d.edges.find(e => e.id === 'e_hostage_save_cop_public_enemy').kind = 'traced';
+}, /saved-cop edge must stay a prerequisite|missing documented cross-chapter edge/);
+
+rejects('rejects extending the Public Enemy slice past Meet Cop', d => {
+  d.edges.push({ id: 'e_fixture_pe_after', from: 'pe_meet_cop', to: 'k_meet', kind: 'traced', src: ['powerpyxPublicEnemy'] });
+}, /pe_meet_cop must not gain an outgoing consequence/);
+
+rejects('rejects dropping the saved-cop condition', d => {
+  d.conditions = d.conditions.filter(c => c.id !== 'cond_hostage_save_cop_meet');
+}, /saved-cop edge must have exactly one condition/);
+
+rejects('rejects drawing a consequence for LEAVE WOUNDED COP', d => {
+  d.edges.push({ id: 'e_fixture_leave_cop', from: 'wounded_cop', to: 'fail_negotiate', fromOption: 0, kind: 'traced', src: ['steam'] });
+}, /LEAVE WOUNDED COP must have no drawn consequence/);
+
+rejects('rejects relabelling an unrelated uncertain Hostage connector as traced', d => {
+  d.edges.find(e => e.id === 'e_hostage_start_fish').kind = 'traced';
+}, /5 uncertain edge claims|must reference exactly the 5 uncertain edge claims/);
+
+rejects('rejects merging Hostage chart uncertainty into the saved-cop gate', d => {
+  const unknown = d.uncertainties.find(u => u.id === 'u_hostage_chart_uncertain');
+  unknown.edges.push('e_hostage_save_cop_public_enemy');
+}, /must reference exactly the 5 uncertain edge claims|must not absorb the guide-supported saved-cop prerequisite/);
+
+rejects('rejects changing a Hostage stage container into a plain box', d => {
+  d.nodes.find(n => n.id === 'stage-negotiate').kind = 'action';
+}, /hostage should have 3 stage containers/);
+
+check('source correction preserves withdrawn identities and appends exact replacement topology', () => {
+  eq(real.edges.slice(93, 96).map(e => [e.id, e.from, e.to]), [
+    ['e_home_clean1_trash', 'a_clean1', 'a_take_out_trash'],
+    ['e_home_trash_ask', 'a_take_out_trash', 'a_ask'],
+    ['e_home_clean2_talk', 'a_clean2', 'a_talk']
+  ]);
+  eq([real.edges[2].id, real.edges[2].from, real.edges[2].to, real.edges[2].kind],
+    ['e_home_clean1_ask', 'a_clean1', 'a_ask', 'withdrawn']);
+  eq([real.edges[6].id, real.edges[6].from, real.edges[6].to, real.edges[6].kind],
+    ['e_home_room_talk', 'a_room', 'a_talk', 'withdrawn']);
+  eq(real.edges[2].replacedBy, ['e_home_clean1_trash', 'e_home_trash_ask']);
+  eq(real.edges[6].replacedBy, ['e_home_clean2_talk']);
+  eq(['a_clean1', 'a_clean2'].map(id => real.nodes.find(n => n.id === id).kind), ['stage', 'stage']);
+  eq(real.meta.counts.activeEdges, 111);
+  eq(real.meta.counts.withdrawnEdges, 2);
+});
+rejects('rejects a withdrawn claim with no reason', d => { delete d.edges[2].note; }, /withdrawal reason/);
+rejects('rejects a withdrawn claim with a dangling replacement', d => { d.edges[2].replacedBy = ['e_missing']; }, /must be an active edge/);
+rejects('rejects withdrawal cycles or replacement chains', d => { d.edges[2].replacedBy = [d.edges[6].id]; }, /must be an active edge/);
+rejects('rejects duplicate replacement references', d => { d.edges[2].replacedBy.push(d.edges[2].replacedBy[0]); }, /repeats a replacement/);
+rejects('rejects replacement metadata on an active claim', d => { d.edges[0].replacedBy = [d.edges[1].id]; }, /active but has replacedBy/);
+rejects('rejects a live condition on a withdrawn claim', d => { d.conditions[0].appliesTo = [d.edges[2].id]; }, /withdrawn but retains a live condition/);
+rejects('rejects diagonal authored paths', d => { d.edges[94].points[1][1] += 5; }, /points must be orthogonal/);
+rejects('rejects unanchored authored paths', d => { d.edges[94].points[0][0] -= 1; }, /anchored to endpoint borders/);
+rejects('rejects malformed authored paths', d => { d.edges[94].points = ['not a coordinate pair']; }, /finite coordinate pairs/);
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

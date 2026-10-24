@@ -50,9 +50,9 @@ async function snapshot(page) {
     const desktop=await browser.newPage({viewport:{width:1440,height:900}}); await open(desktop,base);
     await check('desktop fit opens the complete labeled spatial graph',async()=>{
       const s=await snapshot(desktop);
-      assert(s.nodes.length===56&&s.nodes.every(n=>n.text&&n.label),'expected all 56 named events in their own boxes');
-      assert(s.edges.length===53,'expected all 53 actual connectors');
-      assert(s.frames.length===3&&s.frames.every(f=>f.label&&f.inside),'all chapter regions and names must fit');
+      assert(s.nodes.length===128&&s.nodes.every(n=>n.text&&n.label),'expected all 128 named events in their own boxes');
+      assert(s.edges.length===111,'expected all 111 actual connectors');
+      assert(s.frames.length===7&&s.frames.every(f=>f.label&&f.inside),'all seven chapter regions and names must fit');
       assert(s.lod===null&&/^\d+%$/.test(s.zoom),'camera has no semantic LOD state');
     });
     await check('zoom changes camera scale without changing world graph',async()=>{
@@ -65,7 +65,7 @@ async function snapshot(page) {
     await check('chapter focus fits a real region and keeps every edge available',async()=>{
       await desktop.locator('[data-chapter="stormy"]').click(); await settle(desktop); const s=await snapshot(desktop);
       assert(s.frames.find(f=>f.id==='stormy')?.inside,'Stormy Night frame is outside the viewport after focus');
-      assert(s.nodes.length===56&&s.edges.length===53,'chapter focus hid map content');
+      assert(s.nodes.length===128&&s.edges.length===111,'chapter focus hid map content');
       assert(await desktop.locator('[data-chapter="stormy"]').getAttribute('aria-pressed')==='true','chapter button state did not update');
       await desktop.locator('[data-chapter="all"]').click(); await settle(desktop); await desktop.locator('#fit').click(); await settle(desktop);
       const fit=await snapshot(desktop); assert(fit.frames.every(f=>f.inside),'Fit did not restore all chapter bounds');
@@ -74,11 +74,14 @@ async function snapshot(page) {
     await check('390px viewport retains the same graph and usable chapter focus',async()=>{
       const s=await snapshot(mobile); const width=await mobile.locator('#canvas').evaluate(e=>e.clientWidth);
       assert(Math.abs(width-390)<=1,'mobile canvas width does not match viewport');
-      assert(s.nodes.length===56&&s.nodes.every(n=>n.text&&n.label),'mobile fit changed the real node inventory');
-      assert(s.edges.length===53,'mobile fit changed the real edge inventory');
+      assert(s.nodes.length===128&&s.nodes.every(n=>n.text&&n.label),'mobile fit changed the real node inventory');
+      assert(s.edges.length===111,'mobile fit changed the real edge inventory');
       await mobile.locator('[data-chapter="kara"]').click(); await settle(mobile); const focused=await snapshot(mobile);
       assert(focused.frames.find(f=>f.id==='kara')?.inside,'Kara chapter fit falls outside the viewport');
-      assert(focused.nodes.length===56&&focused.edges.length===53,'mobile chapter focus hid real graph elements');
+      assert(focused.nodes.length===128&&focused.edges.length===111,'mobile chapter focus hid real graph elements');
+      await mobile.locator('[data-chapter="hostage"]').click(); await settle(mobile); const hostage=await snapshot(mobile);
+      assert(hostage.frames.find(f=>f.id==='hostage')?.inside,'Hostage chapter fit falls outside the viewport');
+      assert(hostage.nodes.length===128&&hostage.edges.length===111,'Hostage focus hid real graph elements');
       assert(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'mobile document has horizontal overflow');
     });
     await desktop.close(); await mobile.close();

@@ -1,0 +1,75 @@
+'use strict';
+
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { spawnSync } = require('node:child_process');
+const { validateInventory } = require('../tools/data/validate-inventory');
+const root = path.resolve(__dirname, '..');
+const inventory = JSON.parse(fs.readFileSync(path.join(root, 'data/chapter-inventory.json'), 'utf8'));
+const atlas = JSON.parse(fs.readFileSync(path.join(root, 'data/atlas.source.json'), 'utf8')).atlas;
+const allCharts = data => data.chapters.flatMap(chapter => chapter.charts);
+const mutate = (change, expected) => {
+  const copy = structuredClone(inventory);
+  change(copy);
+  const errors = validateInventory(copy, atlas);
+  assert(errors.some(error => expected.test(error)), `Expected ${expected}, received ${JSON.stringify(errors)}`);
+};
+assert.deepEqual(validateInventory(inventory, atlas), []);
+assert.equal(inventory.chapters.length, 32);
+assert.equal(allCharts(inventory).length, 39);
+assert.equal(allCharts(inventory).filter(chart => chart.character === null).length, 21);
+assert.deepEqual(allCharts(inventory).flatMap(chart => chart.runtimeChapterIds).sort(), ['home', 'hostage', 'kara', 'public-enemy', 'shades-of-color', 'stormy', 'the-painter']);
+assert.equal(inventory.reconciliation.state, 'partial');
+assert.deepEqual(inventory.chapters.find(chapter => chapter.id === 'opening').charts, []);
+assert.equal(allCharts(inventory).filter(chart => chart.coverage === 'checked-against-chart').length, 1);
+assert.equal(allCharts(inventory).filter(chart => chart.coverage === 'partial').length, 6);
+mutate(d => { d.sources[1].id = d.sources[0].id; }, /duplicate ID/);
+mutate(d => { d.sources[0].url = 'http://example.com'; }, /url.*HTTPS/);
+mutate(d => { d.sources[0].url = 'invalid'; }, /url.*HTTPS/);
+mutate(d => { d.sources[0].url = null; }, /url.*HTTPS/);
+mutate(d => { d.sources[0].accessDate = '2026-02-30'; }, /valid ISO calendar date/);
+mutate(d => { d.sources[0].accessDate = '2026-2-01'; }, /valid ISO calendar date/);
+for (const field of ['locator', 'accessOutcome', 'attribution', 'independenceNote']) {
+  mutate(d => { d.sources[0][field] = ' '; }, new RegExp(`sources\\[0\\].${field}.*nonempty`));
+}
+mutate(d => { d.chapters[1].id = d.chapters[0].id; }, /duplicate ID/);
+mutate(d => { allCharts(d)[1].id = allCharts(d)[0].id; }, /duplicate ID/);
+mutate(d => { d.chapters[0].sources = ['absent']; }, /unknown source/);
+mutate(d => { allCharts(d)[0].sources.push('absent'); }, /unknown source/);
+mutate(d => { allCharts(d)[0].locator[0].source = 'absent'; }, /locator.*unknown source/);
+mutate(d => { d.unknowns[0].sources = ['absent']; }, /unknown source/);
+mutate(d => { d.chapters[1].order = 99; }, /contiguous/);
+mutate(d => { allCharts(d)[0].runtimeChapterIds = ['absent']; }, /unknown runtime/);
+mutate(d => { allCharts(d)[0].runtimeChapterIds = []; }, /not mapped/);
+mutate(d => { allCharts(d)[1].runtimeChapterIds = ['hostage']; }, /mapped more than once/);
+mutate(d => { allCharts(d)[0].coverage = 'partial'; }, /coverage differs/);
+mutate(d => { allCharts(d).find(chart => chart.runtimeChapterIds.length === 0).coverage = 'partial'; }, /unmapped chart must have not-added/);
+mutate(d => { allCharts(d).find(chart => chart.runtimeChapterIds.length === 0).coverage = 'checked-against-chart'; }, /unmapped chart must have not-added/);
+mutate(d => { allCharts(d)[1].character = 'alice'; }, /must be null/);
+mutate(d => { allCharts(d)[0].route = 'invented'; }, /non-route heading requires null/);
+mutate(d => { const chart = allCharts(d).find(c => c.kind === 'character-route-heading'); chart.route = null; }, /requires a nonempty route/);
+mutate(d => { const chart = allCharts(d).find(c => c.kind === 'character-heading'); chart.character = null; }, /requires a character/);
+mutate(d => { d.reconciliation.limitations = []; }, /must not be empty/);
+mutate(d => { d.unknowns = []; }, /must not be empty/);
+mutate(d => { d.version = 2; }, /unsupported version/);
+mutate(d => { d.format = 'other'; }, /unsupported format/);
+assert(validateInventory(null, atlas).length > 0);
+assert(validateInventory(inventory, null).length > 0);
+const cli = spawnSync(process.execPath, [path.join(root, 'tools/data/validate-inventory.js')], { cwd: root, encoding: 'utf8' });
+assert.equal(cli.status, 0, cli.stderr);
+assert.match(cli.stdout, /PASS/);
+
+const shades = inventory.chapters.find(chapter => chapter.id === 'shades-of-color').charts[0];
+assert.equal(shades.character, 'markus');
+assert.ok(shades.sources.includes('powerpyx-shades-guide'));
+assert.equal(shades.coverage, 'partial');
+assert.deepEqual(shades.runtimeChapterIds, ['shades-of-color']);
+
+const painter = inventory.chapters.find(chapter => chapter.id === 'the-painter').charts[0];
+assert.equal(painter.character, 'markus');
+assert.ok(painter.sources.includes('powerpyx-painter-guide'));
+assert.equal(painter.coverage, 'partial');
+assert.deepEqual(painter.runtimeChapterIds, ['the-painter']);
+
+console.log('PASS: chapter inventory regression checks');

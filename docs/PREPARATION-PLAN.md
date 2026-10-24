@@ -1,5 +1,8 @@
 # ra9-atlas — preparation plan
 
+Historical checkpoint. For current requirements and work order, use [the specification](spec.md), [roadmap](ROADMAP.md), and [status](STATUS.md).
+The statements below describe the original package, not the current repository state.
+
 Updated: 2026-10-17.
 
 ## Goal

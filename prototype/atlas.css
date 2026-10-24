@@ -56,15 +56,15 @@ a:hover { text-decoration: underline; }
 
 /* ---------- shell ---------- */
 .app { height: 100%; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr); overflow: hidden; }
-.top { display: flex; align-items: center; gap: 12px; min-height: 56px; min-width: 0; padding: 8px 14px; border-bottom: 1px solid var(--line); background: var(--surface); z-index: 5; }
+.top { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; min-height: 56px; min-width: 0; padding: 8px 14px; border-bottom: 1px solid var(--line); background: var(--surface); z-index: 5; }
 .brand { min-width: 190px; }
 .brand strong { font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
 .brand span { display: block; color: var(--muted); font-size: 11px; }
-.chapters { display: flex; gap: 4px; overflow: auto; min-width: 0; scrollbar-width: thin; }
-.chapter { padding: 6px 10px; border: 1px solid transparent; border-radius: 6px; color: var(--muted); white-space: nowrap; text-align: left; font-size: 12px; line-height: 1.25; }
+.chapters { display: flex; flex: 1 1 680px; flex-wrap: wrap; gap: 4px; overflow: visible; min-width: 0; }
+.chapter { padding: 6px 10px; border: 1px solid transparent; border-radius: 6px; color: var(--muted); white-space: nowrap; text-align: left; font-size: 12px; line-height: 1.25; max-width: 220px; }
 .chapter:hover { background: var(--chip); color: var(--text); }
 .chapter.active { border-color: var(--accent); color: var(--text); background: var(--chip); }
-.chapter small { display: block; color: var(--muted); font-size: 10px; }
+.chapter small { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; color: var(--muted); font-size: 10px; white-space: normal; }
 .tools { display: flex; align-items: center; gap: 6px; margin-left: auto; flex: none; }
 .search { position: relative; width: 200px; }
 .search input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; background: var(--surface); color: var(--text); }
@@ -110,16 +110,32 @@ a:hover { text-decoration: underline; }
   flex: none; font-size: 11.5px; line-height: 1.2; overflow-wrap: anywhere; }
 .node.choice .node-label { padding: 5px 8px; font-size: 11.5px; font-weight: 600; }
 .node.flag { border-style: dashed; }
+.node.stage { background: var(--panel); border: 3px double var(--strong); box-shadow: inset 4px 0 0 var(--accent); padding: 7px 9px; font-weight: 600; letter-spacing: .04em; }
+.node.stage .sub { letter-spacing: normal; font-weight: 400; }
 .node.outcome { font-weight: 600; }
 .node.choice { padding: 0; display: flex; flex-direction: column; justify-content: safe center; }
 .node.choice .opt { padding: 5px 8px; border-bottom: 1px solid var(--line); }
 .node.choice .opt:last-child { border-bottom: none; }
 .node.choice .opt .from-option { display: block; color: var(--muted); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+.node.choice.compact .node-label { padding: 2px 7px; font-size: 10px; line-height: 1.25; border-bottom: 1px solid var(--line); }
+.node.choice.compact .opt { padding: 2px 7px; font-size: 10.5px; line-height: 1.25; }
+.node.choice.compact .opt .from-option { display: none; }
+
+/* The Hostage type trial is chapter-specific. Text stays in world space and
+   follows the same camera transform as every other chart element. */
+.node.hostage .node-label { font-size: 13.5px; }
+/* A fallback font can wrap short action labels onto two lines in 36px boxes. */
+.node.hostage.action { padding-top: 0; padding-bottom: 0; display: flex; flex-direction: column; justify-content: center; align-items: stretch; }
+.node.hostage.stage { padding-top: 4px; padding-bottom: 4px; }
+.node.hostage.choice.compact .node-label { font-size: 12px; }
+.node.hostage.choice .opt { font-size: 13.5px; }
+.node.hostage.choice.compact .opt { font-size: 12.5px; }
 
 .edge { fill: none; stroke: var(--edge); stroke-width: 1.5; marker-end: url(#arrowhead); }
 .edge.conditional { stroke: var(--strong); stroke-dasharray: 7 3 2 3; }
 .edge.prerequisite { stroke: var(--gate); stroke-width: 1.9; }
 .edge.hypothesis { stroke: var(--strong); stroke-dasharray: 3 4; }
+.edge.uncertain { stroke: var(--strong); stroke-dasharray: 2 4; }
 .edge.active { stroke: var(--accent); stroke-width: 2.2; }
 .edge.focused { stroke: var(--accent); stroke-width: 3; }
 .edge.dimmed { opacity: .25; }
@@ -128,18 +144,20 @@ a:hover { text-decoration: underline; }
   background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; font-size: 10.5px;
   line-height: 1.25; color: var(--muted); pointer-events: auto; }
 .edge-label.hypothesis { border-style: dashed; color: var(--text); }
+.edge-label.uncertain { border-style: dashed; color: var(--text); }
 .edge-label.prerequisite { border-color: var(--gate); color: var(--text); }
 .edge-label.dimmed { opacity: .3; }
 .edge-label:hover { border-color: var(--accent); }
 .edge-label:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .badge-ring { stroke: var(--strong); fill: var(--bg); stroke-width: 1.2; }
 .badge-text { fill: var(--muted); font-size: 10px; font-weight: 700; }
-.legend { position: absolute; left: 12px; top: 12px; z-index: 3; background: var(--panel); border: 1px solid var(--line);
+.legend { position: absolute; left: 12px; top: 12px; z-index: 3; pointer-events: none; background: var(--panel); border: 1px solid var(--line);
   border-radius: 8px; padding: 7px 10px; font-size: 11px; color: var(--muted); max-width: 240px; }
 .legend .row { display: flex; align-items: center; gap: 7px; margin: 2px 0; }
 .legend i { display: inline-block; width: 26px; height: 0; border-top: 2px solid var(--edge); flex: none; }
 .legend i.dashdot { border-top: 2px dashed var(--strong); }
 .legend i.dashed { border-top: 2px dotted var(--strong); }
+.legend i.uncertain { border-top: 3px double var(--strong); }
 .legend i.gate-line { border-top: 3px solid var(--gate); }
 .legend .glyph { width: 26px; text-align: center; font-weight: 700; color: var(--text); font-style: normal; }
 .status { position: absolute; left: 12px; bottom: 12px; z-index: 3; background: var(--panel); border: 1px solid var(--line);
@@ -161,6 +179,7 @@ a:hover { text-decoration: underline; }
   letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
 .chip.user { border-style: dashed; }
 .chip.unresolved { border-style: dashed; border-color: var(--strong); }
+.chip.uncertain { border-style: dashed; border-color: var(--strong); }
 .chip.mixed { border-style: dotted; }
 .rowlist { display: flex; flex-direction: column; gap: 4px; }
 .rowlist button { text-align: left; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; font-size: 12px; background: var(--surface); }
@@ -186,7 +205,7 @@ a:hover { text-decoration: underline; }
 @media (max-width: 900px) {
   .app { grid-template-columns: minmax(0, 1fr); }
   .top { flex-wrap: wrap; min-width: 0; }
-  .chapters { order: 3; width: 100%; }
+  .chapters { order: 3; width: 100%; flex-basis: 100%; flex-wrap: nowrap; overflow: auto; scrollbar-width: thin; }
   .brand { min-width: 130px; }
   .brand span { display: none; }
   .workspace { display: block; position: relative; width: 100%; min-width: 0; height: 100%; }
@@ -204,3 +223,8 @@ a:hover { text-decoration: underline; }
   .zoom { right: 8px; bottom: 8px; }
   .zoom span { min-width: 92px; font-size: 10px; }
 }
+
+/* Explicit contract 1.1 row groups share geometry with connector anchors. */
+.node.choice.row-group { display: block; }
+.node.choice.row-group .node-label { position: absolute; top: 0; left: 0; right: 0; margin: 0; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+.node.choice.row-group .opt { position: absolute; left: 0; right: 0; display: flex; align-items: center; padding: 4px 8px; margin: 0; overflow-wrap: anywhere; white-space: normal; }

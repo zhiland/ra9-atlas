@@ -1,7 +1,6 @@
 # ra9-atlas — intent
 
-Date: 2026-10-17. Status: record of the project owner's agreed intent.
-This document does not authorize implementation.
+Date: 2026-10-21. Status: record of the project owner's agreed intent; it is not implementation authorization or a production design.
 
 ## Problem
 
@@ -21,8 +20,10 @@ The overview is a large connected flowchart. Multiple choices, branches, and out
 - Show a spoiler warning before the map. After consent, show the full map.
 - Defer fog of war. Its future behavior is not defined.
 - Mark disputed links clearly and show their sources.
-- Show prerequisites alongside consequences. Check the presentation in a mockup.
+- Show prerequisites alongside consequences. The map-first presentation is accepted; preserve the map while showing details.
 - Cover the full game as the final goal. Small samples test the method, not replace that goal.
+- An explicitly incomplete public preview is acceptable when coverage gaps are visible. Guide-supported or disputed claims may be shown with source and status; this does not make them gameplay-verified.
+- Desktop is primary and mobile support is required. The first release has no images, analytics, or advertising trackers; image use requires rights clearance.
 - Game simulation, save imports, and replay planning are outside the initial scope.
 
 ## Constraints
@@ -34,6 +35,9 @@ Do not treat paraphrases or adapted game mechanics as verified game behavior.
 
 ## Open questions
 
-The acceptable extent of unverified links in the first public release.
-Sources and effort needed to verify the full dataset.
-Navigation, architecture, and publication licenses.
+- The full-product data contract and production stack, including stable permalink migration.
+- The complete reconciled chapter and character-chart inventory, source coverage, and effort to fill documented gaps.
+- A free static hosting provider with no server maintenance.
+- Rights and permitted use for each source-derived item; MIT applies only to original project code and documentation.
+
+See [spec.md](spec.md) for approved product requirements and [ROADMAP.md](ROADMAP.md) for the staged implementation plan and go/no-go gates.

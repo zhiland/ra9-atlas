@@ -24,6 +24,7 @@ Rights layers used below: **code**; **data/text** (structured data, authored pro
 | Source | Rights state (code / data-text / assets) | Evidence (checked 2026-10-18) | Project action |
 |---|---|---|---|
 | Steam Community guide “100% Chapter Flowcharts” (StongLory), id=2162781882 | No reuse license. Page shows the item was “removed from the community because it violates Steam Community & Content Guidelines”; no license text. Workshop content is user content under the Steam Subscriber Agreement. Credits: Reddit user throwawaydeviant9 (paths/screenshots) and Neoseeker's Krystal109 (hi-res images). | <https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882>; <https://store.steampowered.com/subscriber_agreement/> | Reference only; no image included in the prototype. Keep existing credits. Do not publish the transcribed flowchart regions; verify behavior in-game or from independently worded facts. |
+| Shazoo walkthrough article with a secondary-hosted *The Hostage* flowchart image | The article and image have no reuse permission identified in this audit. The image is a game UI screenshot and is not copied into the project. The independent reviewer inspected it on 2026-10-21 as evidence only. | <https://shazoo.ru/2018/04/24/64787/polnoe-prohozhdenie-detroit-become-human-zajmet-25-30-chasov>; image locator: `https://cdn.shazoo.ru/255202_rAFsabVh4Q_41663243971_12ae17c3f7_o.jpg` | Reference only. Use the selected route to check two connector readings. Do not reproduce the image or article text, and do not treat the image as full chart coverage or gameplay verification. |
 | PowerPyx walkthrough | Data/text: all rights reserved. “© 2008–2026 PowerPyx.com, all rights reserved”; ToS allows a single personal-use copy only and bars copying, reproducing, modifying, republishing, or distributing without prior written permission. | <https://www.powerpyx.com/detroit-become-human-full-walkthrough-all-chapters/>; <https://www.powerpyx.com/tos/> | Cite concise, independently written facts with attribution; no text reproduction. Written permission required for anything further. |
 | Game of Guides (Supersoluce), *The Hostage* | Data/text: no reuse license identified. No license statement; page footer shows “Copyright © 2022” only. | <https://video-game-guide-walkthrough.supersoluce.com/solution/detroit-become-human-guide-walkthrough/the-hostage/>; <https://video-game-guide-walkthrough.supersoluce.com/about/> | Cross-check facts only; do not copy guide text. |
 | Gamer Guides, *Battle for Detroit — Kara* and *Stormy Night* | Data/text: all rights reserved. Terms (v2.0, 5 July 2026) grant a private, non-commercial viewing licence only; no copying/republishing; no scraping, systematic downloading, or dataset/model training. “© 2011–2026 Gamer Guides Ltd.” | <https://www.gamerguides.com/detroit-become-human/guide/walkthrough/chapter-1/chapter-31-battle-for-detroit-kara>; <https://www.gamerguides.com/detroit-become-human/guide/walkthrough/chapter-1/chapter-6-stormy-night>; <https://www.gamerguides.com/terms> | Cite facts with attribution; no text copying or data extraction. |
@@ -69,3 +70,12 @@ Rights layers used below: **code**; **data/text** (structured data, authored pro
 - Access limitations during checks: GameFAQs `/terms` returns 404 (footer points to Fandom ToS); GameFAQs board thread returns 403; refero.design terms paths returned no content; Fandom file-page metadata exposes no license template for the checked image.
 
 See also [source register](../SOURCES.md), [initial source survey](source-survey.md), and [chapter coverage snapshot](source-coverage-initial.md).
+
+## 2026-10-22 source-review clarification
+
+The [Hostage packet review](hostage-packet-source-review.md) rechecked attribution
+and the existing reference-only boundaries. It did not establish a new reuse
+license or grant publication clearance. Shazoo's 2018-04-24 context is pre-release.
+Its chart does not resolve the option-specific Cold origin. Source interpretation
+can be approved while the publication decision remains blocked. This is not a
+legal finding that all uses of the recorded facts are forbidden.

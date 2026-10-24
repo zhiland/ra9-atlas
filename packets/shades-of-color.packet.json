@@ -1,0 +1,310 @@
+{
+  "kind": "ra9-atlas.chapter-preparation.packet",
+  "packetVersion": "1.0",
+  "packetStatus": "reviewed",
+  "packetId": "shades-of-color-packet",
+  "chapter": {
+    "id": "shades-of-color",
+    "title": "Shades of Color"
+  },
+  "coverage": {
+    "status": "partial",
+    "scope": "Reviewed partial chart transcription: all twelve visible boxes, five continuous box-to-box connectors and four unknown records. Six detached icon-origin segments have no declared source box; their semantics remain unresolved.",
+    "included": [
+      "Twelve visible chart boxes inventoried as nodes: one stage/checkpoint (WALKING IN THE PARK), ten actions and one outcome (MARKUS TOOK THE BUS).",
+      "Exactly five continuous traced box-to-box edges: park→store, store→package, package→bus, vendor→pushed and preacher→yells.",
+      "The six detached icon-origin segments are recorded only as unknowns: they start at five icons rather than the declared boxes (the magazine icon is shared) and are NOT invented as edges.",
+      "Four unknown records: detached-segment origins, absence of a universal ordering or optional-eligibility rule beyond the five traced edges, the harassment proximity/eligibility and later Painter consequence, and the platform/game build.",
+      "Reference-only rights state for both sources, with a Steam removed-item notice despite the accessible page and images."
+    ],
+    "omitted": [
+      "The six detached icon-origin segments are not modeled as edges; no edge is invented from an icon to its apparent target.",
+      "Icon legend semantics: legend meanings are not interpreted or packaged.",
+      "Unshown branches, cross-chapter claims and the cross-chapter edge to Carl's later comment in The Painter: guide list ordering does not support chart connections; no cross-chapter edge or exact trigger is modeled.",
+      "Harassment causal edge: the exact proximity/eligibility and the later Painter consequence are unverified; no causal edge is added.",
+      "Percentages and any completion claims: partial coverage does not claim complete gameplay. The reviewed slice is integrated separately into the runtime.",
+      "Source images: no image content is reproduced or packaged.",
+      "Gameplay verification, platform and game version: no transition is verified in game and the build is unknown.",
+      "Publication rights: all sources remain reference-only; no reuse license, clearance or permission is asserted, and publication clearance is omitted."
+    ],
+    "sources": [
+      "steamShades",
+      "powerpyxShades"
+    ]
+  },
+  "sources": [
+    {
+      "id": "steamShades",
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2162781882",
+      "class": "chart-image",
+      "role": "Basis for the transcribed partial chart: twelve visible boxes and five continuous box-to-box edges. Detached icon-origin segments and legend semantics are not transcribed as chart content.",
+      "locator": "Shades of Color image https://images.steamusercontent.com/ugc/1469813569888632243/9D4431A670A8AA5A0B5784ECE24FF763747247FD/ 3785x1148, SHA256 60480bc17fe3b22cab0249359652593b52952020e7e163767374eb11badb18ca.",
+      "access": [
+        {
+          "date": "2026-10-23",
+          "actor": "extraction worker",
+          "outcome": "not-accessed",
+          "note": "The model did not access the image or the source page. All facts recorded here are parent-inspected public facts, not direct model source access."
+        },
+        {
+          "date": "2026-10-23",
+          "actor": "Codex extraction parent",
+          "outcome": "inspected",
+          "note": "Image inspected on 2026-10-23. Steam shows a removed-item notice although the page and images remain accessible. No gameplay verification or publication clearance."
+        },
+        {
+          "date": "2026-10-23",
+          "actor": "Separate Codex shades_source_review agent",
+          "outcome": "inspected",
+          "note": "Independently inspected both local chart images and the live source page. Approves the bounded packet interpretation, not complete gameplay coverage or publication rights."
+        }
+      ],
+      "attribution": "Steam Community guide “Detroit: Become Human | 100% Chapter Flowcharts” by StongLory; the guide credits Reddit user /u/throwawaydeviant9 for original paths/screenshots and Neoseeker’s Krystal109 for high-resolution flowchart images.",
+      "rights": {
+        "state": "reference-only",
+        "note": "Steam marks the item removed although the page and embedded images remain accessible. Evidence only; no image, text or chart-derived expression is cleared for reuse or publication."
+      }
+    },
+    {
+      "id": "powerpyxShades",
+      "url": "https://www.powerpyx.com/detroit-become-human-shades-of-color-walkthrough-100/",
+      "class": "supplementary-guide",
+      "role": "Supports the checkpoint Walking in the Park bullet list identifying Markus, the harassment step being potentially avoidable by distance, and the guide-reported later Carl comment in The Painter. Guide list ordering is not used for chart connections.",
+      "locator": "Shades of Color walkthrough, checkpoint Walking in the Park bullet list and harassment note; Carl comment reference in The Painter. Access-specific extracted lines are not recorded; parent page review only.",
+      "access": [
+        {
+          "date": "2026-10-23",
+          "actor": "extraction worker",
+          "outcome": "not-accessed",
+          "note": "The model did not access the source page. All facts recorded here are parent-inspected public facts, not direct model source access."
+        },
+        {
+          "date": "2026-10-23",
+          "actor": "Codex extraction parent",
+          "outcome": "inspected",
+          "note": "Live page inspected on 2026-10-23. Guide list ordering does not support chart connections; source independence from the Steam chart is not established. No gameplay verification or publication clearance."
+        },
+        {
+          "date": "2026-10-23",
+          "actor": "Separate Codex shades_source_review agent",
+          "outcome": "inspected",
+          "note": "Independently inspected both local chart images and the live source page. Approves the bounded packet interpretation, not complete gameplay coverage or publication rights."
+        }
+      ],
+      "attribution": "PowerPyx, Detroit: Become Human — Shades of Color walkthrough.",
+      "rights": {
+        "state": "reference-only",
+        "note": "No reuse license identified; cite independently worded facts only. No guide text, image or chart expression is cleared for reuse or publication."
+      }
+    }
+  ],
+  "chart": {
+    "basis": "chart-transcribed",
+    "sources": [
+      "steamShades"
+    ],
+    "nodes": [
+      {
+        "id": "sc_park",
+        "label": "WALKING IN THE PARK",
+        "kind": "stage"
+      },
+      {
+        "id": "sc_secret",
+        "label": "READ \"SECRET OF ANDROIDS\"",
+        "kind": "action"
+      },
+      {
+        "id": "sc_climate",
+        "label": "READ \"CLIMATE CHANGE-UP\"",
+        "kind": "action"
+      },
+      {
+        "id": "sc_vendor",
+        "label": "STARE AT HOT DOG VENDOR",
+        "kind": "action"
+      },
+      {
+        "id": "sc_pushed",
+        "label": "HOT DOG VENDOR PUSHES MARKUS",
+        "kind": "action"
+      },
+      {
+        "id": "sc_busker",
+        "label": "LISTEN TO BUSKER",
+        "kind": "action"
+      },
+      {
+        "id": "sc_preacher",
+        "label": "WATCH PREACHER",
+        "kind": "action"
+      },
+      {
+        "id": "sc_yells",
+        "label": "PREACHER YELLS AT MARKUS",
+        "kind": "action"
+      },
+      {
+        "id": "sc_store",
+        "label": "VISIT PAINTS STORE",
+        "kind": "action"
+      },
+      {
+        "id": "sc_package",
+        "label": "COLLECT PACKAGE",
+        "kind": "action"
+      },
+      {
+        "id": "sc_protesters",
+        "label": "PROTESTERS HARASS MARKUS",
+        "kind": "action"
+      },
+      {
+        "id": "sc_bus",
+        "label": "MARKUS TOOK THE BUS",
+        "kind": "outcome"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e_sc_park_store",
+        "from": "sc_park",
+        "to": "sc_store",
+        "kind": "traced",
+        "sources": [
+          "steamShades"
+        ],
+        "legacyEdgeIndex": 96
+      },
+      {
+        "id": "e_sc_store_package",
+        "from": "sc_store",
+        "to": "sc_package",
+        "kind": "traced",
+        "sources": [
+          "steamShades"
+        ],
+        "legacyEdgeIndex": 97
+      },
+      {
+        "id": "e_sc_package_bus",
+        "from": "sc_package",
+        "to": "sc_bus",
+        "kind": "traced",
+        "sources": [
+          "steamShades"
+        ],
+        "legacyEdgeIndex": 98
+      },
+      {
+        "id": "e_sc_vendor_push",
+        "from": "sc_vendor",
+        "to": "sc_pushed",
+        "kind": "traced",
+        "sources": [
+          "steamShades"
+        ],
+        "legacyEdgeIndex": 99
+      },
+      {
+        "id": "e_sc_preacher_yells",
+        "from": "sc_preacher",
+        "to": "sc_yells",
+        "kind": "traced",
+        "sources": [
+          "steamShades"
+        ],
+        "legacyEdgeIndex": 100
+      }
+    ]
+  },
+  "supplementary": [],
+  "conditions": [],
+  "unknowns": [
+    {
+      "id": "u_sc_detached_origins",
+      "status": "unknown",
+      "explanation": "The chart shows six detached segments starting at five icons rather than the declared boxes (the magazine icon is shared), pointing toward sc_secret, sc_climate, sc_vendor, sc_busker, sc_preacher and sc_protesters. These segments are NOT invented as edges; their semantic meaning is unknown and the icon legend is omitted.",
+      "nodes": [
+        "sc_secret",
+        "sc_climate",
+        "sc_vendor",
+        "sc_busker",
+        "sc_preacher",
+        "sc_protesters"
+      ],
+      "edges": [],
+      "sources": [
+        "steamShades"
+      ]
+    },
+    {
+      "id": "u_sc_order",
+      "status": "unknown",
+      "explanation": "No universal ordering or optional-eligibility rule is known beyond the five traced continuous box-to-box edges. The chart's boxes and the guide's list ordering do not establish a required sequence or which optional steps are eligible when.",
+      "nodes": [],
+      "edges": [
+        "e_sc_park_store",
+        "e_sc_store_package",
+        "e_sc_package_bus",
+        "e_sc_vendor_push",
+        "e_sc_preacher_yells"
+      ],
+      "sources": [
+        "steamShades",
+        "powerpyxShades"
+      ]
+    },
+    {
+      "id": "u_sc_harassment",
+      "status": "unknown",
+      "explanation": "The exact proximity/eligibility for PROTESTERS HARASS MARKUS and any later Carl comment consequence in The Painter are unverified. PowerPyx reports harassment potentially avoidable by distance and a later Carl comment in The Painter; no causal edge is added and source independence is not established.",
+      "nodes": [
+        "sc_protesters"
+      ],
+      "edges": [],
+      "sources": [
+        "powerpyxShades",
+        "steamShades"
+      ]
+    },
+    {
+      "id": "u_sc_build",
+      "status": "unknown",
+      "explanation": "The platform and game build are unknown and no gameplay verification has been performed. Transcription is chart-based only; no transition has been verified in game.",
+      "nodes": [
+        "sc_park"
+      ],
+      "edges": [],
+      "sources": [
+        "steamShades"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "review": {
+    "independent": {
+      "required": true,
+      "state": "approved",
+      "reviewer": "Separate Codex shades_source_review agent",
+      "date": "2026-10-23",
+      "scope": "Independent comparison of both chart images and live Steam/PowerPyx pages against all packet labels, continuous connectors, detached fragments, unknowns and omissions.",
+      "notes": "Approved for the stated partial source interpretation. The reviewer derived counts before reading the packet. Twelve boxes and five box-to-box connectors match. Six detached segments from five icons are not graph edges. Two images show the same underlying chart; source independence and publication rights are not established. See docs/notes/shades-of-color-source-review.md."
+    },
+    "mergeGate": {
+      "state": "blocked",
+      "reason": "The independently approved partial slice is integrated and structurally reconciled to the runtime. Publication rights for source-derived material remain unresolved. No gameplay verification or permission is established; publication remains blocked."
+    }
+  },
+  "atlas": {
+    "source": "prototype/atlas-data.js",
+    "chapterId": "shades-of-color",
+    "exactChapterNodes": true,
+    "exactChapterEdges": true
+  },
+  "legacy": {
+    "canonical": "?edge=N",
+    "edgeIndexBase": "prototype/atlas-data.js edges[]",
+    "note": "The twelve nodes append at102–113; the five edges append at96–100. Every pre-existing identity, endpoint, option and index is preserved. Two withdrawn old claims remain historical records."
+  }
+}

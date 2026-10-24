@@ -13,13 +13,14 @@
 (function () {
   'use strict';
 
-  var C = ATLAS_CORE, D = ATLAS;
+  var C = ATLAS_CORE, D = ATLAS, Rows = ATLAS_ROW_LAYOUT;
   var byId = {}, chapters = {};
   D.nodes.forEach(function (n) { byId[n.id] = n; });
   D.chapters.forEach(function (c) { chapters[c.id] = c; });
 
   var state = C.createState();
   var hashApplied = false;
+  var pendingOwnHashes = [];
   var cam = { scale: 1, tx: 0, ty: 0 };
   var app = document.getElementById('app');
   var lastTrigger = null;
@@ -34,8 +35,8 @@
     mixed: 'Mixed secondary evidence · see details',
     synthetic: 'Synthetic fixture · not evidence'
   };
-  var KIND_LABEL = { action: 'Action', flag: 'State flag', choice: 'Choice', outcome: 'Outcome' };
-  var EDGE_LABEL = { traced: 'traced', conditional: 'reported condition', prerequisite: 'prerequisite gate', hypothesis: 'unresolved hypothesis' };
+  var KIND_LABEL = { action: 'Action', flag: 'State flag', choice: 'Choice', outcome: 'Outcome', stage: 'Stage container' };
+  var EDGE_LABEL = { traced: 'traced', conditional: 'reported condition', prerequisite: 'prerequisite gate', hypothesis: 'unresolved hypothesis', uncertain: 'uncertain chart connector', withdrawn: 'withdrawn claim' };
   var SOURCE_LABEL = {
     steam: 'Steam chapter flowcharts (screenshot reference)',
     powerpyxHome: 'PowerPyx · A New Home',
@@ -47,7 +48,14 @@
     powerpyxKara: 'PowerPyx · Battle for Detroit — Kara',
     fandomBattle: 'Fandom · Battle for Detroit',
     neoseekerKara: 'Neoseeker · Battle for Detroit — Kara',
-    gamerGuides: 'Gamer Guides · Battle for Detroit — Kara'
+    gamerGuides: 'Gamer Guides · Battle for Detroit — Kara',
+    powerpyxHostage: 'PowerPyx · The Hostage / Opening',
+    powerpyxPublicEnemy: 'PowerPyx · Public Enemy',
+    gamefaqsPublicEnemy: 'GameFAQs/Mogg · Public Enemy',
+    steamShades: 'Steam · Shades of Color chart',
+    steamPainter: 'Steam · The Painter chart',
+    powerpyxPainter: 'PowerPyx · The Painter guide',
+    powerpyxShades: 'PowerPyx · Shades of Color'
   };
 
   var nodeChapter = {};
@@ -67,6 +75,14 @@
   function edgeEvidence(e) {
     var a = byId[e.from], b = byId[e.to];
     var sources = edgeSources(e);
+    if (e.kind === 'withdrawn') {
+      return {
+        cls: 'withdrawn',
+        status: 'Withdrawn claim · historical record, not an active connector',
+        unknown: 'This claim was withdrawn during source review. It is kept only as history with its original endpoints: it is not an active connector on the map, and it never was verified in game.',
+        sources: sources
+      };
+    }
     if ((a && a.status === 'synthetic') || (b && b.status === 'synthetic')) {
       return {
         cls: 'synthetic',
@@ -88,6 +104,14 @@
         cls: 'conditional',
         status: 'Reported condition · single-source or disputed',
         unknown: 'The condition is not verified in game and may be incomplete.',
+        sources: sources
+      };
+    }
+    if (e.kind === 'uncertain') {
+      return {
+        cls: 'uncertain',
+        status: 'Uncertain chart connector · route or source not confidently traced',
+        unknown: 'This connector is visible in the screenshot but its route, source or branch row is ambiguous. Structure only; no in-game verification.',
         sources: sources
       };
     }
@@ -135,12 +159,19 @@
   }
 
   function coverHtml() {
+    var count = D.chapters.length;
+    var words = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven'];
+    var countWord = words[count] || String(count);
+    var names = D.chapters.map(function (c) { return '<strong>' + esc(c.name) + '</strong>'; });
+    var nameList = names.length > 1
+      ? names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1]
+      : (names[0] || 'no regions');
     return '<div class="cover" id="spoiler-overlay" role="dialog" aria-modal="true" aria-labelledby="spoiler-title">' +
       '<div class="cover-box">' +
       '<div class="eyebrow">ra9-atlas · PoC4 · selected multi-chapter slice</div>' +
       '<h1 id="spoiler-title">Full spoilers ahead</h1>' +
-      '<p>This map reveals choices and outcomes from <em>Detroit: Become Human</em>, including a late-game Todd and Kara branch.</p>' +
-      '<p>Three selected chapter regions are shown: <strong>A New Home</strong>, <strong>Stormy Night</strong> and <strong>Battle for Detroit — Kara</strong>. They are guide-based and screenshot-transcribed only; no transition is verified in game. Game version and platform are unknown.</p>' +
+      '<p>This map reveals choices and outcomes from <em>Detroit: Become Human</em>, including late-game Todd and Kara branches and a saved-cop meeting in Public Enemy.</p>' +
+      '<p>' + countWord + ' selected chapter region' + (count === 1 ? ' is' : 's are') + ' shown: ' + nameList + '. They are guide-based and screenshot-transcribed only; no transition is verified in game. Game version and platform are unknown. Chart coverage is partial and scoped to these selected regions only, not the whole game.</p>' +
       '<button class="primary" id="consent">Reveal atlas map</button>' +
       '</div></div>';
   }
@@ -183,8 +214,12 @@
   /* ---------- orthogonal routing (mirrored by prototype/validate-atlas-data.js) ---------- */
   function pathFor(e) {
     var a = byId[e.from], b = byId[e.to];
+    var points = Rows.routePoints(a, b, e) || e.points;
+    if (points) return points.map(function (point, index) {
+      return (index ? 'L ' : 'M ') + point[0] + ' ' + point[1];
+    }).join(' ');
     var fromY = e.fromOption == null ? a.y + a.h / 2 :
-      a.y + (e.fromOption + 0.5) * a.h / a.options.length;
+      Rows.anchorY(a, e.fromOption);
     var sameCol = Math.abs((a.x + a.w / 2) - (b.x + b.w / 2)) < 26;
     if (sameCol) {
       var cx = a.x + a.w / 2, dx = b.x + b.w / 2;
@@ -204,7 +239,10 @@
 
   function neighbours(id) {
     var set = {};
-    D.edges.forEach(function (e) { if (e.from === id || e.to === id) { set[e.from] = 1; set[e.to] = 1; } });
+    D.edges.forEach(function (e) {
+      if (!C.isActiveEdge(e)) return;
+      if (e.from === id || e.to === id) { set[e.from] = 1; set[e.to] = 1; }
+    });
     return set;
   }
 
@@ -244,8 +282,9 @@
               '<div class="row"><i></i>traced connector</div>' +
               '<div class="row"><i class="dashdot"></i>reported condition</div>' +
               '<div class="row"><i class="dashed"></i>unresolved hypothesis</div>' +
+              '<div class="row"><i class="uncertain"></i>uncertain chart connector</div>' +
               '<div class="row"><i class="gate-line"></i>prerequisite gate</div>' +
-              '<div class="row"><span class="glyph">?</span>unresolved hypothesis marker</div>' +
+              '<div class="row"><span class="glyph">?</span>uncertain or unresolved marker</div>' +
             '</div>' +
             '<div class="status" id="status"></div>' +
             '<div class="zoom"><button class="tool" id="minus" aria-label="Zoom out">−</button><span id="zoomLabel"></span><button class="tool" id="plus" aria-label="Zoom in">+</button></div>' +
@@ -313,7 +352,11 @@
 
   function setHash() {
     var h = C.hashFor(state);
-    if (location.hash !== h) location.hash = h;
+    if (location.hash !== h) {
+      var oldURL = location.href;
+      location.hash = h;
+      pendingOwnHashes.push({ oldURL: oldURL, newURL: location.href });
+    }
   }
 
   /* ---------- graph ---------- */
@@ -346,6 +389,7 @@
     var focus = state.selected ? neighbours(state.selected) : null;
     var paths = [], labelQueue = [], badgeQueue = [];
     D.edges.forEach(function (e, i) {
+      if (!C.isActiveEdge(e)) return;
       var d = pathFor(e);
       var edgeFocused = state.edge === i;
       var active = edgeFocused || (state.selected && (e.from === state.selected || e.to === state.selected));
@@ -355,7 +399,7 @@
         '" id="edge-' + i + '" data-edge="' + i + '"' + (e.id ? ' data-edge-id="' + esc(e.id) + '"' : '') +
         ' marker-end="url(#arrowhead)" d="' + d + '"></path>');
       if (e.label) labelQueue.push({ e: e, i: i, dim: dim });
-      if (e.kind === 'hypothesis') badgeQueue.push({ e: e, i: i, dim: dim });
+      if (e.kind === 'hypothesis' || e.kind === 'uncertain') badgeQueue.push({ e: e, i: i, dim: dim });
     });
     svg.innerHTML = '<defs><marker id="arrowhead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 8 4 L 0 8 z" fill="context-stroke"></path></marker></defs>' + paths.join('');
 
@@ -380,7 +424,7 @@
     mk.setAttribute('height', D.canvas.height);
     mk.innerHTML = badgeQueue.map(function (B) {
       var shape = '<circle class="badge-ring" r="8"></circle><text class="badge-text" text-anchor="middle" dy="3.5">?</text>';
-      return '<g class="' + (B.dim ? 'dimmed' : '') + '">' + shape + '</g>';
+      return '<g class="badge ' + B.e.kind + (B.dim ? ' dimmed' : '') + '" data-badge-edge="' + esc(B.e.id) + '">' + shape + '</g>';
     }).join('');
     var badgeNodes = mk.querySelectorAll('g');
     badgeQueue.forEach(function (B, idx) {
@@ -391,16 +435,26 @@
 
     document.getElementById('nodes').innerHTML = D.nodes.map(function (n) {
       var classes = ['node', n.kind];
+      if (n.chapter === 'hostage') classes.push('hostage');
+      if (n.rowGroup === true) classes.push('row-group');
+      if (n.kind === 'choice' && n.h <= 70) classes.push('compact');
       if (state.selected === n.id) classes.push('selected');
-      var inner = '<span class="node-label" data-node-label="' + esc(n.id) + '">' + esc(n.label) + '</span>';
+      var shownLabel = n.heading || n.label;
+      var inner = '<span class="node-label" data-node-label="' + esc(n.id) + '">' + esc(shownLabel) + '</span>';
       if (n.kind === 'choice') {
+        var rowLayout = Rows.layout(n);
+        if (rowLayout) inner = '<span class="node-label" data-node-label="' + esc(n.id) + '" style="height:' + rowLayout.headerHeight + 'px">' + esc(shownLabel) + '</span>';
         inner += n.options.map(function (o, i) {
+          if (rowLayout) {
+            var row = rowLayout.rows[i];
+            return '<span class="opt" data-row-index="' + i + '" style="top:' + (row.y - n.y - 1) + 'px;height:' + row.h + 'px">' + esc(o) + '</span>';
+          }
           return '<span class="opt"><span class="from-option">option ' + (i + 1) + '</span>' + esc(o) + '</span>';
         }).join('');
       } else {
         inner += n.sub ? '<span class="sub">' + esc(n.sub) + '</span>' : '';
       }
-      var aria = esc(n.label) + ' — ' + KIND_LABEL[n.kind] + ' — ' + (STATUS_LABEL[n.status] || 'status unknown');
+      var aria = esc(n.label) + ' — ' + (n.rowGroup === true ? 'Source row group' : KIND_LABEL[n.kind]) + ' — ' + (STATUS_LABEL[n.status] || 'status unknown');
       return '<button class="' + classes.join(' ') + '" data-node="' + n.id + '" data-kind="' + n.kind + '" style="left:' + n.x + 'px;top:' + n.y +
         'px;width:' + n.w + 'px;height:' + n.h + 'px" aria-label="' + aria + '">' + inner + '</button>';
     }).join('');
@@ -414,9 +468,14 @@
     });
 
     var c = D.meta.counts;
+    /* Withdrawn claims stay in the total edge count for their array indices,
+       so the connector count counts only active connectors; the withdrawn
+       records get their own number when the data reports one. */
+    var connectorCount = c.activeEdges != null ? c.activeEdges : c.edges;
     document.getElementById('status').innerHTML =
-      'Selected slice · ' + c.chapters + ' chapters · ' + c.nodes + ' events · ' + c.edges +
-      ' connectors · ' + c.crossChapterEdges + ' cross-chapter · not in-game verified';
+      'Selected slice · ' + c.chapters + ' chapters · ' + c.nodes + ' nodes · ' + connectorCount +
+      ' connectors' + (c.withdrawnEdges != null ? ' · ' + c.withdrawnEdges + ' withdrawn' : '') +
+      ' · ' + c.crossChapterEdges + ' cross-chapter · not in-game verified';
 
     document.querySelectorAll('[data-chapter]').forEach(function (b) {
       var on = b.getAttribute('data-chapter') === state.chapter;
@@ -456,6 +515,7 @@
 
     var related = [];
     D.edges.forEach(function (e, i) {
+      if (!C.isActiveEdge(e)) return;
       if (e.from === n.id || e.to === n.id) related.push({ edge: e, index: i });
     });
     var rows = related.map(function (item) {
@@ -471,7 +531,7 @@
     }).join('');
 
     var optBlock = n.kind === 'choice'
-      ? '<h3>Choice options reported</h3><ul class="opt-list">' + n.options.map(function (o) { return '<li>' + esc(o) + '</li>'; }).join('') + '</ul>'
+      ? '<h3>' + (n.rowGroup === true ? 'Source rows shown' : 'Choice options reported') + '</h3><ul class="opt-list">' + n.options.map(function (o) { return '<li>' + esc(o) + '</li>'; }).join('') + '</ul>'
       : '';
 
     var sourceKeys = (d.src || n.src || []);
@@ -483,9 +543,41 @@
 
     var focused = state.edge != null ? D.edges[state.edge] : null;
     var edgeBlock = '';
-    if (focused && byId[focused.from] && byId[focused.to]) {
+    if (focused && focused.kind === 'withdrawn' && byId[focused.from] && byId[focused.to]) {
+      /* Reached only through a legacy permalink that names the withdrawn
+         edge index or id: the claim is shown with its original endpoints,
+         its historical status, and the active replacements that superseded
+         it. It never appears as a map connector. */
+      var rev = edgeEvidence(focused);
+      var replacements = (focused.replacedBy || []).map(function (replId) {
+        var ri = C.resolveEdgeIndex(D, replId);
+        if (ri == null) return '';
+        var r = D.edges[ri];
+        if (!C.isActiveEdge(r)) return '';
+        var rOther = byId[r.to];
+        if (!rOther) return '';
+        return '<button data-open-edge="' + ri + '"' +
+          (state.edge === ri ? ' class="focused"' : '') +
+          '><span class="dir">' + (r.from === focused.to ? '←' : '→') + '</span>' +
+          esc(rOther.label) + (r.label ? ' — ' + esc(r.label) : '') +
+          '<span class="kind">' + esc(EDGE_LABEL[r.kind]) + '</span></button>';
+      }).join('');
+      edgeBlock = '<h3>Withdrawn claim (historical)</h3>' +
+        '<div class="edge-evidence" data-edge-evidence="' + state.edge + '" data-evidence="' + rev.cls + '">' +
+        '<p><strong>' + esc(byId[focused.from].label) + ' → ' + esc(byId[focused.to].label) + '</strong></p>' +
+        '<p><span class="chip ' + rev.cls + '">' + esc(EDGE_LABEL[focused.kind]) + '</span> ' + esc(rev.status) + '</p>' +
+        '<p class="note">' + esc(rev.unknown) + '</p>' +
+        (focused.label ? '<p class="note tiny">Connector label: ' + esc(focused.label) + '</p>' : '') +
+        (focused.note ? '<p class="note tiny">Evidence note: ' + esc(focused.note) + '</p>' : '') +
+        (replacements ? '<p class="tiny muted">Withdrawn in favour of these active connectors:</p>' +
+          '<div class="rowlist">' + replacements + '</div>' : '') +
+        '<p class="tiny muted">' + esc(sourceSummary(rev.sources)) + '</p>' +
+        edgeSourceLinks(rev.sources) +
+        '</div>';
+    } else if (focused && byId[focused.from] && byId[focused.to]) {
       var ev = edgeEvidence(focused);
-      edgeBlock = '<h3>Focused cross-chapter connector</h3>' +
+      edgeBlock = '<h3>' + (nodeChapter[focused.from] !== nodeChapter[focused.to]
+        ? 'Focused cross-chapter connector' : 'Focused connector') + '</h3>' +
         '<div class="edge-evidence" data-edge-evidence="' + state.edge + '" data-evidence="' + ev.cls + '">' +
         '<p><strong>' + esc(byId[focused.from].label) + ' → ' + esc(byId[focused.to].label) + '</strong></p>' +
         '<p><span class="chip ' + ev.cls + '">' + esc(EDGE_LABEL[focused.kind]) + '</span> ' + esc(ev.status) + '</p>' +
@@ -510,7 +602,7 @@
 
     el.innerHTML =
       '<button class="close" id="details-close" aria-label="Close details">×</button>' +
-      '<div class="eyebrow">' + esc(chapter ? chapter.name : n.chapter) + ' · ' + esc(KIND_LABEL[n.kind]) + '</div>' +
+      '<div class="eyebrow">' + esc(chapter ? chapter.name : n.chapter) + ' · ' + esc(n.rowGroup === true ? 'Source row group' : KIND_LABEL[n.kind]) + '</div>' +
       '<h2>' + esc(n.label) + '</h2>' +
       '<span class="chip ' + n.status + '">' + esc(d.status || STATUS_LABEL[n.status] || 'status unknown') + '</span>' +
       '<p>' + esc(d.summary || n.note || 'A node in this selected slice. Structure comes from the cited reference; no in-game verification.') + '</p>' +
@@ -531,6 +623,13 @@
         var id = b.getAttribute('data-goto');
         lastTrigger = b;
         commit(C.selectNode(state, id, D), { center: id, hash: true });
+      };
+    });
+    /* Existing edge-focus path reused for replacement connectors: opening one
+       jumps by its original ATLAS array index and selects its actual to node. */
+    Array.prototype.forEach.call(el.querySelectorAll('[data-open-edge]'), function (b) {
+      b.onclick = function () {
+        focusEdgeFromMap(Number(b.getAttribute('data-open-edge')), b);
       };
     });
   }
@@ -753,7 +852,13 @@
     }
   });
 
-  window.addEventListener('hashchange', function () {
+  window.addEventListener('hashchange', function (event) {
+    // UI commits already applied these targets. A delayed self-event must not
+    // undo a later close while its permalink deliberately stays unchanged.
+    var own = pendingOwnHashes.findIndex(function (change) {
+      return change.oldURL === event.oldURL && change.newURL === event.newURL;
+    });
+    if (own !== -1) { pendingOwnHashes.splice(own, 1); return; }
     if (!state.consented) return;
     var next = C.applyHash(state, location.hash, D);
     if (!C.sameTarget(next, state)) {

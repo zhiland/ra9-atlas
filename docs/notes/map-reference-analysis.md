@@ -29,12 +29,19 @@ The OCR text also read these terminal labels: `CONNOR FAILED TO REACH DEVIANT IN
 
 ## A New Home: OCR transcription with visible links
 
+Corrected by independent image review on 2026-10-23. The earlier transcription
+skipped TAKE OUT TRASH and incorrectly routed the conversation through the
+Alice-room chore. See [the review](anewhome-packet-source-review.md).
+Both cleaning headings are stage containers. Their branches do not establish
+mandatory chore order or a sufficient condition for conversation.
+
 The screenshot has the same left-to-right layout. A central `CLEAN FIRST FLOOR` stage branches into chores, then continues to upstairs and `CLEAN SECOND FLOOR`. On its right, the visually readable Alice sequence is:
 
 ```text
 WELCOME HOME → JOIN TODD → CLEAN FIRST FLOOR
-CLEAN FIRST FLOOR → ASK TO GO UPSTAIRS → GO UPSTAIRS → CLEAN SECOND FLOOR
-CLEAN SECOND FLOOR → CLEAN ALICE'S ROOM → TALK WITH ALICE
+CLEAN FIRST FLOOR → TAKE OUT TRASH → ASK TO GO UPSTAIRS → GO UPSTAIRS → CLEAN SECOND FLOOR
+CLEAN SECOND FLOOR → TALK WITH ALICE
+CLEAN SECOND FLOOR → CLEAN ALICE'S ROOM (stage/chore branch)
 TALK WITH ALICE → ALICE GIVES KARA A KEY → OPEN ALICE'S BOX
 ```
 

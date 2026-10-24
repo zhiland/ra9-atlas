@@ -1,0 +1,44 @@
+{
+  "kind": "ra9-atlas.chapter-preparation.packet",
+  "packetVersion": "1.0",
+  "packetStatus": "draft",
+  "packetId": "replace-with-chapter-id-packet",
+  "chapter": {
+    "id": "replace-with-chapter-id",
+    "title": "Replace with chapter title"
+  },
+  "coverage": {
+    "status": "not-added",
+    "scope": "Draft preparation scope for Replace with chapter title. No evidence has been collected yet.",
+    "included": [],
+    "omitted": [
+      "All chapter content; no evidence has been collected yet."
+    ],
+    "sources": []
+  },
+  "sources": [],
+  "chart": {
+    "basis": "chart-transcribed",
+    "sources": [],
+    "nodes": [],
+    "edges": []
+  },
+  "supplementary": [],
+  "conditions": [],
+  "unknowns": [],
+  "conflicts": [],
+  "review": {
+    "independent": {
+      "required": true,
+      "state": "not-started",
+      "reviewer": null,
+      "date": null,
+      "scope": "Independent source review has not started.",
+      "notes": "Automated structural validation cannot complete an independent source review."
+    },
+    "mergeGate": {
+      "state": "blocked",
+      "reason": "Draft packet: no evidence and no independent source review."
+    }
+  }
+}

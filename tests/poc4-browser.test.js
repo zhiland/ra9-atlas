@@ -7,7 +7,7 @@
 
    What this suite does and does not prove: it serves the static pages from
    localhost and drives them in headless Chromium. It exercises consent and remembered
-   consent, the continuous story map, the three LOD steps, fit bounds,
+   consent, the continuous story map, the stable world across camera scales, fit bounds,
    chapter focus, actual cross-chapter navigation, both detail-close paths,
    history, search keyboard handling, hash round-trips and text contrast in
    all three palettes, plus a scoped 390x845 mobile-emulation layout,
@@ -149,6 +149,43 @@ function fullyInside(rect, canvas, tolerance) {
     rect.top >= canvas.top - tol && rect.bottom <= canvas.bottom + tol;
 }
 
+async function verifyLeisure(page) {
+  await openChapter(page, 'the-painter');
+  const measured = await page.evaluate(function () {
+    const scale = new DOMMatrixReadOnly(getComputedStyle(document.getElementById('world')).transform).a;
+    const groups = ATLAS.nodes.filter(function (n) { return n.rowGroup; });
+    return groups.map(function (n) {
+      const node = document.querySelector('[data-node="' + n.id + '"]'), nr = node.getBoundingClientRect();
+      return Array.from(node.querySelectorAll('[data-row-index]')).map(function (row, i) {
+        const rr = row.getBoundingClientRect(), range = document.createRange(); range.selectNodeContents(row);
+        const text = range.getBoundingClientRect();
+        const edge = ATLAS.edges.find(function (e) { return e.from === n.id && e.fromOption === i; });
+        const path = edge && document.querySelector('path[data-edge-id="' + edge.id + '"]');
+        const center = n.y + (rr.top + rr.height / 2 - nr.top) / scale;
+        return { text: row.textContent, expected: n.options[i], fits: text.left >= rr.left - 1 && text.right <= rr.right + 1 && text.top >= rr.top - 1 && text.bottom <= rr.bottom + 1,
+          anchor: !path || Math.abs(path.getPointAtLength(0).y - center) < .1 };
+      });
+    }).flat();
+  });
+  assert(measured.length === 13 && measured.every(function (r) { return r.fits && r.anchor && r.text === r.expected; }), 'thirteen actual source rows must fit and match their visible option paths');
+  await page.locator('#q').fill('WILLIAM SHAKESPEARE');
+  await page.locator('#results [data-hit="pt_book"]').click();
+  await page.locator('#details').waitFor({ state: 'visible' });
+  assert(/source rows shown/i.test(await textOf(page, '#details')), 'group detail must identify source rows');
+  assert(await page.locator('#details .opt-list li').count() === 3, 'book detail must show all three rows');
+  await page.locator('#details-close').click(); await page.locator('#q').fill('');
+  for (const link of [{index:106,node:'pt_activity',id:'e_pt_find_activity'},{index:108,node:'pt_book',id:'e_pt_activity_book'},{index:112,node:'pt_studio',id:'e_pt_piano_studio'}]) {
+    await page.evaluate(function (link) { location.hash = '#the-painter/' + link.node + '?edge=' + link.index; }, link);
+    await page.waitForFunction(function (id) { return !!document.querySelector('path.edge.focused[data-edge-id="' + id + '"]'); }, link.id);
+    assert(await page.locator('#details [data-edge-evidence="' + link.index + '"]').count() === 1, 'new numeric link must open actual source evidence');
+    assert(await page.locator('#details a[href*="2162781882"]').count() > 0, 'leisure chart source link missing');
+    await page.locator('#details-close').click();
+  }
+  assert(await page.evaluate(function () { return ATLAS.edges.slice(110).every(function (e) { return e.fromOption == null; }); }), 'common bracket exits must not acquire per-row indices');
+  assert(await page.locator('[data-node]').count() === 128, 'leisure navigation must preserve every node');
+  await resetAtlas(page);
+}
+
 async function runVariant(browser, variant) {
   console.log('scenario ' + variant.id + ' (' + variant.palette + ')');
   const pageErrors = [];
@@ -192,8 +229,8 @@ async function runVariant(browser, variant) {
     assert(state.focused === 'consent', 'consent should receive focus, was ' + state.focused);
     assert(state.world && state.world.width > 0 && state.world.height > 0, 'map world must be rendered but covered');
     assert(state.canvas && state.canvas.width > 0 && state.canvas.height > 0, 'canvas must have layout under the cover');
-    assert(state.nodes === 56, '56 nodes should be rendered behind the cover, got ' + state.nodes);
-    assert(state.edges === 53, '53 connectors should be rendered behind the cover, got ' + state.edges);
+    assert(state.nodes === 128, '128 nodes should be rendered behind the cover, got ' + state.nodes);
+    assert(state.edges === 111, '111 connectors should be rendered behind the cover, got ' + state.edges);
     assert(state.lod === null, 'the map must not carry a semantic LOD attribute');
   });
 
@@ -208,7 +245,7 @@ async function runVariant(browser, variant) {
     assert(await page.locator('#trail').isVisible(), 'history trail not visible');
     assert(!(await page.locator('#atlas-shell').getAttribute('inert')), 'shell stayed inert after consent');
     const status = await textOf(page, '#status');
-    assert(status.indexOf('3 chapters · 56 events · 53 connectors') !== -1, 'status line counts: ' + status);
+    assert(status.indexOf('7 chapters · 128 nodes · 111 connectors') !== -1, 'status line counts: ' + status);
     assert(status.indexOf('not in-game verified') !== -1, 'status line must keep the not-verified qualifier');
     assert(status.indexOf('version/platform unknown') === -1 && status.length <= 180,
       'primary status must stay a concise slice summary, got: ' + status);
@@ -216,11 +253,25 @@ async function runVariant(browser, variant) {
     const zoom = await textOf(page, '#zoomLabel');
     assert(/^\d+%$/.test(zoom), 'zoom label should report camera scale only: ' + zoom);
     assert(await page.locator('#overview').count() === 0, 'the card/report overview surface must stay removed');
-    assert(await page.locator('.frame').count() === 3, 'three chapter frames must stay mounted');
-    assert(await page.locator('[data-node]').count() === 56, '56 event nodes must stay mounted');
-    assert(await page.locator('path.edge').count() === 53, '53 connectors must stay mounted');
-    assert(await page.locator('[data-frame-label]').count() === 3, 'three chapter names must remain on the map');
-    assert(await page.locator('[data-node-label]').count() === 56, 'every event box must keep its label');
+    assert(await page.locator('.frame').count() === 7, 'seven chapter frames must stay mounted');
+    assert(await page.locator('[data-node]').count() === 128, '128 nodes must stay mounted');
+    assert(await page.locator('path.edge').count() === 111, '111 connectors must stay mounted');
+    assert(await page.locator('[data-frame-label]').count() === 7, 'seven chapter names must remain on the map');
+    assert(await page.locator('[data-node-label]').count() === 128, 'every event box must keep its label');
+    const chapterNav = await page.evaluate(function () {
+      return {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        items: Array.from(document.querySelectorAll('[data-chapter]')).map(function (button) {
+          const rect = button.getBoundingClientRect();
+          return { id: button.getAttribute('data-chapter'), text: button.textContent.trim(), left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom };
+        })
+      };
+    });
+    assert(chapterNav.items.length === 8, 'whole-atlas plus seven chapter choices must stay available');
+    assert(chapterNav.items.every(function (item) {
+      return item.text && item.left >= 0 && item.right <= chapterNav.width + 1 && item.top >= 0 && item.bottom <= chapterNav.height + 1;
+    }), 'every chapter choice must be fully visible at the desktop viewport');
   });
 
   await ok('map names and labels stay attached to real chapters, nodes and cross-chapter edges', async function () {
@@ -240,8 +291,8 @@ async function runVariant(browser, variant) {
       const labelled = Array.from(document.querySelectorAll('.edge-label')).map(function (el) { return Number(el.getAttribute('data-edge-label')); });
       return { frames: frames, labels: labels, actualCross: actualCross, labelled: labelled };
     });
-    assert(result.frames.length === 3 && result.frames.every(function (f) { return f.contained && f.title; }), 'chapter names must stay inside all real frames');
-    assert(result.labels.length === 56 && result.labels.every(function (n) { return n.contained && n.text; }), 'all 56 real nodes must retain their full in-box labels');
+    assert(result.frames.length === 7 && result.frames.every(function (f) { return f.contained && f.title; }), 'chapter names must stay inside all real frames');
+    assert(result.labels.length === 128 && result.labels.every(function (n) { return n.contained && n.text; }), 'all 128 real nodes must retain their full in-box labels');
     result.actualCross.forEach(function (index) { assert(result.labelled.indexOf(index) !== -1 || !ATLAS.edges[index].label, 'labelled cross-chapter edge ' + index + ' disappeared'); });
     assert(await page.locator('#overview-connectors, .overview-link, .overview-card').count() === 0, 'no pseudo-map or report surface may replace the graph');
   });
@@ -274,7 +325,7 @@ async function runVariant(browser, variant) {
     await resetAtlas(page);
     const all = await fitSnapshot(page);
     assert(all.lod === null, 'whole-map fit must not set a semantic zoom level');
-    assert(all.frames.length === 3, 'three frames expected');
+    assert(all.frames.length === 7, 'seven frames expected');
     all.frames.forEach(function (frame) {
       assert(fullyInside(frame.rect, all.canvas), frame.id + ' frame is clipped by the whole-map fit');
     });
@@ -287,7 +338,7 @@ async function runVariant(browser, variant) {
     assert(await page.locator('[data-chapter="home"]').getAttribute('aria-pressed') === 'true', 'home chapter is not active');
     const homeFrame = home.frames.filter(function (f) { return f.id === 'home'; })[0];
     assert(homeFrame && fullyInside(homeFrame.rect, home.canvas), 'focused home chapter is clipped by the canvas');
-    assert(home.nodeCount === 56 && home.edgeCount === 53, 'chapter focus must keep the whole graph mounted');
+    assert(home.nodeCount === 128 && home.edgeCount === 111, 'chapter focus must keep the whole graph mounted');
     assert(!home.horizontalOverflow, 'chapter focus introduced horizontal overflow');
 
     await page.locator('[data-chapter="kara"]').click();
@@ -295,10 +346,80 @@ async function runVariant(browser, variant) {
     const kara = await fitSnapshot(page);
     const karaFrame = kara.frames.filter(function (f) { return f.id === 'kara'; })[0];
     assert(karaFrame && fullyInside(karaFrame.rect, kara.canvas), 'focused Kara chapter is clipped by the canvas');
+
+    await openChapter(page, 'hostage');
+    const hostage = await fitSnapshot(page);
+    const hostageFrame = hostage.frames.filter(function (f) { return f.id === 'hostage'; })[0];
+    assert(hostageFrame && fullyInside(hostageFrame.rect, hostage.canvas), 'focused Hostage chapter is clipped by the canvas');
+    assert(hostage.nodeCount === 128 && hostage.edgeCount === 111, 'Hostage focus must keep the whole graph mounted');
+    const hostageInside = await page.evaluate(function () {
+      const c = document.getElementById('canvas').getBoundingClientRect();
+      const nodes = Array.from(document.querySelectorAll('[data-node]')).filter(function (node) {
+        return ATLAS.nodes.filter(function (n) { return n.id === node.getAttribute('data-node'); })[0].chapter === 'hostage';
+      });
+      return {
+        count: nodes.length,
+        inside: nodes.every(function (node) {
+          const r = node.getBoundingClientRect();
+          return r.left >= c.left - 1 && r.right <= c.right + 1 && r.top >= c.top - 1 && r.bottom <= c.bottom + 1;
+        })
+      };
+    });
+    assert(hostageInside.count === 33 && hostageInside.inside, 'Hostage focus must fit all 33 chart boxes');
     await page.locator('[data-chapter="all"]').click();
     await waitFrames(page);
     assert(await page.locator('#canvas').getAttribute('data-lod') === null, 'reset must not restore a semantic zoom level');
   });
+
+  await ok('Shades preserves its partial chart, unknown origins, source detail and appended edge link', async function () {
+    await openChapter(page, 'shades-of-color');
+    const shape = await fitSnapshot(page);
+    const frame = shape.frames.find(function (f) { return f.id === 'shades-of-color'; });
+    assert(frame && fullyInside(frame.rect, shape.canvas), 'Shades chapter frame must fit');
+    assert(await page.locator('[data-node^="sc_"]').count() === 12, 'all twelve Shades nodes must stay mounted');
+    assert(await page.locator('path.edge[data-edge-id^="e_sc_"]').count() === 5, 'only five reviewed Shades connectors');
+    await page.locator('#q').fill('WATCH PREACHER');
+    await page.locator('#results [data-hit="sc_preacher"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    const detail = (await textOf(page, '#details')).toLowerCase();
+    assert(detail.includes('origin') && detail.includes('unknown'), 'detached-origin uncertainty must be visible');
+    assert(await page.locator('#details a[href*="2162781882"]').count() > 0, 'Steam source link must be present');
+    await page.locator('#details-close').click();
+    await page.locator('#q').fill('');
+    await page.evaluate(function () { location.hash = '#shades-of-color/sc_store?edge=96'; });
+    await page.waitForFunction(function () { return !!document.querySelector('path.edge.focused[data-edge-id="e_sc_park_store"]'); });
+    assert(await page.locator('#details [data-edge-evidence="96"]').count() === 1, 'appended numeric permalink must open its actual edge');
+    const invented = await page.evaluate(function () { return ATLAS.edges.some(function (e) { return e.from === 'sc_protesters' && e.to === 'sc_bus'; }); });
+    assert(!invented, 'do not invent a protesters-to-bus connector');
+    await page.locator('#details-close').click();
+    await resetAtlas(page);
+  });
+
+  await ok('Painter opening supports focus, unknown origins and exact appended clothes edge', async function () {
+    await openChapter(page, 'the-painter');
+    const shape = await fitSnapshot(page);
+    const frame = shape.frames.find(function (f) { return f.id === 'the-painter'; });
+    assert(frame && fullyInside(frame.rect, shape.canvas), 'Painter frame must fit');
+    assert(await page.locator('[data-node^="pt_"]').count() === 14, 'fourteen Painter nodes must stay mounted');
+    assert(await page.locator('path.edge[data-edge-id^="e_pt_"]').count() === 12, 'twelve reviewed Painter traces');
+    await page.locator('#q').fill('ACTIVATE BIRDS');
+    await page.locator('#results [data-hit="pt_birds"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    const detail = (await textOf(page, '#details')).toLowerCase();
+    assert(detail.includes('origin') && detail.includes('unknown'), 'detached-origin gap must be visible');
+    assert(await page.locator('#details a[href*="2162781882"]').count() > 0, 'Painter chart source must be linked');
+    await page.locator('#details-close').click();
+    await page.locator('#q').fill('');
+    await page.evaluate(function () { location.hash = '#the-painter/pt_clothes?edge=104'; });
+    await page.waitForFunction(function () { return !!document.querySelector('path.edge.focused[data-edge-id="e_pt_wake_clothes"]'); });
+    assert(await page.locator('#details [data-edge-evidence="104"]').count() === 1, 'numeric link must open Wake to clothes');
+    assert(await page.locator('#details a[href*="the-painter-walkthrough"]').count() > 0, 'guide report must carry its citation');
+    assert(!(await page.evaluate(function () { return ATLAS.edges.some(function (e) { return e.from === 'sc_protesters' && e.to === 'pt_clothes'; }); })), 'harassment report must not become a cross-chapter edge');
+    await page.locator('#details-close').click();
+    await resetAtlas(page);
+  });
+
+  await ok('Painter leisure rows, group exits and numeric links retain exact source evidence', async function () { await verifyLeisure(page); });
 
   await ok('Meet Todd keeps its two separate prerequisite gates', async function () {
     await openChapter(page, 'kara');
@@ -348,6 +469,127 @@ async function runVariant(browser, variant) {
     assert(centered, 'the opened node should be brought into view');
     await page.locator('#details-close').click();
     await page.locator('#details').waitFor({ state: 'hidden' });
+  });
+
+  await ok('The Hostage chart keeps five uncertain claims, the primary-image reading, a dead end and the saved-cop carry', async function () {
+    await openChapter(page, 'hostage');
+    assert(await page.locator('[data-chapter="hostage"]').getAttribute('aria-pressed') === 'true', 'Hostage chapter is not active');
+    assert(await page.locator('.node.hostage.stage').count() === 3, 'three Hostage stage containers must stay visually distinct');
+    const chartBoxes = await page.evaluate(function () {
+      const nodes = Array.from(document.querySelectorAll('[data-node]')).filter(function (node) {
+        return ATLAS.nodes.filter(function (n) { return n.id === node.getAttribute('data-node'); })[0].chapter === 'hostage';
+      });
+      const source = ATLAS.nodes.filter(function (n) { return n.chapter === 'hostage'; });
+      const labels = source.reduce(function (out, node) {
+        return out.concat(node.kind === 'choice' ? node.options : [node.label]);
+      }, []);
+      return {
+        boxes: nodes.length,
+        labels: labels,
+        missing: labels.filter(function (label) {
+          return !nodes.some(function (node) { return node.textContent.indexOf(label) !== -1; });
+        })
+      };
+    });
+    assert(chartBoxes.boxes === 33, 'all 33 Hostage chart boxes must render');
+    assert(chartBoxes.labels.length === 40 && chartBoxes.missing.length === 0,
+      'all 40 Hostage chart labels must stay visible: ' + chartBoxes.missing.join(', '));
+
+    const uncertain = await page.evaluate(function () {
+      const paths = Array.from(document.querySelectorAll('path.edge.uncertain')).map(function (path) {
+        return {
+          id: path.getAttribute('data-edge-id'),
+          dash: getComputedStyle(path).strokeDasharray
+        };
+      });
+      const badges = Array.from(document.querySelectorAll('.badge.uncertain')).map(function (badge) {
+        return { id: badge.getAttribute('data-badge-edge'), text: badge.textContent.trim() };
+      });
+      const chart = ATLAS.edges.filter(function (edge) {
+        return edge.kind === 'uncertain' && edge.id.indexOf('e_hostage_') === 0;
+      }).map(function (edge) { return edge.id; });
+      return { paths: paths, badges: badges, chart: chart };
+    });
+    assert(uncertain.chart.length === 5, 'fixture should keep 5 uncertain Hostage edge claims');
+    assert(uncertain.paths.length === 5, 'five uncertain Hostage paths must render, got ' + uncertain.paths.length);
+    assert(uncertain.paths.every(function (path) { return uncertain.chart.includes(path.id) && path.dash !== 'none'; }),
+      'every uncertain Hostage connector must stay dashed');
+    assert(uncertain.badges.length === 5 && uncertain.badges.every(function (badge) { return badge.text === '?'; }),
+      'five question-mark badges must stay attached to the uncertain claims');
+
+    const readings = await page.evaluate(function () {
+      return ['e_hostage_approach_fail', 'e_hostage_cold_approach_fail', 'e_hostage_fail_jumps'].map(function (id) {
+        const edge = ATLAS.edges.find(function (item) { return item.id === id; });
+        const path = document.querySelector('[data-edge-id="' + id + '"]');
+        return { id: id, fromOption: edge.fromOption == null ? null : edge.fromOption, kind: edge.kind,
+          rendered: !!path, pathClass: path && path.getAttribute('class') };
+      });
+    });
+    assert(readings.map(function (item) { return [item.fromOption, item.kind, item.rendered]; }).toString() ===
+      '0,uncertain,true,1,uncertain,true,,traced,true',
+      'option split and selected FAIL→Jumps route must stay visible: ' + JSON.stringify(readings));
+
+    await page.locator('[data-node="get_close"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    const deadEnd = await textOf(page, '#details');
+    assert(deadEnd.indexOf('GET CLOSE ENOUGH') !== -1, 'GET CLOSE ENOUGH details did not open');
+    const getCloseOut = await page.evaluate(function () {
+      return Array.from(document.querySelectorAll('#details .rowlist [data-edge]')).filter(function (row) {
+        return ATLAS.edges[Number(row.getAttribute('data-edge'))].from === 'get_close';
+      }).length;
+    });
+    assert(getCloseOut === 0, 'GET CLOSE ENOUGH must keep no outgoing connector');
+    await page.locator('#details-close').click();
+    await page.locator('#details').waitFor({ state: 'hidden' });
+
+    await page.locator('[data-node="wounded_cop"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    const cop = await textOf(page, '#details');
+    assert(cop.indexOf('SAVE WOUNDED COP') !== -1, 'wounded-cop choices must remain visible');
+    assert(cop.indexOf('LEAVE WOUNDED COP') !== -1, 'the leave row must remain visible without a consequence');
+    assert(await page.locator('#details .rowlist [data-goto="pe_meet_cop"]').count() === 1,
+      'SAVE WOUNDED COP must carry exactly one cross-chapter row');
+    const gateKind = await page.locator('#details .rowlist [data-goto="pe_meet_cop"] .kind').textContent();
+    assert(/prerequisite/i.test(gateKind || ''), 'saved-cop carry must render as a prerequisite, got ' + gateKind);
+    assert(await page.locator('#details .rowlist [data-goto="pe_meet_cop"]').textContent().then(function (t) {
+      return /SAVE WOUNDED COP/.test(t);
+    }), 'the cross-chapter row must name the SAVE option');
+    await page.locator('#details .rowlist [data-goto="pe_meet_cop"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    const meet = await textOf(page, '#details');
+    assert(meet.indexOf('Meet Cop From Hostage Situation') !== -1, 'Public Enemy meeting did not open');
+    assert(await page.locator('[data-chapter="public-enemy"]').getAttribute('aria-pressed') === 'true',
+      'the chapter must follow the saved-cop carry');
+    const meetOut = await page.evaluate(function () {
+      return Array.from(document.querySelectorAll('#details .rowlist [data-edge]')).filter(function (row) {
+        return ATLAS.edges[Number(row.getAttribute('data-edge'))].from === 'pe_meet_cop';
+      }).length;
+    });
+    assert(meetOut === 0, 'the bounded Public Enemy node must have no outgoing consequence');
+    assert(meet.indexOf('Matching guides are not independent verification') !== -1,
+      'the meeting must keep its evidence limit');
+    await page.locator('#details-close').click();
+    await page.locator('#details').waitFor({ state: 'hidden' });
+
+    await openChapter(page, 'hostage');
+    await page.locator('.edge-label[data-edge-id="e_hostage_save_cop_public_enemy"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    const evidence = await page.evaluate(function () {
+      const block = document.querySelector('#details [data-edge-evidence]');
+      return {
+        edge: block ? Number(block.getAttribute('data-edge-evidence')) : null,
+        evidence: block ? block.getAttribute('data-evidence') : null,
+        hash: location.hash
+      };
+    });
+    assert(evidence.edge !== null && evidence.evidence === 'prerequisite', 'saved-cop edge evidence block missing');
+    assert(evidence.hash.indexOf('#public-enemy/pe_meet_cop?edge=') === 0,
+      'saved-cop edge hash should open the bounded meeting node, got ' + evidence.hash);
+    assert(await page.locator('#details .edge-evidence a[href*="powerpyx.com"]').count() >= 1,
+      'saved-cop evidence must link the supporting guide');
+    await page.locator('#details-close').click();
+    await page.locator('#details').waitFor({ state: 'hidden' });
+    await resetAtlas(page);
   });
 
   await ok('the two successful non-gun escapes stay separate and Todd links stay inferred', async function () {
@@ -461,10 +703,43 @@ async function runVariant(browser, variant) {
       };
     });
     assert(separation.fatalOut === 0, 'the fatal outcome must remain terminal on the map');
-    assert(separation.mountedEdges === 53 && separation.entryEdges === 7,
+    assert(separation.mountedEdges === 111 && separation.entryEdges === 7,
       'all entry connectors must stay mounted with the map');
     assert(JSON.stringify(separation.deviantOut) === JSON.stringify(['s_go_upstairs', 's_reason_todd']),
       'deviant response connectors changed: ' + separation.deviantOut.join(','));
+  });
+
+  await ok('withdrawn legacy links show history and open each active replacement without drawing false arrows', async function () {
+    for (const index of [2, 6]) {
+      const record = await page.evaluate(function (i) {
+        const edge = ATLAS.edges[i];
+        return { to: edge.to, replacements: edge.replacedBy.map(function (id) {
+          const replacementIndex = ATLAS.edges.findIndex(function (e) { return e.id === id; });
+          return { index: replacementIndex, to: ATLAS.edges[replacementIndex].to };
+        }) };
+      }, index);
+      for (const replacement of record.replacements) {
+        await resetAtlas(page);
+        await page.evaluate(function (hash) { location.hash = hash; }, '#home/' + record.to + '?edge=' + index);
+        await page.locator('#details [data-evidence="withdrawn"]').waitFor({ state: 'visible' });
+        const historical = await textOf(page, '#details');
+        assert(historical.includes('Withdrawn claim') && historical.includes('not an active connector'),
+          'old link must identify a withdrawn historical claim');
+        assert(await page.locator('path.edge[data-edge="2"], path.edge[data-edge="6"]').count() === 0,
+          'withdrawn claims must have no SVG arrow');
+        assert(await page.locator('#details .rowlist [data-edge="' + index + '"]').count() === 0,
+          'withdrawn history must not be an ordinary node connection');
+        await page.locator('#details [data-open-edge="' + replacement.index + '"]').click();
+        await page.locator('#details [data-edge-evidence="' + replacement.index + '"]').waitFor({ state: 'visible' });
+        assert((await textOf(page, '#details')).includes('Focused connector') &&
+          !(await textOf(page, '#details')).includes('Focused cross-chapter connector'),
+          'local replacements must not be classified as cross-chapter connectors');
+        assert((await page.evaluate(function () { return location.hash; })) ===
+          '#home/' + replacement.to + '?edge=' + replacement.index, 'replacement permalink must identify its real record');
+        assert(await page.locator('path.edge.focused[data-edge="' + replacement.index + '"]').count() === 1,
+          'replacement must focus its real map path');
+      }
+    }
   });
 
   await ok('map cross-label opens the actual edge with evidence and a permalink', async function () {
@@ -701,7 +976,7 @@ async function runVariant(browser, variant) {
     assert(locked.focus === 'consent', 're-lock should focus the consent button');
     assert(locked.overlayZ >= 40, 're-locked overlay must cover the map');
     assert(locked.canvasWidth > 0 && locked.canvasHeight > 0 && locked.worldVisible, 'map must stay visible beneath the re-locked overlay');
-    assert(locked.nodes === 56, 'map content must stay mounted beneath the re-locked overlay');
+    assert(locked.nodes === 128, 'map content must stay mounted beneath the re-locked overlay');
     assert(locked.detailsHidden, 're-lock should happen from a closed-details state');
     assert(locked.stored === null, 'reset should clear the stored consent key');
 
@@ -784,8 +1059,8 @@ async function runMobileRegression(browser) {
   await page.goto(baseUrl + '/prototype/poc4-editorial.html#');
   await page.locator('#consent').waitFor({ state: 'visible' });
   await ok('mobile spoiler cover keeps the real map underneath', async function () {
-    assert(await page.locator('[data-node]').count() === 56, 'real nodes must be mounted beneath the cover');
-    assert(await page.locator('path.edge').count() === 53, 'real edges must be mounted beneath the cover');
+    assert(await page.locator('[data-node]').count() === 128, 'real nodes must be mounted beneath the cover');
+    assert(await page.locator('path.edge').count() === 111, 'real edges must be mounted beneath the cover');
     assert(await page.locator('#spoiler-overlay').isVisible(), 'spoiler cover should be visible');
   });
   await page.locator('#consent').click();
@@ -812,7 +1087,7 @@ async function runMobileRegression(browser) {
     });
     assert(Math.abs(m.width-m.viewport)<=1, 'canvas width does not fit the mobile viewport');
     assert(!m.overflow, 'mobile page has horizontal overflow');
-    assert(m.nodes===56&&m.labels===56&&m.edges===53, 'mobile viewport changed graph inventory');
+    assert(m.nodes===128&&m.labels===128&&m.edges===111, 'mobile viewport changed graph inventory');
     assert(m.frames.every(function(f){return f.inside;}), 'whole-map Fit should contain all chapter regions');
     assert(m.scale>0&&m.scale<1, 'mobile fit should scale the same world map');
   });
@@ -828,7 +1103,7 @@ async function runMobileRegression(browser) {
       return { pressed:document.querySelector('[data-chapter="home"]').getAttribute('aria-pressed'), inside:frame.left>=canvas.left-1&&frame.right<=canvas.right+1&&frame.top>=canvas.top-1&&frame.bottom<=canvas.bottom+1, nodes:document.querySelectorAll('[data-node]').length, labels:document.querySelectorAll('[data-node-label]').length, edges:document.querySelectorAll('path.edge').length, camera:{a:m.a,e:m.e,f:m.f}, text:Array.from(document.querySelectorAll('[data-node-label]')).map(function(x){return x.textContent.trim();}) };
     });
     assert(focused.pressed==='true'&&focused.inside, 'mobile chapter focus did not fit its real frame');
-    assert(focused.nodes===56&&focused.labels===56&&focused.edges===53, 'chapter focus swapped or hid real graph content');
+    assert(focused.nodes===128&&focused.labels===128&&focused.edges===111, 'chapter focus swapped or hid real graph content');
     assert(focused.text.every(Boolean), 'chapter focus has an anonymous event label');
     const point=await page.evaluate(function(){const c=document.getElementById('canvas'),r=c.getBoundingClientRect();for(let y=r.top+25;y<r.bottom-25;y+=12){for(let x=r.left+25;x<r.right-25;x+=12){const el=document.elementFromPoint(x,y);if(el&&c.contains(el)&&!el.closest('button,a,input,.legend,.status,.zoom'))return{x:x,y:y};}}return null;});
     assert(point,'no clear map point for mobile pan');
@@ -840,6 +1115,49 @@ async function runMobileRegression(browser) {
     assert(before.a>0, 'initial mobile camera was invalid');
   });
 
+  await ok('mobile Shades focus and search retain partial-chart evidence and the map', async function () {
+    await openChapter(page, 'shades-of-color');
+    await page.locator('#q').fill('PROTESTERS');
+    await page.locator('#results [data-hit="sc_protesters"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    const detail = (await textOf(page, '#details')).toLowerCase();
+    assert(detail.includes('origin') && detail.includes('unknown'), 'mobile details must expose unknown origins');
+    assert(await page.locator('#details a[href*="powerpyx.com"]').count() > 0, 'guide claim needs its PowerPyx citation');
+    assert(await page.locator('[data-node]').count() === 128, 'mobile details must preserve the whole map');
+    await page.locator('#details-close').click();
+    await page.locator('#q').fill('');
+    await page.evaluate(function () { location.hash = '#shades-of-color/sc_store?edge=96'; });
+    await page.waitForFunction(function () { return !!document.querySelector('path.edge.focused[data-edge-id="e_sc_park_store"]'); });
+    assert(await page.locator('#details [data-edge-evidence="96"]').count() === 1, 'mobile appended permalink must open its actual edge');
+    assert(await page.locator('[data-node]').count() === 128, 'mobile appended permalink must preserve the map');
+    await page.locator('#details-close').click();
+    await resetAtlas(page);
+  });
+
+  await ok('mobile Painter search and appended edge retain evidence and the map', async function () {
+    await openChapter(page, 'the-painter');
+    await page.locator('#q').fill('LIFE ON TITAN');
+    await page.locator('#results [data-hit="pt_titan"]').click();
+    await page.locator('#details').waitFor({ state: 'visible' });
+    const detail = (await textOf(page, '#details')).toLowerCase();
+    assert(detail.includes('origin') && detail.includes('unknown'), 'mobile detached-origin evidence missing');
+    assert(await page.locator('[data-node]').count() === 128, 'mobile search must preserve the graph');
+    await page.locator('#details-close').click();
+    await page.locator('#q').fill('');
+    await page.evaluate(function () { location.hash = '#the-painter/pt_clothes?edge=104'; });
+    await page.waitForFunction(function () { return !!document.querySelector('path.edge.focused[data-edge-id="e_pt_wake_clothes"]'); });
+    assert(await page.locator('#details [data-edge-evidence="104"]').count() === 1, 'mobile permalink must open actual Painter trace');
+    assert(await page.locator('#details a[href*="the-painter-walkthrough"]').count() > 0, 'mobile guide report citation missing');
+    assert(await page.locator('[data-node]').count() === 128, 'mobile permalink must preserve the graph');
+    const panel = await page.locator('#details').boundingBox();
+    assert(panel && panel.x >= -1 && panel.x + panel.width <= 391, 'mobile Painter details overflow');
+    await page.keyboard.press('Escape');
+    await page.locator('#details').waitFor({ state: 'hidden' });
+    await resetAtlas(page);
+  });
+
+  await ok('mobile Painter leisure rows and links retain usable source details', async function () { await verifyLeisure(page); });
+
   await ok('mobile search opens usable details and preserves the map', async function () {
     await page.locator('#q').fill('meet');
     const hit=page.locator('#results [data-hit="k_meet"]');
@@ -847,11 +1165,67 @@ async function runMobileRegression(browser) {
     await hit.click(); await page.locator('#details').waitFor({state:'visible'});
     assert(await page.locator('#details-close').isVisible(), 'details close control is not visible');
     assert((await textOf(page,'#details')).includes('Meet Todd'), 'wrong event details opened');
-    assert((await page.locator('[data-node]').count())===56, 'map must stay mounted behind details');
+    assert((await page.locator('[data-node]').count())===128, 'map must stay mounted behind details');
     const r=await page.locator('#details').boundingBox();
     assert(r&&r.x>=-1&&r.x+r.width<=390+1, 'details panel extends beyond the mobile viewport');
     await page.keyboard.press('Escape'); await page.locator('#details').waitFor({state:'hidden'});
     assert(pageErrors.length===0,pageErrors.join(' | '));
+  });
+  await ok('mobile legacy permalink exposes a usable withdrawal notice and replacement', async function () {
+    await page.evaluate(function () { location.hash = '#home/a_ask?edge=2'; });
+    await page.locator('#details [data-evidence="withdrawn"]').waitFor({ state: 'visible' });
+    const panel = await page.locator('#details').boundingBox();
+    assert(panel && panel.x >= -1 && panel.x + panel.width <= 391, 'withdrawal details overflow the mobile viewport');
+    assert(await page.locator('#details [data-open-edge]').count() === 2, 'both replacement steps must be available');
+    await page.locator('#details [data-open-edge="93"]').click();
+    await page.locator('#details [data-edge-evidence="93"]').waitFor({ state: 'visible' });
+    assert((await page.evaluate(function () { return location.hash; })) === '#home/a_take_out_trash?edge=93',
+      'mobile replacement must open the real trash connector');
+    assert(await page.locator('path.edge').count() === 111, 'history navigation must preserve the active graph');
+    assert(pageErrors.length === 0, pageErrors.join(' | '));
+  });
+  await page.close();
+}
+
+// Hold real hash events so a quick close always precedes the queued URL event.
+async function runHashCloseRegression(browser) {
+  console.log('scenario delayed hash event after closing details');
+  const page = await browser.newPage({ viewport: { width: 390, height: 845 } });
+  await page.addInitScript(function () {
+    const add = window.addEventListener.bind(window);
+    window.__ra9DeferredHashes = [];
+    window.addEventListener = function (type, listener, options) {
+      if (type === 'hashchange') add(type, function (event) {
+        window.__ra9DeferredHashes.push(function () { listener.call(window, event); });
+      }, options);
+      else add(type, listener, options);
+    };
+    window.__ra9FlushHashes = function () {
+      window.__ra9DeferredHashes.splice(0).forEach(function (deliver) { deliver(); });
+    };
+  });
+  await page.goto(baseUrl + '/prototype/poc4-editorial.html');
+  await page.locator('#consent').click();
+  await page.locator('#q').fill('meet');
+  await page.locator('#results [data-hit="k_meet"]').click();
+  await page.waitForFunction(function () { return window.__ra9DeferredHashes.length > 0; });
+  await ok('queued self-written hash cannot reopen details after Escape', async function () {
+    await page.keyboard.press('Escape');
+    assert(await page.locator('#details').isHidden(), 'Escape must close details before URL delivery');
+    const hash = await page.evaluate(function () { return location.hash; });
+    await page.evaluate(function () { window.__ra9FlushHashes(); });
+    assert(await page.locator('#details').isHidden(), 'queued hash reopened the closed details');
+    assert(await page.evaluate(function () { return location.hash; }) === hash, 'close must preserve the selected permalink');
+  });
+  await ok('external hash navigation and browser Back still restore actual edge and node targets', async function () {
+    await page.evaluate(function () { location.hash = '#shades-of-color/sc_store?edge=96'; });
+    await page.waitForFunction(function () { return window.__ra9DeferredHashes.length > 0; });
+    await page.evaluate(function () { window.__ra9FlushHashes(); });
+    assert(await page.locator('#details [data-edge-evidence="96"]').count() === 1, 'external edge navigation must still work');
+    await page.goBack();
+    await page.waitForFunction(function () { return window.__ra9DeferredHashes.length > 0; });
+    await page.evaluate(function () { window.__ra9FlushHashes(); });
+    assert((await textOf(page, '#details')).includes('Meet Todd'), 'Back must restore the prior node');
   });
   await page.close();
 }
@@ -860,8 +1234,11 @@ async function runMobileRegression(browser) {
   const server = await startServer();
   const browser = await chromium.launch();
   try {
-    for (const variant of VARIANTS) await runVariant(browser, variant);
-    await runMobileRegression(browser);
+    if (!process.argv.includes('--hash-close-only')) {
+      for (const variant of VARIANTS) await runVariant(browser, variant);
+      await runMobileRegression(browser);
+    }
+    await runHashCloseRegression(browser);
   } finally {
     await browser.close();
     await new Promise(function (resolve) { server.close(resolve); });

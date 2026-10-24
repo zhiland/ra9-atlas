@@ -40,11 +40,15 @@ const MIME = {
 };
 
 const EXPECTED = {
-  canvas: { width: 4450, height: 1080 },
+  canvas: { width: 4950, height: 3450 },
   frames: {
     home: { x: 30, y: 120, w: 1930, h: 530 },
     stormy: { x: 2000, y: 120, w: 1320, h: 860 },
-    kara: { x: 3360, y: 120, w: 1060, h: 900 }
+    kara: { x: 3360, y: 120, w: 1060, h: 900 },
+    hostage: { x: 0, y: 1120, w: 4450, h: 1340 },
+    'public-enemy': { x: 4490, y: 2200, w: 380, h: 250 },
+    'shades-of-color': { x: 30, y: 2540, w: 1900, h: 500 },
+    'the-painter': { x: 2040, y: 2540, w: 1900, h: 850 }
   },
   nodes: {
     a_welcome: { x: 50, y: 250, w: 170, h: 84 },
@@ -70,6 +74,18 @@ const EXPECTED = {
     a_block_todd_view: { x: 1000, y: 580, w: 170, h: 54 },
     a_activate_vacuum: { x: 810, y: 523, w: 170, h: 54 },
     a_take_out_trash: { x: 620, y: 562, w: 170, h: 54 },
+    a_clean_todd_room: { x: 1490, y: 346, w: 170, h: 54 },
+    a_tidy_pills: { x: 1300, y: 346, w: 170, h: 54 },
+    a_make_todd_bed: { x: 1680, y: 346, w: 170, h: 54 },
+    a_alice_goes_room: { x: 1680, y: 444, w: 170, h: 54 },
+    a_clean_toilet: { x: 1300, y: 444, w: 170, h: 54 },
+    a_arrange_bathroom_bottles: { x: 1490, y: 444, w: 170, h: 54 },
+    a_store_bathroom_clothes: { x: 1380, y: 543, w: 170, h: 50 },
+    a_mop_bathroom: { x: 1570, y: 543, w: 170, h: 50 },
+    a_read_android_qb: { x: 1760, y: 543, w: 170, h: 50 },
+    a_read_putting_price: { x: 1380, y: 596, w: 170, h: 54 },
+    a_read_alice_floor_book: { x: 1570, y: 596, w: 170, h: 54 },
+    a_read_alice_shelf_books: { x: 1760, y: 596, w: 170, h: 54 },
     s_take_gun: { x: 2045, y: 210, w: 190, h: 84 },
     s_gun_struggle: { x: 2305, y: 210, w: 190, h: 84 },
     s_kara_shoots_todd: { x: 2565, y: 210, w: 190, h: 84 },
@@ -102,7 +118,67 @@ const EXPECTED = {
     k_late_bus: { x: 3655, y: 780, w: 190, h: 84 },
     k_dialogue: { x: 4165, y: 410, w: 210, h: 110 },
     k_away: { x: 4165, y: 250, w: 210, h: 84 },
-    k_check: { x: 4165, y: 650, w: 210, h: 84 }
+    k_check: { x: 4165, y: 650, w: 210, h: 84 },
+    mission_start: { x: 65, y: 1870, w: 200, h: 44 },
+    fish: { x: 65, y: 1670, w: 220, h: 64 },
+    talk_allen: { x: 365, y: 1876, w: 220, h: 36 },
+    'stage-search': { x: 685, y: 1850, w: 180, h: 70 },
+    inv_father: { x: 925, y: 1590, w: 210, h: 36 },
+    learn_cause: { x: 1245, y: 1590, w: 210, h: 36 },
+    learn_name: { x: 1245, y: 1750, w: 210, h: 36 },
+    inv_gun_case: { x: 1245, y: 2030, w: 210, h: 36 },
+    inv_cop_body: { x: 925, y: 2170, w: 210, h: 36 },
+    cops_gun: { x: 1245, y: 2150, w: 220, h: 64 },
+    wasted_time: { x: 1705, y: 1570, w: 230, h: 44 },
+    go_outside: { x: 1705, y: 1790, w: 230, h: 36 },
+    swat_injured: { x: 1705, y: 2170, w: 230, h: 44 },
+    'stage-confront': { x: 2025, y: 1850, w: 230, h: 60 },
+    'stage-negotiate': { x: 2405, y: 1850, w: 230, h: 60 },
+    approach: { x: 2685, y: 1510, w: 230, h: 64 },
+    helicopter: { x: 2685, y: 1690, w: 240, h: 64 },
+    gun_talk: { x: 2685, y: 2110, w: 230, h: 64 },
+    wounded_cop: { x: 2685, y: 2270, w: 230, h: 64 },
+    fail_negotiate: { x: 3065, y: 1490, w: 230, h: 36 },
+    honest_deviant: { x: 3445, y: 1510, w: 230, h: 36 },
+    lie_deviant: { x: 3445, y: 1690, w: 210, h: 36 },
+    trust: { x: 3725, y: 1670, w: 210, h: 64 },
+    sacrifice_self: { x: 3445, y: 1890, w: 210, h: 36 },
+    use_gun: { x: 3445, y: 2070, w: 210, h: 36 },
+    get_close: { x: 3445, y: 2250, w: 230, h: 36 },
+    deviant_jumps: { x: 3445, y: 1330, w: 230, h: 44 },
+    end_failed: { x: 4045, y: 1270, w: 320, h: 56 },
+    end_leapt: { x: 4045, y: 1450, w: 320, h: 56 },
+    end_snipers: { x: 4045, y: 1710, w: 320, h: 56 },
+    end_died: { x: 4045, y: 1890, w: 320, h: 56 },
+    end_deviant_shot: { x: 4045, y: 2090, w: 320, h: 56 },
+    end_connor_shot: { x: 4045, y: 2290, w: 320, h: 56 },
+    pe_meet_cop: { x: 4520, y: 2320, w: 320, h: 84 },
+    sc_park: { x: 90, y: 2610, w: 240, h: 74 },
+    sc_secret: { x: 90, y: 2890, w: 240, h: 70 },
+    sc_climate: { x: 400, y: 2890, w: 260, h: 70 },
+    sc_vendor: { x: 450, y: 2740, w: 260, h: 70 },
+    sc_pushed: { x: 850, y: 2740, w: 260, h: 70 },
+    sc_busker: { x: 1290, y: 2740, w: 260, h: 70 },
+    sc_preacher: { x: 750, y: 2890, w: 260, h: 70 },
+    sc_yells: { x: 1110, y: 2890, w: 260, h: 70 },
+    sc_store: { x: 520, y: 2610, w: 260, h: 74 },
+    sc_package: { x: 950, y: 2610, w: 260, h: 74 },
+    sc_protesters: { x: 1500, y: 2890, w: 260, h: 70 },
+    sc_bus: { x: 1380, y: 2610, w: 260, h: 74 },
+    pt_arrive: { x: 2100, y: 2640, w: 240, h: 80 },
+    pt_package: { x: 2440, y: 2640, w: 250, h: 80 },
+    pt_wake: { x: 2780, y: 2640, w: 250, h: 80 },
+    pt_breakfast: { x: 3120, y: 2640, w: 250, h: 80 },
+    pt_clothes: { x: 3120, y: 2880, w: 300, h: 80 },
+    pt_birds: { x: 2440, y: 2770, w: 250, h: 80 },
+    pt_north: { x: 2100, y: 2880, w: 250, h: 80 },
+    pt_titan: { x: 2440, y: 2880, w: 250, h: 80 },
+    pt_find: { x: 3480, y: 2640, w: 280, h: 80 },
+    pt_activity: { x:2100,y:3100,w:320,h:200 },
+    pt_chess: { x:2470,y:3070,w:320,h:160 },
+    pt_book: { x:2820,y:3070,w:400,h:200 },
+    pt_piano: { x:3250,y:3070,w:320,h:190 },
+    pt_studio: { x:3610,y:3120,w:240,h:80 }
   }
 };
 
@@ -208,6 +284,7 @@ async function layoutSnapshot(page) {
       return {
         id: el.getAttribute('data-node'),
         chapter: source.chapter,
+        kind: source.kind,
         layout: { x: source.x, y: source.y, w: source.w, h: source.h },
         rect: rect(el),
         overflow: el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1
@@ -261,7 +338,7 @@ async function run(browser) {
   await openAtlas(page);
   const snapshot = await layoutSnapshot(page);
 
-  await ok('canvas and chapter frames keep the widened Stormy/checkpoint bounds', async function () {
+  await ok('expanded canvas keeps all old frames and the new Shades and Painter regions', async function () {
     assert(snapshot.canvas.width === EXPECTED.canvas.width && snapshot.canvas.height === EXPECTED.canvas.height,
       'canvas changed to ' + snapshot.canvas.width + '×' + snapshot.canvas.height);
     Object.keys(EXPECTED.frames).forEach(function (id) {
@@ -272,20 +349,50 @@ async function run(browser) {
     const home = EXPECTED.frames.home;
     const stormy = EXPECTED.frames.stormy;
     const kara = EXPECTED.frames.kara;
+    const hostage = EXPECTED.frames.hostage;
+    const enemy = EXPECTED.frames['public-enemy'];
     assert(stormy.x - (home.x + home.w) >= 24, 'A New Home / Stormy Night gap shrank below 24px');
     assert(kara.x - (stormy.x + stormy.w) >= 40, 'Stormy Night / Kara gap shrank below 40px');
+    assert(hostage.y - (home.y + home.h) >= 24, 'A New Home / The Hostage row gap shrank below 24px');
+    assert(enemy.x - (hostage.x + hostage.w) >= 24, 'The Hostage / Public Enemy gap shrank below 24px');
     assert(stormy.w >= 1200, 'Stormy Night lost its multi-lane width: ' + stormy.w);
     assert(kara.w >= 1000, 'Kara checkpoint region lost its widened bounds: ' + kara.w);
+    assert(hostage.w >= 4400 && hostage.h >= 1300, 'The Hostage chart lost its Stage 1 fit bounds');
   });
 
-  await ok('all 56 node boxes keep the expected static world geometry', async function () {
+  await ok('all 128 node boxes keep the expected static world geometry', async function () {
     const actual = {};
     snapshot.nodes.forEach(function (node) { actual[node.id] = node.layout; });
-    assert(snapshot.nodes.length === 56, 'expected 56 node boxes, got ' + snapshot.nodes.length);
+    assert(snapshot.nodes.length === 128, 'expected 128 node boxes, got ' + snapshot.nodes.length);
     Object.keys(EXPECTED.nodes).forEach(function (id) {
       assert(actual[id], 'missing node ' + id);
       sameBox(actual[id], EXPECTED.nodes[id], 'node ' + id);
     });
+  });
+
+  await ok('The Hostage chart and Public Enemy node stay inside their frames', async function () {
+    const byId = Object.fromEntries(snapshot.nodes.map(function (node) { return [node.id, node.layout]; }));
+    const hostageFrame = EXPECTED.frames.hostage;
+    const hostage = snapshot.nodes.filter(function (node) { return node.chapter === 'hostage'; });
+    assert(hostage.length === 33, 'expected 33 Hostage boxes, got ' + hostage.length);
+    hostage.forEach(function (node) {
+      const box = node.layout;
+      assert(box.x >= hostageFrame.x && box.x + box.w <= hostageFrame.x + hostageFrame.w,
+        node.id + ' leaves The Hostage frame horizontally');
+      assert(box.y >= hostageFrame.y && box.y + box.h <= hostageFrame.y + hostageFrame.h,
+        node.id + ' leaves The Hostage frame vertically');
+    });
+    const enemy = byId.pe_meet_cop;
+    const enemyFrame = EXPECTED.frames['public-enemy'];
+    assert(enemy, 'Public Enemy node missing');
+    assert(enemy.x >= enemyFrame.x && enemy.x + enemy.w <= enemyFrame.x + enemyFrame.w &&
+      enemy.y >= enemyFrame.y && enemy.y + enemy.h <= enemyFrame.y + enemyFrame.h,
+      'Public Enemy node leaves its frame');
+    ['stage-search', 'stage-confront', 'stage-negotiate'].forEach(function (id) {
+      const node = snapshot.nodes.filter(function (item) { return item.id === id; })[0];
+      assert(node && node.kind === 'stage', id + ' should remain a Hostage stage container');
+    });
+    assert(byId.get_close.y > byId.deviant_jumps.y, 'GET CLOSE ENOUGH should stay in the negotiation lane');
   });
 
   await ok('A New Home main sequence runs left to right with side clues below', async function () {
@@ -318,6 +425,27 @@ async function run(browser) {
       'the magazine readings should use the two upper activity columns');
     assert(byId.a_enrage_todd.x > byId.a_find_red_ice.x && byId.a_block_todd_view.x > byId.a_watch_todd_tv.x,
       'known local first-floor sequences must read left to right');
+  });
+
+  await ok('second-floor events stay in their own A New Home lane', async function () {
+    const ids = ['a_clean_todd_room', 'a_tidy_pills', 'a_make_todd_bed', 'a_alice_goes_room',
+      'a_clean_toilet', 'a_arrange_bathroom_bottles', 'a_store_bathroom_clothes', 'a_mop_bathroom',
+      'a_read_android_qb', 'a_read_putting_price', 'a_read_alice_floor_book', 'a_read_alice_shelf_books'];
+    const byId = Object.fromEntries(snapshot.nodes.map(function (node) { return [node.id, node.layout]; }));
+    const rowY = byId.a_clean2.y;
+    ids.forEach(function (id) {
+      assert(byId[id], 'missing second-floor event ' + id);
+      assert(byId[id].y > rowY, id + ' must stay below the main A New Home row');
+      assert(byId[id].x > byId.a_room.x, id + ' must stay to the right of Alice’s room cleaning step');
+      assert(byId[id].x + byId[id].w <= EXPECTED.frames.home.x + EXPECTED.frames.home.w,
+        id + ' leaves the A New Home frame horizontally');
+      assert(byId[id].y + byId[id].h <= EXPECTED.frames.home.y + EXPECTED.frames.home.h,
+        id + ' leaves the A New Home frame vertically');
+    });
+    assert(byId.a_tidy_pills.y === byId.a_clean_todd_room.y && byId.a_clean_todd_room.y === byId.a_make_todd_bed.y,
+      'Todd’s room events should share the first second-floor lane');
+    assert(byId.a_make_todd_bed.x < byId.a_alice_goes_room.x || byId.a_make_todd_bed.y < byId.a_alice_goes_room.y,
+      'the bed-to-Alice-room sequence must not run backwards');
   });
 
   await ok('Stormy and checkpoint nodes keep clear row and column gutters', async function () {
@@ -405,14 +533,15 @@ async function run(browser) {
 
   await ok('chapter focus keeps each region readable at the 1440x900 viewport', async function () {
     const scales = {};
-    for (const id of ['home', 'stormy', 'kara']) {
+    const minimum = { home: 0.62, stormy: 0.62, kara: 0.62, hostage: 0.28, 'public-enemy': 0.62, 'shades-of-color': 0.65, 'the-painter': 0.65 };
+    for (const id of Object.keys(minimum)) {
       await page.locator('[data-chapter="' + id + '"]').click();
       await waitFrames(page);
       scales[id] = await page.evaluate(function () {
         const world = document.getElementById('world');
         return new DOMMatrixReadOnly(getComputedStyle(world).transform).a;
       });
-      assert(scales[id] >= 0.65,
+      assert(scales[id] >= minimum[id],
         id + ' chapter focus fell to ' + Math.round(scales[id] * 100) + '%');
     }
     await page.locator('[data-chapter="all"]').click();

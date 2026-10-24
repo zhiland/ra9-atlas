@@ -24,7 +24,7 @@ Fixtures D1–D3 were cleared by Gate 02 for mockup use **with explicit evidence
 | Badge | Meaning | Covers |
 |---|---|---|
 | Guide-reported — matching sources | ≥2 guides agree; independence unproven | D1 lie-to-keep-gun (PowerPyx; Game of Guides cross-check); D2.4/D2.5; D3 threshold and branches (PowerPyx; Gamer Guides, texts closely match) |
-| Guide-reported — single source | one secondary source; unconfirmed | D2.1 key at Neutral or higher (GameFAQs; PowerPyx states no threshold); Neoseeker's late-only D3 branch |
+| Guide-reported — single source | one secondary source; unconfirmed | D2.1 key after Alice trusts Kara enough (GameFAQs; exact level unstated); Neoseeker's late-only D3 branch |
 | Transcript text | secondary transcript, not gameplay capture | D2.2 box contents (Fandom, lines 1947–1964) |
 | Snippet-only | full page not reviewed | D2.3; Neoseeker parts of D2.4/D3 |
 | Conflict / unclarity | sources disagree; may be omission | D3 Supersoluce discrepancy (step 6) |
@@ -57,7 +57,7 @@ Each step separates **U** (UI behavior to prototype) from **G** (gameplay facts 
 ### Step 4 — Forward consequence: D2 (R2, forward)
 
 - **U:** from *A New Home* ("Talk to Alice" / "Open Alice's Box"), a "later consequences" panel links to *Battle for Detroit (Kara)* "Meet Todd" (PowerPyx lines 224–228), with direct navigation.
-- **U:** compound conditions, each a separate entry: key at Neutral or higher, box needs it (**single source**); "the box opened" (**unresolved trigger** — guides disagree: "see/inspect the photo or box" vs. "open the box"; `ch04_opened_box` is only a reported hypothesis); Todd survived *Stormy Night* (**matching sources**); Kara and Alice reach the terminal (**matching sources**).
+- **U:** compound conditions, each a separate entry: Alice trusts Kara enough to give the key (**GameFAQs; exact relationship level unknown**); the box needs the key (**single source**); "the box opened" (**unresolved trigger** — guides disagree: "see/inspect the photo or box" vs. "open the box"; `ch04_opened_box` is only a reported hypothesis); Todd survived *Stormy Night* (**matching sources**); Kara and Alice reach the terminal (**matching sources**).
 - **U:** outcomes as an explicit alternative set (D2.5): positive dialogue → Todd sends the soldiers away; negative → persuasion fails, security check triggered. Label: depends on later dialogue — not guaranteed by opening the box.
 - **U:** overall D2 badge: guide-reported chain with unresolved conditions, labeled hypothetical (Gate 02: HOLD as verified example; GO as labeled scenario).
 
@@ -82,7 +82,7 @@ Each step separates **U** (UI behavior to prototype) from **G** (gameplay facts 
 ## 6. Gameplay facts still unknown — display as unknown
 
 - No D1–D3 claim is verified in game; the "in-game verified" badge never appears; version/platform `unknown`.
-- **D1:** complete condition set, order, build accuracy. **D2:** exact trigger (open box vs. see photo vs. dialogue node); full later condition set; single-source Neutral-key claim; safe branch-isolation replays unchecked. **D3:** equality at 11:00; text independence; both outcomes in one build.
+- **D1:** complete condition set, order, build accuracy. **D2:** exact trigger (open box vs. see photo vs. dialogue node); full later condition set; exact Alice-key relationship level; safe branch-isolation replays unchecked. **D3:** equality at 11:00; text independence; both outcomes in one build.
 - A verification record from the mockup states expectation, observation, evidence, verdict — scope is navigation only (spec change rule applies to conflicts found).
 
 ## 7. Out of scope
