@@ -35,6 +35,33 @@ npm test
 compares the exact deterministic output and fails on missing or stale files
 without writing. It is part of normal validation and CI.
 
+## Structural coverage report
+
+`tools/data/coverage-report.js` is a dependency-free, read-only reporter. It
+re-runs the same `compileSource` validation as generation (format, ledger
+identity and the full atlas validator) and then counts graph structure. It
+never writes anything: no input file, generated artifact or default report
+file is created or modified.
+
+```sh
+npm run coverage:report     # versioned JSON report on stdout
+npm run coverage:report:md  # readable Markdown totals and chapter tables
+npm run test:coverage       # reporter regression tests (also part of npm test)
+```
+
+Flags: `--markdown` selects the Markdown rendering; `--source PATH` and
+`--ledger PATH` choose the input files (defaulting to the committed bundle).
+Unknown flags and missing flag values are rejected. Output is deterministic:
+no timestamps or absolute paths, and chapter rows follow source chapter order.
+
+The report is a structural inventory only. Its counts are observations of the
+committed source structure — never source approval, gameplay verification,
+completeness evidence or publication permission. Declared per-chapter coverage
+status and scope are copied, not inferred. Conditions and uncertainties appear
+as totals only and are never attributed to chapters. Cross-chapter active
+edges stay out of internal counts, and withdrawn records preserve history
+without counting as active.
+
 ## Change flow
 
 1. Extract or correct a preparation packet and complete separate source review.
