@@ -16,6 +16,7 @@ const fs = require('fs');
 const path = require('path');
 const { shadesRuntimeErrors } = require('./validate-shades-runtime');
 const { painterRuntimeErrors } = require('./validate-painter-runtime');
+const RowLayout = require('./atlas-row-layout');
 
 const dataFile = path.join(__dirname, 'atlas-data.js');
 const CLAIM_STATUSES = new Set(['ocr', 'guide', 'user', 'unresolved', 'mixed']);
@@ -92,7 +93,7 @@ function validateAtlas(ATLAS) {
 
   check('source registry and contract version are declared', () => {
     const errors = [];
-    if (meta.contractVersion !== '1.0') errors.push(`meta.contractVersion should be "1.0", found "${meta.contractVersion}"`);
+    if (!['1.0', '1.1'].includes(meta.contractVersion)) errors.push(`meta.contractVersion should be "1.0" or "1.1", found "${meta.contractVersion}"`);
     if (!ATLAS.refs || typeof ATLAS.refs !== 'object' || Array.isArray(ATLAS.refs)) {
       errors.push('ATLAS.refs must be an object of source references');
       return errors;
@@ -114,11 +115,7 @@ function validateAtlas(ATLAS) {
       if (!n.label) errors.push(`node "${n.id}" has no label`);
       if (!chapterById.has(n.chapter)) errors.push(`node "${n.id}" references missing chapter "${n.chapter}"`);
       errors.push(...sourceRefErrors(`node "${n.id}"`, n.src, true));
-      if (n.kind === 'choice') {
-        if (!Array.isArray(n.options) || n.options.length !== 2 || n.options.some(o => !o)) {
-          errors.push(`choice node "${n.id}" must list exactly 2 non-empty option labels`);
-        }
-      }
+      errors.push(...RowLayout.errors(n, meta.contractVersion).map(message => `node "${n.id}": ${message}`));
     }
     return errors;
   });
@@ -216,6 +213,10 @@ function validateAtlas(ATLAS) {
         (((point[0] === node.x || point[0] === node.x + node.w) && point[1] >= node.y && point[1] <= node.y + node.h) ||
          ((point[1] === node.y || point[1] === node.y + node.h) && point[0] >= node.x && point[0] <= node.x + node.w));
       if (!onBorder(points[0], byId.get(edge.from)) || !onBorder(points[points.length - 1], byId.get(edge.to))) errors.push(`${edge.id} points must be anchored to endpoint borders`);
+      const from = byId.get(edge.from);
+      if (from && from.rowGroup === true && Array.isArray(from.options) && Number.isInteger(edge.fromOption) && edge.fromOption >= 0 && edge.fromOption < from.options.length && !RowLayout.errors(from, meta.contractVersion).length) {
+        if (Math.abs(points[0][1] - RowLayout.anchorY(from, edge.fromOption)) > 0.01) errors.push(`${edge.id} authored start must match its source row center`);
+      }
     }
     return errors;
   });
@@ -249,7 +250,7 @@ function validateAtlas(ATLAS) {
       }
       if (e.fromOption != null) {
         const n = byId.get(e.from);
-        if (!n || n.kind !== 'choice' || !Number.isInteger(e.fromOption) || e.fromOption < 0 || e.fromOption >= n.options.length) {
+        if (!n || n.kind !== 'choice' || !Number.isInteger(e.fromOption) || e.fromOption < 0 || !Array.isArray(n.options) || e.fromOption >= n.options.length) {
           errors.push(`edge ${e.from}->${e.to} has an invalid fromOption`);
         }
       }
@@ -1292,8 +1293,8 @@ function validateAtlas(ATLAS) {
   function routeSegments(edge) {
     const a = byId.get(edge.from), b = byId.get(edge.to);
     const fromY = edge.fromOption == null ? a.y + a.h / 2 :
-      a.y + (edge.fromOption + 0.5) * a.h / a.options.length;
-    const sameCol = Math.abs((a.x + a.w / 2) - (b.x + b.w / 2)) < 26;
+      RowLayout.anchorY(a, edge.fromOption);
+    const sameCol = Math.abs((a.x + a.w / 2) - (b.x + b.w / 2)) < 26 && !(a.rowGroup === true && edge.fromOption != null);
     if (Array.isArray(edge.points) && edge.points.length >= 2 && edge.points.every(p => Array.isArray(p) && p.length === 2 && p.every(Number.isFinite))) {
       return edge.points.slice(1).map((p, i) => {
         const a = edge.points[i];

@@ -28,9 +28,9 @@ Existing packets and default draft creation use 1.0, with exactly two options
 per choice. Preparation version 1.1 permits two or more unique nonempty string
 options in both chart and supplementary nodes. Select 1.1 explicitly in the
 packet JSON. Its zero-based edge indices still address the declared option array.
-Unsupported versions fail. The current runtime remains binary: a valid 1.1
-preparation packet does not permit unsupported runtime choices or bypass exact
-ATLAS reconciliation. See [acceptance and checks](notes/packet-choice-arity.md).
+Unsupported versions fail. Production data remains binary. The separate runtime 1.1 opt-in uses explicit
+source row groups; a valid preparation packet does not enable that flag, change
+production data or bypass exact ATLAS reconciliation. See [acceptance and checks](notes/packet-choice-arity.md).
 
 ## Purpose and shape
 

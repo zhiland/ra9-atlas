@@ -4,6 +4,14 @@ Updated: 2026-10-24. Stage 1 source review is complete for the bounded Hostage
 pilot. Stage 2 preparation is implemented. Canonical JSON authoring and deterministic generation now preserve the existing sample.
 Full-product schema expansion, permalink output migration, actual game-chart census and hosting remain open.
 
+## Runtime row-group support checkpoint
+
+[Runtime contract 1.1](notes/runtime-row-groups.md) adds explicit source row-group
+support with shared heading/row/anchor geometry. Production data remains 1.0 and
+all old nodes, coordinates, source claims and links are unchanged. New groups
+require an explicit flag and do not assert player agency or game completion.
+Final review/verification results are recorded in the report.
+
 ## Painter leisure preparation checkpoint
 
 The [reviewed leisure packet](notes/painter-leisure-review.md) uses explicit1.1:
@@ -11,8 +19,8 @@ six graph objects, thirteen grouped rows and seven traced relationships. Three
 common exits leave brackets without per-row indices or invented completion rules.
 Four unknowns retain semantics and game/build limits. Publication stays blocked.
 The shared checkpoint is not a new runtime node. The displayed atlas remains
-123 nodes/106 records/104 active connectors across seven regions. Current runtime
-support remains binary; source preparation is not runtime approval. Draft
+123 nodes/106 records/104 active connectors across seven regions. Production data
+remains binary; source preparation is not runtime approval. Draft
 [PR #32](https://github.com/zhiland/ra9-atlas/pull/32) passed Ubuntu CI at
 `ed00495`. Source, Standards and Spec reviews have no open findings.
 

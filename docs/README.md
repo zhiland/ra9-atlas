@@ -17,6 +17,7 @@ Use these documents for current work:
 | [Chapter inventory](notes/chapter-inventory-reconciliation.md) | Partial source-index reconciliation and explicit gaps |
 | [CI](ci.md) | Hosted checks and verification boundaries |
 | [Data contract](data-contract.md) | Bounded runtime sample contract |
+| [Runtime row groups](notes/runtime-row-groups.md) | Explicit opt-in geometry, legacy compatibility and synthetic browser checks |
 | [Packet choice versions](notes/packet-choice-arity.md) | Explicit 1.1 multi-option preparation and preserved binary 1.0/runtime |
 | [Chapter preparation](chapter-preparation.md) | Packet extraction, validation, source review and merge gate |
 | [Source register](SOURCES.md) | Evidence provenance and access limitations |

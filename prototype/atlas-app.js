@@ -13,7 +13,7 @@
 (function () {
   'use strict';
 
-  var C = ATLAS_CORE, D = ATLAS;
+  var C = ATLAS_CORE, D = ATLAS, Rows = ATLAS_ROW_LAYOUT;
   var byId = {}, chapters = {};
   D.nodes.forEach(function (n) { byId[n.id] = n; });
   D.chapters.forEach(function (c) { chapters[c.id] = c; });
@@ -218,8 +218,8 @@
     }).join(' ');
     var a = byId[e.from], b = byId[e.to];
     var fromY = e.fromOption == null ? a.y + a.h / 2 :
-      a.y + (e.fromOption + 0.5) * a.h / a.options.length;
-    var sameCol = Math.abs((a.x + a.w / 2) - (b.x + b.w / 2)) < 26;
+      Rows.anchorY(a, e.fromOption);
+    var sameCol = Math.abs((a.x + a.w / 2) - (b.x + b.w / 2)) < 26 && !(a.rowGroup === true && e.fromOption != null);
     if (sameCol) {
       var cx = a.x + a.w / 2, dx = b.x + b.w / 2;
       return b.y > a.y
@@ -435,18 +435,25 @@
     document.getElementById('nodes').innerHTML = D.nodes.map(function (n) {
       var classes = ['node', n.kind];
       if (n.chapter === 'hostage') classes.push('hostage');
+      if (n.rowGroup === true) classes.push('row-group');
       if (n.kind === 'choice' && n.h <= 70) classes.push('compact');
       if (state.selected === n.id) classes.push('selected');
       var shownLabel = n.heading || n.label;
       var inner = '<span class="node-label" data-node-label="' + esc(n.id) + '">' + esc(shownLabel) + '</span>';
       if (n.kind === 'choice') {
+        var rowLayout = Rows.layout(n);
+        if (rowLayout) inner = '<span class="node-label" data-node-label="' + esc(n.id) + '" style="height:' + rowLayout.headerHeight + 'px">' + esc(shownLabel) + '</span>';
         inner += n.options.map(function (o, i) {
+          if (rowLayout) {
+            var row = rowLayout.rows[i];
+            return '<span class="opt" data-row-index="' + i + '" style="top:' + (row.y - n.y - 1) + 'px;height:' + row.h + 'px">' + esc(o) + '</span>';
+          }
           return '<span class="opt"><span class="from-option">option ' + (i + 1) + '</span>' + esc(o) + '</span>';
         }).join('');
       } else {
         inner += n.sub ? '<span class="sub">' + esc(n.sub) + '</span>' : '';
       }
-      var aria = esc(n.label) + ' — ' + KIND_LABEL[n.kind] + ' — ' + (STATUS_LABEL[n.status] || 'status unknown');
+      var aria = esc(n.label) + ' — ' + (n.rowGroup === true ? 'Source row group' : KIND_LABEL[n.kind]) + ' — ' + (STATUS_LABEL[n.status] || 'status unknown');
       return '<button class="' + classes.join(' ') + '" data-node="' + n.id + '" data-kind="' + n.kind + '" style="left:' + n.x + 'px;top:' + n.y +
         'px;width:' + n.w + 'px;height:' + n.h + 'px" aria-label="' + aria + '">' + inner + '</button>';
     }).join('');
@@ -523,7 +530,7 @@
     }).join('');
 
     var optBlock = n.kind === 'choice'
-      ? '<h3>Choice options reported</h3><ul class="opt-list">' + n.options.map(function (o) { return '<li>' + esc(o) + '</li>'; }).join('') + '</ul>'
+      ? '<h3>' + (n.rowGroup === true ? 'Source rows shown' : 'Choice options reported') + '</h3><ul class="opt-list">' + n.options.map(function (o) { return '<li>' + esc(o) + '</li>'; }).join('') + '</ul>'
       : '';
 
     var sourceKeys = (d.src || n.src || []);
@@ -594,7 +601,7 @@
 
     el.innerHTML =
       '<button class="close" id="details-close" aria-label="Close details">×</button>' +
-      '<div class="eyebrow">' + esc(chapter ? chapter.name : n.chapter) + ' · ' + esc(KIND_LABEL[n.kind]) + '</div>' +
+      '<div class="eyebrow">' + esc(chapter ? chapter.name : n.chapter) + ' · ' + esc(n.rowGroup === true ? 'Source row group' : KIND_LABEL[n.kind]) + '</div>' +
       '<h2>' + esc(n.label) + '</h2>' +
       '<span class="chip ' + n.status + '">' + esc(d.status || STATUS_LABEL[n.status] || 'status unknown') + '</span>' +
       '<p>' + esc(d.summary || n.note || 'A node in this selected slice. Structure comes from the cited reference; no in-game verification.') + '</p>' +

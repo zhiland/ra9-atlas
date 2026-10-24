@@ -223,3 +223,8 @@ a:hover { text-decoration: underline; }
   .zoom { right: 8px; bottom: 8px; }
   .zoom span { min-width: 92px; font-size: 10px; }
 }
+
+/* Explicit contract 1.1 row groups share geometry with connector anchors. */
+.node.choice.row-group { display: block; }
+.node.choice.row-group .node-label { position: absolute; top: 0; left: 0; right: 0; margin: 0; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+.node.choice.row-group .opt { position: absolute; left: 0; right: 0; display: flex; align-items: center; padding: 4px 8px; margin: 0; overflow-wrap: anywhere; white-space: normal; }

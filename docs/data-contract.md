@@ -318,3 +318,14 @@ detached origins, optional ordering, clothes eligibility and build gaps. The
 [bounded fence](../prototype/validate-painter-runtime.js) rejects invented origin
 and cross-chapter edges, changed source labels, lost unknowns and eligibility
 gates. Source agreement does not verify game transitions or grant reuse rights.
+
+## Opt-in runtime contract 1.1 source row groups
+
+Current production data still declares 1.0. Runtime validation also accepts 1.1.
+Only a choice node with `rowGroup: true` opts into two or more unique nonempty
+string rows. Unflagged choices retain exactly two options and the old layout,
+even in 1.1. New groups require a 24px heading, two 1px borders and at least32px
+per row. Their visible labels and option anchors share one geometry module.
+Source group captions do not claim direct player agency. Common bracket exits
+have no `fromOption`. An authored option path must start at its row center.
+See [runtime checks](notes/runtime-row-groups.md) and [ADR 0003](adr/0003-explicit-source-row-groups.md).

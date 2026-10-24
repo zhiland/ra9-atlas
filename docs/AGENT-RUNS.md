@@ -130,3 +130,10 @@ before seeing a packet. Controlled OpenCode from public `b1f4f5c` stopped safely
 after provider HTTP429/free quota exhaustion. No patch or paid fallback was used.
 Codex prepared the packet, and the reviewer approved it with zero corrections.
 No runtime change occurs. See [report](notes/painter-leisure-review.md).
+
+## 2026-10-24 runtime source row groups
+
+Codex implemented explicit opt-in runtime1.1 geometry and validation after the
+free OpenCode route quota failure. No additional external run or paid fallback
+is used. Eleven unit/contract and six synthetic browser scenarios cover the
+new representation and legacy compatibility. See [report](notes/runtime-row-groups.md).
