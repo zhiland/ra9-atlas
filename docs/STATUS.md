@@ -4,6 +4,13 @@ Updated: 2026-10-24. Stage 1 source review is complete for the bounded Hostage
 pilot. Stage 2 preparation is implemented. Canonical JSON authoring and deterministic generation now preserve the existing sample.
 Full-product schema expansion, permalink output migration, actual game-chart census and hosting remain open.
 
+## Coverage documentation checkpoint
+
+[Draft PR #35](https://github.com/zhiland/ra9-atlas/pull/35) refreshes the current
+coverage entry and preserves the historical report unchanged. Both review axes
+have zero findings. Ubuntu CI passes at `decb767`. See the
+[cleanup report](notes/coverage-doc-refresh.md). No runtime or source claim changes.
+
 ## Painter leisure runtime checkpoint
 
 The [leisure integration](notes/painter-leisure-runtime.md) reuses the boundary

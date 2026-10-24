@@ -4,6 +4,7 @@ Use these documents for current work:
 
 | Document | Authority and scope |
 | --- | --- |
+| [Coverage cleanup](notes/coverage-doc-refresh.md) | Current/historical separation, reviews and verification |
 | [Current coverage](notes/poc4-coverage.md) | Runtime inventory, per-region scope and verification limits |
 | [STATUS](STATUS.md) | Current checkpoint, verification results and next package |
 | [Specification](spec.md) | Approved product requirements and acceptance boundaries |
