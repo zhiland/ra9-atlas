@@ -10,7 +10,10 @@ Full-product schema expansion, permalink output migration, actual game-chart cen
 support with shared heading/row/anchor geometry. Production data remains 1.0 and
 all old nodes, coordinates, source claims and links are unchanged. New groups
 require an explicit flag and do not assert player agency or game completion.
-Final review/verification results are recorded in the report.
+Draft [PR #33](https://github.com/zhiland/ra9-atlas/pull/33) passes Ubuntu CI
+at `75d729c`. Fourteen unit/contract and six new browser fixtures pass, alongside
+the existing 72 browser scenarios. Standards and Spec follow-ups closed the
+endpoint-interior routing defect. Both axes have zero open findings.
 
 ## Painter leisure preparation checkpoint
 

@@ -6,7 +6,8 @@ even under 1.1. This avoids silently reinterpreting published choices when new
 source groups contain outcomes or variations rather than player decisions.
 
 A shared layout module owns the heading, row bounds and option anchors for the
-new groups. Renderer and validator use the same geometry. Group-level exits keep
+new groups. Renderer and validator use the same geometry and option routes. Routes must
+remain outside endpoint interiors. Overlapping columns use an outside corridor. Group-level exits keep
 no option index. We retain the existing choice kind and add an explicit opt-in
 rather than splitting groups into invented binary branches or introducing a new
 kind throughout navigation and edge handling. Source interpretation, gameplay

@@ -32,20 +32,33 @@ loading. Existing map data and packets remain unchanged.
 
 ## Standards
 
-Pending fixed-point review.
+Initial review found one P2: an overlapping-column route crossed its source
+interior. Shared routing now uses an outside corridor. The follow-up at
+`75d729c` closed it. Standards: zero open findings.
 
 ## Spec
 
-Pending acceptance review.
+Initial review independently found the same visible-route defect. The follow-up
+at `75d729c` confirmed the fix. Spec: zero open findings.
 
 ## Verification
 
-Eleven unit/contract regressions cover legacy anchors, 3/4-row geometry, versions,
+Fourteen unit/contract regressions cover legacy anchors, 3/4-row geometry, versions,
 malformed groups, zero/last indices and authored-path row matching. Six browser
 fixtures exercise three themes at desktop/mobile widths with long labels and
 literal markup. They compare actual row centers to SVG starts, include aligned
 columns and common exits, search/deep links/details and escaping. These fixtures
-are synthetic and are not adopted game content. Full npm passed, including these 11 unit/contract and six browser fixtures,
+are synthetic and are not adopted game content. Full npm passed, including these 14 unit/contract and six browser fixtures,
 all existing packet and source/layout fences, and the unchanged 72 main browser
 scenarios. Production data, all packets and generated atlas are byte-identical
 to base `dd2f2bb`.
+
+The browser regression first reproduced the endpoint-interior failure. After the
+fix, it samples the actual SVG path against both endpoint interiors. Automatic
+paths use outside corridors for overlapping columns. Invalid authored routes and
+explicit lanes fail validation. Legacy routes remain unchanged.
+
+[Ubuntu CI](https://github.com/zhiland/ra9-atlas/actions/runs/40068397568)
+passed at `75d729c`, including full Node/Chromium, 18 runner regressions and
+8 mocked preflight checks. This does not certify native macOS isolation, Safari,
+physical touch, assistive technology or gameplay. Draft PR #33 remains unmerged.
