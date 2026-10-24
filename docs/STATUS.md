@@ -4,6 +4,16 @@ Updated: 2026-10-24. Stage 1 source review is complete for the bounded Hostage
 pilot. Stage 2 preparation is implemented. Canonical JSON authoring and deterministic generation now preserve the existing sample.
 Full-product schema expansion, permalink output migration, actual game-chart census and hosting remain open.
 
+## Main integration checkpoint
+
+The owner explicitly authorized integration on2026-10-24. PR #38 merged the
+reviewed stack #18–38 into `main` at `df6d3fedd9ae929f8bebf95dea9f6ec08ca97480`.
+The merge tree exactly matches the tested `20a5cf8` tree. Fresh integration
+CI40117638176 and main CI40117801061 both passed. PR #18 was automatically
+marked merged; incorporated PRs #19–37 were closed as redundant. No branch
+history was squashed, no local draft was included, and no deployment occurred.
+Historical PR checkpoints below describe their pre-integration state.
+
 ## Model route checkpoint
 
 The owner-selected implementation route is isolated OpenRouter MiMo2.6Flash
