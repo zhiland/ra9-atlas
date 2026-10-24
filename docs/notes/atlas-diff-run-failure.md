@@ -48,3 +48,18 @@ escaping belongs to the tool argument produced the exact required file bytes.
 The byte comparison and fixture contents were unchanged. This closes transport
 and native-config revalidation for this host/pinned version; arbitrary model
 output still requires patch review and project tests.
+
+## Restart export and continuation
+
+The restart at145e038 stopped with client exit failure after9 HTTP200 responses.
+No native error was present in the retained server/client logs; the earlier
+header-timeout cause is not demonstrated for this exit. The stopped server
+exported a marked partial patch containing only tools/data/atlas-diff.js.
+Codex reviewed the full module and preserved it as an incomplete checkpoint;
+syntax and equal-canonical-input smoke checks passed. Tests, npm wiring and
+documentation remain unfinished. This is not package acceptance.
+
+All9 calls reported usage: USD0.017950728,416,463 input,53,349 completion and
+48,911 reasoning tokens. The earlier failed run's13/15-report subtotal remains
+separate. Resume from this preserved implementation to finish the package,
+rather than discarding it or rerunning the original implementation from zero.
