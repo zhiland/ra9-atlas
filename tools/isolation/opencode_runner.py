@@ -634,7 +634,10 @@ def main():
                                          'Read public.txt with the read tool. Create result.txt containing exactly '
                                          + json.dumps(SELF_TEST_CONTENT) + ' as a JSON-encoded content string. '
                                          'The actual file must contain two lines separated by one LF, '
-                                         'with no final newline. Use the write tool. '
+                                         'with no final newline. The surrounding JSON quotes and JSON escaping '
+                                         'describe the write tool content argument, not literal file bytes. '
+                                         'Do not write quote characters or a literal backslash-n into the file. '
+                                         'Use the write tool. '
                                          'Use only glob, grep, read and write; shell is denied. '
                                          'After the write succeeds, reply DONE without further tool calls.')
             completed = {event["part"]["tool"] for event in map(json.loads, output.splitlines())

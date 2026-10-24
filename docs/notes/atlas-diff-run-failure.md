@@ -41,3 +41,10 @@ and16MiB bounded response buffer are unchanged. The owner explicitly withdrew
 the20% Codex reserve for immediate continuation; the previous deferred schedule
 no longer applies. A live canonical provider self-test is required before the
 large task restarts.
+
+The live corrected route passed53/53 canonical checks and shut down cleanly.
+An initial fixture attempt wrote a literal JSON string; clarifying that JSON
+escaping belongs to the tool argument produced the exact required file bytes.
+The byte comparison and fixture contents were unchanged. This closes transport
+and native-config revalidation for this host/pinned version; arbitrary model
+output still requires patch review and project tests.
