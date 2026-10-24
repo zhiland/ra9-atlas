@@ -141,6 +141,28 @@ class OpenRouterTests(unittest.TestCase):
                 with self.assertRaises(ValueError): provider.complete(request())
                 network.assert_not_called()
 
+    def test_stop_reason_is_initial_null_then_names_each_complete_guard(self):
+        # Initially null before any rejection.
+        provider = router.OpenRouterProvider(MODEL, '0.02')
+        self.assertIsNone(provider.summary()['stopReason'])
+        # Reservation that would exceed the budget stops before the paid POST.
+        budgeted = router.OpenRouterProvider(MODEL, '0.000001')
+        with patch.object(router, 'metadata', return_value=row()), patch.object(router, 'exchange') as network:
+            with self.assertRaises(ValueError): budgeted.complete(request())
+            network.assert_not_called()
+        self.assertEqual(budgeted.summary()['stopReason'], 'budget_exhausted')
+        self.assertEqual(budgeted.requests, 0)
+        self.assertEqual(budgeted.reserved, router.Decimal(0))
+        # Six requests reached stops before the paid POST.
+        limited = router.OpenRouterProvider(MODEL, '0.02')
+        limited.requests = 6
+        with patch.object(router, 'metadata', return_value=row()), patch.object(router, 'exchange') as network:
+            with self.assertRaises(ValueError): limited.complete(request())
+            network.assert_not_called()
+        self.assertEqual(limited.summary()['stopReason'], 'request_limit')
+        self.assertEqual(limited.requests, 6)
+        self.assertEqual(limited.reserved, router.Decimal(0))
+
     def test_config_contains_only_loopback_placeholder_and_real_prices(self):
         provider = router.OpenRouterProvider(MODEL, '0.02'); provider.metadata = row()
         config = runner.configuration(12345, Path('/synthetic'), provider)

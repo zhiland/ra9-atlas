@@ -40,7 +40,7 @@ for every endpoint. Prices can change; the relay rechecks before every request.
 
 | Model | Input | Output | Context | Route decision |
 | --- | ---: | ---: | ---: | --- |
-| Xiaomi MiMo 2.6 Flash | 0.14 | 0.28 | 1.05M | Partial tools; bounded self-test failed |
+| Xiaomi MiMo 2.6 Flash | 0.14 | 0.28 | 1.05M | First code task accepted; synthetic newline finding remains |
 | DeepSeek V4.1 Flash | 0.02 | 1.00 | 1.05M | 53/53; paid reserve |
 | Meta Muse Spark 1.3 Contributor | 0.10 | 0.20 | 1.05M | Excluded: training and extra search fee |
 | Qwen3 Coder Next | 0.12 | 0.80 | 262K | Optional coding reserve |
@@ -67,6 +67,16 @@ It repeated writes and hit its USD0.03 guard before final success. The two CLI
 event cost totals were USD0.00061866 and USD0.00073668. Partial tool use is not a
 passing end-to-end result; MiMo is not the selected project route.
 
+At the user's request, a further MiMo run raised the reservation to USD0.06.
+`/private/tmp/ra9-opencode-run-ncff286i` completed four HTTP200 requests and
+52/53 checks. It stopped only on exact file content: `ISOLATED_PROVIDER_OK`
+was missing the required final newline. The client completed; no budget/call
+guard was hit. API cost was USD0.000268580, while the conservative reservation
+was USD0.02297624. Server shutdown passed. This distinguishes a model output
+error from the earlier reservation stops. USD0.02 is two cents of reserved
+capacity, not an actual MiMo charge. USD0.0011 is about 0.11 cents, not
+0.0011 cents; these small tests do not establish relative cost per solved task.
+
 DeepSeek V4.1 Flash passed 53/53 checks twice. The final implementation checkpoint
 at `/private/tmp/ra9-opencode-run-ot9_88of` returned four HTTP200 completions and
 reported API cost USD0.001276795, distinct from its conservative USD0.01164760
@@ -90,8 +100,22 @@ USD0.003751835 (about 0.38 cents). These are API observations, not a reconciled
 account invoice. No dedicated DeepSeek credential was available in the inherited
 environment. Direct DeepSeek is unnecessary for the selected OpenRouter reserve.
 
-Use North Mini Code first, Nous StepFun as an explicit free reserve,
-and DeepSeek only with an explicit run budget. Do not probe quotas repeatedly.
+The owner subsequently selected MiMo for the next bounded trial. This is an
+operational preference, not a passing self-test or a proven quality ranking.
+Its missing final newline remains an open exact-output issue. Start with a small
+reviewable task and keep all correctness checks; do not waive the failed check.
+DeepSeek is the verified paid reserve; North Mini Code is the demonstrated free
+project route, followed by Nous StepFun. Flint stays lower priority after its
+failed public task. No evidence yet establishes that MiMo is generally better
+than the free models or five times cheaper per solved task. The MiMo probes used
+the same model/version with different budget limits, not an old/new model pair.
+Use an explicit run budget for paid routes. Do not probe quotas repeatedly.
+
+The [first MiMo code task](mimo-first-code-task.md) then passed all 51 public-run
+checks. Its two-file patch was accepted without implementation corrections;
+15 OpenRouter,18 runner and19 Nous tests pass. Four requests cost
+USD0.001607496; model-event time was40.5 seconds. This supports bounded reviewed
+work, not a general quality or cost ranking.
 Independent code review and public repository smoke results follow below.
 
 ## Independent review

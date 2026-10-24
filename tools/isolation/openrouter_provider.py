@@ -111,6 +111,7 @@ class OpenRouterProvider:
             raise ValueError('Run budget must be between USD0 and USD0.10')
         self.reserved = Decimal(0)
         self.requests = 0
+        self.stop_reason = None
         self.usage_reports = 0
         self.reported_cost = Decimal(0)
         self.cost_reports = 0
@@ -176,7 +177,12 @@ class OpenRouterProvider:
         reservation = (input_bound * Decimal(row['pricing']['prompt'])
                        + request['max_tokens'] * Decimal(row['pricing']['completion']))
         with self.lock:
-            if self.requests >= 6 or self.reserved + reservation > self.budget:
+            # Split guards so the host report records which limit stopped the run.
+            if self.requests >= 6:
+                self.stop_reason = 'request_limit'
+                raise ValueError('OpenRouter probe request/budget limit reached')
+            if self.reserved + reservation > self.budget:
+                self.stop_reason = 'budget_exhausted'
                 raise ValueError('OpenRouter probe request/budget limit reached')
             self.requests += 1
             self.reserved += reservation  # Never refund failed or interrupted requests.
@@ -223,6 +229,7 @@ class OpenRouterProvider:
 
     def summary(self):
         return {'requestCount': self.requests, 'reservedUSD': str(self.reserved),
+                'stopReason': self.stop_reason,
                 'runBudgetUSD': str(self.budget), 'trainingOptIn': self.allow_training,
                 'usageReports': self.usage_reports, 'costReports': self.cost_reports,
                 'apiReportedCostUSD': str(self.reported_cost) if self.cost_reports else None,
