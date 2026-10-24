@@ -21,3 +21,23 @@ boundary and bounded buffers, add a meaningful regression, and revalidate any
 changed runner/config boundary before restarting this public task. Do not
 change OS/network access or introduce paid fallback. Preserve the owner's20%
 Codex reserve; substantial work is deferred until the current quota reset.
+
+## Verified transport correction
+
+The pinned2.0.32 binary defines a300000ms header deadline and supports
+`headerTimeout:false` and `timeout:false`. Working mode now sets both in native
+provider settings; bounded probes are unchanged. A regression failed before the
+fix and passed afterward. All67 Python regressions passed:21 OpenRouter,
+20 Nous,18 runner and8 preflight. Both independent review axes found no blocker.
+
+A native synthetic test used the canonical IsolatedRun and no external
+inference. A20ms client deadline with a200ms delayed valid SSE response failed
+after4 attempts. With the production disabled-deadline settings, the same
+response succeeded on1 attempt. Both native runs retained OS/policy checks and
+stopped their servers. The test scales time, not the production protocol.
+
+The OS profile, loopback ports, credential boundary,300s upstream socket-idle
+and16MiB bounded response buffer are unchanged. The owner explicitly withdrew
+the20% Codex reserve for immediate continuation; the previous deferred schedule
+no longer applies. A live canonical provider self-test is required before the
+large task restarts.
